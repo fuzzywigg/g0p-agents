@@ -17,3 +17,7 @@ It specifically details an **Oracle-Style Quantum Hive Mind** architecture, feat
 * **AGENTS-v2.2.md**: Historic snapshot of the agent constitution.
 
 > **Note**: This is an archived reference implementation. For current operational standards, see the main `agents-standard` repository.
+
+## License
+
+MIT — see [LICENSE](LICENSE).
