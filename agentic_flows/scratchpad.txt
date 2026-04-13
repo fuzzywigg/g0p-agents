@@ -1,0 +1,29 @@
+# g0p-agents Agent Coordination Scratchpad
+
+This file is the **source of truth** for agent coordination state in this repo.
+Updated by each agent after completing their task. Never delete entries — mark them complete.
+
+Format:
+- [x] = DONE
+- [ ] = PENDING
+- [~] = IN_PROGRESS
+- [!] = BLOCKED/ESCALATED
+
+---
+
+## Task: Repo Hydration — 2026-04-13
+
+- [x] Phase 1: Discovery — explore repo, produce findings report
+- [x] Phase 2: Generate questions (LIST A + LIST B)
+- [x] Phase 3: Resolve LIST A via research
+- [x] Phase 4: Issue content documented in docs/agent-hydration.md
+- [x] Phase 5: Roadmap issue content ready
+- [x] Phase 6: CLAUDE.md, CONTRIBUTING.md, SECURITY.md, CHANGELOG.md, issue templates, CI workflow created
+- [ ] Phase 6: LIST B answered by Andrew (B1–B5 deferred)
+- [ ] Issues created on GitHub (blocked: gh CLI auth — needs browser-claude or Andrew)
+- [ ] Notion page created/updated (needs claude-cowork with Notion access)
+
+Status: IN_PROGRESS
+Created: 2026-04-13T02:07:01Z
+Owner: copilot
+Current blocker: Issue creation requires GitHub token with issues:write scope
