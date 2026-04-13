@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### Added
+- `LICENSE` — MIT License (copyright 2026 Andrew Pappas / smtp.eth)
 - `CLAUDE.md` — agent routing matrix and repo-specific instructions
 - `CONTRIBUTING.md` — contribution guidelines for ecosystem agents and humans
 - `SECURITY.md` — vulnerability reporting and security standards
