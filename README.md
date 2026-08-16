@@ -1,8 +1,12 @@
-# Quantum Agent Swarm (Public Archive)
+# g0p-agents (archived reference)
 
-This repository contains the "Quantum-Blockchain" agentic protocols v2.2 (Dec 2025).
+Docs-only archive of 2025 "Quantum-Blockchain" agent prompts (v2.2, Dec 2025).
 
-It specifically details an **Oracle-Style Quantum Hive Mind** architecture, featuring:
+**This is not a live hive, runtime, or production swarm.** The "Oracle-Style Quantum Hive Mind" language in the historic copy below is prompt fiction. There is no running hive mind in this tree. For current operational standards, see [fuzzywigg/agents-standard](https://github.com/fuzzywigg/agents-standard).
+
+## Historic prompt set
+
+This repository contains the "Quantum-Blockchain" agentic protocols v2.2 (Dec 2025). The files describe an **Oracle-Style Quantum Hive Mind** architecture *on paper*, featuring:
 
 1. **QuantumArchitectAgent**: Designing quantum-safe algorithms.
 2. **BlockchainArchitectAgent**: Implementing multi-chain, quantum-resistant contracts.
@@ -16,7 +20,7 @@ It specifically details an **Oracle-Style Quantum Hive Mind** architecture, feat
 * **IMPLEMENTATION-GUIDE.md**: Step-by-step setup for a quantum-dev environment.
 * **AGENTS-v2.2.md**: Historic snapshot of the agent constitution.
 
-> **Note**: This is an archived reference implementation. For current operational standards, see the main `agents-standard` repository.
+> **Note**: This is an archived reference implementation, not a live hive. For current operational standards, see the main `agents-standard` repository.
 
 ## License
 
