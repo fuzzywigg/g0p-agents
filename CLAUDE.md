@@ -9,16 +9,20 @@ Canonical source: This file (GitHub is truth for code/config)
 ## Repo Identity
 
 **Repo**: fuzzywigg/g0p-agents
-**Purpose**: Quantum-Blockchain agentic protocols archive (v2.2, Dec 2025). Contains agent system prompts, Goose YAML recipe templates, and implementation guide for the FUZZYWIGG four-agent swarm (QuantumArchitectAgent, BlockchainArchitectAgent, EdgeSecurityAgent, OrchestrationAgent).
+**Purpose**: Quantum-Blockchain agentic protocols archive (v2.2, Dec 2025).
+Contains agent system prompts, Goose YAML recipe templates, and implementation
+guide for the FUZZYWIGG four-agent swarm (QuantumArchitectAgent,
+BlockchainArchitectAgent, EdgeSecurityAgent, OrchestrationAgent).
 **North Star**: PikoClaw demo at Panathenea (Athens), May 27–29, 2026
-**Status**: Documentation archive — activation into working codebase is a pending architectural decision (see LIST B in docs/agent-hydration.md)
+**Status**: Documentation archive — activation into working codebase is a
+pending architectural decision (see LIST B in docs/agent-hydration.md)
 
 ---
 
 ## Agent Routing Matrix
 
 | Task | Surface | Rationale |
-|------|---------|-----------|
+| ------ | --------- | ----------- |
 | CI/CD fixes, linting, dependabot | copilot | Single-repo, syntax-level work |
 | Multi-file code scaffolding (agentic_flows/, contracts/, quantum_circuits/) | geryon | Deep coding, long-running, 60–90 min |
 | Strategic planning, Notion updates, cross-platform coordination | claude-cowork | Cross-system state, Notion truth |
@@ -31,7 +35,7 @@ Canonical source: This file (GitHub is truth for code/config)
 ## State Residency Rules
 
 | Content Type | Owner | Others do |
-|---|---|---|
+| --- | --- | --- |
 | Code, config, workflows | This GitHub repo | Link only |
 | Policies, decisions, rollouts | Notion Tier 1 | Link only |
 | Agent operating rules | Notion Tier 0 | Link only |
@@ -43,7 +47,7 @@ Canonical source: This file (GitHub is truth for code/config)
 ## Key Files
 
 | File | Purpose |
-|------|---------|
+| ------ | --------- |
 | `AGENTS-v2.2.md` | Constitution — full agent rules and quantum-blockchain standards |
 | `AGENT-PROMPTS.md` | System prompts for all 4 specialist agents |
 | `GOOSE-RECIPES.md` | Goose YAML recipe templates for orchestration |
@@ -70,7 +74,7 @@ Canonical source: This file (GitHub is truth for code/config)
 
 When blocked, use this format in PR comments or Slack:
 
-```
+```text
 🚨 ESCALATION REQUIRED
 From Agent: [surface name]
 Conflict: [What constraint am I hitting?]

@@ -21,9 +21,9 @@ TARGET REPO: [owner/repo-name] BRANCH: [claude/hydrate-repo-issues-XXXXX]
 
 You are an AI agent working for Andrew Pappas (github.com/fuzzywigg, ENS: smtp.eth) on the FUZZYWIGG multi-agent ecosystem. You operate under these governance layers:
 
-Tier 0 (Agent Interface Protocol): https://www.notion.so/33f071e361d2814fb6d0db6d54a1a651
-Tier 1 (Governance/Policy): https://www.notion.so/335071e361d281baaf3bffb6b57eabf4
-Master Index: https://www.notion.so/337071e361d28189b501ce2a1983a239
+Tier 0 (Agent Interface Protocol): <https://www.notion.so/33f071e361d2814fb6d0db6d54a1a651>
+Tier 1 (Governance/Policy): <https://www.notion.so/335071e361d281baaf3bffb6b57eabf4>
+Master Index: <https://www.notion.so/337071e361d28189b501ce2a1983a239>
 North Star: PikoClaw demo at Panathenea (Athens), May 27-29, 2026
 State residency rules (one system owns truth; others link):
 
@@ -32,7 +32,15 @@ Policies/decisions/rollouts: Notion Tier 1 is truth
 Agent operating rules: Notion Tier 0 is truth
 Ephemeral execution context: Slack/Discord threads — link, don't canonize
 Reusable prompts/snippets: Gist or repo /docs/ — Notion links to it
-Agent surfaces available for routing: claude-cowork — Strategic planning, cross-platform coordination, Notion, Slack geryon — Deep coding, multi-file changes, long-running tasks (60-90 min) copilot — Single-repo CI fixes, syntax cleanup, dependabot follow-ups browser-claude — GitHub Settings, Cloudflare UI, dashboards browser-gemini — GoDaddy, Google Workspace, GSC, GA4, SEO human — Financial transactions, repo visibility, branch protection playwright — Automated E2E verification, demo QA
+Agent surfaces available for routing:
+
+- claude-cowork — Strategic planning, cross-platform coordination, Notion, Slack
+- geryon — Deep coding, multi-file changes, long-running tasks (60-90 min)
+- copilot — Single-repo CI fixes, syntax cleanup, dependabot follow-ups
+- browser-claude — GitHub Settings, Cloudflare UI, dashboards
+- browser-gemini — GoDaddy, Google Workspace, GSC, GA4, SEO
+- human — Financial transactions, repo visibility, branch protection
+- playwright — Automated E2E verification, demo QA
 
 == PHASE 1: DISCOVERY ==
 
@@ -57,9 +65,13 @@ Produce a structured FINDINGS REPORT with two columns per category: EXISTS (with
 
 From the findings report, generate two lists:
 
-LIST A — QUESTIONS THAT CAN BE ANSWERED BY RESEARCH: Questions about the codebase, dependencies, framework conventions, or ecosystem context that you can resolve by reading more code, checking docs, or searching the web.
+LIST A — QUESTIONS THAT CAN BE ANSWERED BY RESEARCH: Questions about the
+codebase, dependencies, framework conventions, or ecosystem context that you
+can resolve by reading more code, checking docs, or searching the web.
 
-LIST B — QUESTIONS REQUIRING HITL: Questions that only Andrew can answer — product direction, business priorities, third-party account access, financial decisions, architectural preferences not inferable from code.
+LIST B — QUESTIONS REQUIRING HITL: Questions that only Andrew can answer —
+product direction, business priorities, third-party account access, financial
+decisions, architectural preferences not inferable from code.
 
 For each question, note:
 
@@ -94,12 +106,12 @@ Proposed Solution
 Acceptance Criteria
  [Testable, binary criteria]
 Agent Surface Routing
-Field	Value
-Surface	[agent-surface]
-Rationale	[Why this surface, estimated effort]
-Priority	[P1/P2/P3 — with justification]
-Branch	[conventional branch name]
-Dependencies	[issue numbers this depends on, if any]
+Field Value
+Surface [agent-surface]
+Rationale [Why this surface, estimated effort]
+Priority [P1/P2/P3 — with justification]
+Branch [conventional branch name]
+Dependencies [issue numbers this depends on, if any]
 ISSUE CATEGORIES (evaluate all — skip categories with no gaps):
 
 CI/CD & Infrastructure — pipeline enforcement, reproducibility, containerization
@@ -110,13 +122,24 @@ Feature Development — missing capabilities, API gaps, tool surface expansion
 Resilience & Failover — retry logic, graceful degradation, health monitoring
 Code Quality — dead code, magic numbers, naming, unused modules
 Cross-system Alignment — Notion/GitHub/Slack state residency, routing consistency
-PRIORITY FRAMEWORK: P1 — Blocks other work, governance enforcement, prevents crashes/data loss P2 — Quality/security depth, operational visibility, documentation completeness P3 — Optimization, code hygiene, extended capabilities
+PRIORITY FRAMEWORK:
 
-PHASE ORDER — Issues must be grouped into execution phases: Phase 1 (Foundation/P1): Issues that unblock everything else Phase 2 (Hardening/P2): Issues that deepen quality once foundation is solid Phase 3 (Optimization/P3): Nice-to-have improvements
+- P1 — Blocks other work, governance enforcement, prevents crashes/data loss
+- P2 — Quality/security depth, operational visibility, documentation completeness
+- P3 — Optimization, code hygiene, extended capabilities
+
+PHASE ORDER — Issues must be grouped into execution phases:
+
+- Phase 1 (Foundation/P1): Issues that unblock everything else
+- Phase 2 (Hardening/P2): Issues that deepen quality once foundation is solid
+- Phase 3 (Optimization/P3): Nice-to-have improvements
 
 == PHASE 5: ROADMAP TRACKER ==
 
-After all individual issues are created, create a master roadmap issue: Title: [claude] {repo-name} Roadmap — Development Timeline & Issue Tracker Body: Phase table linking all issues, dependency graph, surface distribution, exit criteria per phase, and governing principles.
+After all individual issues are created, create a master roadmap issue:
+Title: [claude] {repo-name} Roadmap — Development Timeline & Issue Tracker
+Body: Phase table linking all issues, dependency graph, surface distribution,
+exit criteria per phase, and governing principles.
 
 == PHASE 6: CROSS-SYSTEM DOCUMENTATION ==
 

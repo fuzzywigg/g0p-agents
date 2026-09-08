@@ -16,7 +16,7 @@ This repo is part of the FUZZYWIGG multi-agent ecosystem. Contributions come fro
 ## Branch Strategy
 
 | Branch | Purpose |
-|---|---|
+| --- | --- |
 | `main` | Protected. Merges require PR + review. Never push directly. |
 | `copilot/<task>` | Copilot agent work — CI fixes, single-file edits |
 | `geryon/<task>` | Geryon agent work — multi-file scaffolding, deep code changes |
@@ -33,6 +33,7 @@ This repo is part of the FUZZYWIGG multi-agent ecosystem. Contributions come fro
 ## Issue Reporting
 
 Use the appropriate issue template:
+
 - **Bug** — something broken in existing files or workflows
 - **Feature** — new capability needed
 - **Agent Task** — structured work for a specific agent surface

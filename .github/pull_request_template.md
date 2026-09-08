@@ -1,4 +1,4 @@
-## Summary
+# Summary
 
 <!-- One sentence: what does this PR accomplish? -->
 
@@ -10,19 +10,19 @@
 
 <!-- List of files changed and what was done -->
 
-- 
-- 
+-
+-
 
 ## Acceptance Criteria
 
 <!-- Copy from the linked issue -->
 
-- [ ] 
+- [ ]
 
 ## Agent Surface Routing
 
 | Field | Value |
-|---|---|
+| --- | --- |
 | Surface | [agent-surface] |
 | Issue | #[issue-number] |
 | Branch | [branch name] |
