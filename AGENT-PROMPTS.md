@@ -1,4 +1,5 @@
 # Agent Prompt Templates
+
 ## FUZZYWIGG-AI Quantum-Blockchain System
 
 Use these prompts when instantiating each specialist agent. Customize with project-specific context.
@@ -397,7 +398,7 @@ Remember: You are not smarter than the three specialists. Your job is to listen,
 
 ## Usage Instructions
 
-### For Each Agent Instantiation:
+### For Each Agent Instantiation
 
 1. **Copy the relevant prompt template** (above)
 2. **Fill in the [INSERT PROJECT-SPECIFIC INFO HERE] sections**
@@ -411,7 +412,7 @@ Remember: You are not smarter than the three specialists. Your job is to listen,
 
 ### Example: Instantiate QuantumArchitectAgent
 
-```
+```text
 System Prompt: [Copy QuantumArchitectAgent Prompt Template]
 
 User Input: "Review the proposed factorization circuit for our NFT mint operation. Check Cirq optimization, validate quantum-safety, provide gate count and error rate estimates. Use the scratchpad to track progress."
@@ -432,6 +433,7 @@ Output: Updated scratchpad + Cirq circuit file
 ## Integration with AGENTS.md
 
 These prompts are **living documents**. Update them whenever:
+
 - AGENTS.md constraints change
 - A new escalation pattern emerges
 - Risk tolerance thresholds change (quarterly)

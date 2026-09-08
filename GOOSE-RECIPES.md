@@ -1,4 +1,5 @@
 # Goose Recipes for FUZZYWIGG-AI
+
 ## Recipe-Based Agent Orchestration
 
 Store all recipes in `./agentic_flows/` directory. Each recipe is a YAML file that orchestrates one agent workflow or multi-agent orchestration.
@@ -443,6 +444,7 @@ goose run ./agentic_flows/quantum_nft_mint_full_orchestration.yaml
 ```
 
 This will:
+
 1. Run all three specialist agents
 2. Collect their outputs
 3. Check for conflicts
@@ -476,7 +478,7 @@ This is the **source of truth** for agent coordination.
 
 All recipes should follow this naming pattern:
 
-```
+```text
 [domain]_[action]_[target].yaml
 
 Examples:

@@ -1,4 +1,5 @@
 # IMPLEMENTATION GUIDE: Quantum-Blockchain Agentic Team
+
 ## FUZZYWIGG-AI (smtp.eth)
 
 **Date**: 2025-12-13  
@@ -39,6 +40,7 @@ You now have these files generated:
 - **[13] TEAM-ANALYSIS.md** — Detailed team structure (for reference)
 
 **Copy them to your repo**:
+
 ```bash
 cp AGENTS-v2.2.md ~/fuzzywigg-ai/AGENTS.md
 cp AGENT-PROMPTS.md ~/fuzzywigg-ai/docs/AGENT-PROMPTS.md
@@ -107,6 +109,7 @@ echo "Activate environment with: source ~/quantum-blockchain-env/bin/activate"
 **Goal**: Get your development environment fully operational
 
 **Checklist**:
+
 - [ ] WSL2 setup complete (Python + Node.js)
 - [ ] Docker Desktop running with WSL2 backend
 - [ ] VS Code installed with extensions (Python, Solidity, Docker)
@@ -115,6 +118,7 @@ echo "Activate environment with: source ~/quantum-blockchain-env/bin/activate"
 - [ ] Cirq test project working (`import cirq; print(cirq.__version__)`)
 
 **Verify**:
+
 ```bash
 # Test Python environment
 python3 -c "import cirq; print('Cirq version:', cirq.__version__)"
@@ -131,18 +135,21 @@ npx hardhat --version
 **Goal**: Create your four specialist agent instances
 
 **For each agent**:
+
 1. Copy the prompt template from [15]
 2. Customize with your project context
 3. Store in `docs/agents/[agent-name]-prompt.md`
 4. Note the LLM provider (Claude, GPT, Gemini, etc.)
 
 **Files to create**:
+
 - `docs/agents/quantum-architect-prompt.md`
 - `docs/agents/blockchain-architect-prompt.md`
 - `docs/agents/edge-security-prompt.md`
 - `docs/agents/orchestration-prompt.md`
 
 **Example customization** (fill in these fields):
+
 ```markdown
 ## Current Project Context
 - Target quantum hardware: Cirq-sim (local), then Google Quantum Chip (future)
@@ -156,18 +163,21 @@ npx hardhat --version
 **Goal**: Build the YAML recipe files that orchestrate agents
 
 **Files to create**:
+
 - `agentic_flows/quantum_algorithm_design.yaml` (copy from [16])
 - `agentic_flows/blockchain_contract_design.yaml` (copy from [16])
 - `agentic_flows/edge_security_implementation.yaml` (copy from [16])
 - `agentic_flows/quantum_nft_mint_orchestration.yaml` (copy from [16])
 
 **Customize each recipe**:
+
 1. Replace `[INSERT PROJECT-SPECIFIC INFO HERE]` placeholders
 2. Update tool versions/requirements
 3. Adjust timeouts based on your hardware
 4. Point to your actual MCP service endpoints (if applicable)
 
 **Test recipes**:
+
 ```bash
 # First, install Goose (if not already)
 npm install -g @blockgensystems/goose
@@ -221,6 +231,7 @@ Owner: QuantumArchitectAgent
 ```
 
 **Rules**:
+
 - Use checkboxes to track progress
 - Each agent "owns" its section
 - Append new tasks as they arise
@@ -234,6 +245,7 @@ Owner: QuantumArchitectAgent
 **Test Scenario**: Simple quantum circuit → smart contract → mobile signing
 
 **Steps**:
+
 1. Add task to scratchpad: "Test: Simple quantum circuit design"
 2. Run QuantumArchitectAgent on `quantum_algorithm_design.yaml`
 3. Agent updates scratchpad with circuit file + estimates
@@ -246,6 +258,7 @@ Owner: QuantumArchitectAgent
 10. Decision logged in `postmortem.md`
 
 **Expected Result**:
+
 - `./quantum_circuits/test_circuit.py` (Cirq code)
 - `./contracts/TestContract.sol` (Solidity code)
 - `./mobile/src/TestValidator.js` (React Native code)
@@ -257,6 +270,7 @@ Owner: QuantumArchitectAgent
 **Goal**: Run real workflows and handle escalations
 
 **Typical workflow**:
+
 1. Define a real quantum-blockchain problem
 2. Create task in scratchpad
 3. Run specialist agents
@@ -266,6 +280,7 @@ Owner: QuantumArchitectAgent
 7. Adjust AGENTS.md constraints based on lessons learned
 
 **Key Metrics to Track**:
+
 - Agent output quality (1-5 scale)
 - Conflict resolution time (minutes)
 - Decision reversals (log in postmortem.md)
@@ -276,6 +291,7 @@ Owner: QuantumArchitectAgent
 ## Tools & Software Checklist
 
 **Required (Days 1-2)**:
+
 - [ ] Python 3.11+ (installed in WSL2)
 - [ ] Node.js 20.x LTS (installed in WSL2)
 - [ ] Docker Desktop (running with WSL2 backend)
@@ -283,29 +299,34 @@ Owner: QuantumArchitectAgent
 - [ ] Git + GitHub (version control)
 
 **Quantum (Days 2-3)**:
+
 - [ ] Cirq (Python library)
 - [ ] Qualtran (Python library)
 - [ ] Jupyter Lab (interactive development)
 - [ ] IBM Quantum Experience account (free, for real hardware testing)
 
 **Blockchain (Days 3-4)**:
+
 - [ ] Hardhat (npm install -g hardhat)
 - [ ] Solidity compiler (integrated with Hardhat)
 - [ ] Slither (security analyzer)
 - [ ] Etherscan account (contract verification)
 
 **Mobile (Days 4-5)**:
+
 - [ ] Android Studio (Android development)
 - [ ] Xcode (iOS development, Mac only) OR React Native + Expo
 - [ ] liboqs (post-quantum crypto library)
 - [ ] MetaMask wallet (browser + mobile)
 
 **Orchestration (Days 5-6)**:
+
 - [ ] Goose (agent orchestration framework)
 - [ ] Docker Compose (container orchestration)
 - [ ] YAML editor (VS Code has built-in support)
 
 **Optional (Production)**:
+
 - [ ] Azure account (cloud backend)
 - [ ] Sentry (error tracking)
 - [ ] PostHog (product analytics)
@@ -315,6 +336,7 @@ Owner: QuantumArchitectAgent
 ## Success Criteria
 
 **By End of Week 1**:
+
 - ✅ Development environment fully operational
 - ✅ All four specialist agents instantiated
 - ✅ Goose recipes created and tested
@@ -322,12 +344,14 @@ Owner: QuantumArchitectAgent
 - ✅ postmortem.md has first entry
 
 **By End of Week 2**:
+
 - ✅ Three real workflows completed (quantum → contract → mobile)
 - ✅ At least one escalation handled and documented
 - ✅ AGENTS.md updated with lessons learned
 - ✅ Team comfortable with agent coordination
 
 **By End of Month**:
+
 - ✅ Risk tolerance increased (based on successful operations)
 - ✅ Deployment to Sepolia testnet
 - ✅ 100+ test transactions completed
@@ -338,18 +362,23 @@ Owner: QuantumArchitectAgent
 ## Common Issues & Solutions
 
 ### Issue 1: "Cirq is too slow for mobile"
+
 **Solution**: Use Qualtran to analyze circuit resource requirements. Break into smaller sub-circuits. Cache results.
 
 ### Issue 2: "Smart contract gas cost exceeds budget"
+
 **Solution**: BlockchainArchitectAgent optimizes with lower-level opcodes. Consider rollups (Arbitrum, Optimism).
 
 ### Issue 3: "Mobile device can't run quantum circuit"
+
 **Solution**: Implement classical simulation fallback (slower but works). Use hybrid approach.
 
 ### Issue 4: "Agents can't reach consensus on design"
+
 **Solution**: OrchestrationAgent escalates to you. Make trade-off decision. Log in postmortem.md.
 
 ### Issue 5: "Scratchpad gets out of sync"
+
 **Solution**: Scratchpad is append-only, never overwrite. If corrupted, restore from git history.
 
 ---
@@ -390,18 +419,21 @@ A: Success metrics (circuit depth, gas cost, crypto ops time), decision accuracy
 ## Support & Resources
 
 **Documentation**:
+
 - AGENTS.md v2.2 (your constitution)
 - AGENT-PROMPTS.md (specialist prompts)
 - GOOSE-RECIPES.md (Goose recipe templates)
 - TEAM-ANALYSIS.md (team structure reference)
 
 **External Resources**:
-- Google Cirq: https://quantumai.google/cirq
-- Hardhat: https://hardhat.org/
-- Goose: https://block.github.io/goose/
-- NIST Post-Quantum Crypto: https://csrc.nist.gov/projects/post-quantum-cryptography/
+
+- Google Cirq: <https://quantumai.google/cirq>
+- Hardhat: <https://hardhat.org/>
+- Goose: <https://block.github.io/goose/>
+- NIST Post-Quantum Crypto: <https://csrc.nist.gov/projects/post-quantum-cryptography/>
 
 **Community**:
+
 - GitHub (version control + collaboration)
 - Stack Overflow (technical questions)
 - Quantum Computing Slack communities

@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### Added
+
 - `LICENSE` — MIT License (copyright 2026 Andrew Pappas / smtp.eth)
 - `CLAUDE.md` — agent routing matrix and repo-specific instructions
 - `CONTRIBUTING.md` — contribution guidelines for ecosystem agents and humans
@@ -26,6 +27,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [0.1.0] — 2025-12-13
 
 ### Added
+
 - `README.md` — public archive description
 - `AGENTS-v2.2.md` — agent constitution with quantum-blockchain sections
 - `AGENT-PROMPTS.md` — specialist agent system prompts (4 agents)

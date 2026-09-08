@@ -2,7 +2,10 @@
 
 Docs-only archive of 2025 "Quantum-Blockchain" agent prompts (v2.2, Dec 2025).
 
-**This is not a live hive, runtime, or production swarm.** The "Oracle-Style Quantum Hive Mind" language in the historic copy below is prompt fiction. There is no running hive mind in this tree. For current operational standards, see [fuzzywigg/agents-standard](https://github.com/fuzzywigg/agents-standard).
+**This is not a live hive, runtime, or production swarm.** The "Oracle-Style
+Quantum Hive Mind" language in the historic copy below is prompt fiction. There
+is no running hive mind in this tree. For current operational standards, see
+[fuzzywigg/agents-standard](https://github.com/fuzzywigg/agents-standard).
 
 ## Historic prompt set
 

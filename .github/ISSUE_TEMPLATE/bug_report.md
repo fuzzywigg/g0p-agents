@@ -42,7 +42,7 @@ Edit policy: Agent-editable; structural changes require Andrew approval
 ## Agent Surface Routing
 
 | Field | Value |
-|---|---|
+| --- | --- |
 | Surface | [agent-surface] |
 | Rationale | [Why this surface, estimated effort] |
 | Priority | [P1/P2/P3] |

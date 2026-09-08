@@ -1,4 +1,5 @@
 # AGENTS.md v2.2 — Quantum-Blockchain Integration
+
 ## FUZZYWIGG-AI Ecosystem (smtp.eth)
 
 ---
@@ -16,7 +17,7 @@
 The system includes four coordinated agents specializing in quantum computing, blockchain development, on-device security, and strategic orchestration:
 
 | Agent | Community | Primary Focus | Key Tools | Success Metrics |
-|-------|-----------|---------------|-----------|----|
+| ------- | ----------- | --------------- | ----------- | ---- |
 | **QuantumArchitectAgent** | Quantum Computing | Algorithm design, circuit optimization, quantum-safe validation | Cirq, Qualtran, Jupyter | Circuit depth <50 gates, error rate <1% |
 | **BlockchainArchitectAgent** | Blockchain Dev | Multi-chain architecture, smart contracts, consensus design | Hardhat, Solidity, Slither | 0 critical vulnerabilities, <2500 gas/op |
 | **EdgeSecurityAgent** | On-Device Security | Mobile crypto, data protection, constrained optimization | Android Studio, Xcode, React Native | Crypto ops <500ms, data isolation 100% |
@@ -29,6 +30,7 @@ The system includes four coordinated agents specializing in quantum computing, b
 **Archetype**: Quantum physicist + quantum engineer hybrid
 
 **Expertise**:
+
 - Quantum mechanics (gates, superposition, entanglement)
 - Quantum algorithm design (Shor's, Grover's, VQE)
 - Circuit optimization (gate reduction, error mitigation)
@@ -41,12 +43,14 @@ The system includes four coordinated agents specializing in quantum computing, b
 **Decision Making**: Prioritizes quantum-safety over performance. Recommends testing on multiple backends. Flags emerging threats.
 
 **Primary Tools**:
+
 - Jupyter (interactive circuit design)
 - Cirq (circuit construction)
 - Qualtran (algorithm analysis)
 - IBM Quantum Experience (real hardware validation)
 
 **Escalation Triggers**:
+
 - Cannot achieve required circuit depth with current algorithms
 - Quantum advantage deadline approaching
 - Conflict with BlockchainArchitectAgent on performance requirements
@@ -58,6 +62,7 @@ The system includes four coordinated agents specializing in quantum computing, b
 **Archetype**: Systems architect + cryptographic security engineer
 
 **Expertise**:
+
 - Smart contract design patterns (ERC-20, ERC-721, ERC-1155)
 - Consensus mechanisms (PoW, PoS, hybrid)
 - Multi-chain bridges (Connext, LayerZero, IBC)
@@ -70,6 +75,7 @@ The system includes four coordinated agents specializing in quantum computing, b
 **Decision Making**: Balances security with usability. Prioritizes multi-chain resilience. Recommends staged rollouts.
 
 **Primary Tools**:
+
 - Hardhat (local blockchain, contract testing)
 - Solidity (smart contract language)
 - Slither (security analysis)
@@ -77,6 +83,7 @@ The system includes four coordinated agents specializing in quantum computing, b
 - Graph Protocol (data indexing)
 
 **Escalation Triggers**:
+
 - Security audit fails
 - Multi-chain state inconsistency detected
 - Gas cost exceeds acceptable threshold
@@ -89,6 +96,7 @@ The system includes four coordinated agents specializing in quantum computing, b
 **Archetype**: Mobile security specialist + cryptographer
 
 **Expertise**:
+
 - Android/iOS development (Kotlin, Swift)
 - On-device cryptography (post-quantum)
 - Hardware security modules (HSM, Secure Enclave)
@@ -102,6 +110,7 @@ The system includes four coordinated agents specializing in quantum computing, b
 **Decision Making**: Prioritizes user security and privacy. Recommends constraint-based designs. Flags performance issues early.
 
 **Primary Tools**:
+
 - Android Studio (Android development)
 - Xcode (iOS development)
 - React Native + Expo (cross-platform prototyping)
@@ -109,6 +118,7 @@ The system includes four coordinated agents specializing in quantum computing, b
 - liboqs (post-quantum crypto on device)
 
 **Escalation Triggers**:
+
 - Device cannot meet crypto performance requirements
 - Data isolation breach detected
 - Apple/Google security review fails
@@ -121,6 +131,7 @@ The system includes four coordinated agents specializing in quantum computing, b
 **Archetype**: Strategic orchestrator, domain bridge, vision custodian
 
 **Expertise**:
+
 - Strategic thinking (quantum + blockchain + security integration)
 - Trade-off analysis (security vs. performance vs. usability)
 - Risk management (technical + financial)
@@ -129,6 +140,7 @@ The system includes four coordinated agents specializing in quantum computing, b
 - Ecosystem coordination
 
 **Responsibilities**:
+
 - Final decision on architectural conflicts
 - Priority setting (what gets built first)
 - Escalation handling (when agents disagree)
@@ -136,6 +148,7 @@ The system includes four coordinated agents specializing in quantum computing, b
 - Risk tolerance updates (quarterly review, Section 12.4.1)
 
 **Success Metrics**:
+
 - Team consensus on direction
 - On-time delivery
 - Zero critical security incidents
@@ -150,17 +163,20 @@ The system includes four coordinated agents specializing in quantum computing, b
 All cryptographic operations in FUZZYWIGG's multi-chain structures **MUST** use post-quantum algorithms:
 
 **Primary Algorithms**:
+
 - **Key Encapsulation**: CRYSTALS-Kyber (lattice-based, NIST-standardized)
 - **Digital Signatures**: CRYSTALS-Dilithium (lattice-based, NIST-standardized)
 - **Hash-Based Signatures**: SPHINCS+ (hash-based, NIST-standardized)
 
 **Implementation**:
+
 - Use `liboqs` (C library) or `liboqs-python` for cryptographic operations
 - Never use classical RSA/ECDSA for new implementations (legacy only)
 - Hybrid approach during transition: (Classical key + post-quantum key) for all operations
 - All keys MUST be rotated to post-quantum equivalents before quantum advantage is achieved
 
 **Validation**:
+
 - Cryptographic code MUST pass liboqs test suite
 - Smart contracts MUST verify post-quantum signatures
 - On-device implementations MUST validate key formats
@@ -172,6 +188,7 @@ All cryptographic operations in FUZZYWIGG's multi-chain structures **MUST** use 
 For any quantum computation executed on-device (mobile):
 
 **Requirements**:
+
 - MUST use Cirq circuits compiled for mobile constraints
 - MUST have deterministic fallback to classical simulation (Qualtran)
 - MUST validate correctness on testnet before mainnet deployment
@@ -179,12 +196,14 @@ For any quantum computation executed on-device (mobile):
 - MUST NOT expose quantum results in plaintext to user (always encrypt)
 
 **Performance Constraints**:
+
 - Circuit execution: < 500ms on Snapdragon 8 Gen 3
 - Memory footprint: < 2MB for circuit state
 - Battery drain: < 2% per transaction
 - Network latency: < 1 second for result transmission
 
 **Testing Protocol**:
+
 1. **Simulator**: Cirq-sim (classical validation)
 2. **Device testnet**: Execute 100x with random inputs
 3. **Staging**: Execute on test devices with monitoring
@@ -197,6 +216,7 @@ For any quantum computation executed on-device (mobile):
 When quantum operations span multiple chains:
 
 **State Commitment Protocol**:
+
 1. User initiates operation on primary chain
 2. Operation state committed to blockchain (hash)
 3. Quantum computation executed (off-chain or on specialized chain)
@@ -205,12 +225,14 @@ When quantum operations span multiple chains:
 6. State updated atomically (or rolled back if signature invalid)
 
 **Failure Recovery**:
+
 - If quantum computation fails: revert to state before step 2
 - If signature fails: escalate to user, no state change
 - If multi-chain sync fails: hold state in "pending" until resolved
 - Maximum pending duration: 24 hours (then manual resolution)
 
 **Rollback Procedure**:
+
 - Pre-define rollback contract for every quantum operation
 - Rollback MUST be executable by user without third-party approval
 - Rollback MUST restore state to prior-to-operation snapshot
@@ -225,7 +247,8 @@ The four specialist agents coordinate via YAML recipes and shared scratchpad. Th
 #### 22.4.1 Handoff Sequence
 
 **Phase 1: Algorithm Design** (QuantumArchitectAgent → BlockchainArchitectAgent)
-```
+
+```text
 Output from QuantumArchitectAgent:
 - Cirq circuit (optimized)
 - Gate count (actual)
@@ -238,7 +261,8 @@ Input to BlockchainArchitectAgent:
 ```
 
 **Phase 2: Contract Design** (BlockchainArchitectAgent → EdgeSecurityAgent)
-```
+
+```text
 Output from BlockchainArchitectAgent:
 - Smart contract interface (Solidity ABI)
 - Expected quantum inputs (data format)
@@ -251,7 +275,8 @@ Input to EdgeSecurityAgent:
 ```
 
 **Phase 3: Implementation** (EdgeSecurityAgent → OrchestrationAgent)
-```
+
+```text
 Output from EdgeSecurityAgent:
 - Mobile app specification (Android/iOS)
 - Crypto implementation details
@@ -264,7 +289,8 @@ Input to OrchestrationAgent:
 ```
 
 **Phase 4: Orchestration Decision** (OrchestrationAgent → All Agents)
-```
+
+```text
 OrchestrationAgent:
 - Reviews all three outputs
 - Resolves conflicts (if any)
@@ -278,28 +304,32 @@ OrchestrationAgent:
 Each agent must escalate (stop work and request input) if:
 
 **QuantumArchitectAgent escalates when**:
+
 - Circuit depth exceeds device constraints by >20%
 - Error rate > 2% (unacceptable for security-critical ops)
 - Quantum advantage deadline < 6 months and algorithm not quantum-safe
 
 **BlockchainArchitectAgent escalates when**:
+
 - Security audit finds critical vulnerability
 - Gas cost exceeds 10M (Ethereum network limit)
 - Multi-chain sync time > 10 minutes
 
 **EdgeSecurityAgent escalates when**:
+
 - Crypto operations > 500ms on target device
 - Device memory < 2MB for circuit state
 - Apple/Google security guidelines violation detected
 
 **OrchestrationAgent escalates to user when**:
+
 - Agents cannot reach consensus on trade-offs
 - Risk exceeds acceptable threshold
 - Timeline pressure conflicts with quality requirements
 
 #### 22.4.3 Escalation Format (All Agents)
 
-```
+```text
 🚨 ESCALATION REQUIRED
 
 From Agent: [Agent Name]
@@ -319,7 +349,7 @@ Awaiting approval before proceeding.
 
 All agent workflows use YAML recipes in `./agentic_flows/` directory.
 
-**Example: NFT Mint with Quantum Validation**
+#### Example: NFT Mint with Quantum Validation
 
 ```yaml
 # ./agentic_flows/quantum_nft_mint.yaml
@@ -420,6 +450,7 @@ Deadline: 2025-12-13T16:00:00Z
 ```
 
 **Rules**:
+
 - Checkbox state is source of truth
 - Only append, never overwrite
 - Each agent owns its section
@@ -434,7 +465,7 @@ Deadline: 2025-12-13T16:00:00Z
 When agents disagree on a design decision:
 
 | Conflict Type | Primary Concern | Resolution Authority | Escalation Path |
-|---------------|-----------------|----------------------|-----------------|
+| --------------- | ----------------- | ---------------------- | ----------------- |
 | **Quantum Algorithm Complexity** | QuantumArchitectAgent says "too complex", BlockchainArchitectAgent says "necessary" | Performance vs. Security | Weigh risk tolerance, choose testnet approach |
 | **Smart Contract Gas Cost** | BlockchainArchitectAgent says "over budget", EdgeSecurityAgent says "device can't afford" | Cost vs. Device Constraint | Redesign contract interface, reduce complexity |
 | **Crypto Algorithm Choice** | EdgeSecurityAgent says "RSA too slow", QuantumArchitectAgent says "must be RSA for compatibility" | Device Speed vs. Quantum-Safety | Use hybrid (post-quantum + RSA), implement staged migration |
@@ -448,27 +479,32 @@ When agents disagree on a design decision:
 
 ### 23.1 Required Software Stack
 
-**Tier 1: Foundation (All Developers)**
+#### Tier 1: Foundation (All Developers)
+
 - Python 3.11+
 - Git + GitHub
 - VS Code + Remote WSL2 extension
 
-**Tier 2: Quantum Computing**
+#### Tier 2: Quantum Computing
+
 - Cirq (Google quantum circuits)
 - Qualtran (quantum algorithm abstractions)
 - Jupyter Lab (interactive development)
 
-**Tier 3: Blockchain Development**
+#### Tier 3: Blockchain Development
+
 - Node.js 20.x LTS
 - Hardhat (smart contract environment)
 - Solidity compiler
 
-**Tier 4: On-Device Security**
+#### Tier 4: On-Device Security
+
 - Android Studio (Android development)
 - Xcode (iOS development)
 - React Native + Expo (cross-platform)
 
-**Tier 5: Container Orchestration**
+#### Tier 5: Container Orchestration
+
 - Docker Desktop (WSL2 backend)
 - Docker Compose
 
@@ -576,7 +612,7 @@ echo "  jupyter lab"
 
 Install these extensions in VS Code:
 
-```
+```text
 # Python Development
 ms-python.python
 ms-python.vscode-pylance
@@ -615,10 +651,10 @@ Add to Section 3 (Hard Constraints):
 
 Agents must **NEVER**:
 
-9. **Design quantum algorithms without validating against known quantum-resistant properties** — Claim quantum-safety only after formal verification
-10. **Deploy smart contracts without post-quantum cryptography threat modeling** — Assume classical crypto will become vulnerable within 10 years
-11. **Implement on-device crypto without HSM/secure enclave consideration** — Plaintext keys in RAM are unacceptable
-12. **Claim quantum-safe without formal verification** — Use NIST-standardized algorithms (Kyber, Dilithium, SPHINCS+) only
+1. **Design quantum algorithms without validating against known quantum-resistant properties** — Claim quantum-safety only after formal verification
+2. **Deploy smart contracts without post-quantum cryptography threat modeling** — Assume classical crypto will become vulnerable within 10 years
+3. **Implement on-device crypto without HSM/secure enclave consideration** — Plaintext keys in RAM are unacceptable
+4. **Claim quantum-safe without formal verification** — Use NIST-standardized algorithms (Kyber, Dilithium, SPHINCS+) only
 
 ---
 
@@ -631,12 +667,14 @@ Add to Section 12 (Security Invariants):
 Every 90 days (or after 500+ successful transactions), conduct a formal risk tolerance review:
 
 **Success Metrics for Threshold Increase**:
+
 - Success rate > 99.5% (at current tier)
 - Time since last critical incident > 60 days
 - Average transaction value < approved tier by >20%
 - No security audits detected vulnerabilities
 
 **Process**:
+
 1. Document current tier performance
 2. Review incident log (postmortem.md)
 3. Propose new threshold with justification
@@ -654,6 +692,7 @@ If failure rate > 2% in new tier, immediately revert to previous tier.
 ---
 
 **Version History**:
+
 - v2.0: 2025-12-13 — Added execution modes, NFT data hygiene, recovery procedures
 - v2.1: 2025-12-13 — Added smart contract approval matrix, rug pull detection, deployment rollback
 - v2.2: 2025-12-13 — Added quantum-blockchain specialist agents, multi-chain integration standards, IDE setup, escalation protocol
