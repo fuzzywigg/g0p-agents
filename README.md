@@ -1,5 +1,9 @@
 # g0p-agents (archived reference)
 
+[![CI](https://github.com/fuzzywigg/g0p-agents/actions/workflows/ci.yml/badge.svg?branch=alpha)](https://github.com/fuzzywigg/g0p-agents/actions/workflows/ci.yml)
+[![link-check](https://img.shields.io/github/actions/workflow/status/fuzzywigg/g0p-agents/ci.yml?branch=alpha&label=link-check)](https://github.com/fuzzywigg/g0p-agents/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/github/license/fuzzywigg/g0p-agents)](LICENSE)
+
 Docs-only archive of 2025 "Quantum-Blockchain" agent prompts (v2.2, Dec 2025).
 
 **This is not a live hive, runtime, or production swarm.** The "Oracle-Style
