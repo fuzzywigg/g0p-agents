@@ -10,6 +10,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Agent routing / identity / escalation **v16** deepeners (post-#33):
+  `routing-rationales`, `claude-metadata`, `escalation-usage` validators; CLAUDE.md
+  routing-matrix rationale column locks + header Status/Tier/Owner/Created/Edit/
+  Canonical locks + escalation usage intro / fenced `text` block / placeholder field
+  locks; consistency deepeners for `routing_matrix_rationale_phrases` /
+  `claude_metadata_required_phrases` / `escalation_usage_required_phrases`
+  (61 total; historic four only — routing/identity slice, not packaging-inventory
+  meta or Dependabot)
+
 - Agent routing / identity / escalation **v15** deepeners (post-#32): `routing-matrix`,
   `repo-identity`, `escalation-format` validators; CLAUDE.md Agent Routing Matrix
   task-row locks + Repo Identity north-star/purpose locks + Escalation Format

@@ -1,5 +1,5 @@
 {
-  "version": 15,
+  "version": 16,
   "documented_agents": [
     "QuantumArchitectAgent",
     "BlockchainArchitectAgent",
@@ -286,12 +286,14 @@
     "ci-runs-on",
     "ci-setup-python",
     "claude",
+    "claude-metadata",
     "constitution",
     "contributing",
     "cross-docs",
     "dependabot",
     "environment",
     "escalation-format",
+    "escalation-usage",
     "execution-summary",
     "feature-template",
     "github-agent-desc",
@@ -323,6 +325,7 @@
     "requirements-dev",
     "routing",
     "routing-matrix",
+    "routing-rationales",
     "schemas",
     "scratchpad",
     "security",
@@ -330,7 +333,7 @@
     "yaml-configs"
   ],
   "min_coverage_fail_under": 99,
-  "min_validator_count": 58,
+  "min_validator_count": 61,
   "required_paths": [
     "README.md",
     "LICENSE",
@@ -576,5 +579,29 @@
     "Conflict:",
     "Recommendation:",
     "Timeline:"
+  ],
+  "routing_matrix_rationale_phrases": [
+    "Single-repo, syntax-level work",
+    "Deep coding, long-running, 60\u201390 min",
+    "Cross-system state, Notion truth",
+    "UI-only settings",
+    "Test automation",
+    "Non-automatable"
+  ],
+  "claude_metadata_required_phrases": [
+    "Status: ACTIVE",
+    "Tier: 1",
+    "Owner: claude-cowork",
+    "Created: 2026-04-13",
+    "Edit policy: Agent-editable",
+    "Canonical source: This file"
+  ],
+  "escalation_usage_required_phrases": [
+    "When blocked, use this format in PR comments or Slack:",
+    "```text",
+    "From Agent: [surface name]",
+    "Conflict: [What constraint am I hitting?]",
+    "Recommendation: [How should we resolve this?]",
+    "Timeline: [How long until decision needed?]"
   ]
 }
