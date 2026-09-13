@@ -1,5 +1,5 @@
 {
-  "version": 12,
+  "version": 13,
   "documented_agents": [
     "QuantumArchitectAgent",
     "BlockchainArchitectAgent",
@@ -279,6 +279,9 @@
     "ci-actions",
     "ci-artifacts",
     "ci-job-names",
+    "ci-pip-check",
+    "ci-pip-install",
+    "ci-pytest",
     "ci-ruff",
     "ci-runs-on",
     "ci-setup-python",
@@ -321,7 +324,7 @@
     "yaml-configs"
   ],
   "min_coverage_fail_under": 99,
-  "min_validator_count": 49,
+  "min_validator_count": 52,
   "required_paths": [
     "README.md",
     "LICENSE",
@@ -509,5 +512,13 @@
     "MIT License",
     "Permission is hereby granted",
     "THE SOFTWARE IS PROVIDED \"AS IS\""
+  ],
+  "ci_pip_install_command": "python -m pip install -r requirements-dev.txt",
+  "ci_pip_check_command": "python -m pip check",
+  "ci_pytest_required_markers": [
+    "--cov=scripts",
+    "--cov-report=term-missing",
+    "--cov-report=xml",
+    "--junitxml=pytest-junit.xml"
   ]
 }

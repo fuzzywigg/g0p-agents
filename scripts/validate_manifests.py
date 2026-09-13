@@ -34,9 +34,11 @@ Checks structural correctness of:
 - CI link-check lychee args/fail + markdown-lint globs/config + job display names
 - CI runs-on ubuntu-latest + artifact paths/if-no-files-found + actionlint shell/id locks
 - CI setup-python cache: pip + ruff check scripts/tests command locks
+- CI pip install / pip check / pytest cov+junitxml command marker locks
 - pyproject project name + version/license/description/readme +
   ruff line-length/src/lint select locks
-- coverage show_missing/skip_empty/source + pytest addopts/testpaths/pythonpath locks
+- coverage show_missing/skip_empty/source + exact fail_under +
+  pytest addopts/testpaths/pythonpath locks
 - LICENSE MIT required phrase locks (header / grant / AS IS)
 - Dependabot directory set inventory lock (file untouched)
 - Issue template frontmatter name/about locks
@@ -143,7 +145,7 @@ REQUIRED_ARCHIVE_DOCS = (
     "README.md",
 )
 
-INVENTORY_VERSION = 12
+INVENTORY_VERSION = 13
 CURSOR_ENVIRONMENT_NAME = "g0p-agents"
 DEPENDABOT_SCHEDULE_INTERVAL = "weekly"
 DEPENDABOT_DIRECTORIES: frozenset[str] = frozenset({"/"})
@@ -192,6 +194,14 @@ CI_ACTIONLINT_SHELL = "bash"
 CI_ACTIONLINT_STEP_ID = "get_actionlint"
 CI_SETUP_PYTHON_CACHE = "pip"
 CI_RUFF_CHECK_COMMAND = "ruff check scripts tests"
+CI_PIP_INSTALL_COMMAND = "python -m pip install -r requirements-dev.txt"
+CI_PIP_CHECK_COMMAND = "python -m pip check"
+CI_PYTEST_REQUIRED_MARKERS: tuple[str, ...] = (
+    "--cov=scripts",
+    "--cov-report=term-missing",
+    "--cov-report=xml",
+    "--junitxml=pytest-junit.xml",
+)
 LICENSE_REQUIRED_PHRASES: tuple[str, ...] = (
     "MIT License",
     "Permission is hereby granted",
@@ -519,7 +529,7 @@ SCRATCHPAD_STATUS_MARKERS: tuple[str, ...] = (
 SPECIALIST_AGENTS: tuple[str, ...] = DOCUMENTED_AGENTS[:-1]
 
 MIN_COVERAGE_FAIL_UNDER = 99
-MIN_VALIDATOR_COUNT = 49
+MIN_VALIDATOR_COUNT = 52
 
 
 @dataclass(frozen=True)
@@ -1103,6 +1113,18 @@ def validate_packaging_inventory(root: Path) -> list[Finding]:
     ):
         findings.append(_lock_mismatch(schema_path, "license_required_phrases"))
 
+    if inventory.get("ci_pip_install_command") != CI_PIP_INSTALL_COMMAND:
+        findings.append(_lock_mismatch(schema_path, "ci_pip_install_command"))
+
+    if inventory.get("ci_pip_check_command") != CI_PIP_CHECK_COMMAND:
+        findings.append(_lock_mismatch(schema_path, "ci_pip_check_command"))
+
+    if (
+        tuple(inventory.get("ci_pytest_required_markers", ()))
+        != CI_PYTEST_REQUIRED_MARKERS
+    ):
+        findings.append(_lock_mismatch(schema_path, "ci_pytest_required_markers"))
+
     expected_validator_names = tuple(sorted(VALIDATORS))
     if tuple(inventory.get("validator_names", ())) != expected_validator_names:
         findings.append(_lock_mismatch(schema_path, "validator_names"))
@@ -1452,6 +1474,53 @@ def _inventory_lock_consistency(
                 )
             )
             break
+
+    pip_install = inventory.get("ci_pip_install_command")
+    if not isinstance(pip_install, str) or not pip_install.strip():
+        findings.append(
+            Finding(schema_path, "ci_pip_install_command must be a non-empty string")
+        )
+    elif "pip install" not in pip_install:
+        findings.append(
+            Finding(schema_path, "ci_pip_install_command must mention pip install")
+        )
+
+    pip_check = inventory.get("ci_pip_check_command")
+    if not isinstance(pip_check, str) or not pip_check.strip():
+        findings.append(
+            Finding(schema_path, "ci_pip_check_command must be a non-empty string")
+        )
+    elif "pip check" not in pip_check:
+        findings.append(
+            Finding(schema_path, "ci_pip_check_command must mention pip check")
+        )
+
+    pytest_markers = list(inventory.get("ci_pytest_required_markers", ()))
+    if len(pytest_markers) != len(set(pytest_markers)):
+        findings.append(
+            Finding(schema_path, "ci_pytest_required_markers must be unique")
+        )
+    if not pytest_markers:
+        findings.append(
+            Finding(schema_path, "ci_pytest_required_markers must not be empty")
+        )
+    for marker in pytest_markers:
+        if not isinstance(marker, str) or not marker.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "ci_pytest_required_markers entries must be non-empty strings",
+                )
+            )
+            break
+    else:
+        if pytest_markers and not any("--cov" in str(m) for m in pytest_markers):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "ci_pytest_required_markers must include a --cov marker",
+                )
+            )
 
     return findings
 
@@ -2419,11 +2488,14 @@ def validate_pyproject(root: Path) -> list[Finding]:
         )
 
     fail_under = report.get("fail_under")
-    if not isinstance(fail_under, (int, float)) or fail_under < MIN_COVERAGE_FAIL_UNDER:
+    if not isinstance(fail_under, (int, float)) or fail_under != MIN_COVERAGE_FAIL_UNDER:
         findings.append(
             Finding(
                 rel,
-                f"coverage fail_under must be >= {MIN_COVERAGE_FAIL_UNDER}, found {fail_under!r}",
+                (
+                    "coverage fail_under must be "
+                    f"{MIN_COVERAGE_FAIL_UNDER}, found {fail_under!r}"
+                ),
             )
         )
     return findings
@@ -3695,6 +3767,114 @@ def validate_license_mit(root: Path) -> list[Finding]:
     return findings
 
 
+def _manifest_validate_steps(
+    root: Path,
+) -> tuple[str, list[Any] | None, list[Finding]]:
+    """Return (rel, steps|None, findings) for the manifest-validate job."""
+    rel = ".github/workflows/ci.yml"
+    path = root / rel
+    if not path.is_file():
+        return rel, None, [Finding(rel, "CI workflow missing")]
+    data, parse_findings = parse_yaml_text(path.read_text(encoding="utf-8"), path=rel)
+    findings = list(parse_findings)
+    if data is None:
+        return rel, None, findings
+    if not isinstance(data, dict):
+        return rel, None, findings + [Finding(rel, "CI workflow root must be a mapping")]
+    jobs = data.get("jobs")
+    if not isinstance(jobs, dict):
+        return rel, None, findings + [Finding(rel, "CI workflow missing jobs mapping")]
+    manifest = jobs.get("manifest-validate")
+    if not isinstance(manifest, dict):
+        return rel, None, findings + [
+            Finding(rel, "CI workflow missing manifest-validate job")
+        ]
+    steps = manifest.get("steps")
+    if not isinstance(steps, list):
+        return rel, None, findings + [
+            Finding(rel, "manifest-validate job missing steps")
+        ]
+    return rel, steps, findings
+
+
+def validate_ci_pip_install(root: Path) -> list[Finding]:
+    rel, steps, findings = _manifest_validate_steps(root)
+    if steps is None:
+        return findings
+    found = False
+    for step in steps:
+        if not isinstance(step, dict):
+            continue
+        run = step.get("run")
+        if not isinstance(run, str):
+            continue
+        if CI_PIP_INSTALL_COMMAND in run:
+            found = True
+            break
+    if not found:
+        findings.append(
+            Finding(
+                rel,
+                f"manifest-validate must run {CI_PIP_INSTALL_COMMAND!r}",
+            )
+        )
+    return findings
+
+
+def validate_ci_pip_check(root: Path) -> list[Finding]:
+    rel, steps, findings = _manifest_validate_steps(root)
+    if steps is None:
+        return findings
+    found = False
+    for step in steps:
+        if not isinstance(step, dict):
+            continue
+        run = step.get("run")
+        if not isinstance(run, str):
+            continue
+        if CI_PIP_CHECK_COMMAND in run:
+            found = True
+            break
+    if not found:
+        findings.append(
+            Finding(
+                rel,
+                f"manifest-validate must run {CI_PIP_CHECK_COMMAND!r}",
+            )
+        )
+    return findings
+
+
+def validate_ci_pytest(root: Path) -> list[Finding]:
+    rel, steps, findings = _manifest_validate_steps(root)
+    if steps is None:
+        return findings
+    found_pytest = False
+    for step in steps:
+        if not isinstance(step, dict):
+            continue
+        run = step.get("run")
+        if not isinstance(run, str):
+            continue
+        if "python -m pytest" not in run:
+            continue
+        found_pytest = True
+        for marker in CI_PYTEST_REQUIRED_MARKERS:
+            if marker not in run:
+                findings.append(
+                    Finding(
+                        rel,
+                        f"manifest-validate pytest step missing marker {marker!r}",
+                    )
+                )
+        break
+    if not found_pytest:
+        findings.append(
+            Finding(rel, "manifest-validate must run a python -m pytest step")
+        )
+    return findings
+
+
 VALIDATORS: dict[str, ValidatorFn] = {
     "schemas": validate_schemas_meta,
     "inventory": validate_packaging_inventory,
@@ -3733,6 +3913,9 @@ VALIDATORS: dict[str, ValidatorFn] = {
     "actionlint-shell": validate_actionlint_shell,
     "ci-setup-python": validate_ci_setup_python,
     "ci-ruff": validate_ci_ruff,
+    "ci-pip-install": validate_ci_pip_install,
+    "ci-pip-check": validate_ci_pip_check,
+    "ci-pytest": validate_ci_pytest,
     "link-check": validate_link_check,
     "prompts": validate_documented_agent_prompts,
     "cross-docs": validate_cross_doc_agents,

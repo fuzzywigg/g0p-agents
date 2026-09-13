@@ -173,6 +173,9 @@ def _inventory_payload(**overrides: object) -> dict:
         "ci_setup_python_cache": vm.CI_SETUP_PYTHON_CACHE,
         "ci_ruff_check_command": vm.CI_RUFF_CHECK_COMMAND,
         "license_required_phrases": list(vm.LICENSE_REQUIRED_PHRASES),
+        "ci_pip_install_command": vm.CI_PIP_INSTALL_COMMAND,
+        "ci_pip_check_command": vm.CI_PIP_CHECK_COMMAND,
+        "ci_pytest_required_markers": list(vm.CI_PYTEST_REQUIRED_MARKERS),
         "validator_names": sorted(vm.VALIDATORS),
         "specialist_agents": list(vm.SPECIALIST_AGENTS),
         "schema_draft_uri": vm.SCHEMA_DRAFT_URI,
@@ -774,6 +777,9 @@ def test_validators_registry_covers_all_checks() -> None:
         "actionlint-shell",
         "ci-setup-python",
         "ci-ruff",
+        "ci-pip-install",
+        "ci-pip-check",
+        "ci-pytest",
         "license-mit",
         "link-check",
         "github-agent-desc",
@@ -1004,7 +1010,7 @@ def test_pyproject_validator_paths(tmp_path: Path) -> None:
         ),
     )
     findings = vm.validate_pyproject(tmp_path)
-    assert any("fail_under must be >=" in f.message for f in findings)
+    assert any("fail_under must be" in f.message and ">=" not in f.message for f in findings)
 
 
 def test_yaml_configs_missing(tmp_path: Path) -> None:
@@ -1243,7 +1249,7 @@ def test_pyproject_missing_sections(tmp_path: Path) -> None:
         ),
     )
     findings = vm.validate_pyproject(tmp_path)
-    assert any("fail_under must be >=" in f.message for f in findings)
+    assert any("fail_under must be" in f.message and ">=" not in f.message for f in findings)
 
 
 def _ci_yaml_with_matrix(versions: list[str], *, markers: list[str] | None = None) -> str:
@@ -1534,7 +1540,7 @@ def test_packaging_inventory_v5_lock_fields(tmp_path: Path) -> None:
                 "scratchpad_status_markers",
                 list(vm.SCRATCHPAD_STATUS_MARKERS)[:-1] + ["INVENTED"],
             ),
-                ("version", 13),
+                ("version", 14),
                 ("min_coverage_fail_under", 90),
                 ("min_validator_count", 999),
                 ("dependabot_group_names", ["github_actions"]),
@@ -1655,6 +1661,12 @@ def test_packaging_inventory_v5_lock_fields(tmp_path: Path) -> None:
                 (
                     "license_required_phrases",
                     list(vm.LICENSE_REQUIRED_PHRASES)[:-1] + ["invented"],
+                ),
+                ("ci_pip_install_command", "pip install wrong"),
+                ("ci_pip_check_command", "pip check wrong"),
+                (
+                    "ci_pytest_required_markers",
+                    list(vm.CI_PYTEST_REQUIRED_MARKERS)[:-1] + ["--invented"],
                 ),
                 ]
     for field, value in cases:
@@ -2404,8 +2416,8 @@ def test_ci_workflow_v5_deepeners(tmp_path: Path) -> None:
 def test_live_v5_validators() -> None:
     assert vm.validate_bug_report_template(REPO_ROOT) == []
     assert vm.validate_feature_request_template(REPO_ROOT) == []
-    assert vm.INVENTORY_VERSION == 12
-    assert len(vm.VALIDATORS) == 49
+    assert vm.INVENTORY_VERSION == 13
+    assert len(vm.VALIDATORS) == 52
     assert vm.MIN_COVERAGE_FAIL_UNDER == 99
 
 
@@ -2414,7 +2426,7 @@ def test_live_v6_validators() -> None:
     assert vm.validate_postmortem_packaging(REPO_ROOT) == []
     assert vm.validate_gitignore_packaging(REPO_ROOT) == []
     assert vm.validate_negative_constraints(REPO_ROOT) == []
-    assert vm.INVENTORY_VERSION == 12
+    assert vm.INVENTORY_VERSION == 13
     assert len(vm.VALIDATORS) >= 43
     assert sorted(vm.VALIDATORS) == json.loads(
         (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
@@ -2425,7 +2437,7 @@ def test_live_v7_validators() -> None:
     assert vm.validate_hydration_report(REPO_ROOT) == []
     assert vm.validate_execution_summary(REPO_ROOT) == []
     assert vm.validate_implementation_guide(REPO_ROOT) == []
-    assert vm.INVENTORY_VERSION == 12
+    assert vm.INVENTORY_VERSION == 13
     assert len(vm.VALIDATORS) >= 43
     assert "Lock inventory" in vm.REQUIRED_MANIFEST_STEP_MARKERS
     assert "INVENTORY_VERSION" in vm.REQUIRED_MANIFEST_STEP_MARKERS
@@ -2446,9 +2458,9 @@ def test_live_v8_validators() -> None:
     assert vm.validate_claude_packaging(REPO_ROOT) == []
     assert vm.validate_recipe_titles(REPO_ROOT) == []
     assert vm.validate_ci_actions(REPO_ROOT) == []
-    assert vm.INVENTORY_VERSION == 12
-    assert len(vm.VALIDATORS) == 49
-    assert vm.MIN_VALIDATOR_COUNT == 49
+    assert vm.INVENTORY_VERSION == 13
+    assert len(vm.VALIDATORS) == 52
+    assert vm.MIN_VALIDATOR_COUNT == 52
     assert vm.PYPROJECT_NAME == "g0p-agents-validation"
     assert set(vm.DEPENDABOT_DIRECTORIES) == {"/"}
     assert dict(vm.RECIPE_TITLES) == json.loads(
@@ -2463,9 +2475,9 @@ def test_live_v9_validators() -> None:
     assert vm.validate_issue_template_names(REPO_ROOT) == []
     assert vm.validate_readme_badges(REPO_ROOT) == []
     assert vm.validate_quarterly_review(REPO_ROOT) == []
-    assert vm.INVENTORY_VERSION == 12
-    assert len(vm.VALIDATORS) == 49
-    assert vm.MIN_VALIDATOR_COUNT == 49
+    assert vm.INVENTORY_VERSION == 13
+    assert len(vm.VALIDATORS) == 52
+    assert vm.MIN_VALIDATOR_COUNT == 52
     assert vm.CI_WORKFLOW_NAME == "CI — Lint, Links & Manifests"
     assert vm.MARKDOWNLINT_MD025 is False
     assert vm.MARKDOWNLINT_MD033 is False
@@ -2491,9 +2503,9 @@ def test_live_v10_validators() -> None:
     assert vm.validate_link_check(REPO_ROOT) == []
     assert vm.validate_ci_job_names(REPO_ROOT) == []
     assert vm.validate_github_agent_description(REPO_ROOT) == []
-    assert vm.INVENTORY_VERSION == 12
-    assert len(vm.VALIDATORS) == 49
-    assert vm.MIN_VALIDATOR_COUNT == 49
+    assert vm.INVENTORY_VERSION == 13
+    assert len(vm.VALIDATORS) == 52
+    assert vm.MIN_VALIDATOR_COUNT == 52
     assert vm.CI_LINK_CHECK_ARGS == "--verbose --no-progress '**/*.md'"
     assert vm.CI_LINK_CHECK_FAIL is True
     assert vm.CI_MARKDOWN_LINT_GLOBS == "**/*.md"
@@ -3999,9 +4011,9 @@ def test_live_v11_validators() -> None:
     assert vm.validate_ci_runs_on(REPO_ROOT) == []
     assert vm.validate_ci_artifacts(REPO_ROOT) == []
     assert vm.validate_actionlint_shell(REPO_ROOT) == []
-    assert vm.INVENTORY_VERSION == 12
-    assert len(vm.VALIDATORS) == 49
-    assert vm.MIN_VALIDATOR_COUNT == 49
+    assert vm.INVENTORY_VERSION == 13
+    assert len(vm.VALIDATORS) == 52
+    assert vm.MIN_VALIDATOR_COUNT == 52
     assert vm.CI_RUNS_ON == "ubuntu-latest"
     assert vm.CI_ARTIFACT_IF_NO_FILES_FOUND == "warn"
     assert tuple(vm.CI_ARTIFACT_PATHS) == (
@@ -4020,7 +4032,7 @@ def test_live_v11_validators() -> None:
     inventory = json.loads(
         (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
     )
-    assert inventory["version"] == 12
+    assert inventory["version"] == 13
     assert inventory["ci_runs_on"] == vm.CI_RUNS_ON
     assert inventory["ci_artifact_paths"] == list(vm.CI_ARTIFACT_PATHS)
     assert inventory["ci_artifact_if_no_files_found"] == vm.CI_ARTIFACT_IF_NO_FILES_FOUND
@@ -4456,9 +4468,9 @@ def test_live_v12_validators() -> None:
     assert vm.validate_ci_setup_python(REPO_ROOT) == []
     assert vm.validate_ci_ruff(REPO_ROOT) == []
     assert vm.validate_license_mit(REPO_ROOT) == []
-    assert vm.INVENTORY_VERSION == 12
-    assert len(vm.VALIDATORS) == 49
-    assert vm.MIN_VALIDATOR_COUNT == 49
+    assert vm.INVENTORY_VERSION == 13
+    assert len(vm.VALIDATORS) == 52
+    assert vm.MIN_VALIDATOR_COUNT == 52
     assert vm.CI_SETUP_PYTHON_CACHE == "pip"
     assert vm.CI_RUFF_CHECK_COMMAND == "ruff check scripts tests"
     assert "MIT License" in vm.LICENSE_REQUIRED_PHRASES
@@ -4467,11 +4479,11 @@ def test_live_v12_validators() -> None:
     inventory = json.loads(
         (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
     )
-    assert inventory["version"] == 12
+    assert inventory["version"] == 13
     assert inventory["ci_setup_python_cache"] == vm.CI_SETUP_PYTHON_CACHE
     assert inventory["ci_ruff_check_command"] == vm.CI_RUFF_CHECK_COMMAND
     assert inventory["license_required_phrases"] == list(vm.LICENSE_REQUIRED_PHRASES)
-    assert inventory["min_validator_count"] == 49
+    assert inventory["min_validator_count"] == 52
     assert sorted(vm.VALIDATORS) == inventory["validator_names"]
     assert "ci-setup-python" in vm.VALIDATORS
     assert "ci-ruff" in vm.VALIDATORS
@@ -4746,3 +4758,327 @@ def test_v12_ci_setup_python_ruff_license_mit_edge_cases(tmp_path: Path) -> None
     assert any("ci_setup_python_cache" in f.message for f in findings)
     assert any("ci_ruff_check_command" in f.message for f in findings)
     assert any("license_required_phrases" in f.message for f in findings)
+
+
+def test_live_v13_validators() -> None:
+    assert vm.validate_ci_pip_install(REPO_ROOT) == []
+    assert vm.validate_ci_pip_check(REPO_ROOT) == []
+    assert vm.validate_ci_pytest(REPO_ROOT) == []
+    assert vm.INVENTORY_VERSION == 13
+    assert len(vm.VALIDATORS) == 52
+    assert vm.MIN_VALIDATOR_COUNT == 52
+    assert vm.CI_PIP_INSTALL_COMMAND == "python -m pip install -r requirements-dev.txt"
+    assert vm.CI_PIP_CHECK_COMMAND == "python -m pip check"
+    assert tuple(vm.CI_PYTEST_REQUIRED_MARKERS) == (
+        "--cov=scripts",
+        "--cov-report=term-missing",
+        "--cov-report=xml",
+        "--junitxml=pytest-junit.xml",
+    )
+    inventory = json.loads(
+        (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
+    )
+    assert inventory["version"] == 13
+    assert inventory["ci_pip_install_command"] == vm.CI_PIP_INSTALL_COMMAND
+    assert inventory["ci_pip_check_command"] == vm.CI_PIP_CHECK_COMMAND
+    assert inventory["ci_pytest_required_markers"] == list(vm.CI_PYTEST_REQUIRED_MARKERS)
+    assert inventory["min_validator_count"] == 52
+    assert sorted(vm.VALIDATORS) == inventory["validator_names"]
+    assert "ci-pip-install" in vm.VALIDATORS
+    assert "ci-pip-check" in vm.VALIDATORS
+    assert "ci-pytest" in vm.VALIDATORS
+    assert vm.validate_pyproject(REPO_ROOT) == []
+
+
+def test_v13_ci_pip_pytest_edge_cases(tmp_path: Path) -> None:
+    assert any("missing" in f.message for f in vm.validate_ci_pip_install(tmp_path))
+    assert any("missing" in f.message for f in vm.validate_ci_pip_check(tmp_path))
+    assert any("missing" in f.message for f in vm.validate_ci_pytest(tmp_path))
+
+    _write(tmp_path / ".github" / "workflows" / "ci.yml", "- just-a-list\n")
+    assert any(
+        "root must be a mapping" in f.message
+        for f in vm.validate_ci_pip_install(tmp_path)
+    )
+    assert any(
+        "root must be a mapping" in f.message for f in vm.validate_ci_pip_check(tmp_path)
+    )
+    assert any(
+        "root must be a mapping" in f.message for f in vm.validate_ci_pytest(tmp_path)
+    )
+
+    _write(tmp_path / ".github" / "workflows" / "ci.yml", "null\n")
+    assert vm.validate_ci_pip_install(tmp_path) == []
+    assert vm.validate_ci_pip_check(tmp_path) == []
+    assert vm.validate_ci_pytest(tmp_path) == []
+
+    _write(tmp_path / ".github" / "workflows" / "ci.yml", "name: only\n")
+    assert any(
+        "missing jobs mapping" in f.message
+        for f in vm.validate_ci_pip_install(tmp_path)
+    )
+    assert any(
+        "missing jobs mapping" in f.message for f in vm.validate_ci_pip_check(tmp_path)
+    )
+    assert any(
+        "missing jobs mapping" in f.message for f in vm.validate_ci_pytest(tmp_path)
+    )
+
+    _write(
+        tmp_path / ".github" / "workflows" / "ci.yml",
+        "\n".join(
+            [
+                "name: CI",
+                "jobs:",
+                "  other:",
+                "    runs-on: ubuntu-latest",
+                "",
+            ]
+        ),
+    )
+    assert any(
+        "missing manifest-validate job" in f.message
+        for f in vm.validate_ci_pip_install(tmp_path)
+    )
+    assert any(
+        "missing manifest-validate job" in f.message
+        for f in vm.validate_ci_pip_check(tmp_path)
+    )
+    assert any(
+        "missing manifest-validate job" in f.message
+        for f in vm.validate_ci_pytest(tmp_path)
+    )
+
+    _write(
+        tmp_path / ".github" / "workflows" / "ci.yml",
+        "\n".join(
+            [
+                "name: CI",
+                "jobs:",
+                "  manifest-validate:",
+                "    runs-on: ubuntu-latest",
+                "",
+            ]
+        ),
+    )
+    assert any(
+        "manifest-validate job missing steps" in f.message
+        for f in vm.validate_ci_pip_install(tmp_path)
+    )
+    assert any(
+        "manifest-validate job missing steps" in f.message
+        for f in vm.validate_ci_pip_check(tmp_path)
+    )
+    assert any(
+        "manifest-validate job missing steps" in f.message
+        for f in vm.validate_ci_pytest(tmp_path)
+    )
+
+    _write(
+        tmp_path / ".github" / "workflows" / "ci.yml",
+        "\n".join(
+            [
+                "name: CI",
+                "jobs:",
+                "  manifest-validate:",
+                "    runs-on: ubuntu-latest",
+                "    steps:",
+                "      - not-a-mapping",
+                "      - run: echo no pip or pytest",
+                "",
+            ]
+        ),
+    )
+    assert any(
+        "must run" in f.message for f in vm.validate_ci_pip_install(tmp_path)
+    )
+    assert any("must run" in f.message for f in vm.validate_ci_pip_check(tmp_path))
+    assert any(
+        "must run a python -m pytest step" in f.message
+        for f in vm.validate_ci_pytest(tmp_path)
+    )
+
+    _write(
+        tmp_path / ".github" / "workflows" / "ci.yml",
+        "\n".join(
+            [
+                "name: CI",
+                "jobs:",
+                "  manifest-validate:",
+                "    runs-on: ubuntu-latest",
+                "    steps:",
+                f"      - run: {vm.CI_PIP_INSTALL_COMMAND}",
+                f"      - run: {vm.CI_PIP_CHECK_COMMAND}",
+                "      - run: python -m pytest -q",
+                "",
+            ]
+        ),
+    )
+    assert vm.validate_ci_pip_install(tmp_path) == []
+    assert vm.validate_ci_pip_check(tmp_path) == []
+    findings = vm.validate_ci_pytest(tmp_path)
+    for marker in vm.CI_PYTEST_REQUIRED_MARKERS:
+        assert any(marker in f.message for f in findings), marker
+
+    pytest_run = "python -m pytest " + " ".join(vm.CI_PYTEST_REQUIRED_MARKERS)
+    _write(
+        tmp_path / ".github" / "workflows" / "ci.yml",
+        "\n".join(
+            [
+                "name: CI",
+                "jobs:",
+                "  manifest-validate:",
+                "    runs-on: ubuntu-latest",
+                "    steps:",
+                f"      - run: {vm.CI_PIP_INSTALL_COMMAND}",
+                f"      - run: {vm.CI_PIP_CHECK_COMMAND}",
+                f"      - run: {pytest_run}",
+                "",
+            ]
+        ),
+    )
+    assert vm.validate_ci_pip_install(tmp_path) == []
+    assert vm.validate_ci_pip_check(tmp_path) == []
+    assert vm.validate_ci_pytest(tmp_path) == []
+
+    _write(tmp_path / ".github" / "workflows" / "ci.yml", ":\n  - bad\n")
+    assert any(
+        "YAML parse error" in f.message for f in vm.validate_ci_pip_install(tmp_path)
+    )
+    assert any(
+        "YAML parse error" in f.message for f in vm.validate_ci_pip_check(tmp_path)
+    )
+    assert any(
+        "YAML parse error" in f.message for f in vm.validate_ci_pytest(tmp_path)
+    )
+
+    _copy_schemas(tmp_path)
+    inventory = json.loads(
+        (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
+    )
+
+    blank_install = dict(inventory)
+    blank_install["ci_pip_install_command"] = "  "
+    findings = vm._inventory_lock_consistency(
+        blank_install, schema_path="schemas/packaging-inventory.json"
+    )
+    assert any(
+        "ci_pip_install_command must be a non-empty string" in f.message
+        for f in findings
+    )
+
+    no_install = dict(inventory)
+    no_install["ci_pip_install_command"] = "python -m uv sync"
+    findings = vm._inventory_lock_consistency(
+        no_install, schema_path="schemas/packaging-inventory.json"
+    )
+    assert any(
+        "ci_pip_install_command must mention pip install" in f.message
+        for f in findings
+    )
+
+    blank_check = dict(inventory)
+    blank_check["ci_pip_check_command"] = ""
+    findings = vm._inventory_lock_consistency(
+        blank_check, schema_path="schemas/packaging-inventory.json"
+    )
+    assert any(
+        "ci_pip_check_command must be a non-empty string" in f.message
+        for f in findings
+    )
+
+    no_check = dict(inventory)
+    no_check["ci_pip_check_command"] = "python -m compileall"
+    findings = vm._inventory_lock_consistency(
+        no_check, schema_path="schemas/packaging-inventory.json"
+    )
+    assert any(
+        "ci_pip_check_command must mention pip check" in f.message for f in findings
+    )
+
+    empty_markers = dict(inventory)
+    empty_markers["ci_pytest_required_markers"] = []
+    findings = vm._inventory_lock_consistency(
+        empty_markers, schema_path="schemas/packaging-inventory.json"
+    )
+    assert any(
+        "ci_pytest_required_markers must not be empty" in f.message for f in findings
+    )
+
+    dup_markers = dict(inventory)
+    dup_markers["ci_pytest_required_markers"] = ["--cov=scripts", "--cov=scripts"]
+    findings = vm._inventory_lock_consistency(
+        dup_markers, schema_path="schemas/packaging-inventory.json"
+    )
+    assert any(
+        "ci_pytest_required_markers must be unique" in f.message for f in findings
+    )
+
+    blank_marker = dict(inventory)
+    blank_marker["ci_pytest_required_markers"] = ["--cov=scripts", "  "]
+    findings = vm._inventory_lock_consistency(
+        blank_marker, schema_path="schemas/packaging-inventory.json"
+    )
+    assert any(
+        "ci_pytest_required_markers entries must be non-empty strings" in f.message
+        for f in findings
+    )
+
+    non_str_marker = dict(inventory)
+    non_str_marker["ci_pytest_required_markers"] = ["--cov=scripts", 42]
+    findings = vm._inventory_lock_consistency(
+        non_str_marker, schema_path="schemas/packaging-inventory.json"
+    )
+    assert any(
+        "ci_pytest_required_markers entries must be non-empty strings" in f.message
+        for f in findings
+    )
+
+    no_cov = dict(inventory)
+    no_cov["ci_pytest_required_markers"] = ["--junitxml=pytest-junit.xml"]
+    findings = vm._inventory_lock_consistency(
+        no_cov, schema_path="schemas/packaging-inventory.json"
+    )
+    assert any(
+        "ci_pytest_required_markers must include a --cov marker" in f.message
+        for f in findings
+    )
+
+    for rel in _inventory_payload()["required_paths"]:
+        target = tmp_path / rel
+        target.parent.mkdir(parents=True, exist_ok=True)
+        if not target.exists():
+            target.write_text("ok\n", encoding="utf-8")
+    (tmp_path / "schemas" / "packaging-inventory.json").write_text(
+        json.dumps(
+            _inventory_payload(
+                ci_pip_install_command="wrong install",
+                ci_pip_check_command="wrong check",
+                ci_pytest_required_markers=["--invented"],
+            )
+        ),
+        encoding="utf-8",
+    )
+    findings = vm.validate_packaging_inventory(tmp_path)
+    assert any("ci_pip_install_command" in f.message for f in findings)
+    assert any("ci_pip_check_command" in f.message for f in findings)
+    assert any("ci_pytest_required_markers" in f.message for f in findings)
+
+
+def test_coverage_fail_under_exact_lock(tmp_path: Path) -> None:
+    _write(
+        tmp_path / "pyproject.toml",
+        "\n".join(
+            [
+                "[tool.pytest.ini_options]",
+                'testpaths = ["tests"]',
+                "[tool.ruff]",
+                'target-version = "py311"',
+                "[tool.coverage.report]",
+                "fail_under = 100",
+                "",
+            ]
+        ),
+    )
+    findings = vm.validate_pyproject(tmp_path)
+    assert any("fail_under must be 99" in f.message for f in findings)
