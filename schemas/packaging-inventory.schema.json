@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/fuzzywigg/g0p-agents/schemas/packaging-inventory.schema.json",
   "title": "Archive packaging inventory",
-  "description": "Locked packaging paths and historic agent/recipe inventory for this docs-only archive (v26).",
+  "description": "Locked packaging paths and historic agent/recipe inventory for this docs-only archive (v27).",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -161,6 +161,9 @@
     "goose_howto_required_phrases",
     "goose_state_machine_required_phrases",
     "goose_naming_required_phrases",
+    "prompt_roles_required_phrases",
+    "prompt_sections_required_phrases",
+    "prompt_usage_required_phrases",
     "execution_timeline_required_phrases",
     "execution_technologies_required_phrases",
     "execution_workflow_required_phrases"
@@ -168,7 +171,7 @@
   "properties": {
     "version": {
       "type": "integer",
-      "minimum": 26
+      "minimum": 27
     },
     "required_paths": {
       "type": "array",
@@ -1299,6 +1302,33 @@
       }
     },
     "goose_naming_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "prompt_roles_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "prompt_sections_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "prompt_usage_required_phrases": {
       "type": "array",
       "minItems": 1,
       "uniqueItems": true,

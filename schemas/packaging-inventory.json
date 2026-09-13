@@ -1,5 +1,5 @@
 {
-  "version": 26,
+  "version": 27,
   "documented_agents": [
     "QuantumArchitectAgent",
     "BlockchainArchitectAgent",
@@ -335,6 +335,9 @@
     "pr-routing",
     "pr-summary",
     "pr-template",
+    "prompt-roles",
+    "prompt-sections",
+    "prompt-usage",
     "prompts",
     "pyproject",
     "quarterly-review",
@@ -363,7 +366,7 @@
     "yaml-configs"
   ],
   "min_coverage_fail_under": 99,
-  "min_validator_count": 91,
+  "min_validator_count": 94,
   "required_paths": [
     "README.md",
     "LICENSE",
@@ -846,6 +849,39 @@
     "## Adding New Recipes",
     "Create new YAML file",
     "Follow the structure"
+  ],
+  "prompt_roles_required_phrases": [
+    "## 1. QuantumArchitectAgent Prompt Template",
+    "You are the Quantum Computing specialist for the FUZZYWIGG-AI ecosystem.",
+    "## 2. BlockchainArchitectAgent Prompt Template",
+    "You are the Blockchain Development specialist for the FUZZYWIGG-AI ecosystem.",
+    "## 3. EdgeSecurityAgent Prompt Template",
+    "You are the On-Device Security specialist for the FUZZYWIGG-AI ecosystem.",
+    "## 4. OrchestrationAgent Prompt Template",
+    "You are the Strategic Orchestrator for the FUZZYWIGG-AI ecosystem.",
+    "Your role is NOT to code. Your role is to COORDINATE."
+  ],
+  "prompt_sections_required_phrases": [
+    "## Your Role",
+    "## Core Responsibilities",
+    "## Your Tools",
+    "## Your Communication Style",
+    "## Key Constraints (NEVER VIOLATE)",
+    "## Escalation Triggers (STOP and Request Input)",
+    "## Success Metrics",
+    "## Related Documentation",
+    "## Your Decision Authority",
+    "## Conflict Resolution Matrix"
+  ],
+  "prompt_usage_required_phrases": [
+    "## Usage Instructions",
+    "### For Each Agent Instantiation",
+    "Copy the relevant prompt template",
+    "[INSERT PROJECT-SPECIFIC INFO HERE]",
+    "### Example: Instantiate QuantumArchitectAgent",
+    "## Integration with AGENTS.md",
+    "These prompts are **living documents**",
+    "Risk tolerance thresholds change (quarterly)"
   ],
   "execution_timeline_required_phrases": [
     "## Implementation Timeline",

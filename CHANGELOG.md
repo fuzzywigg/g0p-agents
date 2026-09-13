@@ -10,15 +10,26 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
-- Execution summary **v26** deepeners (post-#52): `execution-timeline`,
+- Execution summary **v27** deepeners (post-#54): `execution-timeline`,
   `execution-technologies`, `execution-workflow` validators; EXECUTION-SUMMARY.md
   Implementation Timeline / Week 1 / By End of Month locks, Key Technologies
   (Cirq/Hardhat/liboqs/Goose) locks, and Workflow Overview single/multi/escalation
   locks; consistency deepeners for `execution_timeline_required_phrases` /
   `execution_technologies_required_phrases` / `execution_workflow_required_phrases`
-  (91 total; historic four only — execution-summary slice, not goose recipes,
-  README honesty, PR-template, contributing, issue-template, scratchpad,
-  postmortem, archive snapshot, security policy, routing/identity, or Dependabot)
+  (94 total; historic four only — execution-summary slice, not goose recipes,
+  agent prompts, README honesty, PR-template, contributing, issue-template,
+  scratchpad, postmortem, archive snapshot, security policy, routing/identity,
+  or Dependabot)
+
+- Agent prompts **v26** deepeners (post-#52): `prompt-roles`, `prompt-sections`,
+  `prompt-usage` validators; AGENT-PROMPTS.md four-agent role/template heading
+  locks, shared specialist/orchestrator section heading locks, and Usage
+  Instructions / Integration with AGENTS.md locks; consistency deepeners for
+  `prompt_roles_required_phrases` / `prompt_sections_required_phrases` /
+  `prompt_usage_required_phrases` (91 total; historic four only — agent prompts
+  slice, not goose recipes, README honesty, PR-template, contributing,
+  issue-template, scratchpad, postmortem, archive snapshot, security policy,
+  routing/identity, or Dependabot)
 
 - Goose recipes **v25** deepeners (post-#51): `goose-howto`, `goose-state-machine`,
   `goose-naming` validators; GOOSE-RECIPES.md How to Use individual/master
