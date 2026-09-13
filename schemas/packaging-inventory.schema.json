@@ -160,12 +160,15 @@
     "readme_contents_required_phrases",
     "goose_howto_required_phrases",
     "goose_state_machine_required_phrases",
-    "goose_naming_required_phrases"
+    "goose_naming_required_phrases",
+    "prompt_roles_required_phrases",
+    "prompt_sections_required_phrases",
+    "prompt_usage_required_phrases"
   ],
   "properties": {
     "version": {
       "type": "integer",
-      "minimum": 25
+      "minimum": 26
     },
     "required_paths": {
       "type": "array",
@@ -1296,6 +1299,33 @@
       }
     },
     "goose_naming_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "prompt_roles_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "prompt_sections_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "prompt_usage_required_phrases": {
       "type": "array",
       "minItems": 1,
       "uniqueItems": true,

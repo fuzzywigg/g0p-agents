@@ -160,7 +160,7 @@ REQUIRED_ARCHIVE_DOCS = (
     "README.md",
 )
 
-INVENTORY_VERSION = 25
+INVENTORY_VERSION = 26
 CURSOR_ENVIRONMENT_NAME = "g0p-agents"
 DEPENDABOT_SCHEDULE_INTERVAL = "weekly"
 DEPENDABOT_DIRECTORIES: frozenset[str] = frozenset({"/"})
@@ -818,6 +818,39 @@ GOOSE_NAMING_REQUIRED_PHRASES: tuple[str, ...] = (
     "Create new YAML file",
     "Follow the structure",
 )
+PROMPT_ROLES_REQUIRED_PHRASES: tuple[str, ...] = (
+    "## 1. QuantumArchitectAgent Prompt Template",
+    "You are the Quantum Computing specialist for the FUZZYWIGG-AI ecosystem.",
+    "## 2. BlockchainArchitectAgent Prompt Template",
+    "You are the Blockchain Development specialist for the FUZZYWIGG-AI ecosystem.",
+    "## 3. EdgeSecurityAgent Prompt Template",
+    "You are the On-Device Security specialist for the FUZZYWIGG-AI ecosystem.",
+    "## 4. OrchestrationAgent Prompt Template",
+    "You are the Strategic Orchestrator for the FUZZYWIGG-AI ecosystem.",
+    "Your role is NOT to code. Your role is to COORDINATE.",
+)
+PROMPT_SECTIONS_REQUIRED_PHRASES: tuple[str, ...] = (
+    "## Your Role",
+    "## Core Responsibilities",
+    "## Your Tools",
+    "## Your Communication Style",
+    "## Key Constraints (NEVER VIOLATE)",
+    "## Escalation Triggers (STOP and Request Input)",
+    "## Success Metrics",
+    "## Related Documentation",
+    "## Your Decision Authority",
+    "## Conflict Resolution Matrix",
+)
+PROMPT_USAGE_REQUIRED_PHRASES: tuple[str, ...] = (
+    "## Usage Instructions",
+    "### For Each Agent Instantiation",
+    "Copy the relevant prompt template",
+    "[INSERT PROJECT-SPECIFIC INFO HERE]",
+    "### Example: Instantiate QuantumArchitectAgent",
+    "## Integration with AGENTS.md",
+    "These prompts are **living documents**",
+    "Risk tolerance thresholds change (quarterly)",
+)
 
 CONTRIBUTING_BRANCH_SURFACES: tuple[str, ...] = ("copilot", "geryon", "cursor")
 
@@ -831,7 +864,7 @@ SCRATCHPAD_STATUS_MARKERS: tuple[str, ...] = (
 SPECIALIST_AGENTS: tuple[str, ...] = DOCUMENTED_AGENTS[:-1]
 
 MIN_COVERAGE_FAIL_UNDER = 99
-MIN_VALIDATOR_COUNT = 88
+MIN_VALIDATOR_COUNT = 91
 
 
 @dataclass(frozen=True)
@@ -1669,6 +1702,24 @@ def validate_packaging_inventory(root: Path) -> list[Finding]:
         != GOOSE_NAMING_REQUIRED_PHRASES
     ):
         findings.append(_lock_mismatch(schema_path, "goose_naming_required_phrases"))
+
+    if (
+        tuple(inventory.get("prompt_roles_required_phrases", ()))
+        != PROMPT_ROLES_REQUIRED_PHRASES
+    ):
+        findings.append(_lock_mismatch(schema_path, "prompt_roles_required_phrases"))
+
+    if (
+        tuple(inventory.get("prompt_sections_required_phrases", ()))
+        != PROMPT_SECTIONS_REQUIRED_PHRASES
+    ):
+        findings.append(_lock_mismatch(schema_path, "prompt_sections_required_phrases"))
+
+    if (
+        tuple(inventory.get("prompt_usage_required_phrases", ()))
+        != PROMPT_USAGE_REQUIRED_PHRASES
+    ):
+        findings.append(_lock_mismatch(schema_path, "prompt_usage_required_phrases"))
 
     expected_validator_names = tuple(sorted(VALIDATORS))
     if tuple(inventory.get("validator_names", ())) != expected_validator_names:
@@ -3199,6 +3250,108 @@ def _inventory_lock_consistency(
                     schema_path,
                     "goose_naming_required_phrases must include Recipe Naming "
                     "Convention/Adding New Recipes/domain_action_target pattern",
+                )
+            )
+
+    roles = list(inventory.get("prompt_roles_required_phrases", ()))
+    if len(roles) != len(set(roles)):
+        findings.append(
+            Finding(schema_path, "prompt_roles_required_phrases must be unique")
+        )
+    if not roles:
+        findings.append(
+            Finding(schema_path, "prompt_roles_required_phrases must not be empty")
+        )
+    for phrase in roles:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_roles_required_phrases entries must be non-empty strings",
+                )
+            )
+            break
+    else:
+        required_roles = {
+            "## 1. QuantumArchitectAgent Prompt Template",
+            "## 4. OrchestrationAgent Prompt Template",
+            "You are the Strategic Orchestrator for the FUZZYWIGG-AI ecosystem.",
+            "Your role is NOT to code. Your role is to COORDINATE.",
+        }
+        if roles and not required_roles <= set(roles):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_roles_required_phrases must include Quantum/"
+                    "Orchestration template headings and orchestrator identity",
+                )
+            )
+
+    sections = list(inventory.get("prompt_sections_required_phrases", ()))
+    if len(sections) != len(set(sections)):
+        findings.append(
+            Finding(schema_path, "prompt_sections_required_phrases must be unique")
+        )
+    if not sections:
+        findings.append(
+            Finding(schema_path, "prompt_sections_required_phrases must not be empty")
+        )
+    for phrase in sections:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_sections_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_sections = {
+            "## Your Role",
+            "## Key Constraints (NEVER VIOLATE)",
+            "## Conflict Resolution Matrix",
+            "## Related Documentation",
+        }
+        if sections and not required_sections <= set(sections):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_sections_required_phrases must include Your Role/"
+                    "Key Constraints/Conflict Resolution/Related Documentation",
+                )
+            )
+
+    usage = list(inventory.get("prompt_usage_required_phrases", ()))
+    if len(usage) != len(set(usage)):
+        findings.append(
+            Finding(schema_path, "prompt_usage_required_phrases must be unique")
+        )
+    if not usage:
+        findings.append(
+            Finding(schema_path, "prompt_usage_required_phrases must not be empty")
+        )
+    for phrase in usage:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_usage_required_phrases entries must be non-empty strings",
+                )
+            )
+            break
+    else:
+        required_usage = {
+            "## Usage Instructions",
+            "## Integration with AGENTS.md",
+            "[INSERT PROJECT-SPECIFIC INFO HERE]",
+        }
+        if usage and not required_usage <= set(usage):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_usage_required_phrases must include Usage Instructions/"
+                    "Integration with AGENTS.md/INSERT PROJECT-SPECIFIC",
                 )
             )
 
@@ -5027,6 +5180,61 @@ def validate_goose_naming(root: Path) -> list[Finding]:
     return findings
 
 
+def validate_prompt_roles(root: Path) -> list[Finding]:
+    rel = "AGENT-PROMPTS.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "AGENT-PROMPTS.md missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    for phrase in PROMPT_ROLES_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(rel, f"missing locked prompt-roles phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_prompt_sections(root: Path) -> list[Finding]:
+    rel = "AGENT-PROMPTS.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "AGENT-PROMPTS.md missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## Your Role" not in text:
+        findings.append(Finding(rel, "missing Your Role section"))
+    if "## Key Constraints (NEVER VIOLATE)" not in text:
+        findings.append(Finding(rel, "missing Key Constraints section"))
+    if "## Conflict Resolution Matrix" not in text:
+        findings.append(Finding(rel, "missing Conflict Resolution Matrix section"))
+    for phrase in PROMPT_SECTIONS_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(rel, f"missing locked prompt-sections phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_prompt_usage(root: Path) -> list[Finding]:
+    rel = "AGENT-PROMPTS.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "AGENT-PROMPTS.md missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## Usage Instructions" not in text:
+        findings.append(Finding(rel, "missing Usage Instructions section"))
+    if "## Integration with AGENTS.md" not in text:
+        findings.append(Finding(rel, "missing Integration with AGENTS.md section"))
+    for phrase in PROMPT_USAGE_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(rel, f"missing locked prompt-usage phrase: {phrase}")
+            )
+    return findings
+
+
 def validate_agent_task_template(root: Path) -> list[Finding]:
     rel = ".github/ISSUE_TEMPLATE/agent_task.md"
     path = root / rel
@@ -6204,6 +6412,9 @@ VALIDATORS: dict[str, ValidatorFn] = {
     "goose-howto": validate_goose_howto,
     "goose-state-machine": validate_goose_state_machine,
     "goose-naming": validate_goose_naming,
+    "prompt-roles": validate_prompt_roles,
+    "prompt-sections": validate_prompt_sections,
+    "prompt-usage": validate_prompt_usage,
     "security": validate_security_packaging,
     "contributing": validate_contributing_packaging,
     "contributing-who": validate_contributing_who,
