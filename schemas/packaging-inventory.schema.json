@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/fuzzywigg/g0p-agents/schemas/packaging-inventory.schema.json",
   "title": "Archive packaging inventory",
-  "description": "Locked packaging paths and historic agent/recipe inventory for this docs-only archive (v7).",
+  "description": "Locked packaging paths and historic agent/recipe inventory for this docs-only archive (v8).",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -13,6 +13,7 @@
     "expected_recipe_files",
     "recipe_bindings",
     "recipe_primary_agents",
+    "recipe_titles",
     "orchestration_recipe_name",
     "required_ci_jobs",
     "required_python_versions",
@@ -41,6 +42,7 @@
     "dependabot_schedule_interval",
     "dependabot_ecosystems",
     "dependabot_group_names",
+    "dependabot_directories",
     "ci_permissions_contents",
     "ci_artifact_name_prefix",
     "ci_pull_request_branch",
@@ -48,6 +50,8 @@
     "ci_artifact_upload_if",
     "ci_cancel_in_progress",
     "ci_fail_fast",
+    "ci_required_actions",
+    "pyproject_name",
     "pyproject_requires_python",
     "pyproject_ruff_target_version",
     "coverage_branch",
@@ -67,6 +71,9 @@
     "hydration_required_sections",
     "execution_summary_required_phrases",
     "implementation_guide_required_phrases",
+    "claude_required_phrases",
+    "escalation_format_phrases",
+    "goose_docs_required_phrases",
     "validator_names",
     "specialist_agents",
     "schema_draft_uri",
@@ -80,7 +87,7 @@
   "properties": {
     "version": {
       "type": "integer",
-      "minimum": 7
+      "minimum": 8
     },
     "required_paths": {
       "type": "array",
@@ -138,6 +145,15 @@
       "additionalProperties": {
         "type": "string",
         "pattern": "^[A-Z][A-Za-z0-9]*Agent$"
+      }
+    },
+    "recipe_titles": {
+      "type": "object",
+      "minProperties": 4,
+      "maxProperties": 4,
+      "additionalProperties": {
+        "type": "string",
+        "minLength": 1
       }
     },
     "orchestration_recipe_name": {
@@ -398,6 +414,15 @@
         "pattern": "^[a-z][a-z0-9_]*$"
       }
     },
+    "dependabot_directories": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
     "ci_permissions_contents": {
       "type": "string",
       "minLength": 1
@@ -423,6 +448,21 @@
     },
     "ci_fail_fast": {
       "type": "boolean"
+    },
+    "ci_required_actions": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "pattern": "^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+@v[0-9]+$"
+      }
+    },
+    "pyproject_name": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-z][a-z0-9-]*$"
     },
     "pyproject_requires_python": {
       "type": "string",
@@ -540,6 +580,33 @@
       }
     },
     "implementation_guide_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "claude_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "escalation_format_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "goose_docs_required_phrases": {
       "type": "array",
       "minItems": 1,
       "uniqueItems": true,

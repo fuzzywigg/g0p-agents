@@ -28,6 +28,11 @@ Checks structural correctness of:
 - Packaging inventory lock + internal consistency + schema meta-validation
 - Parseability of known YAML config files
 - Historic Goose recipe version lock (1.0.0)
+- CLAUDE.md required sections / identity / escalation-format phrases
+- Historic Goose recipe title locks (four recipes only)
+- CI required GitHub Actions pins
+- pyproject project name lock
+- Dependabot directory set inventory lock (file untouched)
 
 Does not invent agents or scaffold new specialist definitions.
 """
@@ -126,7 +131,7 @@ REQUIRED_ARCHIVE_DOCS = (
     "README.md",
 )
 
-INVENTORY_VERSION = 7
+INVENTORY_VERSION = 8
 CURSOR_ENVIRONMENT_NAME = "g0p-agents"
 DEPENDABOT_SCHEDULE_INTERVAL = "weekly"
 DEPENDABOT_DIRECTORIES: frozenset[str] = frozenset({"/"})
@@ -139,9 +144,31 @@ CI_CONCURRENCY_GROUP_PREFIX = "ci-"
 CI_ARTIFACT_UPLOAD_IF = "always()"
 CI_CANCEL_IN_PROGRESS = True
 CI_FAIL_FAST = False
+CI_REQUIRED_ACTIONS: tuple[str, ...] = (
+    "actions/checkout@v7",
+    "actions/setup-python@v5",
+    "actions/upload-artifact@v4",
+    "DavidAnson/markdownlint-cli2-action@v24",
+    "lycheeverse/lychee-action@v2",
+)
+PYPROJECT_NAME = "g0p-agents-validation"
 PYPROJECT_REQUIRES_PYTHON = ">=3.11"
 PYPROJECT_RUFF_TARGET_VERSION = "py311"
 COVERAGE_BRANCH = True
+RECIPE_TITLES: dict[str, str] = {
+    "quantum_algorithm_design_workflow": (
+        "Design and Optimize Quantum Algorithm for Cryptographic Operation"
+    ),
+    "blockchain_contract_design_workflow": (
+        "Design and Audit Smart Contract for Quantum-Resistant Multi-Chain"
+    ),
+    "edge_security_implementation_workflow": (
+        "Implement Quantum-Safe Cryptography on Mobile Device"
+    ),
+    "quantum_nft_mint_full_orchestration": (
+        "Full Quantum-Blockchain-Mobile Orchestration for NFT Mint Operation"
+    ),
+}
 MARKDOWNLINT_DEFAULT = True
 MARKDOWNLINT_MD013_LINE_LENGTH = 200
 GITHUB_AGENT_NAME = "Hydration"
@@ -351,6 +378,26 @@ CLAUDE_REQUIRED_SECTIONS: tuple[str, ...] = (
     "## Quarterly Review Triggers",
 )
 
+CLAUDE_REQUIRED_PHRASES: tuple[str, ...] = (
+    "fuzzywigg/g0p-agents",
+    "PikoClaw demo at Panathenea",
+    "Documentation archive",
+    "LIST B",
+)
+
+ESCALATION_FORMAT_PHRASES: tuple[str, ...] = (
+    "From Agent:",
+    "Conflict:",
+    "Recommendation:",
+    "Timeline:",
+)
+
+GOOSE_DOCS_REQUIRED_PHRASES: tuple[str, ...] = (
+    "Recipe-Based Agent Orchestration",
+    "./agentic_flows/",
+    "goose run",
+)
+
 CONTRIBUTING_BRANCH_SURFACES: tuple[str, ...] = ("copilot", "geryon", "cursor")
 
 SCRATCHPAD_STATUS_MARKERS: tuple[str, ...] = (
@@ -363,7 +410,7 @@ SCRATCHPAD_STATUS_MARKERS: tuple[str, ...] = (
 SPECIALIST_AGENTS: tuple[str, ...] = DOCUMENTED_AGENTS[:-1]
 
 MIN_COVERAGE_FAIL_UNDER = 99
-MIN_VALIDATOR_COUNT = 34
+MIN_VALIDATOR_COUNT = 37
 
 
 @dataclass(frozen=True)
@@ -780,6 +827,32 @@ def validate_packaging_inventory(root: Path) -> list[Finding]:
     if tuple(inventory.get("scratchpad_status_markers", ())) != SCRATCHPAD_STATUS_MARKERS:
         findings.append(_lock_mismatch(schema_path, "scratchpad_status_markers"))
 
+    if frozenset(inventory.get("dependabot_directories", ())) != DEPENDABOT_DIRECTORIES:
+        findings.append(_lock_mismatch(schema_path, "dependabot_directories"))
+
+    if dict(inventory.get("recipe_titles", {})) != RECIPE_TITLES:
+        findings.append(_lock_mismatch(schema_path, "recipe_titles"))
+
+    if tuple(inventory.get("ci_required_actions", ())) != CI_REQUIRED_ACTIONS:
+        findings.append(_lock_mismatch(schema_path, "ci_required_actions"))
+
+    if inventory.get("pyproject_name") != PYPROJECT_NAME:
+        findings.append(_lock_mismatch(schema_path, "pyproject_name"))
+
+    if tuple(inventory.get("claude_required_phrases", ())) != CLAUDE_REQUIRED_PHRASES:
+        findings.append(_lock_mismatch(schema_path, "claude_required_phrases"))
+
+    if (
+        tuple(inventory.get("escalation_format_phrases", ()))
+        != ESCALATION_FORMAT_PHRASES
+    ):
+        findings.append(_lock_mismatch(schema_path, "escalation_format_phrases"))
+
+    if (
+        tuple(inventory.get("goose_docs_required_phrases", ()))
+        != GOOSE_DOCS_REQUIRED_PHRASES
+    ):
+        findings.append(_lock_mismatch(schema_path, "goose_docs_required_phrases"))
 
     expected_validator_names = tuple(sorted(VALIDATORS))
     if tuple(inventory.get("validator_names", ())) != expected_validator_names:
@@ -909,6 +982,30 @@ def _inventory_lock_consistency(
     group_names = list(inventory.get("dependabot_group_names", ()))
     if len(group_names) != len(set(group_names)):
         findings.append(Finding(schema_path, "dependabot_group_names must be unique"))
+
+    recipe_titles = dict(inventory.get("recipe_titles", {}))
+    if set(recipe_titles) != names:
+        findings.append(
+            Finding(
+                schema_path,
+                "recipe_titles keys inconsistent with expected_recipe_names",
+            )
+        )
+    title_values = list(recipe_titles.values())
+    if len(title_values) != len(set(title_values)):
+        findings.append(Finding(schema_path, "recipe_titles values must be unique"))
+
+    actions = list(inventory.get("ci_required_actions", ()))
+    if len(actions) != len(set(actions)):
+        findings.append(Finding(schema_path, "ci_required_actions must be unique"))
+    if not actions:
+        findings.append(Finding(schema_path, "ci_required_actions must not be empty"))
+
+    directories = list(inventory.get("dependabot_directories", ()))
+    if len(directories) != len(set(directories)):
+        findings.append(Finding(schema_path, "dependabot_directories must be unique"))
+    if not directories:
+        findings.append(Finding(schema_path, "dependabot_directories must not be empty"))
 
     return findings
 
@@ -1577,6 +1674,14 @@ def validate_pyproject(root: Path) -> list[Finding]:
     findings: list[Finding] = []
     project = data.get("project")
     if isinstance(project, dict):
+        name = project.get("name")
+        if name != PYPROJECT_NAME:
+            findings.append(
+                Finding(
+                    rel,
+                    f"project.name must be {PYPROJECT_NAME!r}, found {name!r}",
+                )
+            )
         requires = project.get("requires-python")
         if requires != PYPROJECT_REQUIRES_PYTHON:
             findings.append(
@@ -2215,11 +2320,106 @@ def validate_implementation_guide(root: Path) -> list[Finding]:
     return findings
 
 
+def validate_claude_packaging(root: Path) -> list[Finding]:
+    rel = "CLAUDE.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "CLAUDE.md missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    for section in CLAUDE_REQUIRED_SECTIONS:
+        if section not in text:
+            findings.append(Finding(rel, f"CLAUDE.md missing required section: {section}"))
+    for phrase in CLAUDE_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(rel, f"CLAUDE.md missing packaging phrase: {phrase}")
+            )
+    for phrase in ESCALATION_FORMAT_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(rel, f"CLAUDE.md missing escalation-format phrase: {phrase}")
+            )
+    for agent in DOCUMENTED_AGENTS:
+        if agent not in text:
+            findings.append(Finding(rel, f"CLAUDE.md missing documented agent: {agent}"))
+    invented = sorted(agent_tokens(text) - set(DOCUMENTED_AGENTS))
+    if invented:
+        findings.append(
+            Finding(rel, f"invented or unknown agent token(s): {', '.join(invented)}")
+        )
+    return findings
+
+
+def validate_recipe_titles(root: Path) -> list[Finding]:
+    rel = "GOOSE-RECIPES.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "GOOSE-RECIPES.md missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    for phrase in GOOSE_DOCS_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(rel, f"GOOSE-RECIPES missing packaging phrase: {phrase}")
+            )
+    blocks = extract_fenced_yaml_blocks(text)
+    seen: set[str] = set()
+    for index, block in enumerate(blocks, start=1):
+        block_path = f"{rel}#recipe-{index}"
+        data, parse_findings = parse_yaml_text(block, path=block_path)
+        findings.extend(parse_findings)
+        if not isinstance(data, dict):
+            continue
+        name = data.get("name")
+        recipe = data.get("recipe")
+        if not isinstance(name, str) or not isinstance(recipe, dict):
+            continue
+        seen.add(name)
+        expected_title = RECIPE_TITLES.get(name)
+        title = recipe.get("title")
+        if expected_title is None:
+            findings.append(
+                Finding(block_path, f"unexpected/invented recipe name: {name}")
+            )
+            continue
+        if title != expected_title:
+            findings.append(
+                Finding(
+                    block_path,
+                    (
+                        f"historic recipe title must be {expected_title!r}, "
+                        f"found {title!r}"
+                    ),
+                )
+            )
+    missing = sorted(set(RECIPE_TITLES) - seen)
+    for name in missing:
+        findings.append(Finding(rel, f"missing locked recipe title for: {name}"))
+    return findings
+
+
+def validate_ci_actions(root: Path) -> list[Finding]:
+    rel = ".github/workflows/ci.yml"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "CI workflow missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    for action in CI_REQUIRED_ACTIONS:
+        if action not in text:
+            findings.append(
+                Finding(rel, f"CI workflow missing required action pin: {action}")
+            )
+    return findings
+
+
 VALIDATORS: dict[str, ValidatorFn] = {
     "schemas": validate_schemas_meta,
     "inventory": validate_packaging_inventory,
     "goose": validate_goose_recipes,
     "recipe-agents": validate_recipe_agent_bindings,
+    "recipe-titles": validate_recipe_titles,
     "agent-tokens": validate_archive_agent_tokens,
     "constitution": validate_constitution_agent_headings,
     "routing": validate_routing_surfaces,
@@ -2241,12 +2441,14 @@ VALIDATORS: dict[str, ValidatorFn] = {
     "pyproject": validate_pyproject,
     "yaml-configs": validate_yaml_configs,
     "ci": validate_ci_workflow,
+    "ci-actions": validate_ci_actions,
     "prompts": validate_documented_agent_prompts,
     "cross-docs": validate_cross_doc_agents,
     "changelog": validate_changelog_packaging,
     "postmortem": validate_postmortem_packaging,
     "gitignore": validate_gitignore_packaging,
     "negative-constraints": validate_negative_constraints,
+    "claude": validate_claude_packaging,
     "hydration": validate_hydration_report,
     "execution-summary": validate_execution_summary,
     "implementation-guide": validate_implementation_guide,
