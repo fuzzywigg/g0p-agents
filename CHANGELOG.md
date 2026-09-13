@@ -10,6 +10,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Contributing guide **v21** deepeners (post-#42): `contributing-who`,
+  `contributing-branches`, `contributing-pr` validators; CONTRIBUTING.md Who Can
+  Contribute locks + Branch Strategy table locks + PR Requirements / Governance
+  locks; consistency deepeners for `contributing_who_required_phrases` /
+  `contributing_branch_required_phrases` / `contributing_pr_required_phrases`
+  (76 total; historic four only — contributing slice, not scratchpad, postmortem,
+  archive snapshot, security policy, routing/identity, or Dependabot)
+
 - Scratchpad coordination **v20** deepeners (post-#41): `scratchpad-intro`,
   `scratchpad-format`, `scratchpad-task-meta` validators; scratchpad.txt intro/
   update mandate locks + Format legend locks + Task Repo Hydration meta locks;

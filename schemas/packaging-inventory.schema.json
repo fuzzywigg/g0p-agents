@@ -145,12 +145,15 @@
     "postmortem_next_steps_required_phrases",
     "scratchpad_intro_required_phrases",
     "scratchpad_format_required_phrases",
-    "scratchpad_task_meta_required_phrases"
+    "scratchpad_task_meta_required_phrases",
+    "contributing_who_required_phrases",
+    "contributing_branch_required_phrases",
+    "contributing_pr_required_phrases"
   ],
   "properties": {
     "version": {
       "type": "integer",
-      "minimum": 20
+      "minimum": 21
     },
     "required_paths": {
       "type": "array",
@@ -1146,6 +1149,33 @@
       }
     },
     "scratchpad_task_meta_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "contributing_who_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "contributing_branch_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "contributing_pr_required_phrases": {
       "type": "array",
       "minItems": 1,
       "uniqueItems": true,
