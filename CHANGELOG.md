@@ -10,6 +10,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Execution summary **v28** deepeners (post-#56): `execution-timeline`,
+  `execution-technologies`, `execution-workflow` validators; EXECUTION-SUMMARY.md
+  Implementation Timeline / Week 1 / By End of Month locks, Key Technologies
+  (Cirq/Hardhat/liboqs/Goose) locks, and Workflow Overview single/multi/escalation
+  locks; consistency deepeners for `execution_timeline_required_phrases` /
+  `execution_technologies_required_phrases` / `execution_workflow_required_phrases`
+  (97 total; historic four only — execution-summary slice, not implementation
+  guide, agent prompts, goose recipes, README honesty, PR-template, contributing,
+  issue-template, scratchpad, postmortem, archive snapshot, security policy,
+  routing/identity, or Dependabot)
+
 - Implementation guide **v27** deepeners (post-#54): `implementation-phases`,
   `implementation-tools`, `implementation-success` validators; IMPLEMENTATION-GUIDE.md
   Full Implementation Phase 1–6 / agent prompt path / recipe path locks; Tools &
