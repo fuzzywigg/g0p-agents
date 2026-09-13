@@ -1,5 +1,5 @@
 {
-  "version": 14,
+  "version": 15,
   "documented_agents": [
     "QuantumArchitectAgent",
     "BlockchainArchitectAgent",
@@ -291,6 +291,7 @@
     "cross-docs",
     "dependabot",
     "environment",
+    "escalation-format",
     "execution-summary",
     "feature-template",
     "github-agent-desc",
@@ -318,8 +319,10 @@
     "readme-badges",
     "recipe-agents",
     "recipe-titles",
+    "repo-identity",
     "requirements-dev",
     "routing",
+    "routing-matrix",
     "schemas",
     "scratchpad",
     "security",
@@ -327,7 +330,7 @@
     "yaml-configs"
   ],
   "min_coverage_fail_under": 99,
-  "min_validator_count": 55,
+  "min_validator_count": 58,
   "required_paths": [
     "README.md",
     "LICENSE",
@@ -550,5 +553,28 @@
     "Issue",
     "Branch",
     "Priority"
+  ],
+  "routing_matrix_required_phrases": [
+    "CI/CD fixes, linting, dependabot",
+    "Multi-file code scaffolding (agentic_flows/, contracts/, quantum_circuits/)",
+    "Strategic planning, Notion updates, cross-platform coordination",
+    "GitHub Settings, branch protection",
+    "Automated E2E verification",
+    "Financial transactions, repo visibility changes"
+  ],
+  "repo_identity_required_phrases": [
+    "fuzzywigg/g0p-agents",
+    "Quantum-Blockchain agentic protocols archive",
+    "FUZZYWIGG four-agent swarm",
+    "PikoClaw demo at Panathenea",
+    "Documentation archive",
+    "LIST B"
+  ],
+  "escalation_block_required_phrases": [
+    "ESCALATION REQUIRED",
+    "From Agent:",
+    "Conflict:",
+    "Recommendation:",
+    "Timeline:"
   ]
 }

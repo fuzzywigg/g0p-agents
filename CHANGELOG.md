@@ -10,6 +10,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Agent routing / identity / escalation **v15** deepeners (post-#32): `routing-matrix`,
+  `repo-identity`, `escalation-format` validators; CLAUDE.md Agent Routing Matrix
+  task-row locks + Repo Identity north-star/purpose locks + Escalation Format
+  banner/field locks; consistency deepeners for `routing_matrix_required_phrases` /
+  `repo_identity_required_phrases` / `escalation_block_required_phrases` (58 total;
+  historic four only — routing/identity slice, not packaging-inventory meta or CI
+  command deepeners)
+
 - Packaging inventory **v14** deepeners (post-#31): `state-residency`, `key-files`,
   `pr-routing` validators; CLAUDE.md State Residency Rules + Key Files table locks;
   PR template Agent Surface Routing field locks (Surface / Issue / Branch /
