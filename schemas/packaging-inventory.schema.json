@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/fuzzywigg/g0p-agents/schemas/packaging-inventory.schema.json",
   "title": "Archive packaging inventory",
-  "description": "Locked packaging paths and historic agent/recipe inventory for this docs-only archive (v3).",
+  "description": "Locked packaging paths and historic agent/recipe inventory for this docs-only archive (v4).",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -13,6 +13,7 @@
     "expected_recipe_files",
     "recipe_bindings",
     "recipe_primary_agents",
+    "orchestration_recipe_name",
     "required_ci_jobs",
     "required_python_versions",
     "required_manifest_step_markers",
@@ -22,13 +23,23 @@
     "issue_template_files",
     "pr_template_headings",
     "historic_goose_settings",
+    "routing_surfaces",
+    "constitution_heading_prefix",
+    "prompt_system_header_suffix",
+    "specialist_escalation_marker",
+    "orchestration_escalation_marker",
+    "agent_token_scan_docs",
+    "readme_required_phrases",
+    "security_required_phrases",
+    "contributing_required_phrases",
+    "issue_agent_task_headings",
     "min_coverage_fail_under",
     "min_validator_count"
   ],
   "properties": {
     "version": {
       "type": "integer",
-      "minimum": 3
+      "minimum": 4
     },
     "required_paths": {
       "type": "array",
@@ -87,6 +98,10 @@
         "type": "string",
         "pattern": "^[A-Z][A-Za-z0-9]*Agent$"
       }
+    },
+    "orchestration_recipe_name": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]*$"
     },
     "required_ci_jobs": {
       "type": "array",
@@ -169,11 +184,11 @@
       "properties": {
         "goose_provider": {
           "type": "string",
-          "minLength": 1
+          "const": "anthropic"
         },
         "goose_model": {
           "type": "string",
-          "minLength": 1
+          "const": "claude-opus-4"
         },
         "extension_type": {
           "type": "string",
@@ -183,6 +198,77 @@
           "type": "string",
           "minLength": 1
         }
+      }
+    },
+    "routing_surfaces": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "pattern": "^[a-z][a-z0-9-]*$"
+      }
+    },
+    "constitution_heading_prefix": {
+      "type": "string",
+      "minLength": 1
+    },
+    "prompt_system_header_suffix": {
+      "type": "string",
+      "minLength": 1
+    },
+    "specialist_escalation_marker": {
+      "type": "string",
+      "minLength": 1
+    },
+    "orchestration_escalation_marker": {
+      "type": "string",
+      "minLength": 1
+    },
+    "agent_token_scan_docs": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "readme_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "security_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "contributing_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "issue_agent_task_headings": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
       }
     },
     "min_coverage_fail_under": {

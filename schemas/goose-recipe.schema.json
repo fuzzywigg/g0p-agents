@@ -37,18 +37,16 @@
         },
         "settings": {
           "type": "object",
-          "additionalProperties": true,
+          "additionalProperties": false,
           "required": ["goose_provider", "goose_model"],
           "properties": {
             "goose_provider": {
               "type": "string",
-              "minLength": 1,
-              "maxLength": 64
+              "const": "anthropic"
             },
             "goose_model": {
               "type": "string",
-              "minLength": 1,
-              "maxLength": 128
+              "const": "claude-opus-4"
             }
           }
         },
