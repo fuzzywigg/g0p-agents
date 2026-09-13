@@ -36,17 +36,20 @@ Docs-only bootstrap lives in [`.cursor/environment.json`](.cursor/environment.js
 
 ## Manifest validation
 
-This archive has no runtime agent code. CI still enforces structural checks on documented packaging:
+This archive has no runtime agent code. CI still enforces structural checks on
+documented packaging (Goose recipes, Cursor env, GitHub agent/issue frontmatter,
+Dependabot, inventory, and locked four-agent cross-doc consistency):
 
 ```bash
 python -m pip install -r requirements-dev.txt
+ruff check scripts tests
 python scripts/validate_manifests.py
-python -m pytest -q
+python -m pytest --cov=scripts --cov-report=term-missing
 ```
 
-Schemas live under [`schemas/`](schemas/). The validator reads Goose recipe YAML
-from [`GOOSE-RECIPES.md`](GOOSE-RECIPES.md), plus `.cursor/environment.json`,
-`.github/agents/*.agent.md` frontmatter, and known YAML configs.
+Schemas and the packaging inventory live under [`schemas/`](schemas/). The
+validator reads Goose recipe YAML from [`GOOSE-RECIPES.md`](GOOSE-RECIPES.md)
+and does **not** invent specialist agents beyond the historic four.
 
 ## License
 
