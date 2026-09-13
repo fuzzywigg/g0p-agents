@@ -43,6 +43,7 @@ Checks structural correctness of:
 - CLAUDE.md routing-matrix rationale column locks (six surfaces)
 - CLAUDE.md header metadata locks (Status/Tier/Owner/Created/Edit/Canonical)
 - CLAUDE.md escalation usage intro + fenced placeholder field locks
+- SECURITY.md Supported Versions / Reporting / Standards domain locks
 - pyproject project name + version/license/description/readme +
   ruff line-length/src/lint select locks
 - coverage show_missing/skip_empty/source + exact fail_under +
@@ -153,7 +154,7 @@ REQUIRED_ARCHIVE_DOCS = (
     "README.md",
 )
 
-INVENTORY_VERSION = 16
+INVENTORY_VERSION = 17
 CURSOR_ENVIRONMENT_NAME = "g0p-agents"
 DEPENDABOT_SCHEDULE_INTERVAL = "weekly"
 DEPENDABOT_DIRECTORIES: frozenset[str] = frozenset({"/"})
@@ -283,6 +284,31 @@ ESCALATION_USAGE_REQUIRED_PHRASES: tuple[str, ...] = (
     "Conflict: [What constraint am I hitting?]",
     "Recommendation: [How should we resolve this?]",
     "Timeline: [How long until decision needed?]",
+)
+SECURITY_SUPPORTED_REQUIRED_PHRASES: tuple[str, ...] = (
+    "This repository is a documentation archive",
+    "No executable code is deployed",
+    "YAML recipe templates",
+    "Agent system prompts",
+    "Future: Solidity contracts",
+)
+SECURITY_REPORTING_REQUIRED_PHRASES: tuple[str, ...] = (
+    "Do NOT open a public GitHub issue for security vulnerabilities",
+    "To report a vulnerability:",
+    "Email:",
+    "Include: description, affected files, reproduction steps, suggested fix",
+    "acknowledgment within 48 hours",
+)
+SECURITY_STANDARDS_REQUIRED_PHRASES: tuple[str, ...] = (
+    "Cryptography",
+    "Smart contracts",
+    "Mobile",
+    "Secrets",
+    "Keys",
+    "NIST post-quantum standards",
+    "Slither audit pass",
+    "Never commit secrets",
+    "Never expose plaintext keys",
 )
 LICENSE_REQUIRED_PHRASES: tuple[str, ...] = (
     "MIT License",
@@ -611,7 +637,7 @@ SCRATCHPAD_STATUS_MARKERS: tuple[str, ...] = (
 SPECIALIST_AGENTS: tuple[str, ...] = DOCUMENTED_AGENTS[:-1]
 
 MIN_COVERAGE_FAIL_UNDER = 99
-MIN_VALIDATOR_COUNT = 61
+MIN_VALIDATOR_COUNT = 64
 
 
 @dataclass(frozen=True)
@@ -1262,6 +1288,30 @@ def validate_packaging_inventory(root: Path) -> list[Finding]:
         != ESCALATION_USAGE_REQUIRED_PHRASES
     ):
         findings.append(_lock_mismatch(schema_path, "escalation_usage_required_phrases"))
+
+    if (
+        tuple(inventory.get("security_supported_required_phrases", ()))
+        != SECURITY_SUPPORTED_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "security_supported_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("security_reporting_required_phrases", ()))
+        != SECURITY_REPORTING_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "security_reporting_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("security_standards_required_phrases", ()))
+        != SECURITY_STANDARDS_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "security_standards_required_phrases")
+        )
 
     expected_validator_names = tuple(sorted(VALIDATORS))
     if tuple(inventory.get("validator_names", ())) != expected_validator_names:
@@ -1921,6 +1971,102 @@ def _inventory_lock_consistency(
                 )
             )
 
+    supported = list(inventory.get("security_supported_required_phrases", ()))
+    if len(supported) != len(set(supported)):
+        findings.append(
+            Finding(schema_path, "security_supported_required_phrases must be unique")
+        )
+    if not supported:
+        findings.append(
+            Finding(
+                schema_path, "security_supported_required_phrases must not be empty"
+            )
+        )
+    for phrase in supported:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "security_supported_required_phrases entries must be non-empty strings",
+                )
+            )
+            break
+    else:
+        if supported and "documentation archive" not in " ".join(supported):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "security_supported_required_phrases must mention documentation archive",
+                )
+            )
+
+    reporting = list(inventory.get("security_reporting_required_phrases", ()))
+    if len(reporting) != len(set(reporting)):
+        findings.append(
+            Finding(schema_path, "security_reporting_required_phrases must be unique")
+        )
+    if not reporting:
+        findings.append(
+            Finding(
+                schema_path, "security_reporting_required_phrases must not be empty"
+            )
+        )
+    for phrase in reporting:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "security_reporting_required_phrases entries must be non-empty strings",
+                )
+            )
+            break
+    else:
+        if reporting and not any(
+            "Do NOT open a public GitHub issue" in phrase for phrase in reporting
+        ):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "security_reporting_required_phrases must refuse public GitHub issues",
+                )
+            )
+
+    standards = list(inventory.get("security_standards_required_phrases", ()))
+    if len(standards) != len(set(standards)):
+        findings.append(
+            Finding(schema_path, "security_standards_required_phrases must be unique")
+        )
+    if not standards:
+        findings.append(
+            Finding(
+                schema_path, "security_standards_required_phrases must not be empty"
+            )
+        )
+    for phrase in standards:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "security_standards_required_phrases entries must be non-empty strings",
+                )
+            )
+            break
+    else:
+        required_domains = {
+            "Cryptography",
+            "Smart contracts",
+            "Mobile",
+            "Secrets",
+            "Keys",
+        }
+        if standards and not required_domains <= set(standards):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "security_standards_required_phrases must include five domain rows",
+                )
+            )
+
     return findings
 
 
@@ -2537,6 +2683,59 @@ def validate_escalation_usage(root: Path) -> list[Finding]:
         if phrase not in text:
             findings.append(
                 Finding(rel, f"missing locked escalation-usage phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_security_supported(root: Path) -> list[Finding]:
+    rel = "SECURITY.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "SECURITY.md missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## Supported Versions" not in text:
+        findings.append(Finding(rel, "missing Supported Versions section"))
+    for phrase in SECURITY_SUPPORTED_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(rel, f"missing locked security-supported phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_security_reporting(root: Path) -> list[Finding]:
+    rel = "SECURITY.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "SECURITY.md missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## Reporting a Vulnerability" not in text:
+        findings.append(Finding(rel, "missing Reporting a Vulnerability section"))
+    for phrase in SECURITY_REPORTING_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(rel, f"missing locked security-reporting phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_security_standards(root: Path) -> list[Finding]:
+    rel = "SECURITY.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "SECURITY.md missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## Security Standards for This Ecosystem" not in text:
+        findings.append(
+            Finding(rel, "missing Security Standards for This Ecosystem section")
+        )
+    for phrase in SECURITY_STANDARDS_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(rel, f"missing locked security-standards phrase: {phrase}")
             )
     return findings
 
@@ -4483,6 +4682,9 @@ VALIDATORS: dict[str, ValidatorFn] = {
     "routing-rationales": validate_routing_rationales,
     "claude-metadata": validate_claude_metadata,
     "escalation-usage": validate_escalation_usage,
+    "security-supported": validate_security_supported,
+    "security-reporting": validate_security_reporting,
+    "security-standards": validate_security_standards,
     "link-check": validate_link_check,
     "prompts": validate_documented_agent_prompts,
     "cross-docs": validate_cross_doc_agents,
