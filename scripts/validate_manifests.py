@@ -160,7 +160,7 @@ REQUIRED_ARCHIVE_DOCS = (
     "README.md",
 )
 
-INVENTORY_VERSION = 26
+INVENTORY_VERSION = 27
 CURSOR_ENVIRONMENT_NAME = "g0p-agents"
 DEPENDABOT_SCHEDULE_INTERVAL = "weekly"
 DEPENDABOT_DIRECTORIES: frozenset[str] = frozenset({"/"})
@@ -852,6 +852,41 @@ PROMPT_USAGE_REQUIRED_PHRASES: tuple[str, ...] = (
     "Risk tolerance thresholds change (quarterly)",
 )
 
+IMPLEMENTATION_PHASES_REQUIRED_PHRASES: tuple[str, ...] = (
+    "## Full Implementation (1-2 weeks)",
+    "### Phase 1: Infrastructure (Days 1-2)",
+    "### Phase 2: Define Specialist Agents (Days 2-3)",
+    "### Phase 3: Create Goose Recipes (Days 3-4)",
+    "### Phase 4: Set Up Scratchpad State Machine (Day 4)",
+    "### Phase 5: Test the Workflow (Days 5-6)",
+    "### Phase 6: Iterate & Refine (Days 6-10)",
+    "docs/agents/quantum-architect-prompt.md",
+    "agentic_flows/quantum_algorithm_design.yaml",
+    "agentic_flows/quantum_nft_mint_orchestration.yaml",
+)
+IMPLEMENTATION_TOOLS_REQUIRED_PHRASES: tuple[str, ...] = (
+    "## Tools & Software Checklist",
+    "Python 3.11+",
+    "Node.js 20.x LTS",
+    "Docker Desktop",
+    "Cirq (Python library)",
+    "Hardhat (npm install -g hardhat)",
+    "liboqs (post-quantum crypto library)",
+    "Goose (agent orchestration framework)",
+    "Docker Compose (container orchestration)",
+)
+IMPLEMENTATION_SUCCESS_REQUIRED_PHRASES: tuple[str, ...] = (
+    "## Success Criteria",
+    "**By End of Week 1**:",
+    "**By End of Week 2**:",
+    "**By End of Month**:",
+    "## Common Issues & Solutions",
+    "## FAQ",
+    "## Next Steps",
+    "postmortem.md has first entry",
+    "Deployment to Sepolia testnet",
+)
+
 CONTRIBUTING_BRANCH_SURFACES: tuple[str, ...] = ("copilot", "geryon", "cursor")
 
 SCRATCHPAD_STATUS_MARKERS: tuple[str, ...] = (
@@ -864,7 +899,7 @@ SCRATCHPAD_STATUS_MARKERS: tuple[str, ...] = (
 SPECIALIST_AGENTS: tuple[str, ...] = DOCUMENTED_AGENTS[:-1]
 
 MIN_COVERAGE_FAIL_UNDER = 99
-MIN_VALIDATOR_COUNT = 91
+MIN_VALIDATOR_COUNT = 94
 
 
 @dataclass(frozen=True)
@@ -1720,6 +1755,30 @@ def validate_packaging_inventory(root: Path) -> list[Finding]:
         != PROMPT_USAGE_REQUIRED_PHRASES
     ):
         findings.append(_lock_mismatch(schema_path, "prompt_usage_required_phrases"))
+
+    if (
+        tuple(inventory.get("implementation_phases_required_phrases", ()))
+        != IMPLEMENTATION_PHASES_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "implementation_phases_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("implementation_tools_required_phrases", ()))
+        != IMPLEMENTATION_TOOLS_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "implementation_tools_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("implementation_success_required_phrases", ()))
+        != IMPLEMENTATION_SUCCESS_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "implementation_success_required_phrases")
+        )
 
     expected_validator_names = tuple(sorted(VALIDATORS))
     if tuple(inventory.get("validator_names", ())) != expected_validator_names:
@@ -3352,6 +3411,126 @@ def _inventory_lock_consistency(
                     schema_path,
                     "prompt_usage_required_phrases must include Usage Instructions/"
                     "Integration with AGENTS.md/INSERT PROJECT-SPECIFIC",
+                )
+            )
+
+    phases = list(inventory.get("implementation_phases_required_phrases", ()))
+    if len(phases) != len(set(phases)):
+        findings.append(
+            Finding(
+                schema_path, "implementation_phases_required_phrases must be unique"
+            )
+        )
+    if not phases:
+        findings.append(
+            Finding(
+                schema_path,
+                "implementation_phases_required_phrases must not be empty",
+            )
+        )
+    for phrase in phases:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "implementation_phases_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_phases = {
+            "## Full Implementation (1-2 weeks)",
+            "### Phase 1: Infrastructure (Days 1-2)",
+            "### Phase 6: Iterate & Refine (Days 6-10)",
+            "agentic_flows/quantum_nft_mint_orchestration.yaml",
+        }
+        if phases and not required_phases <= set(phases):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "implementation_phases_required_phrases must include Full "
+                    "Implementation/Phase 1/Phase 6/orchestration recipe path",
+                )
+            )
+
+    tools = list(inventory.get("implementation_tools_required_phrases", ()))
+    if len(tools) != len(set(tools)):
+        findings.append(
+            Finding(
+                schema_path, "implementation_tools_required_phrases must be unique"
+            )
+        )
+    if not tools:
+        findings.append(
+            Finding(
+                schema_path,
+                "implementation_tools_required_phrases must not be empty",
+            )
+        )
+    for phrase in tools:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "implementation_tools_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_tools = {
+            "## Tools & Software Checklist",
+            "Python 3.11+",
+            "Cirq (Python library)",
+            "Goose (agent orchestration framework)",
+        }
+        if tools and not required_tools <= set(tools):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "implementation_tools_required_phrases must include Tools "
+                    "Checklist/Python/Cirq/Goose",
+                )
+            )
+
+    success = list(inventory.get("implementation_success_required_phrases", ()))
+    if len(success) != len(set(success)):
+        findings.append(
+            Finding(
+                schema_path, "implementation_success_required_phrases must be unique"
+            )
+        )
+    if not success:
+        findings.append(
+            Finding(
+                schema_path,
+                "implementation_success_required_phrases must not be empty",
+            )
+        )
+    for phrase in success:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "implementation_success_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_success = {
+            "## Success Criteria",
+            "**By End of Week 1**:",
+            "## Common Issues & Solutions",
+            "## Next Steps",
+        }
+        if success and not required_success <= set(success):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "implementation_success_required_phrases must include Success "
+                    "Criteria/Week 1/Common Issues/Next Steps",
                 )
             )
 
@@ -5235,6 +5414,66 @@ def validate_prompt_usage(root: Path) -> list[Finding]:
     return findings
 
 
+
+def validate_implementation_phases(root: Path) -> list[Finding]:
+    rel = "IMPLEMENTATION-GUIDE.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "IMPLEMENTATION-GUIDE.md missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## Full Implementation (1-2 weeks)" not in text:
+        findings.append(Finding(rel, "missing Full Implementation section"))
+    if "### Phase 1: Infrastructure (Days 1-2)" not in text:
+        findings.append(Finding(rel, "missing Phase 1 Infrastructure section"))
+    if "### Phase 6: Iterate & Refine (Days 6-10)" not in text:
+        findings.append(Finding(rel, "missing Phase 6 Iterate section"))
+    for phrase in IMPLEMENTATION_PHASES_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(rel, f"missing locked implementation-phases phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_implementation_tools(root: Path) -> list[Finding]:
+    rel = "IMPLEMENTATION-GUIDE.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "IMPLEMENTATION-GUIDE.md missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## Tools & Software Checklist" not in text:
+        findings.append(Finding(rel, "missing Tools & Software Checklist section"))
+    for phrase in IMPLEMENTATION_TOOLS_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(rel, f"missing locked implementation-tools phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_implementation_success(root: Path) -> list[Finding]:
+    rel = "IMPLEMENTATION-GUIDE.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "IMPLEMENTATION-GUIDE.md missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## Success Criteria" not in text:
+        findings.append(Finding(rel, "missing Success Criteria section"))
+    if "## Common Issues & Solutions" not in text:
+        findings.append(Finding(rel, "missing Common Issues & Solutions section"))
+    if "## Next Steps" not in text:
+        findings.append(Finding(rel, "missing Next Steps section"))
+    for phrase in IMPLEMENTATION_SUCCESS_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(rel, f"missing locked implementation-success phrase: {phrase}")
+            )
+    return findings
+
+
 def validate_agent_task_template(root: Path) -> list[Finding]:
     rel = ".github/ISSUE_TEMPLATE/agent_task.md"
     path = root / rel
@@ -6415,6 +6654,9 @@ VALIDATORS: dict[str, ValidatorFn] = {
     "prompt-roles": validate_prompt_roles,
     "prompt-sections": validate_prompt_sections,
     "prompt-usage": validate_prompt_usage,
+    "implementation-phases": validate_implementation_phases,
+    "implementation-tools": validate_implementation_tools,
+    "implementation-success": validate_implementation_success,
     "security": validate_security_packaging,
     "contributing": validate_contributing_packaging,
     "contributing-who": validate_contributing_who,

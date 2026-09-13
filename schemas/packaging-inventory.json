@@ -1,5 +1,5 @@
 {
-  "version": 26,
+  "version": 27,
   "documented_agents": [
     "QuantumArchitectAgent",
     "BlockchainArchitectAgent",
@@ -311,7 +311,10 @@
     "hydration",
     "hydration-list-b",
     "implementation-guide",
+    "implementation-phases",
     "implementation-quickstart",
+    "implementation-success",
+    "implementation-tools",
     "inventory",
     "issue-metadata",
     "issue-names",
@@ -363,7 +366,7 @@
     "yaml-configs"
   ],
   "min_coverage_fail_under": 99,
-  "min_validator_count": 91,
+  "min_validator_count": 94,
   "required_paths": [
     "README.md",
     "LICENSE",
@@ -879,5 +882,39 @@
     "## Integration with AGENTS.md",
     "These prompts are **living documents**",
     "Risk tolerance thresholds change (quarterly)"
+  ],
+  "implementation_phases_required_phrases": [
+    "## Full Implementation (1-2 weeks)",
+    "### Phase 1: Infrastructure (Days 1-2)",
+    "### Phase 2: Define Specialist Agents (Days 2-3)",
+    "### Phase 3: Create Goose Recipes (Days 3-4)",
+    "### Phase 4: Set Up Scratchpad State Machine (Day 4)",
+    "### Phase 5: Test the Workflow (Days 5-6)",
+    "### Phase 6: Iterate & Refine (Days 6-10)",
+    "docs/agents/quantum-architect-prompt.md",
+    "agentic_flows/quantum_algorithm_design.yaml",
+    "agentic_flows/quantum_nft_mint_orchestration.yaml"
+  ],
+  "implementation_tools_required_phrases": [
+    "## Tools & Software Checklist",
+    "Python 3.11+",
+    "Node.js 20.x LTS",
+    "Docker Desktop",
+    "Cirq (Python library)",
+    "Hardhat (npm install -g hardhat)",
+    "liboqs (post-quantum crypto library)",
+    "Goose (agent orchestration framework)",
+    "Docker Compose (container orchestration)"
+  ],
+  "implementation_success_required_phrases": [
+    "## Success Criteria",
+    "**By End of Week 1**:",
+    "**By End of Week 2**:",
+    "**By End of Month**:",
+    "## Common Issues & Solutions",
+    "## FAQ",
+    "## Next Steps",
+    "postmortem.md has first entry",
+    "Deployment to Sepolia testnet"
   ]
 }
