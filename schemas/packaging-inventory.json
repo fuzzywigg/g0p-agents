@@ -1,5 +1,5 @@
 {
-  "version": 18,
+  "version": 19,
   "documented_agents": [
     "QuantumArchitectAgent",
     "BlockchainArchitectAgent",
@@ -252,11 +252,11 @@
   "hydration_required_sections": [
     "## PHASE 1: FINDINGS REPORT",
     "## PHASE 2: QUESTIONS",
-    "### LIST B \u2014 Requires Andrew (HITL)",
+    "### LIST B — Requires Andrew (HITL)",
     "## PHASE 3: RESOLVED (LIST A)",
     "## PHASE 4: ISSUES GENERATED",
     "## PHASE 5: Roadmap",
-    "## LIST B \u2014 Deferred to Andrew"
+    "## LIST B — Deferred to Andrew"
   ],
   "execution_summary_required_phrases": [
     "EXECUTION SUMMARY",
@@ -315,6 +315,9 @@
     "markdownlint",
     "negative-constraints",
     "postmortem",
+    "postmortem-fields",
+    "postmortem-intro",
+    "postmortem-next-steps",
     "pr-routing",
     "pr-template",
     "prompts",
@@ -339,7 +342,7 @@
     "yaml-configs"
   ],
   "min_coverage_fail_under": 99,
-  "min_validator_count": 67,
+  "min_validator_count": 70,
   "required_paths": [
     "README.md",
     "LICENSE",
@@ -460,7 +463,7 @@
     "Notion Master Index sync",
     "postmortem.md incident review"
   ],
-  "ci_workflow_name": "CI \u2014 Lint, Links & Manifests",
+  "ci_workflow_name": "CI — Lint, Links & Manifests",
   "ci_required_text_markers": [
     "download-actionlint.bash",
     "actionlint",
@@ -588,7 +591,7 @@
   ],
   "routing_matrix_rationale_phrases": [
     "Single-repo, syntax-level work",
-    "Deep coding, long-running, 60\u201390 min",
+    "Deep coding, long-running, 60–90 min",
     "Cross-system state, Notion truth",
     "UI-only settings",
     "Test automation",
@@ -658,11 +661,34 @@
     "YAML recipes, Docker Compose"
   ],
   "hydration_list_b_required_phrases": [
-    "### LIST B \u2014 Requires Andrew (HITL)",
+    "### LIST B — Requires Andrew (HITL)",
     "Is g0p-agents meant to be activated into a runnable codebase",
     "What is PikoClaw exactly",
     "Should actual Solidity, Python (Cirq), and React Native code be implemented",
     "What is the `agents-standard` repo",
     "Is there a Notion page for g0p-agents"
+  ],
+  "postmortem_intro_required_phrases": [
+    "Decision & Incident Log",
+    "Every significant decision, conflict, and resolution is logged here",
+    "Agents MUST log decisions after each workflow",
+    "Andrew reviews quarterly"
+  ],
+  "postmortem_field_required_phrases": [
+    "**Date**:",
+    "**Decision**:",
+    "**Agent**:",
+    "**Context**:",
+    "**LIST B Deferred**:",
+    "**Risk Level**:",
+    "**Files Created**:",
+    "**Blocked**:",
+    "**Next Steps**:"
+  ],
+  "postmortem_next_steps_required_phrases": [
+    "Andrew answers LIST B (B1–B5) in docs/agent-hydration.md",
+    "browser-claude or claude-cowork creates GitHub issues",
+    "claude-cowork creates/updates Notion page under Active Sprint Work",
+    "geryon scaffolds agentic_flows/ once B1 is answered"
   ]
 }
