@@ -33,9 +33,11 @@ Checks structural correctness of:
 - CI required GitHub Actions pins + workflow name + actionlint markers
 - CI link-check lychee args/fail + markdown-lint globs/config + job display names
 - CI runs-on ubuntu-latest + artifact paths/if-no-files-found + actionlint shell/id locks
+- CI setup-python cache: pip + ruff check scripts/tests command locks
 - pyproject project name + version/license/description/readme +
   ruff line-length/src/lint select locks
 - coverage show_missing/skip_empty/source + pytest addopts/testpaths/pythonpath locks
+- LICENSE MIT required phrase locks (header / grant / AS IS)
 - Dependabot directory set inventory lock (file untouched)
 - Issue template frontmatter name/about locks
 - README badge phrase locks
@@ -141,7 +143,7 @@ REQUIRED_ARCHIVE_DOCS = (
     "README.md",
 )
 
-INVENTORY_VERSION = 11
+INVENTORY_VERSION = 12
 CURSOR_ENVIRONMENT_NAME = "g0p-agents"
 DEPENDABOT_SCHEDULE_INTERVAL = "weekly"
 DEPENDABOT_DIRECTORIES: frozenset[str] = frozenset({"/"})
@@ -188,6 +190,13 @@ CI_ARTIFACT_PATHS: tuple[str, ...] = (
 )
 CI_ACTIONLINT_SHELL = "bash"
 CI_ACTIONLINT_STEP_ID = "get_actionlint"
+CI_SETUP_PYTHON_CACHE = "pip"
+CI_RUFF_CHECK_COMMAND = "ruff check scripts tests"
+LICENSE_REQUIRED_PHRASES: tuple[str, ...] = (
+    "MIT License",
+    "Permission is hereby granted",
+    'THE SOFTWARE IS PROVIDED "AS IS"',
+)
 PYPROJECT_NAME = "g0p-agents-validation"
 PYPROJECT_DESCRIPTION = (
     "Dev-only packaging validators for the g0p-agents docs archive "
@@ -510,7 +519,7 @@ SCRATCHPAD_STATUS_MARKERS: tuple[str, ...] = (
 SPECIALIST_AGENTS: tuple[str, ...] = DOCUMENTED_AGENTS[:-1]
 
 MIN_COVERAGE_FAIL_UNDER = 99
-MIN_VALIDATOR_COUNT = 46
+MIN_VALIDATOR_COUNT = 49
 
 
 @dataclass(frozen=True)
@@ -1082,6 +1091,18 @@ def validate_packaging_inventory(root: Path) -> list[Finding]:
     if tuple(inventory.get("coverage_source", ())) != COVERAGE_SOURCE:
         findings.append(_lock_mismatch(schema_path, "coverage_source"))
 
+    if inventory.get("ci_setup_python_cache") != CI_SETUP_PYTHON_CACHE:
+        findings.append(_lock_mismatch(schema_path, "ci_setup_python_cache"))
+
+    if inventory.get("ci_ruff_check_command") != CI_RUFF_CHECK_COMMAND:
+        findings.append(_lock_mismatch(schema_path, "ci_ruff_check_command"))
+
+    if (
+        tuple(inventory.get("license_required_phrases", ()))
+        != LICENSE_REQUIRED_PHRASES
+    ):
+        findings.append(_lock_mismatch(schema_path, "license_required_phrases"))
+
     expected_validator_names = tuple(sorted(VALIDATORS))
     if tuple(inventory.get("validator_names", ())) != expected_validator_names:
         findings.append(_lock_mismatch(schema_path, "validator_names"))
@@ -1396,6 +1417,41 @@ def _inventory_lock_consistency(
         findings.append(Finding(schema_path, "coverage_source must be unique"))
     if not coverage_source:
         findings.append(Finding(schema_path, "coverage_source must not be empty"))
+
+    setup_cache = inventory.get("ci_setup_python_cache")
+    if not isinstance(setup_cache, str) or not setup_cache.strip():
+        findings.append(
+            Finding(schema_path, "ci_setup_python_cache must be a non-empty string")
+        )
+
+    ruff_cmd = inventory.get("ci_ruff_check_command")
+    if not isinstance(ruff_cmd, str) or not ruff_cmd.strip():
+        findings.append(
+            Finding(schema_path, "ci_ruff_check_command must be a non-empty string")
+        )
+    elif "ruff" not in ruff_cmd:
+        findings.append(
+            Finding(schema_path, "ci_ruff_check_command must mention ruff")
+        )
+
+    license_phrases = list(inventory.get("license_required_phrases", ()))
+    if len(license_phrases) != len(set(license_phrases)):
+        findings.append(
+            Finding(schema_path, "license_required_phrases must be unique")
+        )
+    if not license_phrases:
+        findings.append(
+            Finding(schema_path, "license_required_phrases must not be empty")
+        )
+    for phrase in license_phrases:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "license_required_phrases entries must be non-empty strings",
+                )
+            )
+            break
 
     return findings
 
@@ -3518,6 +3574,127 @@ def validate_actionlint_shell(root: Path) -> list[Finding]:
     return findings
 
 
+def validate_ci_setup_python(root: Path) -> list[Finding]:
+    rel = ".github/workflows/ci.yml"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "CI workflow missing")]
+    data, parse_findings = parse_yaml_text(path.read_text(encoding="utf-8"), path=rel)
+    findings = list(parse_findings)
+    if data is None:
+        return findings
+    if not isinstance(data, dict):
+        return findings + [Finding(rel, "CI workflow root must be a mapping")]
+    jobs = data.get("jobs")
+    if not isinstance(jobs, dict):
+        return findings + [Finding(rel, "CI workflow missing jobs mapping")]
+    manifest = jobs.get("manifest-validate")
+    if not isinstance(manifest, dict):
+        return findings + [Finding(rel, "CI workflow missing manifest-validate job")]
+    steps = manifest.get("steps")
+    if not isinstance(steps, list):
+        return findings + [Finding(rel, "manifest-validate job missing steps")]
+    found_setup = False
+    for step in steps:
+        if not isinstance(step, dict):
+            continue
+        uses = str(step.get("uses", ""))
+        if "setup-python" not in uses:
+            continue
+        found_setup = True
+        with_block = step.get("with")
+        if not isinstance(with_block, dict):
+            findings.append(
+                Finding(rel, "setup-python step missing with: mapping")
+            )
+            continue
+        cache = with_block.get("cache")
+        if cache != CI_SETUP_PYTHON_CACHE:
+            findings.append(
+                Finding(
+                    rel,
+                    (
+                        "setup-python cache must be "
+                        f"{CI_SETUP_PYTHON_CACHE!r}, found {cache!r}"
+                    ),
+                )
+            )
+        cache_path = with_block.get("cache-dependency-path")
+        if cache_path != CI_CACHE_DEPENDENCY_PATH:
+            findings.append(
+                Finding(
+                    rel,
+                    (
+                        "setup-python cache-dependency-path must be "
+                        f"{CI_CACHE_DEPENDENCY_PATH!r}, found {cache_path!r}"
+                    ),
+                )
+            )
+    if not found_setup:
+        findings.append(
+            Finding(rel, "manifest-validate missing setup-python step")
+        )
+    return findings
+
+
+def validate_ci_ruff(root: Path) -> list[Finding]:
+    rel = ".github/workflows/ci.yml"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "CI workflow missing")]
+    data, parse_findings = parse_yaml_text(path.read_text(encoding="utf-8"), path=rel)
+    findings = list(parse_findings)
+    if data is None:
+        return findings
+    if not isinstance(data, dict):
+        return findings + [Finding(rel, "CI workflow root must be a mapping")]
+    jobs = data.get("jobs")
+    if not isinstance(jobs, dict):
+        return findings + [Finding(rel, "CI workflow missing jobs mapping")]
+    manifest = jobs.get("manifest-validate")
+    if not isinstance(manifest, dict):
+        return findings + [Finding(rel, "CI workflow missing manifest-validate job")]
+    steps = manifest.get("steps")
+    if not isinstance(steps, list):
+        return findings + [Finding(rel, "manifest-validate job missing steps")]
+    found_ruff = False
+    for step in steps:
+        if not isinstance(step, dict):
+            continue
+        run = step.get("run")
+        if not isinstance(run, str):
+            continue
+        if CI_RUFF_CHECK_COMMAND in run:
+            found_ruff = True
+            break
+    if not found_ruff:
+        findings.append(
+            Finding(
+                rel,
+                (
+                    "manifest-validate must run "
+                    f"{CI_RUFF_CHECK_COMMAND!r}"
+                ),
+            )
+        )
+    return findings
+
+
+def validate_license_mit(root: Path) -> list[Finding]:
+    rel = "LICENSE"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "LICENSE missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    for phrase in LICENSE_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(rel, f"LICENSE missing required MIT phrase: {phrase}")
+            )
+    return findings
+
+
 VALIDATORS: dict[str, ValidatorFn] = {
     "schemas": validate_schemas_meta,
     "inventory": validate_packaging_inventory,
@@ -3540,6 +3717,7 @@ VALIDATORS: dict[str, ValidatorFn] = {
     "markdownlint": validate_markdownlint,
     "requirements-dev": validate_requirements_dev,
     "license": validate_license,
+    "license-mit": validate_license_mit,
     "readme": validate_readme_packaging,
     "readme-badges": validate_readme_badges,
     "security": validate_security_packaging,
@@ -3553,6 +3731,8 @@ VALIDATORS: dict[str, ValidatorFn] = {
     "ci-runs-on": validate_ci_runs_on,
     "ci-artifacts": validate_ci_artifacts,
     "actionlint-shell": validate_actionlint_shell,
+    "ci-setup-python": validate_ci_setup_python,
+    "ci-ruff": validate_ci_ruff,
     "link-check": validate_link_check,
     "prompts": validate_documented_agent_prompts,
     "cross-docs": validate_cross_doc_agents,

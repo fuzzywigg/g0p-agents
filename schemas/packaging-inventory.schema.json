@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/fuzzywigg/g0p-agents/schemas/packaging-inventory.schema.json",
   "title": "Archive packaging inventory",
-  "description": "Locked packaging paths and historic agent/recipe inventory for this docs-only archive (v11).",
+  "description": "Locked packaging paths and historic agent/recipe inventory for this docs-only archive (v12).",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -118,12 +118,15 @@
     "contributing_branch_surfaces",
     "scratchpad_status_markers",
     "min_coverage_fail_under",
-    "min_validator_count"
+    "min_validator_count",
+    "ci_setup_python_cache",
+    "ci_ruff_check_command",
+    "license_required_phrases"
   ],
   "properties": {
     "version": {
       "type": "integer",
-      "minimum": 11
+      "minimum": 12
     },
     "required_paths": {
       "type": "array",
@@ -896,6 +899,23 @@
       }
     },
     "coverage_source": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "ci_setup_python_cache": {
+      "type": "string",
+      "minLength": 1
+    },
+    "ci_ruff_check_command": {
+      "type": "string",
+      "minLength": 1
+    },
+    "license_required_phrases": {
       "type": "array",
       "minItems": 1,
       "uniqueItems": true,

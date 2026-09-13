@@ -1,5 +1,5 @@
 {
-  "version": 11,
+  "version": 12,
   "documented_agents": [
     "QuantumArchitectAgent",
     "BlockchainArchitectAgent",
@@ -279,7 +279,9 @@
     "ci-actions",
     "ci-artifacts",
     "ci-job-names",
+    "ci-ruff",
     "ci-runs-on",
+    "ci-setup-python",
     "claude",
     "constitution",
     "contributing",
@@ -298,6 +300,7 @@
     "issue-names",
     "issue-templates",
     "license",
+    "license-mit",
     "link-check",
     "markdownlint",
     "negative-constraints",
@@ -318,7 +321,7 @@
     "yaml-configs"
   ],
   "min_coverage_fail_under": 99,
-  "min_validator_count": 46,
+  "min_validator_count": 49,
   "required_paths": [
     "README.md",
     "LICENSE",
@@ -499,5 +502,12 @@
   ],
   "coverage_source": [
     "scripts"
+  ],
+  "ci_setup_python_cache": "pip",
+  "ci_ruff_check_command": "ruff check scripts tests",
+  "license_required_phrases": [
+    "MIT License",
+    "Permission is hereby granted",
+    "THE SOFTWARE IS PROVIDED \"AS IS\""
   ]
 }

@@ -170,6 +170,9 @@ def _inventory_payload(**overrides: object) -> dict:
         "pytest_testpaths": list(vm.PYTEST_TESTPATHS),
         "pytest_pythonpath": list(vm.PYTEST_PYTHONPATH),
         "coverage_source": list(vm.COVERAGE_SOURCE),
+        "ci_setup_python_cache": vm.CI_SETUP_PYTHON_CACHE,
+        "ci_ruff_check_command": vm.CI_RUFF_CHECK_COMMAND,
+        "license_required_phrases": list(vm.LICENSE_REQUIRED_PHRASES),
         "validator_names": sorted(vm.VALIDATORS),
         "specialist_agents": list(vm.SPECIALIST_AGENTS),
         "schema_draft_uri": vm.SCHEMA_DRAFT_URI,
@@ -769,6 +772,9 @@ def test_validators_registry_covers_all_checks() -> None:
         "ci-runs-on",
         "ci-artifacts",
         "actionlint-shell",
+        "ci-setup-python",
+        "ci-ruff",
+        "license-mit",
         "link-check",
         "github-agent-desc",
     }
@@ -1528,113 +1534,129 @@ def test_packaging_inventory_v5_lock_fields(tmp_path: Path) -> None:
                 "scratchpad_status_markers",
                 list(vm.SCRATCHPAD_STATUS_MARKERS)[:-1] + ["INVENTED"],
             ),
-            ("version", 12),
-            ("min_coverage_fail_under", 90),
-            ("min_validator_count", 999),
-            ("dependabot_group_names", ["github_actions"]),
-            ("dependabot_directories", ["/apps"]),
-            ("ci_cancel_in_progress", False),
-            ("ci_fail_fast", True),
-            ("coverage_branch", False),
-            ("license_copyright_marker", "Copyright (c) 1999 Wrong"),
-            (
-                "cursor_install_required_refs",
-                list(vm.CURSOR_INSTALL_REQUIRED_REFS)[:-1] + ["invented.md"],
-            ),
-            (
-                "hydration_required_sections",
-                list(vm.HYDRATION_REQUIRED_SECTIONS)[:-1] + ["## Invented"],
-            ),
-            (
-                "execution_summary_required_phrases",
-                list(vm.EXECUTION_SUMMARY_REQUIRED_PHRASES)[:-1] + ["invented"],
-            ),
-            (
-                "implementation_guide_required_phrases",
-                list(vm.IMPLEMENTATION_GUIDE_REQUIRED_PHRASES)[:-1] + ["invented"],
-            ),
-            (
-                "recipe_titles",
-                {
-                    name: f"Invented {i}"
-                    for i, name in enumerate(sorted(vm.EXPECTED_RECIPE_NAMES), start=1)
-                },
-            ),
-            (
-                "ci_required_actions",
-                list(vm.CI_REQUIRED_ACTIONS)[:-1] + ["actions/checkout@v1"],
-            ),
-            ("pyproject_name", "wrong-package"),
-            (
-                "claude_required_phrases",
-                list(vm.CLAUDE_REQUIRED_PHRASES)[:-1] + ["invented"],
-            ),
-            (
-                "escalation_format_phrases",
-                list(vm.ESCALATION_FORMAT_PHRASES)[:-1] + ["Invented:"],
-            ),
-            (
-                "goose_docs_required_phrases",
-                list(vm.GOOSE_DOCS_REQUIRED_PHRASES)[:-1] + ["invented"],
-            ),
-            (
-                "issue_template_names",
-                {
-                    ".github/ISSUE_TEMPLATE/bug_report.md": "Wrong A",
-                    ".github/ISSUE_TEMPLATE/feature_request.md": "Wrong B",
-                    ".github/ISSUE_TEMPLATE/agent_task.md": "Wrong C",
-                },
-            ),
-            (
-                "issue_template_abouts",
-                {
-                    ".github/ISSUE_TEMPLATE/bug_report.md": "Wrong about A",
-                    ".github/ISSUE_TEMPLATE/feature_request.md": "Wrong about B",
-                    ".github/ISSUE_TEMPLATE/agent_task.md": "Wrong about C",
-                },
-            ),
-            (
-                "readme_badge_phrases",
-                list(vm.README_BADGE_PHRASES)[:-1] + ["invented-badge"],
-            ),
-            (
-                "quarterly_review_phrases",
-                list(vm.QUARTERLY_REVIEW_PHRASES)[:-1] + ["invented review"],
-            ),
-            ("ci_workflow_name", "Wrong CI Name"),
-            (
-                "ci_required_text_markers",
-                list(vm.CI_REQUIRED_TEXT_MARKERS)[:-1] + ["invented-marker"],
-            ),
-            (
-                "pyproject_ruff_lint_select",
-                list(vm.PYPROJECT_RUFF_LINT_SELECT)[:-1] + ["Z"],
-            ),
-            ("ci_link_check_args", "wrong-args"),
-            ("ci_link_check_fail", False),
-            ("ci_markdown_lint_globs", "*.txt"),
-            ("ci_markdown_lint_config", "wrong.yaml"),
-            ("ci_cache_dependency_path", "wrong.txt"),
-            (
-                "ci_job_display_names",
-                {
-                    "markdown-lint": "Wrong A",
-                    "link-check": "Wrong B",
-                    "actionlint": "Wrong C",
-                    "manifest-validate": "Wrong D",
-                },
-            ),
-            ("github_agent_description", "wrong description"),
-            ("pyproject_version", "9.9.9"),
-            ("pyproject_license_text", "Apache-2.0"),
-            ("pyproject_line_length", 80),
-            ("pyproject_ruff_src", ["elsewhere"]),
-            ("pytest_addopts", "-vv"),
-            ("coverage_show_missing", False),
-            ("coverage_skip_empty", False),
-            ("markdownlint_md013_tables", True),
-            ("markdownlint_md013_code_blocks", True),
-            ]
+                ("version", 13),
+                ("min_coverage_fail_under", 90),
+                ("min_validator_count", 999),
+                ("dependabot_group_names", ["github_actions"]),
+                ("dependabot_directories", ["/apps"]),
+                ("ci_cancel_in_progress", False),
+                ("ci_fail_fast", True),
+                ("coverage_branch", False),
+                ("license_copyright_marker", "Copyright (c) 1999 Wrong"),
+                (
+                    "cursor_install_required_refs",
+                    list(vm.CURSOR_INSTALL_REQUIRED_REFS)[:-1] + ["invented.md"],
+                ),
+                (
+                    "hydration_required_sections",
+                    list(vm.HYDRATION_REQUIRED_SECTIONS)[:-1] + ["## Invented"],
+                ),
+                (
+                    "execution_summary_required_phrases",
+                    list(vm.EXECUTION_SUMMARY_REQUIRED_PHRASES)[:-1] + ["invented"],
+                ),
+                (
+                    "implementation_guide_required_phrases",
+                    list(vm.IMPLEMENTATION_GUIDE_REQUIRED_PHRASES)[:-1] + ["invented"],
+                ),
+                (
+                    "recipe_titles",
+                    {
+                        name: f"Invented {i}"
+                        for i, name in enumerate(sorted(vm.EXPECTED_RECIPE_NAMES), start=1)
+                    },
+                ),
+                (
+                    "ci_required_actions",
+                    list(vm.CI_REQUIRED_ACTIONS)[:-1] + ["actions/checkout@v1"],
+                ),
+                ("pyproject_name", "wrong-package"),
+                (
+                    "claude_required_phrases",
+                    list(vm.CLAUDE_REQUIRED_PHRASES)[:-1] + ["invented"],
+                ),
+                (
+                    "escalation_format_phrases",
+                    list(vm.ESCALATION_FORMAT_PHRASES)[:-1] + ["Invented:"],
+                ),
+                (
+                    "goose_docs_required_phrases",
+                    list(vm.GOOSE_DOCS_REQUIRED_PHRASES)[:-1] + ["invented"],
+                ),
+                (
+                    "issue_template_names",
+                    {
+                        ".github/ISSUE_TEMPLATE/bug_report.md": "Wrong A",
+                        ".github/ISSUE_TEMPLATE/feature_request.md": "Wrong B",
+                        ".github/ISSUE_TEMPLATE/agent_task.md": "Wrong C",
+                    },
+                ),
+                (
+                    "issue_template_abouts",
+                    {
+                        ".github/ISSUE_TEMPLATE/bug_report.md": "Wrong about A",
+                        ".github/ISSUE_TEMPLATE/feature_request.md": "Wrong about B",
+                        ".github/ISSUE_TEMPLATE/agent_task.md": "Wrong about C",
+                    },
+                ),
+                (
+                    "readme_badge_phrases",
+                    list(vm.README_BADGE_PHRASES)[:-1] + ["invented-badge"],
+                ),
+                (
+                    "quarterly_review_phrases",
+                    list(vm.QUARTERLY_REVIEW_PHRASES)[:-1] + ["invented review"],
+                ),
+                ("ci_workflow_name", "Wrong CI Name"),
+                (
+                    "ci_required_text_markers",
+                    list(vm.CI_REQUIRED_TEXT_MARKERS)[:-1] + ["invented-marker"],
+                ),
+                (
+                    "pyproject_ruff_lint_select",
+                    list(vm.PYPROJECT_RUFF_LINT_SELECT)[:-1] + ["Z"],
+                ),
+                ("ci_link_check_args", "wrong-args"),
+                ("ci_link_check_fail", False),
+                ("ci_markdown_lint_globs", "*.txt"),
+                ("ci_markdown_lint_config", "wrong.yaml"),
+                ("ci_cache_dependency_path", "wrong.txt"),
+                (
+                    "ci_job_display_names",
+                    {
+                        "markdown-lint": "Wrong A",
+                        "link-check": "Wrong B",
+                        "actionlint": "Wrong C",
+                        "manifest-validate": "Wrong D",
+                    },
+                ),
+                ("github_agent_description", "wrong description"),
+                ("pyproject_version", "9.9.9"),
+                ("pyproject_license_text", "Apache-2.0"),
+                ("pyproject_line_length", 80),
+                ("pyproject_ruff_src", ["elsewhere"]),
+                ("pytest_addopts", "-vv"),
+                ("coverage_show_missing", False),
+                ("coverage_skip_empty", False),
+                ("markdownlint_md013_tables", True),
+                ("markdownlint_md013_code_blocks", True),
+                ("ci_runs_on", "windows-latest"),
+                ("ci_artifact_if_no_files_found", "error"),
+                ("ci_artifact_paths", ["only.json"]),
+                ("ci_actionlint_shell", "pwsh"),
+                ("ci_actionlint_step_id", "wrong"),
+                ("pyproject_description", "wrong description"),
+                ("pyproject_readme", "WRONG.md"),
+                ("pytest_testpaths", ["elsewhere"]),
+                ("pytest_pythonpath", ["elsewhere"]),
+                ("coverage_source", ["elsewhere"]),
+                ("ci_setup_python_cache", "npm"),
+                ("ci_ruff_check_command", "ruff check elsewhere"),
+                (
+                    "license_required_phrases",
+                    list(vm.LICENSE_REQUIRED_PHRASES)[:-1] + ["invented"],
+                ),
+                ]
     for field, value in cases:
         inventory = _inventory_payload(**{field: value})
         # Keep install refs ⊆ required_paths when mutating either field.
@@ -2382,8 +2404,8 @@ def test_ci_workflow_v5_deepeners(tmp_path: Path) -> None:
 def test_live_v5_validators() -> None:
     assert vm.validate_bug_report_template(REPO_ROOT) == []
     assert vm.validate_feature_request_template(REPO_ROOT) == []
-    assert vm.INVENTORY_VERSION == 11
-    assert len(vm.VALIDATORS) == 46
+    assert vm.INVENTORY_VERSION == 12
+    assert len(vm.VALIDATORS) == 49
     assert vm.MIN_COVERAGE_FAIL_UNDER == 99
 
 
@@ -2392,7 +2414,7 @@ def test_live_v6_validators() -> None:
     assert vm.validate_postmortem_packaging(REPO_ROOT) == []
     assert vm.validate_gitignore_packaging(REPO_ROOT) == []
     assert vm.validate_negative_constraints(REPO_ROOT) == []
-    assert vm.INVENTORY_VERSION == 11
+    assert vm.INVENTORY_VERSION == 12
     assert len(vm.VALIDATORS) >= 43
     assert sorted(vm.VALIDATORS) == json.loads(
         (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
@@ -2403,7 +2425,7 @@ def test_live_v7_validators() -> None:
     assert vm.validate_hydration_report(REPO_ROOT) == []
     assert vm.validate_execution_summary(REPO_ROOT) == []
     assert vm.validate_implementation_guide(REPO_ROOT) == []
-    assert vm.INVENTORY_VERSION == 11
+    assert vm.INVENTORY_VERSION == 12
     assert len(vm.VALIDATORS) >= 43
     assert "Lock inventory" in vm.REQUIRED_MANIFEST_STEP_MARKERS
     assert "INVENTORY_VERSION" in vm.REQUIRED_MANIFEST_STEP_MARKERS
@@ -2424,9 +2446,9 @@ def test_live_v8_validators() -> None:
     assert vm.validate_claude_packaging(REPO_ROOT) == []
     assert vm.validate_recipe_titles(REPO_ROOT) == []
     assert vm.validate_ci_actions(REPO_ROOT) == []
-    assert vm.INVENTORY_VERSION == 11
-    assert len(vm.VALIDATORS) == 46
-    assert vm.MIN_VALIDATOR_COUNT == 46
+    assert vm.INVENTORY_VERSION == 12
+    assert len(vm.VALIDATORS) == 49
+    assert vm.MIN_VALIDATOR_COUNT == 49
     assert vm.PYPROJECT_NAME == "g0p-agents-validation"
     assert set(vm.DEPENDABOT_DIRECTORIES) == {"/"}
     assert dict(vm.RECIPE_TITLES) == json.loads(
@@ -2441,9 +2463,9 @@ def test_live_v9_validators() -> None:
     assert vm.validate_issue_template_names(REPO_ROOT) == []
     assert vm.validate_readme_badges(REPO_ROOT) == []
     assert vm.validate_quarterly_review(REPO_ROOT) == []
-    assert vm.INVENTORY_VERSION == 11
-    assert len(vm.VALIDATORS) == 46
-    assert vm.MIN_VALIDATOR_COUNT == 46
+    assert vm.INVENTORY_VERSION == 12
+    assert len(vm.VALIDATORS) == 49
+    assert vm.MIN_VALIDATOR_COUNT == 49
     assert vm.CI_WORKFLOW_NAME == "CI — Lint, Links & Manifests"
     assert vm.MARKDOWNLINT_MD025 is False
     assert vm.MARKDOWNLINT_MD033 is False
@@ -2469,9 +2491,9 @@ def test_live_v10_validators() -> None:
     assert vm.validate_link_check(REPO_ROOT) == []
     assert vm.validate_ci_job_names(REPO_ROOT) == []
     assert vm.validate_github_agent_description(REPO_ROOT) == []
-    assert vm.INVENTORY_VERSION == 11
-    assert len(vm.VALIDATORS) == 46
-    assert vm.MIN_VALIDATOR_COUNT == 46
+    assert vm.INVENTORY_VERSION == 12
+    assert len(vm.VALIDATORS) == 49
+    assert vm.MIN_VALIDATOR_COUNT == 49
     assert vm.CI_LINK_CHECK_ARGS == "--verbose --no-progress '**/*.md'"
     assert vm.CI_LINK_CHECK_FAIL is True
     assert vm.CI_MARKDOWN_LINT_GLOBS == "**/*.md"
@@ -3977,9 +3999,9 @@ def test_live_v11_validators() -> None:
     assert vm.validate_ci_runs_on(REPO_ROOT) == []
     assert vm.validate_ci_artifacts(REPO_ROOT) == []
     assert vm.validate_actionlint_shell(REPO_ROOT) == []
-    assert vm.INVENTORY_VERSION == 11
-    assert len(vm.VALIDATORS) == 46
-    assert vm.MIN_VALIDATOR_COUNT == 46
+    assert vm.INVENTORY_VERSION == 12
+    assert len(vm.VALIDATORS) == 49
+    assert vm.MIN_VALIDATOR_COUNT == 49
     assert vm.CI_RUNS_ON == "ubuntu-latest"
     assert vm.CI_ARTIFACT_IF_NO_FILES_FOUND == "warn"
     assert tuple(vm.CI_ARTIFACT_PATHS) == (
@@ -3998,7 +4020,7 @@ def test_live_v11_validators() -> None:
     inventory = json.loads(
         (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
     )
-    assert inventory["version"] == 11
+    assert inventory["version"] == 12
     assert inventory["ci_runs_on"] == vm.CI_RUNS_ON
     assert inventory["ci_artifact_paths"] == list(vm.CI_ARTIFACT_PATHS)
     assert inventory["ci_artifact_if_no_files_found"] == vm.CI_ARTIFACT_IF_NO_FILES_FOUND
@@ -4429,3 +4451,298 @@ def test_v11_ci_runs_on_artifacts_actionlint_shell_edge_cases(tmp_path: Path) ->
     assert any("pytest_testpaths" in f.message for f in findings)
     assert any("pytest_pythonpath" in f.message for f in findings)
     assert any("coverage_source" in f.message for f in findings)
+
+def test_live_v12_validators() -> None:
+    assert vm.validate_ci_setup_python(REPO_ROOT) == []
+    assert vm.validate_ci_ruff(REPO_ROOT) == []
+    assert vm.validate_license_mit(REPO_ROOT) == []
+    assert vm.INVENTORY_VERSION == 12
+    assert len(vm.VALIDATORS) == 49
+    assert vm.MIN_VALIDATOR_COUNT == 49
+    assert vm.CI_SETUP_PYTHON_CACHE == "pip"
+    assert vm.CI_RUFF_CHECK_COMMAND == "ruff check scripts tests"
+    assert "MIT License" in vm.LICENSE_REQUIRED_PHRASES
+    assert "Permission is hereby granted" in vm.LICENSE_REQUIRED_PHRASES
+    assert 'THE SOFTWARE IS PROVIDED "AS IS"' in vm.LICENSE_REQUIRED_PHRASES
+    inventory = json.loads(
+        (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
+    )
+    assert inventory["version"] == 12
+    assert inventory["ci_setup_python_cache"] == vm.CI_SETUP_PYTHON_CACHE
+    assert inventory["ci_ruff_check_command"] == vm.CI_RUFF_CHECK_COMMAND
+    assert inventory["license_required_phrases"] == list(vm.LICENSE_REQUIRED_PHRASES)
+    assert inventory["min_validator_count"] == 49
+    assert sorted(vm.VALIDATORS) == inventory["validator_names"]
+    assert "ci-setup-python" in vm.VALIDATORS
+    assert "ci-ruff" in vm.VALIDATORS
+    assert "license-mit" in vm.VALIDATORS
+
+
+def test_v12_ci_setup_python_ruff_license_mit_edge_cases(tmp_path: Path) -> None:
+    assert any("missing" in f.message for f in vm.validate_ci_setup_python(tmp_path))
+    assert any("missing" in f.message for f in vm.validate_ci_ruff(tmp_path))
+    assert any("missing" in f.message for f in vm.validate_license_mit(tmp_path))
+
+    _write(tmp_path / "LICENSE", "Not a real license\n")
+    findings = vm.validate_license_mit(tmp_path)
+    assert any("missing required MIT phrase" in f.message for f in findings)
+
+    _write(
+        tmp_path / "LICENSE",
+        "\n".join(
+            [
+                "MIT License",
+                "Permission is hereby granted",
+                'THE SOFTWARE IS PROVIDED "AS IS"',
+                "",
+            ]
+        ),
+    )
+    assert vm.validate_license_mit(tmp_path) == []
+
+    _write(tmp_path / ".github" / "workflows" / "ci.yml", "- just-a-list\n")
+    assert any(
+        "root must be a mapping" in f.message
+        for f in vm.validate_ci_setup_python(tmp_path)
+    )
+    assert any(
+        "root must be a mapping" in f.message for f in vm.validate_ci_ruff(tmp_path)
+    )
+
+    _write(tmp_path / ".github" / "workflows" / "ci.yml", "null\n")
+    assert vm.validate_ci_setup_python(tmp_path) == []
+    assert vm.validate_ci_ruff(tmp_path) == []
+
+    _write(tmp_path / ".github" / "workflows" / "ci.yml", "name: only\n")
+    assert any(
+        "missing jobs mapping" in f.message
+        for f in vm.validate_ci_setup_python(tmp_path)
+    )
+    assert any(
+        "missing jobs mapping" in f.message for f in vm.validate_ci_ruff(tmp_path)
+    )
+
+    _write(
+        tmp_path / ".github" / "workflows" / "ci.yml",
+        "\n".join(
+            [
+                "name: CI",
+                "jobs:",
+                "  other:",
+                "    runs-on: ubuntu-latest",
+                "",
+            ]
+        ),
+    )
+    assert any(
+        "missing manifest-validate job" in f.message
+        for f in vm.validate_ci_setup_python(tmp_path)
+    )
+    assert any(
+        "missing manifest-validate job" in f.message
+        for f in vm.validate_ci_ruff(tmp_path)
+    )
+
+    _write(
+        tmp_path / ".github" / "workflows" / "ci.yml",
+        "\n".join(
+            [
+                "name: CI",
+                "jobs:",
+                "  manifest-validate:",
+                "    runs-on: ubuntu-latest",
+                "",
+            ]
+        ),
+    )
+    assert any(
+        "manifest-validate job missing steps" in f.message
+        for f in vm.validate_ci_setup_python(tmp_path)
+    )
+    assert any(
+        "manifest-validate job missing steps" in f.message
+        for f in vm.validate_ci_ruff(tmp_path)
+    )
+
+    _write(
+        tmp_path / ".github" / "workflows" / "ci.yml",
+        "\n".join(
+            [
+                "name: CI",
+                "jobs:",
+                "  manifest-validate:",
+                "    runs-on: ubuntu-latest",
+                "    steps:",
+                "      - not-a-mapping",
+                "      - uses: actions/setup-python@v5",
+                "        with: not-a-mapping",
+                "      - run: echo no ruff",
+                "",
+            ]
+        ),
+    )
+    findings = vm.validate_ci_setup_python(tmp_path)
+    assert any("setup-python step missing with" in f.message for f in findings)
+    findings = vm.validate_ci_ruff(tmp_path)
+    assert any("must run" in f.message for f in findings)
+
+    _write(
+        tmp_path / ".github" / "workflows" / "ci.yml",
+        "\n".join(
+            [
+                "name: CI",
+                "jobs:",
+                "  manifest-validate:",
+                "    runs-on: ubuntu-latest",
+                "    steps:",
+                "      - uses: actions/setup-python@v5",
+                "        with:",
+                "          cache: npm",
+                "          cache-dependency-path: wrong.txt",
+                f"      - run: {vm.CI_RUFF_CHECK_COMMAND}",
+                "",
+            ]
+        ),
+    )
+    findings = vm.validate_ci_setup_python(tmp_path)
+    assert any("setup-python cache must be" in f.message for f in findings)
+    assert any(
+        "setup-python cache-dependency-path must be" in f.message for f in findings
+    )
+    assert vm.validate_ci_ruff(tmp_path) == []
+
+    _write(
+        tmp_path / ".github" / "workflows" / "ci.yml",
+        "\n".join(
+            [
+                "name: CI",
+                "jobs:",
+                "  manifest-validate:",
+                "    runs-on: ubuntu-latest",
+                "    steps:",
+                "      - run: echo no setup-python",
+                f"      - run: {vm.CI_RUFF_CHECK_COMMAND}",
+                "",
+            ]
+        ),
+    )
+    findings = vm.validate_ci_setup_python(tmp_path)
+    assert any("missing setup-python step" in f.message for f in findings)
+
+    _write(
+        tmp_path / ".github" / "workflows" / "ci.yml",
+        "\n".join(
+            [
+                "name: CI",
+                "jobs:",
+                "  manifest-validate:",
+                "    runs-on: ubuntu-latest",
+                "    steps:",
+                "      - uses: actions/setup-python@v5",
+                "        with:",
+                f"          cache: {vm.CI_SETUP_PYTHON_CACHE}",
+                f"          cache-dependency-path: {vm.CI_CACHE_DEPENDENCY_PATH}",
+                f"      - run: {vm.CI_RUFF_CHECK_COMMAND}",
+                "",
+            ]
+        ),
+    )
+    assert vm.validate_ci_setup_python(tmp_path) == []
+    assert vm.validate_ci_ruff(tmp_path) == []
+
+    # YAML parse error path (data None with findings)
+    _write(tmp_path / ".github" / "workflows" / "ci.yml", ":\n  - bad\n")
+    assert any("YAML parse error" in f.message for f in vm.validate_ci_setup_python(tmp_path))
+    assert any("YAML parse error" in f.message for f in vm.validate_ci_ruff(tmp_path))
+
+    _copy_schemas(tmp_path)
+    inventory = json.loads(
+        (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
+    )
+
+    blank_cache = dict(inventory)
+    blank_cache["ci_setup_python_cache"] = "  "
+    findings = vm._inventory_lock_consistency(
+        blank_cache, schema_path="schemas/packaging-inventory.json"
+    )
+    assert any(
+        "ci_setup_python_cache must be a non-empty string" in f.message
+        for f in findings
+    )
+
+    blank_ruff = dict(inventory)
+    blank_ruff["ci_ruff_check_command"] = ""
+    findings = vm._inventory_lock_consistency(
+        blank_ruff, schema_path="schemas/packaging-inventory.json"
+    )
+    assert any(
+        "ci_ruff_check_command must be a non-empty string" in f.message
+        for f in findings
+    )
+
+    no_ruff = dict(inventory)
+    no_ruff["ci_ruff_check_command"] = "lint everything"
+    findings = vm._inventory_lock_consistency(
+        no_ruff, schema_path="schemas/packaging-inventory.json"
+    )
+    assert any(
+        "ci_ruff_check_command must mention ruff" in f.message for f in findings
+    )
+
+    empty_lic = dict(inventory)
+    empty_lic["license_required_phrases"] = []
+    findings = vm._inventory_lock_consistency(
+        empty_lic, schema_path="schemas/packaging-inventory.json"
+    )
+    assert any(
+        "license_required_phrases must not be empty" in f.message for f in findings
+    )
+
+    dup_lic = dict(inventory)
+    dup_lic["license_required_phrases"] = ["MIT License", "MIT License"]
+    findings = vm._inventory_lock_consistency(
+        dup_lic, schema_path="schemas/packaging-inventory.json"
+    )
+    assert any(
+        "license_required_phrases must be unique" in f.message for f in findings
+    )
+
+    blank_phrase = dict(inventory)
+    blank_phrase["license_required_phrases"] = ["MIT License", "  "]
+    findings = vm._inventory_lock_consistency(
+        blank_phrase, schema_path="schemas/packaging-inventory.json"
+    )
+    assert any(
+        "license_required_phrases entries must be non-empty strings" in f.message
+        for f in findings
+    )
+
+    non_str_phrase = dict(inventory)
+    non_str_phrase["license_required_phrases"] = ["MIT License", 42]
+    findings = vm._inventory_lock_consistency(
+        non_str_phrase, schema_path="schemas/packaging-inventory.json"
+    )
+    assert any(
+        "license_required_phrases entries must be non-empty strings" in f.message
+        for f in findings
+    )
+
+    for rel in _inventory_payload()["required_paths"]:
+        target = tmp_path / rel
+        target.parent.mkdir(parents=True, exist_ok=True)
+        if not target.exists():
+            target.write_text("ok\n", encoding="utf-8")
+    (tmp_path / "schemas" / "packaging-inventory.json").write_text(
+        json.dumps(
+            _inventory_payload(
+                ci_setup_python_cache="npm",
+                ci_ruff_check_command="ruff check elsewhere",
+                license_required_phrases=["Wrong License"],
+            )
+        ),
+        encoding="utf-8",
+    )
+    findings = vm.validate_packaging_inventory(tmp_path)
+    assert any("ci_setup_python_cache" in f.message for f in findings)
+    assert any("ci_ruff_check_command" in f.message for f in findings)
+    assert any("license_required_phrases" in f.message for f in findings)

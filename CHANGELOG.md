@@ -10,6 +10,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Packaging inventory **v12** deepeners (post-#29): `ci-setup-python`, `ci-ruff`,
+  `license-mit` validators; CI setup-python `cache: pip` +
+  `cache-dependency-path` structured locks; `ruff check scripts tests` CI
+  command lock; LICENSE MIT phrase locks (header / grant / AS IS); consistency
+  deepeners for `ci_setup_python_cache` / `ci_ruff_check_command` /
+  `license_required_phrases` (49 total; historic four only)
+
 - Packaging inventory **v11** deepeners (post-#28): `ci-runs-on`, `ci-artifacts`,
   `actionlint-shell` validators; CI `runs-on` ubuntu-latest + artifact
   paths/if-no-files-found + actionlint shell/step-id locks; pyproject
