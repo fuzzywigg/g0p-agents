@@ -45,8 +45,10 @@ recipe-titles/ci-actions/issue-names/readme-badges/quarterly-review/link-check/
 ci-job-names/github-agent-desc/ci-runs-on/ci-artifacts/
 actionlint-shell/ci-setup-python/ci-ruff/license-mit/ci-pip-install/ci-pip-check/
 ci-pytest/state-residency/key-files/pr-routing/routing-matrix/repo-identity/
-escalation-format/routing-rationales/claude-metadata/escalation-usage/security-supported/security-reporting/security-standards/implementation-quickstart/execution-specialists/hydration-list-b, constitution and routing
-and negative-constraint surfaces,
+escalation-format/routing-rationales/claude-metadata/escalation-usage/
+security-supported/security-reporting/security-standards/
+implementation-quickstart/execution-specialists/hydration-list-b, constitution
+and routing and negative-constraint surfaces,
 bug/feature/agent-task template headings and name/about locks, prompt
 escalation locks, CI matrix permissions/fail-fast/artifact naming/action
 pins/workflow name/job display names/lychee args, and locked four-agent
