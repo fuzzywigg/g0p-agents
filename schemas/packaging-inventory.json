@@ -1,5 +1,5 @@
 {
-  "version": 22,
+  "version": 23,
   "documented_agents": [
     "QuantumArchitectAgent",
     "BlockchainArchitectAgent",
@@ -324,7 +324,10 @@
     "postmortem-fields",
     "postmortem-intro",
     "postmortem-next-steps",
+    "pr-acceptance",
+    "pr-changes",
     "pr-routing",
+    "pr-summary",
     "pr-template",
     "prompts",
     "pyproject",
@@ -351,7 +354,7 @@
     "yaml-configs"
   ],
   "min_coverage_fail_under": 99,
-  "min_validator_count": 79,
+  "min_validator_count": 82,
   "required_paths": [
     "README.md",
     "LICENSE",
@@ -428,8 +431,8 @@
   ],
   "ci_required_actions": [
     "actions/checkout@v7",
-    "actions/setup-python@v5",
-    "actions/upload-artifact@v4",
+    "actions/setup-python@v7",
+    "actions/upload-artifact@v7",
     "DavidAnson/markdownlint-cli2-action@v24",
     "lycheeverse/lychee-action@v2"
   ],
@@ -762,5 +765,22 @@
     "One approval required",
     "## Governance",
     "require Andrew approval"
+  ],
+  "pr_summary_required_phrases": [
+    "# Summary",
+    "One sentence: what does this PR accomplish?",
+    "## Problem",
+    "Closes #N"
+  ],
+  "pr_changes_required_phrases": [
+    "## Changes",
+    "List of files changed and what was done"
+  ],
+  "pr_acceptance_required_phrases": [
+    "## Acceptance Criteria",
+    "Copy from the linked issue",
+    "- [ ]",
+    "## Notes for Reviewer",
+    "Anything Andrew or the reviewing agent should know"
   ]
 }

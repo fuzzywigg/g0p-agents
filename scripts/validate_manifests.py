@@ -49,6 +49,7 @@ Checks structural correctness of:
 - postmortem.md intro / Decision field / Next Steps surface locks
 - agentic_flows/scratchpad.txt intro / format-legend / task-meta locks
 - GitHub issue template metadata / routing-field / bug-repro locks
+- PR template Summary/Problem / Changes / Acceptance+Notes instructional locks
 - pyproject project name + version/license/description/readme +
   ruff line-length/src/lint select locks
 - coverage show_missing/skip_empty/source + exact fail_under +
@@ -159,7 +160,7 @@ REQUIRED_ARCHIVE_DOCS = (
     "README.md",
 )
 
-INVENTORY_VERSION = 22
+INVENTORY_VERSION = 23
 CURSOR_ENVIRONMENT_NAME = "g0p-agents"
 DEPENDABOT_SCHEDULE_INTERVAL = "weekly"
 DEPENDABOT_DIRECTORIES: frozenset[str] = frozenset({"/"})
@@ -175,8 +176,8 @@ CI_FAIL_FAST = False
 CI_WORKFLOW_NAME = "CI — Lint, Links & Manifests"
 CI_REQUIRED_ACTIONS: tuple[str, ...] = (
     "actions/checkout@v7",
-    "actions/setup-python@v5",
-    "actions/upload-artifact@v4",
+    "actions/setup-python@v7",
+    "actions/upload-artifact@v7",
     "DavidAnson/markdownlint-cli2-action@v24",
     "lycheeverse/lychee-action@v2",
 )
@@ -430,6 +431,23 @@ CONTRIBUTING_PR_REQUIRED_PHRASES: tuple[str, ...] = (
     "One approval required",
     "## Governance",
     "require Andrew approval",
+)
+PR_SUMMARY_REQUIRED_PHRASES: tuple[str, ...] = (
+    "# Summary",
+    "One sentence: what does this PR accomplish?",
+    "## Problem",
+    "Closes #N",
+)
+PR_CHANGES_REQUIRED_PHRASES: tuple[str, ...] = (
+    "## Changes",
+    "List of files changed and what was done",
+)
+PR_ACCEPTANCE_REQUIRED_PHRASES: tuple[str, ...] = (
+    "## Acceptance Criteria",
+    "Copy from the linked issue",
+    "- [ ]",
+    "## Notes for Reviewer",
+    "Anything Andrew or the reviewing agent should know",
 )
 LICENSE_REQUIRED_PHRASES: tuple[str, ...] = (
     "MIT License",
@@ -758,7 +776,7 @@ SCRATCHPAD_STATUS_MARKERS: tuple[str, ...] = (
 SPECIALIST_AGENTS: tuple[str, ...] = DOCUMENTED_AGENTS[:-1]
 
 MIN_COVERAGE_FAIL_UNDER = 99
-MIN_VALIDATOR_COUNT = 79
+MIN_VALIDATOR_COUNT = 82
 
 
 @dataclass(frozen=True)
@@ -1539,6 +1557,24 @@ def validate_packaging_inventory(root: Path) -> list[Finding]:
         != CONTRIBUTING_PR_REQUIRED_PHRASES
     ):
         findings.append(_lock_mismatch(schema_path, "contributing_pr_required_phrases"))
+
+    if (
+        tuple(inventory.get("pr_summary_required_phrases", ()))
+        != PR_SUMMARY_REQUIRED_PHRASES
+    ):
+        findings.append(_lock_mismatch(schema_path, "pr_summary_required_phrases"))
+
+    if (
+        tuple(inventory.get("pr_changes_required_phrases", ()))
+        != PR_CHANGES_REQUIRED_PHRASES
+    ):
+        findings.append(_lock_mismatch(schema_path, "pr_changes_required_phrases"))
+
+    if (
+        tuple(inventory.get("pr_acceptance_required_phrases", ()))
+        != PR_ACCEPTANCE_REQUIRED_PHRASES
+    ):
+        findings.append(_lock_mismatch(schema_path, "pr_acceptance_required_phrases"))
 
     expected_validator_names = tuple(sorted(VALIDATORS))
     if tuple(inventory.get("validator_names", ())) != expected_validator_names:
@@ -2771,6 +2807,100 @@ def _inventory_lock_consistency(
                     schema_path,
                     "contributing_pr_required_phrases must include PR Requirements, "
                     "CI pass gate, and Governance",
+                )
+            )
+
+    summary = list(inventory.get("pr_summary_required_phrases", ()))
+    if len(summary) != len(set(summary)):
+        findings.append(
+            Finding(schema_path, "pr_summary_required_phrases must be unique")
+        )
+    if not summary:
+        findings.append(
+            Finding(schema_path, "pr_summary_required_phrases must not be empty")
+        )
+    for phrase in summary:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "pr_summary_required_phrases entries must be non-empty strings",
+                )
+            )
+            break
+    else:
+        required_summary = {"# Summary", "## Problem", "Closes #N"}
+        if summary and not required_summary <= set(summary):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "pr_summary_required_phrases must include Summary, Problem, "
+                    "and Closes #N",
+                )
+            )
+
+    changes = list(inventory.get("pr_changes_required_phrases", ()))
+    if len(changes) != len(set(changes)):
+        findings.append(
+            Finding(schema_path, "pr_changes_required_phrases must be unique")
+        )
+    if not changes:
+        findings.append(
+            Finding(schema_path, "pr_changes_required_phrases must not be empty")
+        )
+    for phrase in changes:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "pr_changes_required_phrases entries must be non-empty strings",
+                )
+            )
+            break
+    else:
+        required_changes = {
+            "## Changes",
+            "List of files changed and what was done",
+        }
+        if changes and not required_changes <= set(changes):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "pr_changes_required_phrases must include Changes heading and "
+                    "files-changed instruction",
+                )
+            )
+
+    acceptance = list(inventory.get("pr_acceptance_required_phrases", ()))
+    if len(acceptance) != len(set(acceptance)):
+        findings.append(
+            Finding(schema_path, "pr_acceptance_required_phrases must be unique")
+        )
+    if not acceptance:
+        findings.append(
+            Finding(schema_path, "pr_acceptance_required_phrases must not be empty")
+        )
+    for phrase in acceptance:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "pr_acceptance_required_phrases entries must be non-empty strings",
+                )
+            )
+            break
+    else:
+        required_acceptance = {
+            "## Acceptance Criteria",
+            "- [ ]",
+            "## Notes for Reviewer",
+        }
+        if acceptance and not required_acceptance <= set(acceptance):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "pr_acceptance_required_phrases must include Acceptance Criteria, "
+                    "checkbox, and Notes for Reviewer",
                 )
             )
 
@@ -4448,6 +4578,61 @@ def validate_contributing_pr(root: Path) -> list[Finding]:
     return findings
 
 
+def validate_pr_summary(root: Path) -> list[Finding]:
+    rel = ".github/pull_request_template.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "PR template missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "# Summary" not in text:
+        findings.append(Finding(rel, "missing Summary heading"))
+    if "## Problem" not in text:
+        findings.append(Finding(rel, "missing Problem section"))
+    for phrase in PR_SUMMARY_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(rel, f"missing locked pr-summary phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_pr_changes(root: Path) -> list[Finding]:
+    rel = ".github/pull_request_template.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "PR template missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## Changes" not in text:
+        findings.append(Finding(rel, "missing Changes section"))
+    for phrase in PR_CHANGES_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(rel, f"missing locked pr-changes phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_pr_acceptance(root: Path) -> list[Finding]:
+    rel = ".github/pull_request_template.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "PR template missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## Acceptance Criteria" not in text:
+        findings.append(Finding(rel, "missing Acceptance Criteria section"))
+    if "## Notes for Reviewer" not in text:
+        findings.append(Finding(rel, "missing Notes for Reviewer section"))
+    for phrase in PR_ACCEPTANCE_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(rel, f"missing locked pr-acceptance phrase: {phrase}")
+            )
+    return findings
+
+
 def validate_agent_task_template(root: Path) -> list[Finding]:
     rel = ".github/ISSUE_TEMPLATE/agent_task.md"
     path = root / rel
@@ -5621,6 +5806,9 @@ VALIDATORS: dict[str, ValidatorFn] = {
     "contributing-who": validate_contributing_who,
     "contributing-branches": validate_contributing_branches,
     "contributing-pr": validate_contributing_pr,
+    "pr-summary": validate_pr_summary,
+    "pr-changes": validate_pr_changes,
+    "pr-acceptance": validate_pr_acceptance,
     "scratchpad": validate_scratchpad,
     "scratchpad-intro": validate_scratchpad_intro,
     "scratchpad-format": validate_scratchpad_format,
