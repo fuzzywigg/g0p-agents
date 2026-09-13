@@ -1,5 +1,5 @@
 {
-  "version": 24,
+  "version": 25,
   "documented_agents": [
     "QuantumArchitectAgent",
     "BlockchainArchitectAgent",
@@ -305,6 +305,9 @@
     "github-agents",
     "gitignore",
     "goose",
+    "goose-howto",
+    "goose-naming",
+    "goose-state-machine",
     "hydration",
     "hydration-list-b",
     "implementation-guide",
@@ -357,7 +360,7 @@
     "yaml-configs"
   ],
   "min_coverage_fail_under": 99,
-  "min_validator_count": 85,
+  "min_validator_count": 88,
   "required_paths": [
     "README.md",
     "LICENSE",
@@ -813,5 +816,32 @@
     ".cursor/environment.json",
     "## Manifest validation",
     "## License"
+  ],
+  "goose_howto_required_phrases": [
+    "## How to Use These Recipes",
+    "### Step 1: Individual Recipe (Single Agent)",
+    "goose run ./agentic_flows/quantum_algorithm_design.yaml",
+    "goose run ./agentic_flows/blockchain_contract_design.yaml",
+    "goose run ./agentic_flows/edge_security_implementation.yaml",
+    "### Step 2: Master Recipe (All Agents)",
+    "goose run ./agentic_flows/quantum_nft_mint_orchestration.yaml"
+  ],
+  "goose_state_machine_required_phrases": [
+    "## Scratchpad State Machine",
+    "./agentic_flows/scratchpad.txt",
+    "## Task: Design Quantum-Safe NFT Mint",
+    "Status: IN_PROGRESS",
+    "Current Owner: EdgeSecurityAgent",
+    "source of truth"
+  ],
+  "goose_naming_required_phrases": [
+    "## Recipe Naming Convention",
+    "[domain]_[action]_[target].yaml",
+    "quantum_algorithm_design.yaml",
+    "blockchain_contract_design.yaml",
+    "edge_security_implementation.yaml",
+    "## Adding New Recipes",
+    "Create new YAML file",
+    "Follow the structure"
   ]
 }

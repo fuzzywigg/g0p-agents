@@ -160,7 +160,7 @@ REQUIRED_ARCHIVE_DOCS = (
     "README.md",
 )
 
-INVENTORY_VERSION = 24
+INVENTORY_VERSION = 25
 CURSOR_ENVIRONMENT_NAME = "g0p-agents"
 DEPENDABOT_SCHEDULE_INTERVAL = "weekly"
 DEPENDABOT_DIRECTORIES: frozenset[str] = frozenset({"/"})
@@ -791,6 +791,33 @@ GOOSE_DOCS_REQUIRED_PHRASES: tuple[str, ...] = (
     "./agentic_flows/",
     "goose run",
 )
+GOOSE_HOWTO_REQUIRED_PHRASES: tuple[str, ...] = (
+    "## How to Use These Recipes",
+    "### Step 1: Individual Recipe (Single Agent)",
+    "goose run ./agentic_flows/quantum_algorithm_design.yaml",
+    "goose run ./agentic_flows/blockchain_contract_design.yaml",
+    "goose run ./agentic_flows/edge_security_implementation.yaml",
+    "### Step 2: Master Recipe (All Agents)",
+    "goose run ./agentic_flows/quantum_nft_mint_orchestration.yaml",
+)
+GOOSE_STATE_MACHINE_REQUIRED_PHRASES: tuple[str, ...] = (
+    "## Scratchpad State Machine",
+    "./agentic_flows/scratchpad.txt",
+    "## Task: Design Quantum-Safe NFT Mint",
+    "Status: IN_PROGRESS",
+    "Current Owner: EdgeSecurityAgent",
+    "source of truth",
+)
+GOOSE_NAMING_REQUIRED_PHRASES: tuple[str, ...] = (
+    "## Recipe Naming Convention",
+    "[domain]_[action]_[target].yaml",
+    "quantum_algorithm_design.yaml",
+    "blockchain_contract_design.yaml",
+    "edge_security_implementation.yaml",
+    "## Adding New Recipes",
+    "Create new YAML file",
+    "Follow the structure",
+)
 
 CONTRIBUTING_BRANCH_SURFACES: tuple[str, ...] = ("copilot", "geryon", "cursor")
 
@@ -804,7 +831,7 @@ SCRATCHPAD_STATUS_MARKERS: tuple[str, ...] = (
 SPECIALIST_AGENTS: tuple[str, ...] = DOCUMENTED_AGENTS[:-1]
 
 MIN_COVERAGE_FAIL_UNDER = 99
-MIN_VALIDATOR_COUNT = 85
+MIN_VALIDATOR_COUNT = 88
 
 
 @dataclass(frozen=True)
@@ -1621,6 +1648,27 @@ def validate_packaging_inventory(root: Path) -> list[Finding]:
         != README_CONTENTS_REQUIRED_PHRASES
     ):
         findings.append(_lock_mismatch(schema_path, "readme_contents_required_phrases"))
+
+
+    if (
+        tuple(inventory.get("goose_howto_required_phrases", ()))
+        != GOOSE_HOWTO_REQUIRED_PHRASES
+    ):
+        findings.append(_lock_mismatch(schema_path, "goose_howto_required_phrases"))
+
+    if (
+        tuple(inventory.get("goose_state_machine_required_phrases", ()))
+        != GOOSE_STATE_MACHINE_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "goose_state_machine_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("goose_naming_required_phrases", ()))
+        != GOOSE_NAMING_REQUIRED_PHRASES
+    ):
+        findings.append(_lock_mismatch(schema_path, "goose_naming_required_phrases"))
 
     expected_validator_names = tuple(sorted(VALIDATORS))
     if tuple(inventory.get("validator_names", ())) != expected_validator_names:
@@ -3048,6 +3096,109 @@ def _inventory_lock_consistency(
                     schema_path,
                     "readme_contents_required_phrases must include Contents/"
                     "Cloud agents/Manifest validation/License",
+                )
+            )
+
+
+    howto = list(inventory.get("goose_howto_required_phrases", ()))
+    if len(howto) != len(set(howto)):
+        findings.append(
+            Finding(schema_path, "goose_howto_required_phrases must be unique")
+        )
+    if not howto:
+        findings.append(
+            Finding(schema_path, "goose_howto_required_phrases must not be empty")
+        )
+    for phrase in howto:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "goose_howto_required_phrases entries must be non-empty strings",
+                )
+            )
+            break
+    else:
+        required_howto = {
+            "## How to Use These Recipes",
+            "### Step 1: Individual Recipe (Single Agent)",
+            "### Step 2: Master Recipe (All Agents)",
+        }
+        if howto and not required_howto <= set(howto):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "goose_howto_required_phrases must include How to Use/"
+                    "Individual/Master Recipe steps",
+                )
+            )
+
+    state = list(inventory.get("goose_state_machine_required_phrases", ()))
+    if len(state) != len(set(state)):
+        findings.append(
+            Finding(schema_path, "goose_state_machine_required_phrases must be unique")
+        )
+    if not state:
+        findings.append(
+            Finding(
+                schema_path, "goose_state_machine_required_phrases must not be empty"
+            )
+        )
+    for phrase in state:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "goose_state_machine_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_state = {
+            "## Scratchpad State Machine",
+            "./agentic_flows/scratchpad.txt",
+            "source of truth",
+        }
+        if state and not required_state <= set(state):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "goose_state_machine_required_phrases must include Scratchpad "
+                    "State Machine/scratchpad.txt/source of truth",
+                )
+            )
+
+    naming = list(inventory.get("goose_naming_required_phrases", ()))
+    if len(naming) != len(set(naming)):
+        findings.append(
+            Finding(schema_path, "goose_naming_required_phrases must be unique")
+        )
+    if not naming:
+        findings.append(
+            Finding(schema_path, "goose_naming_required_phrases must not be empty")
+        )
+    for phrase in naming:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "goose_naming_required_phrases entries must be non-empty strings",
+                )
+            )
+            break
+    else:
+        required_naming = {
+            "## Recipe Naming Convention",
+            "## Adding New Recipes",
+            "[domain]_[action]_[target].yaml",
+        }
+        if naming and not required_naming <= set(naming):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "goose_naming_required_phrases must include Recipe Naming "
+                    "Convention/Adding New Recipes/domain_action_target pattern",
                 )
             )
 
@@ -4825,6 +4976,57 @@ def validate_readme_contents(root: Path) -> list[Finding]:
     return findings
 
 
+def validate_goose_howto(root: Path) -> list[Finding]:
+    rel = "GOOSE-RECIPES.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "GOOSE-RECIPES.md missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    for phrase in GOOSE_HOWTO_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(rel, f"missing locked goose-howto phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_goose_state_machine(root: Path) -> list[Finding]:
+    rel = "GOOSE-RECIPES.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "GOOSE-RECIPES.md missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## Scratchpad State Machine" not in text:
+        findings.append(Finding(rel, "missing Scratchpad State Machine section"))
+    for phrase in GOOSE_STATE_MACHINE_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(rel, f"missing locked goose-state-machine phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_goose_naming(root: Path) -> list[Finding]:
+    rel = "GOOSE-RECIPES.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "GOOSE-RECIPES.md missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## Recipe Naming Convention" not in text:
+        findings.append(Finding(rel, "missing Recipe Naming Convention section"))
+    if "## Adding New Recipes" not in text:
+        findings.append(Finding(rel, "missing Adding New Recipes section"))
+    for phrase in GOOSE_NAMING_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(rel, f"missing locked goose-naming phrase: {phrase}")
+            )
+    return findings
+
+
 def validate_agent_task_template(root: Path) -> list[Finding]:
     rel = ".github/ISSUE_TEMPLATE/agent_task.md"
     path = root / rel
@@ -5999,6 +6201,9 @@ VALIDATORS: dict[str, ValidatorFn] = {
     "readme-honesty": validate_readme_honesty,
     "readme-historic": validate_readme_historic,
     "readme-contents": validate_readme_contents,
+    "goose-howto": validate_goose_howto,
+    "goose-state-machine": validate_goose_state_machine,
+    "goose-naming": validate_goose_naming,
     "security": validate_security_packaging,
     "contributing": validate_contributing_packaging,
     "contributing-who": validate_contributing_who,
