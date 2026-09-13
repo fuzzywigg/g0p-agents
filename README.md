@@ -42,8 +42,8 @@ Dependabot, markdownlint, scratchpad, pyproject tooling, inventory v9 locks
 (coverage gate 99%), PR/license/requirements/security/contributing/changelog/
 postmortem/gitignore/hydration/execution-summary/implementation-guide/claude/
 recipe-titles/ci-actions/issue-names/readme-badges/quarterly-review, constitution
-+ routing + negative-constraint surfaces, bug/feature/agent-task template
-headings + name/about locks, prompt escalation locks, CI matrix
+and routing and negative-constraint surfaces, bug/feature/agent-task template
+headings and name/about locks, prompt escalation locks, CI matrix
 permissions/fail-fast/artifact naming/action pins/workflow name, and locked
 four-agent cross-doc consistency):
 
