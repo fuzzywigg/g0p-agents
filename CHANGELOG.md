@@ -10,6 +10,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Packaging inventory **v5** deepeners (post-#21): specialist agents, schema
+  `$schema`/`$id` prefixes, CLAUDE required sections, contributing branch
+  surfaces, scratchpad status markers (DONE/PENDING/IN_PROGRESS/BLOCKED)
+- Coverage gate raised to **99%** (keeps `bug-template` / `feature-template`
+  validators from #21; no Dependabot edits)
+
 - Packaging inventory **v5** locks: bug/feature template headings, archive-doc /
   yaml-config sets, cursor env name, Dependabot weekly schedule, CI permissions /
   artifact prefix / PR branch, pyproject requires-python, markdownlint default,

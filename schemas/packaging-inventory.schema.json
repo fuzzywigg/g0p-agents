@@ -46,6 +46,12 @@
     "markdownlint_default",
     "scratchpad_required_phrases",
     "validator_names",
+    "specialist_agents",
+    "schema_draft_uri",
+    "schema_id_prefix",
+    "claude_required_sections",
+    "contributing_branch_surfaces",
+    "scratchpad_status_markers",
     "min_coverage_fail_under",
     "min_validator_count"
   ],
@@ -386,6 +392,53 @@
       "items": {
         "type": "string",
         "pattern": "^[a-z][a-z0-9-]*$"
+      }
+    },
+    "specialist_agents": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^[A-Z][A-Za-z0-9]*Agent$"
+      }
+    },
+    "schema_draft_uri": {
+      "type": "string",
+      "minLength": 1
+    },
+    "schema_id_prefix": {
+      "type": "string",
+      "minLength": 1
+    },
+    "claude_required_sections": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "contributing_branch_surfaces": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "pattern": "^[a-z][a-z0-9-]*$"
+      }
+    },
+    "scratchpad_status_markers": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "pattern": "^[A-Z][A-Z0-9_]*$"
       }
     }
   }
