@@ -126,23 +126,38 @@ REQUIRED_ARCHIVE_DOCS = (
     "README.md",
 )
 
-INVENTORY_VERSION = 6
+INVENTORY_VERSION = 7
 CURSOR_ENVIRONMENT_NAME = "g0p-agents"
 DEPENDABOT_SCHEDULE_INTERVAL = "weekly"
 DEPENDABOT_DIRECTORIES: frozenset[str] = frozenset({"/"})
 DEPENDABOT_ECOSYSTEMS: frozenset[str] = frozenset({"github-actions", "pip"})
+DEPENDABOT_GROUP_NAMES: frozenset[str] = frozenset({"github_actions", "python_dev"})
 CI_PERMISSIONS_CONTENTS = "read"
 CI_ARTIFACT_NAME_PREFIX = "manifest-validate-py"
 CI_PULL_REQUEST_BRANCH = "alpha"
 CI_CONCURRENCY_GROUP_PREFIX = "ci-"
 CI_ARTIFACT_UPLOAD_IF = "always()"
+CI_CANCEL_IN_PROGRESS = True
+CI_FAIL_FAST = False
 PYPROJECT_REQUIRES_PYTHON = ">=3.11"
 PYPROJECT_RUFF_TARGET_VERSION = "py311"
+COVERAGE_BRANCH = True
 MARKDOWNLINT_DEFAULT = True
 MARKDOWNLINT_MD013_LINE_LENGTH = 200
 GITHUB_AGENT_NAME = "Hydration"
 LICENSE_COPYRIGHT_HOLDER = "Andrew Pappas"
+LICENSE_COPYRIGHT_MARKER = "Copyright (c) 2026 Andrew Pappas"
 AGENTIC_FLOWS_ALLOWED_FILES: frozenset[str] = frozenset({"scratchpad.txt"})
+CURSOR_INSTALL_REQUIRED_REFS: tuple[str, ...] = (
+    "README.md",
+    "LICENSE",
+    "scripts/validate_manifests.py",
+    "schemas/packaging-inventory.json",
+    "schemas/packaging-inventory.schema.json",
+    "tests/test_validate_manifests.py",
+    "requirements-dev.txt",
+    "pyproject.toml",
+)
 
 SCRATCHPAD_REQUIRED_PHRASES = (
     "source of truth",
@@ -177,6 +192,8 @@ REQUIRED_MANIFEST_STEP_MARKERS = (
     "Smoke each",
     "--only",
     "junitxml",
+    "Lock inventory",
+    "INVENTORY_VERSION",
 )
 
 GITHUB_AGENT_FILES: tuple[str, ...] = (".github/agents/my-agent.agent.md",)
@@ -275,6 +292,29 @@ NEGATIVE_CONSTRAINT_PHRASES = (
     "Create public gists containing secrets or PII",
 )
 
+HYDRATION_REQUIRED_SECTIONS = (
+    "## PHASE 1: FINDINGS REPORT",
+    "## PHASE 2: QUESTIONS",
+    "### LIST B — Requires Andrew (HITL)",
+    "## PHASE 3: RESOLVED (LIST A)",
+    "## PHASE 4: ISSUES GENERATED",
+    "## PHASE 5: Roadmap",
+    "## LIST B — Deferred to Andrew",
+)
+
+EXECUTION_SUMMARY_REQUIRED_PHRASES = (
+    "EXECUTION SUMMARY",
+    "Your Four Specialist Agents",
+    "GOOSE-RECIPES.md",
+)
+
+IMPLEMENTATION_GUIDE_REQUIRED_PHRASES = (
+    "IMPLEMENTATION GUIDE",
+    "Quick Start",
+    "agentic_flows",
+    "goose run",
+)
+
 ISSUE_AGENT_TASK_HEADINGS: tuple[str, ...] = (
     "Problem",
     "Proposed Solution",
@@ -323,7 +363,7 @@ SCRATCHPAD_STATUS_MARKERS: tuple[str, ...] = (
 SPECIALIST_AGENTS: tuple[str, ...] = DOCUMENTED_AGENTS[:-1]
 
 MIN_COVERAGE_FAIL_UNDER = 99
-MIN_VALIDATOR_COUNT = 31
+MIN_VALIDATOR_COUNT = 34
 
 
 @dataclass(frozen=True)
@@ -681,6 +721,43 @@ def validate_packaging_inventory(root: Path) -> list[Finding]:
     if frozenset(inventory.get("agentic_flows_allowed_files", ())) != AGENTIC_FLOWS_ALLOWED_FILES:
         findings.append(_lock_mismatch(schema_path, "agentic_flows_allowed_files"))
 
+    if frozenset(inventory.get("dependabot_group_names", ())) != DEPENDABOT_GROUP_NAMES:
+        findings.append(_lock_mismatch(schema_path, "dependabot_group_names"))
+
+    if inventory.get("ci_cancel_in_progress") is not CI_CANCEL_IN_PROGRESS:
+        findings.append(_lock_mismatch(schema_path, "ci_cancel_in_progress"))
+
+    if inventory.get("ci_fail_fast") is not CI_FAIL_FAST:
+        findings.append(_lock_mismatch(schema_path, "ci_fail_fast"))
+
+    if inventory.get("coverage_branch") is not COVERAGE_BRANCH:
+        findings.append(_lock_mismatch(schema_path, "coverage_branch"))
+
+    if inventory.get("license_copyright_marker") != LICENSE_COPYRIGHT_MARKER:
+        findings.append(_lock_mismatch(schema_path, "license_copyright_marker"))
+
+    if (
+        tuple(inventory.get("cursor_install_required_refs", ()))
+        != CURSOR_INSTALL_REQUIRED_REFS
+    ):
+        findings.append(_lock_mismatch(schema_path, "cursor_install_required_refs"))
+
+    if tuple(inventory.get("hydration_required_sections", ())) != HYDRATION_REQUIRED_SECTIONS:
+        findings.append(_lock_mismatch(schema_path, "hydration_required_sections"))
+
+    if (
+        tuple(inventory.get("execution_summary_required_phrases", ()))
+        != EXECUTION_SUMMARY_REQUIRED_PHRASES
+    ):
+        findings.append(_lock_mismatch(schema_path, "execution_summary_required_phrases"))
+
+    if (
+        tuple(inventory.get("implementation_guide_required_phrases", ()))
+        != IMPLEMENTATION_GUIDE_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "implementation_guide_required_phrases")
+        )
 
     if tuple(inventory.get("specialist_agents", ())) != SPECIALIST_AGENTS:
         findings.append(_lock_mismatch(schema_path, "specialist_agents"))
@@ -795,6 +872,44 @@ def _inventory_lock_consistency(
                 "validator_names length below min_validator_count",
             )
         )
+
+    specialists = set(inventory.get("specialist_agents", ()))
+    if specialists | {"OrchestrationAgent"} != agents:
+        findings.append(
+            Finding(
+                schema_path,
+                "specialist_agents + OrchestrationAgent must equal documented_agents",
+            )
+        )
+    if "OrchestrationAgent" in specialists:
+        findings.append(
+            Finding(
+                schema_path,
+                "specialist_agents must not include OrchestrationAgent",
+            )
+        )
+    if orch in primaries and primaries.get(orch) != "OrchestrationAgent":
+        findings.append(
+            Finding(
+                schema_path,
+                "orchestration recipe primary agent must be OrchestrationAgent",
+            )
+        )
+
+    install_refs = set(inventory.get("cursor_install_required_refs", ()))
+    required_paths = set(inventory.get("required_paths", ()))
+    if install_refs and not install_refs <= required_paths:
+        findings.append(
+            Finding(
+                schema_path,
+                "cursor_install_required_refs must be subset of required_paths",
+            )
+        )
+
+    group_names = list(inventory.get("dependabot_group_names", ()))
+    if len(group_names) != len(set(group_names)):
+        findings.append(Finding(schema_path, "dependabot_group_names must be unique"))
+
     return findings
 
 
@@ -1115,6 +1230,15 @@ def validate_cursor_environment(root: Path) -> list[Finding]:
                 findings.append(
                     Finding(rel, f"install references missing file: {ref}")
                 )
+        for required_ref in CURSOR_INSTALL_REQUIRED_REFS:
+            marker = f"test -f {required_ref}"
+            if marker not in install:
+                findings.append(
+                    Finding(
+                        rel,
+                        f"install must reference required packaging path: {required_ref}",
+                    )
+                )
     return findings
 
 
@@ -1271,6 +1395,7 @@ def validate_dependabot(root: Path) -> list[Finding]:
             findings.append(
                 Finding(rel, f"missing required package-ecosystem: {required}")
             )
+    found_groups: set[str] = set()
     for item in updates:
         if not isinstance(item, dict):
             continue
@@ -1296,6 +1421,16 @@ def validate_dependabot(root: Path) -> list[Finding]:
                         ),
                     )
                 )
+        groups = item.get("groups")
+        if isinstance(groups, dict):
+            found_groups.update(str(name) for name in groups)
+        elif groups is not None:
+            findings.append(Finding(rel, "Dependabot groups must be a mapping"))
+    missing_groups = sorted(DEPENDABOT_GROUP_NAMES - found_groups)
+    for group_name in missing_groups:
+        findings.append(
+            Finding(rel, f"missing required Dependabot group: {group_name}")
+        )
     return findings
 
 
@@ -1378,6 +1513,13 @@ def validate_license(root: Path) -> list[Finding]:
             Finding(
                 rel,
                 f"LICENSE missing expected copyright holder {LICENSE_COPYRIGHT_HOLDER!r}",
+            )
+        )
+    if LICENSE_COPYRIGHT_MARKER not in text:
+        findings.append(
+            Finding(
+                rel,
+                f"LICENSE missing copyright marker: {LICENSE_COPYRIGHT_MARKER}",
             )
         )
     return findings
@@ -1478,6 +1620,19 @@ def validate_pyproject(root: Path) -> list[Finding]:
         findings.append(Finding(rel, "missing [tool.coverage]"))
         return findings
 
+    run = coverage.get("run")
+    if isinstance(run, dict):
+        branch = run.get("branch")
+        if branch is not COVERAGE_BRANCH:
+            findings.append(
+                Finding(
+                    rel,
+                    f"coverage run.branch must be {COVERAGE_BRANCH}, found {branch!r}",
+                )
+            )
+    else:
+        findings.append(Finding(rel, "missing [tool.coverage.run]"))
+
     report = coverage.get("report")
     if not isinstance(report, dict) or "fail_under" not in report:
         findings.append(Finding(rel, "missing [tool.coverage.report].fail_under"))
@@ -1562,9 +1717,15 @@ def validate_ci_workflow(root: Path) -> list[Finding]:
                     ),
                 )
             )
-        if concurrency.get("cancel-in-progress") is not True:
+        if concurrency.get("cancel-in-progress") is not CI_CANCEL_IN_PROGRESS:
             findings.append(
-                Finding(rel, "CI workflow concurrency.cancel-in-progress must be true")
+                Finding(
+                    rel,
+                    (
+                        "CI workflow concurrency.cancel-in-progress must be "
+                        f"{CI_CANCEL_IN_PROGRESS}"
+                    ),
+                )
             )
 
     jobs = data.get("jobs")
@@ -1649,11 +1810,14 @@ def validate_ci_workflow(root: Path) -> list[Finding]:
                 Finding(rel, "manifest-validate job must define a Python version matrix")
             )
         else:
-            if strategy.get("fail-fast") is not False:
+            if strategy.get("fail-fast") is not CI_FAIL_FAST:
                 findings.append(
                     Finding(
                         rel,
-                        "manifest-validate strategy.fail-fast must be false",
+                        (
+                            "manifest-validate strategy.fail-fast must be "
+                            f"{CI_FAIL_FAST}"
+                        ),
                     )
                 )
             matrix = strategy.get("matrix")
@@ -1977,6 +2141,80 @@ def validate_negative_constraints(root: Path) -> list[Finding]:
     return findings
 
 
+def validate_hydration_report(root: Path) -> list[Finding]:
+    rel = "docs/agent-hydration.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "hydration report missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    for section in HYDRATION_REQUIRED_SECTIONS:
+        if section not in text:
+            findings.append(Finding(rel, f"hydration missing required section: {section}"))
+    invented = sorted(agent_tokens(text) - set(DOCUMENTED_AGENTS))
+    if invented:
+        findings.append(
+            Finding(rel, f"invented or unknown agent token(s): {', '.join(invented)}")
+        )
+    return findings
+
+
+def validate_execution_summary(root: Path) -> list[Finding]:
+    rel = "EXECUTION-SUMMARY.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "EXECUTION-SUMMARY.md missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    for phrase in EXECUTION_SUMMARY_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(rel, f"EXECUTION-SUMMARY missing packaging phrase: {phrase}")
+            )
+    for agent in DOCUMENTED_AGENTS:
+        if agent not in text:
+            findings.append(
+                Finding(rel, f"EXECUTION-SUMMARY missing documented agent: {agent}")
+            )
+    invented = sorted(agent_tokens(text) - set(DOCUMENTED_AGENTS))
+    if invented:
+        findings.append(
+            Finding(rel, f"invented or unknown agent token(s): {', '.join(invented)}")
+        )
+    return findings
+
+
+def validate_implementation_guide(root: Path) -> list[Finding]:
+    rel = "IMPLEMENTATION-GUIDE.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "IMPLEMENTATION-GUIDE.md missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    for phrase in IMPLEMENTATION_GUIDE_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(
+                    rel,
+                    f"IMPLEMENTATION-GUIDE missing packaging phrase: {phrase}",
+                )
+            )
+    for agent in DOCUMENTED_AGENTS:
+        if agent not in text:
+            findings.append(
+                Finding(
+                    rel,
+                    f"IMPLEMENTATION-GUIDE missing documented agent: {agent}",
+                )
+            )
+    invented = sorted(agent_tokens(text) - set(DOCUMENTED_AGENTS))
+    if invented:
+        findings.append(
+            Finding(rel, f"invented or unknown agent token(s): {', '.join(invented)}")
+        )
+    return findings
+
+
 VALIDATORS: dict[str, ValidatorFn] = {
     "schemas": validate_schemas_meta,
     "inventory": validate_packaging_inventory,
@@ -2009,6 +2247,9 @@ VALIDATORS: dict[str, ValidatorFn] = {
     "postmortem": validate_postmortem_packaging,
     "gitignore": validate_gitignore_packaging,
     "negative-constraints": validate_negative_constraints,
+    "hydration": validate_hydration_report,
+    "execution-summary": validate_execution_summary,
+    "implementation-guide": validate_implementation_guide,
 }
 
 

@@ -10,6 +10,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Packaging inventory **v7** deepeners (post-#23): hydration / execution-summary /
+  implementation-guide validators; Dependabot group-name locks (file untouched);
+  CI cancel-in-progress / fail-fast inventory bools; coverage branch lock; Cursor
+  install required refs; license copyright marker; historic-four identity
+  consistency (specialists + OrchestrationAgent); CI step markers
+  `Lock inventory` / `INVENTORY_VERSION` (34 total; historic four only)
+
 - Packaging inventory **v6** locks (rebased onto #22): changelog/postmortem/gitignore/negative-
   constraint phrases, Dependabot ecosystem set, historic recipe version,
   markdownlint MD013 line_length, CI concurrency prefix + artifact `if`,
@@ -88,6 +95,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 
+- Inventory schema minimum version is **7**; CI validator-count gate raised to ≥34; coverage gate **99%**
 - Inventory schema minimum version is **6**; CI validator-count gate raised to ≥31; coverage gate **99%**
 - Inventory schema minimum version is **5**; CI validator-count gate raised to ≥27
 - Coverage gate raised to 97%; inventory schema minimum version is 3
