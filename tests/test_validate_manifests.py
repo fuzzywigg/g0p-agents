@@ -98,13 +98,17 @@ def _inventory_payload(**overrides: object) -> dict:
         "cursor_environment_name": vm.CURSOR_ENVIRONMENT_NAME,
         "dependabot_schedule_interval": vm.DEPENDABOT_SCHEDULE_INTERVAL,
         "dependabot_ecosystems": sorted(vm.DEPENDABOT_ECOSYSTEMS),
+        "dependabot_group_names": sorted(vm.DEPENDABOT_GROUP_NAMES),
         "ci_permissions_contents": vm.CI_PERMISSIONS_CONTENTS,
         "ci_artifact_name_prefix": vm.CI_ARTIFACT_NAME_PREFIX,
         "ci_pull_request_branch": vm.CI_PULL_REQUEST_BRANCH,
         "ci_concurrency_group_prefix": vm.CI_CONCURRENCY_GROUP_PREFIX,
         "ci_artifact_upload_if": vm.CI_ARTIFACT_UPLOAD_IF,
+        "ci_cancel_in_progress": vm.CI_CANCEL_IN_PROGRESS,
+        "ci_fail_fast": vm.CI_FAIL_FAST,
         "pyproject_requires_python": vm.PYPROJECT_REQUIRES_PYTHON,
         "pyproject_ruff_target_version": vm.PYPROJECT_RUFF_TARGET_VERSION,
+        "coverage_branch": vm.COVERAGE_BRANCH,
         "markdownlint_default": vm.MARKDOWNLINT_DEFAULT,
         "markdownlint_md013_line_length": vm.MARKDOWNLINT_MD013_LINE_LENGTH,
         "scratchpad_required_phrases": list(vm.SCRATCHPAD_REQUIRED_PHRASES),
@@ -113,9 +117,16 @@ def _inventory_payload(**overrides: object) -> dict:
         "gitignore_required_patterns": list(vm.GITIGNORE_REQUIRED_PATTERNS),
         "negative_constraint_phrases": list(vm.NEGATIVE_CONSTRAINT_PHRASES),
         "license_copyright_holder": vm.LICENSE_COPYRIGHT_HOLDER,
+        "license_copyright_marker": vm.LICENSE_COPYRIGHT_MARKER,
         "historic_recipe_version": vm.HISTORIC_RECIPE_VERSION,
         "github_agent_name": vm.GITHUB_AGENT_NAME,
         "agentic_flows_allowed_files": sorted(vm.AGENTIC_FLOWS_ALLOWED_FILES),
+        "cursor_install_required_refs": list(vm.CURSOR_INSTALL_REQUIRED_REFS),
+        "hydration_required_sections": list(vm.HYDRATION_REQUIRED_SECTIONS),
+        "execution_summary_required_phrases": list(vm.EXECUTION_SUMMARY_REQUIRED_PHRASES),
+        "implementation_guide_required_phrases": list(
+            vm.IMPLEMENTATION_GUIDE_REQUIRED_PHRASES
+        ),
         "validator_names": sorted(vm.VALIDATORS),
         "specialist_agents": list(vm.SPECIALIST_AGENTS),
         "schema_draft_uri": vm.SCHEMA_DRAFT_URI,
@@ -125,7 +136,7 @@ def _inventory_payload(**overrides: object) -> dict:
         "scratchpad_status_markers": list(vm.SCRATCHPAD_STATUS_MARKERS),
         "min_coverage_fail_under": vm.MIN_COVERAGE_FAIL_UNDER,
         "min_validator_count": vm.MIN_VALIDATOR_COUNT,
-        "required_paths": ["README.md"],
+        "required_paths": list(dict.fromkeys([*vm.CURSOR_INSTALL_REQUIRED_REFS, "README.md"])),
     }
     payload.update(overrides)
     return payload
@@ -694,6 +705,9 @@ def test_validators_registry_covers_all_checks() -> None:
         "postmortem",
         "gitignore",
         "negative-constraints",
+        "hydration",
+        "execution-summary",
+        "implementation-guide",
     }
     assert set(vm.VALIDATORS) == expected
     assert len(vm.VALIDATORS) == vm.MIN_VALIDATOR_COUNT
@@ -1168,6 +1182,7 @@ def _ci_yaml_with_matrix(versions: list[str], *, markers: list[str] | None = Non
         "pip check",
         "ruff check scripts tests",
         "python scripts/validate_manifests.py --list-validators",
+        "Lock inventory version and validator registry INVENTORY_VERSION",
         "Smoke each validator subset --only schemas",
         "python scripts/validate_manifests.py",
         "python -m pytest --cov=scripts --junitxml=pytest-junit.xml",
@@ -1447,18 +1462,93 @@ def test_packaging_inventory_v5_lock_fields(tmp_path: Path) -> None:
                 "scratchpad_status_markers",
                 list(vm.SCRATCHPAD_STATUS_MARKERS)[:-1] + ["INVENTED"],
             ),
-            ("version", 5),
+            ("version", 8),
             ("min_coverage_fail_under", 90),
             ("min_validator_count", 999),
+            ("dependabot_group_names", ["github_actions"]),
+            ("ci_cancel_in_progress", False),
+            ("ci_fail_fast", True),
+            ("coverage_branch", False),
+            ("license_copyright_marker", "Copyright (c) 1999 Wrong"),
+            (
+                "cursor_install_required_refs",
+                list(vm.CURSOR_INSTALL_REQUIRED_REFS)[:-1] + ["invented.md"],
+            ),
+            (
+                "hydration_required_sections",
+                list(vm.HYDRATION_REQUIRED_SECTIONS)[:-1] + ["## Invented"],
+            ),
+            (
+                "execution_summary_required_phrases",
+                list(vm.EXECUTION_SUMMARY_REQUIRED_PHRASES)[:-1] + ["invented"],
+            ),
+            (
+                "implementation_guide_required_phrases",
+                list(vm.IMPLEMENTATION_GUIDE_REQUIRED_PHRASES)[:-1] + ["invented"],
+            ),
         ]
     for field, value in cases:
         inventory = _inventory_payload(**{field: value})
+        # Keep install refs ⊆ required_paths when mutating either field.
+        if field == "cursor_install_required_refs":
+            inventory["required_paths"] = list(
+                dict.fromkeys([*inventory["required_paths"], *value])  # type: ignore[misc]
+            )
         (tmp_path / "schemas" / "packaging-inventory.json").write_text(
             json.dumps(inventory), encoding="utf-8"
         )
         findings = vm.validate_packaging_inventory(tmp_path)
         assert any(field in f.message for f in findings), field
 
+
+def test_dependabot_groups_not_mapping_and_duplicate_names(tmp_path: Path) -> None:
+    _copy_schemas(tmp_path)
+    _write(
+        tmp_path / ".github" / "dependabot.yml",
+        "\n".join(
+            [
+                "version: 2",
+                "updates:",
+                '  - package-ecosystem: "github-actions"',
+                '    directory: "/"',
+                "    schedule:",
+                '      interval: "weekly"',
+                "    groups: not-a-mapping",
+                '  - package-ecosystem: "pip"',
+                '    directory: "/"',
+                "    schedule:",
+                '      interval: "weekly"',
+                "    groups:",
+                "      python_dev:",
+                "        patterns:",
+                '          - "*"',
+                "",
+            ]
+        ),
+    )
+    findings = vm.validate_dependabot(tmp_path)
+    assert any("groups must be a mapping" in f.message for f in findings)
+
+    dup = _inventory_payload(
+        dependabot_group_names=["github_actions", "github_actions", "python_dev"],
+    )
+    # Bypass schema uniqueItems by writing after schema would reject — exercise
+    # consistency helper directly.
+    findings = vm._inventory_lock_consistency(dup, schema_path="schemas/packaging-inventory.json")
+    assert any("dependabot_group_names must be unique" in f.message for f in findings)
+
+
+def test_ci_upload_artifact_non_dict_step(tmp_path: Path) -> None:
+    yaml_text = _ci_yaml_with_matrix(list(vm.REQUIRED_PYTHON_VERSIONS))
+    # Inject a non-mapping step before upload-artifact so the loop continues.
+    yaml_text = yaml_text.replace(
+        "      - uses: actions/upload-artifact@v4",
+        "      - not-a-mapping\n      - uses: actions/upload-artifact@v4",
+    )
+    _write(tmp_path / ".github" / "workflows" / "ci.yml", yaml_text)
+    findings = vm.validate_ci_workflow(tmp_path)
+    # Still validates; non-dict step is skipped when scanning upload-artifact if.
+    assert isinstance(findings, list)
 
 def test_historic_goose_settings_and_extension_lock(tmp_path: Path) -> None:
     _write(
@@ -2114,13 +2204,13 @@ def test_ci_workflow_v5_deepeners(tmp_path: Path) -> None:
     yaml_text = yaml_text.replace("cancel-in-progress: true", "cancel-in-progress: false")
     _write(tmp_path / ".github" / "workflows" / "ci.yml", yaml_text)
     findings = vm.validate_ci_workflow(tmp_path)
-    assert any("cancel-in-progress must be true" in f.message for f in findings)
+    assert any("cancel-in-progress must be True" in f.message for f in findings)
 
     yaml_text = _ci_yaml_with_matrix(list(vm.REQUIRED_PYTHON_VERSIONS))
     yaml_text = yaml_text.replace("fail-fast: false", "fail-fast: true")
     _write(tmp_path / ".github" / "workflows" / "ci.yml", yaml_text)
     findings = vm.validate_ci_workflow(tmp_path)
-    assert any("fail-fast must be false" in f.message for f in findings)
+    assert any("fail-fast must be False" in f.message for f in findings)
 
     yaml_text = _ci_yaml_with_matrix(list(vm.REQUIRED_PYTHON_VERSIONS))
     yaml_text = yaml_text.replace("contents: read", "contents: write")
@@ -2144,8 +2234,8 @@ def test_ci_workflow_v5_deepeners(tmp_path: Path) -> None:
 def test_live_v5_validators() -> None:
     assert vm.validate_bug_report_template(REPO_ROOT) == []
     assert vm.validate_feature_request_template(REPO_ROOT) == []
-    assert vm.INVENTORY_VERSION == 6
-    assert len(vm.VALIDATORS) == 31
+    assert vm.INVENTORY_VERSION == 7
+    assert len(vm.VALIDATORS) == 34
     assert vm.MIN_COVERAGE_FAIL_UNDER == 99
 
 
@@ -2154,11 +2244,142 @@ def test_live_v6_validators() -> None:
     assert vm.validate_postmortem_packaging(REPO_ROOT) == []
     assert vm.validate_gitignore_packaging(REPO_ROOT) == []
     assert vm.validate_negative_constraints(REPO_ROOT) == []
-    assert vm.INVENTORY_VERSION == 6
-    assert len(vm.VALIDATORS) >= 31
+    assert vm.INVENTORY_VERSION == 7
+    assert len(vm.VALIDATORS) >= 34
     assert sorted(vm.VALIDATORS) == json.loads(
         (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
     )["validator_names"]
+
+
+def test_live_v7_validators() -> None:
+    assert vm.validate_hydration_report(REPO_ROOT) == []
+    assert vm.validate_execution_summary(REPO_ROOT) == []
+    assert vm.validate_implementation_guide(REPO_ROOT) == []
+    assert vm.INVENTORY_VERSION == 7
+    assert len(vm.VALIDATORS) == 34
+    assert vm.MIN_VALIDATOR_COUNT == 34
+    assert "Lock inventory" in vm.REQUIRED_MANIFEST_STEP_MARKERS
+    assert "INVENTORY_VERSION" in vm.REQUIRED_MANIFEST_STEP_MARKERS
+    assert vm.CI_CANCEL_IN_PROGRESS is True
+    assert vm.CI_FAIL_FAST is False
+    assert vm.COVERAGE_BRANCH is True
+    assert set(vm.DEPENDABOT_GROUP_NAMES) == {"github_actions", "python_dev"}
+    assert set(vm.CURSOR_INSTALL_REQUIRED_REFS) <= set(
+        json.loads(
+            (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(
+                encoding="utf-8"
+            )
+        )["required_paths"]
+    )
+
+
+def test_hydration_execution_implementation_edge_cases(tmp_path: Path) -> None:
+    assert any("missing" in f.message for f in vm.validate_hydration_report(tmp_path))
+    _write(tmp_path / "docs" / "agent-hydration.md", "# hydration\nInventedGhostAgent\n")
+    findings = vm.validate_hydration_report(tmp_path)
+    assert any("required section" in f.message for f in findings)
+    assert any("invented or unknown" in f.message for f in findings)
+
+    assert any("missing" in f.message for f in vm.validate_execution_summary(tmp_path))
+    _write(tmp_path / "EXECUTION-SUMMARY.md", "# summary\nInventedGhostAgent\n")
+    findings = vm.validate_execution_summary(tmp_path)
+    assert any("packaging phrase" in f.message for f in findings)
+    assert any("invented or unknown" in f.message for f in findings)
+
+    assert any(
+        "missing" in f.message for f in vm.validate_implementation_guide(tmp_path)
+    )
+    _write(tmp_path / "IMPLEMENTATION-GUIDE.md", "# guide\nInventedGhostAgent\n")
+    findings = vm.validate_implementation_guide(tmp_path)
+    assert any("packaging phrase" in f.message for f in findings)
+    assert any("invented or unknown" in f.message for f in findings)
+
+
+def test_dependabot_group_names_and_coverage_branch(tmp_path: Path) -> None:
+    _copy_schemas(tmp_path)
+    _write(
+        tmp_path / ".github" / "dependabot.yml",
+        "\n".join(
+            [
+                "version: 2",
+                "updates:",
+                '  - package-ecosystem: "github-actions"',
+                '    directory: "/"',
+                "    schedule:",
+                '      interval: "weekly"',
+                '  - package-ecosystem: "pip"',
+                '    directory: "/"',
+                "    schedule:",
+                '      interval: "weekly"',
+                "",
+            ]
+        ),
+    )
+    findings = vm.validate_dependabot(tmp_path)
+    assert any("missing required Dependabot group" in f.message for f in findings)
+
+    _write(
+        tmp_path / "pyproject.toml",
+        "\n".join(
+            [
+                "[project]",
+                'name = "demo"',
+                'version = "0.0.0"',
+                'requires-python = ">=3.11"',
+                "[tool.pytest.ini_options]",
+                "testpaths = [\"tests\"]",
+                "[tool.ruff]",
+                'target-version = "py311"',
+                "[tool.coverage.run]",
+                "branch = false",
+                "[tool.coverage.report]",
+                "fail_under = 99",
+                "",
+            ]
+        ),
+    )
+    findings = vm.validate_pyproject(tmp_path)
+    assert any("coverage run.branch must be True" in f.message for f in findings)
+
+
+def test_cursor_install_required_refs(tmp_path: Path) -> None:
+    _copy_schemas(tmp_path)
+    _write(
+        tmp_path / ".cursor" / "environment.json",
+        json.dumps({"name": "g0p-agents", "install": "test -f README.md"}),
+    )
+    _write(tmp_path / "README.md", "ok\n")
+    findings = vm.validate_cursor_environment(tmp_path)
+    assert any("install must reference required packaging path" in f.message for f in findings)
+
+
+def test_inventory_v7_consistency_locks(tmp_path: Path) -> None:
+    _copy_schemas(tmp_path)
+    # Pass schema (exactly 3 specialists) but include OrchestrationAgent illegally.
+    broken_specialists = _inventory_payload(
+        specialist_agents=[
+            "QuantumArchitectAgent",
+            "BlockchainArchitectAgent",
+            "OrchestrationAgent",
+        ],
+    )
+    (tmp_path / "schemas" / "packaging-inventory.json").write_text(
+        json.dumps(broken_specialists), encoding="utf-8"
+    )
+    findings = vm.validate_packaging_inventory(tmp_path)
+    assert any("must not include OrchestrationAgent" in f.message for f in findings)
+
+    broken_refs = _inventory_payload(
+        required_paths=["README.md"],
+        cursor_install_required_refs=list(vm.CURSOR_INSTALL_REQUIRED_REFS),
+    )
+    (tmp_path / "schemas" / "packaging-inventory.json").write_text(
+        json.dumps(broken_refs), encoding="utf-8"
+    )
+    findings = vm.validate_packaging_inventory(tmp_path)
+    assert any(
+        "cursor_install_required_refs must be subset" in f.message for f in findings
+    )
 
 
 def test_changelog_postmortem_gitignore_negative(tmp_path: Path) -> None:
@@ -2509,6 +2730,7 @@ def test_prompt_non_specialist_non_orchestration_skips(
     _write(tmp_path / "AGENT-PROMPTS.md", headings)
     findings = vm.validate_documented_agent_prompts(tmp_path)
     assert findings == []
+
 
 
 
