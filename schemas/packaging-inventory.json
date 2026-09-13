@@ -1,5 +1,5 @@
 {
-  "version": 25,
+  "version": 26,
   "documented_agents": [
     "QuantumArchitectAgent",
     "BlockchainArchitectAgent",
@@ -300,6 +300,9 @@
     "escalation-usage",
     "execution-specialists",
     "execution-summary",
+    "execution-technologies",
+    "execution-timeline",
+    "execution-workflow",
     "feature-template",
     "github-agent-desc",
     "github-agents",
@@ -360,7 +363,7 @@
     "yaml-configs"
   ],
   "min_coverage_fail_under": 99,
-  "min_validator_count": 88,
+  "min_validator_count": 91,
   "required_paths": [
     "README.md",
     "LICENSE",
@@ -843,5 +846,30 @@
     "## Adding New Recipes",
     "Create new YAML file",
     "Follow the structure"
+  ],
+  "execution_timeline_required_phrases": [
+    "## Implementation Timeline",
+    "### Week 1 Checklist",
+    "WSL2 development environment",
+    "Goose recipes created",
+    "### By End of Month",
+    "Testnet deployment on Sepolia",
+    "Ready for mainnet"
+  ],
+  "execution_technologies_required_phrases": [
+    "## Key Technologies (All Covered)",
+    "Google Cirq (circuit construction)",
+    "Qualtran (algorithm analysis)",
+    "Hardhat (development environment)",
+    "liboqs (post-quantum on mobile)",
+    "Goose (agent framework)",
+    "Scratchpad state machine (checkpoint tracking)"
+  ],
+  "execution_workflow_required_phrases": [
+    "## Workflow Overview",
+    "### Step 1: Single Agent Task",
+    "### Step 2: Multi-Agent Workflow",
+    "### Step 3: Escalation (If Conflict)",
+    "Agents Disagree \u2192 OrchestrationAgent Reviews"
   ]
 }

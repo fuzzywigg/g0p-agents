@@ -10,6 +10,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Execution summary **v26** deepeners (post-#52): `execution-timeline`,
+  `execution-technologies`, `execution-workflow` validators; EXECUTION-SUMMARY.md
+  Implementation Timeline / Week 1 / By End of Month locks, Key Technologies
+  (Cirq/Hardhat/liboqs/Goose) locks, and Workflow Overview single/multi/escalation
+  locks; consistency deepeners for `execution_timeline_required_phrases` /
+  `execution_technologies_required_phrases` / `execution_workflow_required_phrases`
+  (91 total; historic four only — execution-summary slice, not goose recipes,
+  README honesty, PR-template, contributing, issue-template, scratchpad,
+  postmortem, archive snapshot, security policy, routing/identity, or Dependabot)
+
 - Goose recipes **v25** deepeners (post-#51): `goose-howto`, `goose-state-machine`,
   `goose-naming` validators; GOOSE-RECIPES.md How to Use individual/master
   `goose run` path locks, Scratchpad State Machine locks, and Recipe Naming
