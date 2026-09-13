@@ -10,6 +10,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Goose recipes **v23** deepeners (post-#45): `goose-howto`,
+  `goose-state-machine`, `goose-naming` validators; GOOSE-RECIPES.md How to Use
+  individual/master `goose run` locks + Scratchpad State Machine locks + Recipe
+  Naming Convention / Adding New Recipes locks; consistency deepeners for
+  `goose_howto_required_phrases` / `goose_state_machine_required_phrases` /
+  `goose_naming_required_phrases` (82 total; historic four only — goose recipes
+  slice, not contributing, issue-template, scratchpad, postmortem, archive
+  snapshot, security policy, routing/identity, or Dependabot)
+
 - Contributing guide **v22** deepeners (post-#44): `contributing-who`,
   `contributing-branches`, `contributing-pr` validators; CONTRIBUTING.md Who Can
   Contribute locks + Branch Strategy table locks + PR Requirements / Governance
