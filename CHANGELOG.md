@@ -10,6 +10,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- `schemas/` + `scripts/validate_manifests.py` + `tests/` — structural validation for documented Goose recipes, Cursor `environment.json`, GitHub custom-agent frontmatter, and known YAML configs
+- `requirements-dev.txt` — jsonschema / PyYAML / pytest for local + CI validation
+- CI job `manifest-validate` (pytest + `scripts/validate_manifests.py`) in `.github/workflows/ci.yml`
 - `.cursor/environment.json` — minimal Cloud Agent install check (docs archive; no runtime services)
 - `.gitignore` — exclude local env/secret and editor noise
 - `LICENSE` — MIT License (copyright 2026 Andrew Pappas / smtp.eth)
@@ -26,6 +29,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 
+- CI workflow renamed to cover manifest validation in addition to markdown lint/link check
 - CI `pull_request` trigger targets `alpha` (default branch), not `main`
 - `CONTRIBUTING.md` branch strategy aligned with live default branch `alpha`
 

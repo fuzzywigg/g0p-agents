@@ -28,8 +28,18 @@ This repo is part of the FUZZYWIGG multi-agent ecosystem. Contributions come fro
 1. Branch off from `alpha` using the naming convention above
 2. Reference the issue number in the PR title when one exists: `Fix #12: Add LICENSE file`
 3. Fill in the PR template completely
-4. All CI checks must pass before merge
+4. All CI checks must pass before merge (markdown lint, link check, and manifest validate)
 5. One approval required (Andrew or designated reviewer)
+
+## Local validation (docs packaging)
+
+```bash
+python -m pip install -r requirements-dev.txt
+python scripts/validate_manifests.py
+python -m pytest -q
+```
+
+Do not invent new specialist agents in PRs; validate against the documented set in `AGENT-PROMPTS.md` / `GOOSE-RECIPES.md`.
 
 ## Issue Reporting
 
