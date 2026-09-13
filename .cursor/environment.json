@@ -1,4 +1,4 @@
 {
   "name": "g0p-agents",
-  "install": "test -f README.md && test -f LICENSE && test -f AGENTS-v2.2.md && test -f AGENT-PROMPTS.md && test -f .github/workflows/ci.yml"
+  "install": "test -f README.md && test -f LICENSE && test -f AGENTS-v2.2.md && test -f AGENT-PROMPTS.md && test -f GOOSE-RECIPES.md && test -f .github/workflows/ci.yml && test -f scripts/validate_manifests.py && test -f schemas/goose-recipe.schema.json && test -f requirements-dev.txt"
 }

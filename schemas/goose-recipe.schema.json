@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/fuzzywigg/g0p-agents/schemas/goose-recipe.schema.json",
+  "title": "Goose recipe (g0p-agents archive)",
+  "description": "Structural schema for Goose YAML recipes documented in GOOSE-RECIPES.md.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["name", "recipe"],
+  "properties": {
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-z][a-z0-9_]*$"
+    },
+    "recipe": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "version",
+        "title",
+        "settings",
+        "instructions",
+        "prompt",
+        "extensions"
+      ],
+      "properties": {
+        "version": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "settings": {
+          "type": "object",
+          "additionalProperties": true,
+          "required": ["goose_provider", "goose_model"],
+          "properties": {
+            "goose_provider": {
+              "type": "string",
+              "minLength": 1
+            },
+            "goose_model": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "instructions": {
+          "type": "string",
+          "minLength": 1
+        },
+        "prompt": {
+          "type": "string",
+          "minLength": 1
+        },
+        "extensions": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": true,
+            "required": ["type", "name"],
+            "properties": {
+              "type": {
+                "type": "string",
+                "minLength": 1
+              },
+              "name": {
+                "type": "string",
+                "minLength": 1
+              },
+              "timeout": {
+                "type": "integer",
+                "minimum": 1
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

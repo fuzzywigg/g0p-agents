@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/fuzzywigg/g0p-agents/schemas/github-custom-agent.schema.json",
+  "title": "GitHub custom agent frontmatter",
+  "description": "Required YAML frontmatter fields for .github/agents/*.agent.md files.",
+  "type": "object",
+  "additionalProperties": true,
+  "required": ["name", "description"],
+  "properties": {
+    "name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "description": {
+      "type": "string",
+      "minLength": 1
+    }
+  }
+}

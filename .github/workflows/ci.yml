@@ -1,4 +1,4 @@
-name: CI — Markdown Lint & Link Check
+name: CI — Lint, Links & Manifests
 on:
   push:
     branches: ["**"]
@@ -33,3 +33,23 @@ jobs:
           fail: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  manifest-validate:
+    name: Manifest Validate
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v7
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: requirements-dev.txt
+      - name: Install validation dependencies
+        run: python -m pip install -r requirements-dev.txt
+      - name: Validate documented manifests
+        run: python scripts/validate_manifests.py
+      - name: Run unit tests
+        run: python -m pytest -q

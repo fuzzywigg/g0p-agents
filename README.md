@@ -34,6 +34,20 @@ This repository contains the "Quantum-Blockchain" agentic protocols v2.2 (Dec 20
 
 Docs-only bootstrap lives in [`.cursor/environment.json`](.cursor/environment.json) (`install` verifies key archive files; no `start` services).
 
+## Manifest validation
+
+This archive has no runtime agent code. CI still enforces structural checks on documented packaging:
+
+```bash
+python -m pip install -r requirements-dev.txt
+python scripts/validate_manifests.py
+python -m pytest -q
+```
+
+Schemas live under [`schemas/`](schemas/). The validator reads Goose recipe YAML
+from [`GOOSE-RECIPES.md`](GOOSE-RECIPES.md), plus `.cursor/environment.json`,
+`.github/agents/*.agent.md` frontmatter, and known YAML configs.
+
 ## License
 
 MIT — see [LICENSE](LICENSE).

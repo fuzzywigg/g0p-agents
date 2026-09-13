@@ -1,0 +1,4 @@
+# Dev / CI dependencies for manifest validation (docs archive — no runtime package).
+jsonschema>=4.22,<5
+PyYAML>=6.0.1,<7
+pytest>=8.2,<9
