@@ -37,6 +37,9 @@ Checks structural correctness of:
 - CI pip install / pip check / pytest cov+junitxml command marker locks
 - CLAUDE.md state-residency / key-files table locks (archive governance)
 - PR template Agent Surface Routing field locks (Surface/Issue/Branch/Priority)
+- CLAUDE.md Agent Routing Matrix task-row locks (six surfaces)
+- CLAUDE.md Repo Identity north-star / purpose locks
+- CLAUDE.md Escalation Format block field locks (banner + four fields)
 - pyproject project name + version/license/description/readme +
   ruff line-length/src/lint select locks
 - coverage show_missing/skip_empty/source + exact fail_under +
@@ -147,7 +150,7 @@ REQUIRED_ARCHIVE_DOCS = (
     "README.md",
 )
 
-INVENTORY_VERSION = 14
+INVENTORY_VERSION = 15
 CURSOR_ENVIRONMENT_NAME = "g0p-agents"
 DEPENDABOT_SCHEDULE_INTERVAL = "weekly"
 DEPENDABOT_DIRECTORIES: frozenset[str] = frozenset({"/"})
@@ -230,6 +233,29 @@ PR_ROUTING_REQUIRED_FIELDS: tuple[str, ...] = (
     "Issue",
     "Branch",
     "Priority",
+)
+ROUTING_MATRIX_REQUIRED_PHRASES: tuple[str, ...] = (
+    "CI/CD fixes, linting, dependabot",
+    "Multi-file code scaffolding (agentic_flows/, contracts/, quantum_circuits/)",
+    "Strategic planning, Notion updates, cross-platform coordination",
+    "GitHub Settings, branch protection",
+    "Automated E2E verification",
+    "Financial transactions, repo visibility changes",
+)
+REPO_IDENTITY_REQUIRED_PHRASES: tuple[str, ...] = (
+    "fuzzywigg/g0p-agents",
+    "Quantum-Blockchain agentic protocols archive",
+    "FUZZYWIGG four-agent swarm",
+    "PikoClaw demo at Panathenea",
+    "Documentation archive",
+    "LIST B",
+)
+ESCALATION_BLOCK_REQUIRED_PHRASES: tuple[str, ...] = (
+    "ESCALATION REQUIRED",
+    "From Agent:",
+    "Conflict:",
+    "Recommendation:",
+    "Timeline:",
 )
 LICENSE_REQUIRED_PHRASES: tuple[str, ...] = (
     "MIT License",
@@ -558,7 +584,7 @@ SCRATCHPAD_STATUS_MARKERS: tuple[str, ...] = (
 SPECIALIST_AGENTS: tuple[str, ...] = DOCUMENTED_AGENTS[:-1]
 
 MIN_COVERAGE_FAIL_UNDER = 99
-MIN_VALIDATOR_COUNT = 55
+MIN_VALIDATOR_COUNT = 58
 
 
 @dataclass(frozen=True)
@@ -1172,6 +1198,26 @@ def validate_packaging_inventory(root: Path) -> list[Finding]:
     ):
         findings.append(_lock_mismatch(schema_path, "pr_routing_required_fields"))
 
+    if (
+        tuple(inventory.get("routing_matrix_required_phrases", ()))
+        != ROUTING_MATRIX_REQUIRED_PHRASES
+    ):
+        findings.append(_lock_mismatch(schema_path, "routing_matrix_required_phrases"))
+
+    if (
+        tuple(inventory.get("repo_identity_required_phrases", ()))
+        != REPO_IDENTITY_REQUIRED_PHRASES
+    ):
+        findings.append(_lock_mismatch(schema_path, "repo_identity_required_phrases"))
+
+    if (
+        tuple(inventory.get("escalation_block_required_phrases", ()))
+        != ESCALATION_BLOCK_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "escalation_block_required_phrases")
+        )
+
     expected_validator_names = tuple(sorted(VALIDATORS))
     if tuple(inventory.get("validator_names", ())) != expected_validator_names:
         findings.append(_lock_mismatch(schema_path, "validator_names"))
@@ -1645,6 +1691,95 @@ def _inventory_lock_consistency(
                 Finding(
                     schema_path,
                     "pr_routing_required_fields must include Surface/Issue/Branch/Priority",
+                )
+            )
+
+    matrix = list(inventory.get("routing_matrix_required_phrases", ()))
+    if len(matrix) != len(set(matrix)):
+        findings.append(
+            Finding(schema_path, "routing_matrix_required_phrases must be unique")
+        )
+    if not matrix:
+        findings.append(
+            Finding(schema_path, "routing_matrix_required_phrases must not be empty")
+        )
+    for phrase in matrix:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "routing_matrix_required_phrases entries must be non-empty strings",
+                )
+            )
+            break
+    else:
+        surfaces = list(inventory.get("routing_surfaces", ()))
+        if matrix and surfaces and len(matrix) != len(surfaces):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "routing_matrix_required_phrases length must match routing_surfaces",
+                )
+            )
+
+    identity = list(inventory.get("repo_identity_required_phrases", ()))
+    if len(identity) != len(set(identity)):
+        findings.append(
+            Finding(schema_path, "repo_identity_required_phrases must be unique")
+        )
+    if not identity:
+        findings.append(
+            Finding(schema_path, "repo_identity_required_phrases must not be empty")
+        )
+    for phrase in identity:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "repo_identity_required_phrases entries must be non-empty strings",
+                )
+            )
+            break
+    else:
+        if identity and "fuzzywigg/g0p-agents" not in identity:
+            findings.append(
+                Finding(
+                    schema_path,
+                    "repo_identity_required_phrases must include fuzzywigg/g0p-agents",
+                )
+            )
+
+    escalation = list(inventory.get("escalation_block_required_phrases", ()))
+    if len(escalation) != len(set(escalation)):
+        findings.append(
+            Finding(schema_path, "escalation_block_required_phrases must be unique")
+        )
+    if not escalation:
+        findings.append(
+            Finding(schema_path, "escalation_block_required_phrases must not be empty")
+        )
+    for phrase in escalation:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "escalation_block_required_phrases entries must be non-empty strings",
+                )
+            )
+            break
+    else:
+        required_esc = {
+            "ESCALATION REQUIRED",
+            "From Agent:",
+            "Conflict:",
+            "Recommendation:",
+            "Timeline:",
+        }
+        if escalation and not required_esc <= set(escalation):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "escalation_block_required_phrases must include banner and four fields",
                 )
             )
 
@@ -2157,6 +2292,62 @@ def validate_pr_routing(root: Path) -> list[Finding]:
         if marker not in text:
             findings.append(
                 Finding(rel, f"missing locked PR routing field: {field}")
+            )
+    return findings
+
+
+def validate_routing_matrix(root: Path) -> list[Finding]:
+    rel = "CLAUDE.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "CLAUDE.md missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## Agent Routing Matrix" not in text:
+        findings.append(Finding(rel, "missing Agent Routing Matrix section"))
+    for phrase in ROUTING_MATRIX_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(rel, f"missing locked routing-matrix phrase: {phrase}")
+            )
+    for surface in ROUTING_SURFACES:
+        if surface not in text:
+            findings.append(
+                Finding(rel, f"missing locked routing surface in matrix: {surface}")
+            )
+    return findings
+
+
+def validate_repo_identity(root: Path) -> list[Finding]:
+    rel = "CLAUDE.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "CLAUDE.md missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## Repo Identity" not in text:
+        findings.append(Finding(rel, "missing Repo Identity section"))
+    for phrase in REPO_IDENTITY_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(rel, f"missing locked repo-identity phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_escalation_format(root: Path) -> list[Finding]:
+    rel = "CLAUDE.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "CLAUDE.md missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## Escalation Format" not in text:
+        findings.append(Finding(rel, "missing Escalation Format section"))
+    for phrase in ESCALATION_BLOCK_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(rel, f"missing locked escalation-format phrase: {phrase}")
             )
     return findings
 
@@ -4097,6 +4288,9 @@ VALIDATORS: dict[str, ValidatorFn] = {
     "state-residency": validate_state_residency,
     "key-files": validate_key_files,
     "pr-routing": validate_pr_routing,
+    "routing-matrix": validate_routing_matrix,
+    "repo-identity": validate_repo_identity,
+    "escalation-format": validate_escalation_format,
     "link-check": validate_link_check,
     "prompts": validate_documented_agent_prompts,
     "cross-docs": validate_cross_doc_agents,

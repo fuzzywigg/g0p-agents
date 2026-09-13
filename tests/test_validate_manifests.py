@@ -179,6 +179,9 @@ def _inventory_payload(**overrides: object) -> dict:
         "state_residency_required_phrases": list(vm.STATE_RESIDENCY_REQUIRED_PHRASES),
         "key_files_required_entries": list(vm.KEY_FILES_REQUIRED_ENTRIES),
         "pr_routing_required_fields": list(vm.PR_ROUTING_REQUIRED_FIELDS),
+        "routing_matrix_required_phrases": list(vm.ROUTING_MATRIX_REQUIRED_PHRASES),
+        "repo_identity_required_phrases": list(vm.REPO_IDENTITY_REQUIRED_PHRASES),
+        "escalation_block_required_phrases": list(vm.ESCALATION_BLOCK_REQUIRED_PHRASES),
         "validator_names": sorted(vm.VALIDATORS),
         "specialist_agents": list(vm.SPECIALIST_AGENTS),
         "schema_draft_uri": vm.SCHEMA_DRAFT_URI,
@@ -786,6 +789,9 @@ def test_validators_registry_covers_all_checks() -> None:
         "state-residency",
         "key-files",
         "pr-routing",
+        "routing-matrix",
+        "repo-identity",
+        "escalation-format",
         "license-mit",
         "link-check",
         "github-agent-desc",
@@ -1546,7 +1552,7 @@ def test_packaging_inventory_v5_lock_fields(tmp_path: Path) -> None:
                 "scratchpad_status_markers",
                 list(vm.SCRATCHPAD_STATUS_MARKERS)[:-1] + ["INVENTED"],
             ),
-                ("version", 15),
+                ("version", 16),
                 ("min_coverage_fail_under", 90),
                 ("min_validator_count", 999),
                 ("dependabot_group_names", ["github_actions"]),
@@ -1685,6 +1691,18 @@ def test_packaging_inventory_v5_lock_fields(tmp_path: Path) -> None:
                 (
                     "pr_routing_required_fields",
                     list(vm.PR_ROUTING_REQUIRED_FIELDS)[:-1] + ["Invented"],
+                ),
+                (
+                    "routing_matrix_required_phrases",
+                    list(vm.ROUTING_MATRIX_REQUIRED_PHRASES)[:-1] + ["invented"],
+                ),
+                (
+                    "repo_identity_required_phrases",
+                    list(vm.REPO_IDENTITY_REQUIRED_PHRASES)[:-1] + ["invented"],
+                ),
+                (
+                    "escalation_block_required_phrases",
+                    list(vm.ESCALATION_BLOCK_REQUIRED_PHRASES)[:-1] + ["invented"],
                 ),
                 ]
     for field, value in cases:
@@ -2434,8 +2452,8 @@ def test_ci_workflow_v5_deepeners(tmp_path: Path) -> None:
 def test_live_v5_validators() -> None:
     assert vm.validate_bug_report_template(REPO_ROOT) == []
     assert vm.validate_feature_request_template(REPO_ROOT) == []
-    assert vm.INVENTORY_VERSION == 14
-    assert len(vm.VALIDATORS) == 55
+    assert vm.INVENTORY_VERSION == 15
+    assert len(vm.VALIDATORS) == 58
     assert vm.MIN_COVERAGE_FAIL_UNDER == 99
 
 
@@ -2444,7 +2462,7 @@ def test_live_v6_validators() -> None:
     assert vm.validate_postmortem_packaging(REPO_ROOT) == []
     assert vm.validate_gitignore_packaging(REPO_ROOT) == []
     assert vm.validate_negative_constraints(REPO_ROOT) == []
-    assert vm.INVENTORY_VERSION == 14
+    assert vm.INVENTORY_VERSION == 15
     assert len(vm.VALIDATORS) >= 43
     assert sorted(vm.VALIDATORS) == json.loads(
         (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
@@ -2455,7 +2473,7 @@ def test_live_v7_validators() -> None:
     assert vm.validate_hydration_report(REPO_ROOT) == []
     assert vm.validate_execution_summary(REPO_ROOT) == []
     assert vm.validate_implementation_guide(REPO_ROOT) == []
-    assert vm.INVENTORY_VERSION == 14
+    assert vm.INVENTORY_VERSION == 15
     assert len(vm.VALIDATORS) >= 43
     assert "Lock inventory" in vm.REQUIRED_MANIFEST_STEP_MARKERS
     assert "INVENTORY_VERSION" in vm.REQUIRED_MANIFEST_STEP_MARKERS
@@ -2476,9 +2494,9 @@ def test_live_v8_validators() -> None:
     assert vm.validate_claude_packaging(REPO_ROOT) == []
     assert vm.validate_recipe_titles(REPO_ROOT) == []
     assert vm.validate_ci_actions(REPO_ROOT) == []
-    assert vm.INVENTORY_VERSION == 14
-    assert len(vm.VALIDATORS) == 55
-    assert vm.MIN_VALIDATOR_COUNT == 55
+    assert vm.INVENTORY_VERSION == 15
+    assert len(vm.VALIDATORS) == 58
+    assert vm.MIN_VALIDATOR_COUNT == 58
     assert vm.PYPROJECT_NAME == "g0p-agents-validation"
     assert set(vm.DEPENDABOT_DIRECTORIES) == {"/"}
     assert dict(vm.RECIPE_TITLES) == json.loads(
@@ -2493,9 +2511,9 @@ def test_live_v9_validators() -> None:
     assert vm.validate_issue_template_names(REPO_ROOT) == []
     assert vm.validate_readme_badges(REPO_ROOT) == []
     assert vm.validate_quarterly_review(REPO_ROOT) == []
-    assert vm.INVENTORY_VERSION == 14
-    assert len(vm.VALIDATORS) == 55
-    assert vm.MIN_VALIDATOR_COUNT == 55
+    assert vm.INVENTORY_VERSION == 15
+    assert len(vm.VALIDATORS) == 58
+    assert vm.MIN_VALIDATOR_COUNT == 58
     assert vm.CI_WORKFLOW_NAME == "CI — Lint, Links & Manifests"
     assert vm.MARKDOWNLINT_MD025 is False
     assert vm.MARKDOWNLINT_MD033 is False
@@ -2521,9 +2539,9 @@ def test_live_v10_validators() -> None:
     assert vm.validate_link_check(REPO_ROOT) == []
     assert vm.validate_ci_job_names(REPO_ROOT) == []
     assert vm.validate_github_agent_description(REPO_ROOT) == []
-    assert vm.INVENTORY_VERSION == 14
-    assert len(vm.VALIDATORS) == 55
-    assert vm.MIN_VALIDATOR_COUNT == 55
+    assert vm.INVENTORY_VERSION == 15
+    assert len(vm.VALIDATORS) == 58
+    assert vm.MIN_VALIDATOR_COUNT == 58
     assert vm.CI_LINK_CHECK_ARGS == "--verbose --no-progress '**/*.md'"
     assert vm.CI_LINK_CHECK_FAIL is True
     assert vm.CI_MARKDOWN_LINT_GLOBS == "**/*.md"
@@ -4029,9 +4047,9 @@ def test_live_v11_validators() -> None:
     assert vm.validate_ci_runs_on(REPO_ROOT) == []
     assert vm.validate_ci_artifacts(REPO_ROOT) == []
     assert vm.validate_actionlint_shell(REPO_ROOT) == []
-    assert vm.INVENTORY_VERSION == 14
-    assert len(vm.VALIDATORS) == 55
-    assert vm.MIN_VALIDATOR_COUNT == 55
+    assert vm.INVENTORY_VERSION == 15
+    assert len(vm.VALIDATORS) == 58
+    assert vm.MIN_VALIDATOR_COUNT == 58
     assert vm.CI_RUNS_ON == "ubuntu-latest"
     assert vm.CI_ARTIFACT_IF_NO_FILES_FOUND == "warn"
     assert tuple(vm.CI_ARTIFACT_PATHS) == (
@@ -4050,7 +4068,7 @@ def test_live_v11_validators() -> None:
     inventory = json.loads(
         (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
     )
-    assert inventory["version"] == 14
+    assert inventory["version"] == 15
     assert inventory["ci_runs_on"] == vm.CI_RUNS_ON
     assert inventory["ci_artifact_paths"] == list(vm.CI_ARTIFACT_PATHS)
     assert inventory["ci_artifact_if_no_files_found"] == vm.CI_ARTIFACT_IF_NO_FILES_FOUND
@@ -4486,9 +4504,9 @@ def test_live_v12_validators() -> None:
     assert vm.validate_ci_setup_python(REPO_ROOT) == []
     assert vm.validate_ci_ruff(REPO_ROOT) == []
     assert vm.validate_license_mit(REPO_ROOT) == []
-    assert vm.INVENTORY_VERSION == 14
-    assert len(vm.VALIDATORS) == 55
-    assert vm.MIN_VALIDATOR_COUNT == 55
+    assert vm.INVENTORY_VERSION == 15
+    assert len(vm.VALIDATORS) == 58
+    assert vm.MIN_VALIDATOR_COUNT == 58
     assert vm.CI_SETUP_PYTHON_CACHE == "pip"
     assert vm.CI_RUFF_CHECK_COMMAND == "ruff check scripts tests"
     assert "MIT License" in vm.LICENSE_REQUIRED_PHRASES
@@ -4497,11 +4515,11 @@ def test_live_v12_validators() -> None:
     inventory = json.loads(
         (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
     )
-    assert inventory["version"] == 14
+    assert inventory["version"] == 15
     assert inventory["ci_setup_python_cache"] == vm.CI_SETUP_PYTHON_CACHE
     assert inventory["ci_ruff_check_command"] == vm.CI_RUFF_CHECK_COMMAND
     assert inventory["license_required_phrases"] == list(vm.LICENSE_REQUIRED_PHRASES)
-    assert inventory["min_validator_count"] == 55
+    assert inventory["min_validator_count"] == 58
     assert sorted(vm.VALIDATORS) == inventory["validator_names"]
     assert "ci-setup-python" in vm.VALIDATORS
     assert "ci-ruff" in vm.VALIDATORS
@@ -4782,9 +4800,9 @@ def test_live_v13_validators() -> None:
     assert vm.validate_ci_pip_install(REPO_ROOT) == []
     assert vm.validate_ci_pip_check(REPO_ROOT) == []
     assert vm.validate_ci_pytest(REPO_ROOT) == []
-    assert vm.INVENTORY_VERSION == 14
-    assert len(vm.VALIDATORS) == 55
-    assert vm.MIN_VALIDATOR_COUNT == 55
+    assert vm.INVENTORY_VERSION == 15
+    assert len(vm.VALIDATORS) == 58
+    assert vm.MIN_VALIDATOR_COUNT == 58
     assert vm.CI_PIP_INSTALL_COMMAND == "python -m pip install -r requirements-dev.txt"
     assert vm.CI_PIP_CHECK_COMMAND == "python -m pip check"
     assert tuple(vm.CI_PYTEST_REQUIRED_MARKERS) == (
@@ -4796,11 +4814,11 @@ def test_live_v13_validators() -> None:
     inventory = json.loads(
         (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
     )
-    assert inventory["version"] == 14
+    assert inventory["version"] == 15
     assert inventory["ci_pip_install_command"] == vm.CI_PIP_INSTALL_COMMAND
     assert inventory["ci_pip_check_command"] == vm.CI_PIP_CHECK_COMMAND
     assert inventory["ci_pytest_required_markers"] == list(vm.CI_PYTEST_REQUIRED_MARKERS)
-    assert inventory["min_validator_count"] == 55
+    assert inventory["min_validator_count"] == 58
     assert sorted(vm.VALIDATORS) == inventory["validator_names"]
     assert "ci-pip-install" in vm.VALIDATORS
     assert "ci-pip-check" in vm.VALIDATORS
@@ -5106,9 +5124,9 @@ def test_live_v14_validators() -> None:
     assert vm.validate_state_residency(REPO_ROOT) == []
     assert vm.validate_key_files(REPO_ROOT) == []
     assert vm.validate_pr_routing(REPO_ROOT) == []
-    assert vm.INVENTORY_VERSION == 14
-    assert len(vm.VALIDATORS) == 55
-    assert vm.MIN_VALIDATOR_COUNT == 55
+    assert vm.INVENTORY_VERSION == 15
+    assert len(vm.VALIDATORS) == 58
+    assert vm.MIN_VALIDATOR_COUNT == 58
     assert tuple(vm.STATE_RESIDENCY_REQUIRED_PHRASES) == (
         "Code, config, workflows",
         "Policies, decisions, rollouts",
@@ -5139,13 +5157,13 @@ def test_live_v14_validators() -> None:
     inventory = json.loads(
         (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
     )
-    assert inventory["version"] == 14
+    assert inventory["version"] == 15
     assert inventory["state_residency_required_phrases"] == list(
         vm.STATE_RESIDENCY_REQUIRED_PHRASES
     )
     assert inventory["key_files_required_entries"] == list(vm.KEY_FILES_REQUIRED_ENTRIES)
     assert inventory["pr_routing_required_fields"] == list(vm.PR_ROUTING_REQUIRED_FIELDS)
-    assert inventory["min_validator_count"] == 55
+    assert inventory["min_validator_count"] == 58
     assert sorted(vm.VALIDATORS) == inventory["validator_names"]
     assert "state-residency" in vm.VALIDATORS
     assert "key-files" in vm.VALIDATORS
@@ -5366,3 +5384,276 @@ def test_v14_state_residency_key_files_pr_routing_edge_cases(tmp_path: Path) -> 
     assert any("state_residency_required_phrases" in f.message for f in findings)
     assert any("key_files_required_entries" in f.message for f in findings)
     assert any("pr_routing_required_fields" in f.message for f in findings)
+
+
+def test_live_v15_validators() -> None:
+    assert vm.validate_routing_matrix(REPO_ROOT) == []
+    assert vm.validate_repo_identity(REPO_ROOT) == []
+    assert vm.validate_escalation_format(REPO_ROOT) == []
+    assert vm.INVENTORY_VERSION == 15
+    assert len(vm.VALIDATORS) == 58
+    assert vm.MIN_VALIDATOR_COUNT == 58
+    assert tuple(vm.ROUTING_MATRIX_REQUIRED_PHRASES) == (
+        "CI/CD fixes, linting, dependabot",
+        "Multi-file code scaffolding (agentic_flows/, contracts/, quantum_circuits/)",
+        "Strategic planning, Notion updates, cross-platform coordination",
+        "GitHub Settings, branch protection",
+        "Automated E2E verification",
+        "Financial transactions, repo visibility changes",
+    )
+    assert tuple(vm.REPO_IDENTITY_REQUIRED_PHRASES) == (
+        "fuzzywigg/g0p-agents",
+        "Quantum-Blockchain agentic protocols archive",
+        "FUZZYWIGG four-agent swarm",
+        "PikoClaw demo at Panathenea",
+        "Documentation archive",
+        "LIST B",
+    )
+    assert tuple(vm.ESCALATION_BLOCK_REQUIRED_PHRASES) == (
+        "ESCALATION REQUIRED",
+        "From Agent:",
+        "Conflict:",
+        "Recommendation:",
+        "Timeline:",
+    )
+    inventory = json.loads(
+        (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
+    )
+    assert inventory["version"] == 15
+    assert inventory["routing_matrix_required_phrases"] == list(
+        vm.ROUTING_MATRIX_REQUIRED_PHRASES
+    )
+    assert inventory["repo_identity_required_phrases"] == list(
+        vm.REPO_IDENTITY_REQUIRED_PHRASES
+    )
+    assert inventory["escalation_block_required_phrases"] == list(
+        vm.ESCALATION_BLOCK_REQUIRED_PHRASES
+    )
+    assert inventory["min_validator_count"] == 58
+    assert sorted(vm.VALIDATORS) == inventory["validator_names"]
+    assert "routing-matrix" in vm.VALIDATORS
+    assert "repo-identity" in vm.VALIDATORS
+    assert "escalation-format" in vm.VALIDATORS
+    assert vm.validate_claude_packaging(REPO_ROOT) == []
+    assert vm.validate_routing_surfaces(REPO_ROOT) == []
+
+
+def test_v15_routing_identity_escalation_edge_cases(tmp_path: Path) -> None:
+    assert any("missing" in f.message for f in vm.validate_routing_matrix(tmp_path))
+    assert any("missing" in f.message for f in vm.validate_repo_identity(tmp_path))
+    assert any("missing" in f.message for f in vm.validate_escalation_format(tmp_path))
+
+    _write(tmp_path / "CLAUDE.md", "# CLAUDE\n\nNo sections here.\n")
+    findings = vm.validate_routing_matrix(tmp_path)
+    assert any("missing Agent Routing Matrix section" in f.message for f in findings)
+    for phrase in vm.ROUTING_MATRIX_REQUIRED_PHRASES:
+        assert any(phrase in f.message for f in findings)
+    for surface in vm.ROUTING_SURFACES:
+        assert any(surface in f.message for f in findings)
+
+    findings = vm.validate_repo_identity(tmp_path)
+    assert any("missing Repo Identity section" in f.message for f in findings)
+    for phrase in vm.REPO_IDENTITY_REQUIRED_PHRASES:
+        assert any(phrase in f.message for f in findings)
+
+    findings = vm.validate_escalation_format(tmp_path)
+    assert any("missing Escalation Format section" in f.message for f in findings)
+    for phrase in vm.ESCALATION_BLOCK_REQUIRED_PHRASES:
+        assert any(phrase in f.message for f in findings)
+
+    _write(
+        tmp_path / "CLAUDE.md",
+        "\n".join(
+            [
+                "## Repo Identity",
+                "",
+                *[f"- {p}" for p in vm.REPO_IDENTITY_REQUIRED_PHRASES],
+                "",
+                "## Agent Routing Matrix",
+                "",
+                *[f"| {p} | {s} | why |" for p, s in zip(
+                    vm.ROUTING_MATRIX_REQUIRED_PHRASES,
+                    vm.ROUTING_SURFACES,
+                    strict=True,
+                )],
+                "",
+                "## Escalation Format",
+                "",
+                *[f"- {p}" for p in vm.ESCALATION_BLOCK_REQUIRED_PHRASES],
+                "",
+            ]
+        ),
+    )
+    assert vm.validate_routing_matrix(tmp_path) == []
+    assert vm.validate_repo_identity(tmp_path) == []
+    assert vm.validate_escalation_format(tmp_path) == []
+
+    inventory = _inventory_payload()
+    empty_matrix = dict(inventory)
+    empty_matrix["routing_matrix_required_phrases"] = []
+    findings = vm._inventory_lock_consistency(
+        empty_matrix, schema_path="schemas/packaging-inventory.json"
+    )
+    assert any(
+        "routing_matrix_required_phrases must not be empty" in f.message
+        for f in findings
+    )
+
+    dup_matrix = dict(inventory)
+    dup_matrix["routing_matrix_required_phrases"] = [
+        vm.ROUTING_MATRIX_REQUIRED_PHRASES[0],
+        vm.ROUTING_MATRIX_REQUIRED_PHRASES[0],
+        *vm.ROUTING_MATRIX_REQUIRED_PHRASES[1:],
+    ]
+    findings = vm._inventory_lock_consistency(
+        dup_matrix, schema_path="schemas/packaging-inventory.json"
+    )
+    assert any(
+        "routing_matrix_required_phrases must be unique" in f.message for f in findings
+    )
+
+    blank_matrix = dict(inventory)
+    blank_matrix["routing_matrix_required_phrases"] = ["ok", "  "]
+    findings = vm._inventory_lock_consistency(
+        blank_matrix, schema_path="schemas/packaging-inventory.json"
+    )
+    assert any(
+        "routing_matrix_required_phrases entries must be non-empty strings"
+        in f.message
+        for f in findings
+    )
+
+    len_mismatch = dict(inventory)
+    len_mismatch["routing_matrix_required_phrases"] = list(
+        vm.ROUTING_MATRIX_REQUIRED_PHRASES
+    )[:-1]
+    findings = vm._inventory_lock_consistency(
+        len_mismatch, schema_path="schemas/packaging-inventory.json"
+    )
+    assert any(
+        "routing_matrix_required_phrases length must match routing_surfaces"
+        in f.message
+        for f in findings
+    )
+
+    empty_id = dict(inventory)
+    empty_id["repo_identity_required_phrases"] = []
+    findings = vm._inventory_lock_consistency(
+        empty_id, schema_path="schemas/packaging-inventory.json"
+    )
+    assert any(
+        "repo_identity_required_phrases must not be empty" in f.message for f in findings
+    )
+
+    dup_id = dict(inventory)
+    dup_id["repo_identity_required_phrases"] = [
+        "fuzzywigg/g0p-agents",
+        "fuzzywigg/g0p-agents",
+    ]
+    findings = vm._inventory_lock_consistency(
+        dup_id, schema_path="schemas/packaging-inventory.json"
+    )
+    assert any(
+        "repo_identity_required_phrases must be unique" in f.message for f in findings
+    )
+
+    blank_id = dict(inventory)
+    blank_id["repo_identity_required_phrases"] = ["fuzzywigg/g0p-agents", "  "]
+    findings = vm._inventory_lock_consistency(
+        blank_id, schema_path="schemas/packaging-inventory.json"
+    )
+    assert any(
+        "repo_identity_required_phrases entries must be non-empty strings" in f.message
+        for f in findings
+    )
+
+    missing_repo = dict(inventory)
+    missing_repo["repo_identity_required_phrases"] = ["Documentation archive", "LIST B"]
+    findings = vm._inventory_lock_consistency(
+        missing_repo, schema_path="schemas/packaging-inventory.json"
+    )
+    assert any(
+        "repo_identity_required_phrases must include fuzzywigg/g0p-agents" in f.message
+        for f in findings
+    )
+
+    empty_esc = dict(inventory)
+    empty_esc["escalation_block_required_phrases"] = []
+    findings = vm._inventory_lock_consistency(
+        empty_esc, schema_path="schemas/packaging-inventory.json"
+    )
+    assert any(
+        "escalation_block_required_phrases must not be empty" in f.message
+        for f in findings
+    )
+
+    dup_esc = dict(inventory)
+    dup_esc["escalation_block_required_phrases"] = [
+        "ESCALATION REQUIRED",
+        "ESCALATION REQUIRED",
+        "From Agent:",
+        "Conflict:",
+        "Recommendation:",
+    ]
+    findings = vm._inventory_lock_consistency(
+        dup_esc, schema_path="schemas/packaging-inventory.json"
+    )
+    assert any(
+        "escalation_block_required_phrases must be unique" in f.message for f in findings
+    )
+
+    blank_esc = dict(inventory)
+    blank_esc["escalation_block_required_phrases"] = ["ESCALATION REQUIRED", "  "]
+    findings = vm._inventory_lock_consistency(
+        blank_esc, schema_path="schemas/packaging-inventory.json"
+    )
+    assert any(
+        "escalation_block_required_phrases entries must be non-empty strings"
+        in f.message
+        for f in findings
+    )
+
+    missing_esc = dict(inventory)
+    missing_esc["escalation_block_required_phrases"] = [
+        "ESCALATION REQUIRED",
+        "From Agent:",
+        "Conflict:",
+        "Recommendation:",
+    ]
+    findings = vm._inventory_lock_consistency(
+        missing_esc, schema_path="schemas/packaging-inventory.json"
+    )
+    assert any(
+        "escalation_block_required_phrases must include banner and four fields"
+        in f.message
+        for f in findings
+    )
+
+    for rel in _inventory_payload()["required_paths"]:
+        target = tmp_path / rel
+        target.parent.mkdir(parents=True, exist_ok=True)
+        if not target.exists():
+            target.write_text("ok\n", encoding="utf-8")
+    (tmp_path / "schemas" / "packaging-inventory.json").write_text(
+        json.dumps(
+            _inventory_payload(
+                routing_matrix_required_phrases=list(
+                    vm.ROUTING_MATRIX_REQUIRED_PHRASES
+                )[:-1]
+                + ["invented matrix"],
+                repo_identity_required_phrases=list(
+                    vm.REPO_IDENTITY_REQUIRED_PHRASES
+                )[:-1]
+                + ["invented identity"],
+                escalation_block_required_phrases=list(
+                    vm.ESCALATION_BLOCK_REQUIRED_PHRASES
+                )[:-1]
+                + ["invented escalation"],
+            )
+        ),
+        encoding="utf-8",
+    )
+    findings = vm.validate_packaging_inventory(tmp_path)
+    assert any("routing_matrix_required_phrases" in f.message for f in findings)
+    assert any("repo_identity_required_phrases" in f.message for f in findings)
+    assert any("escalation_block_required_phrases" in f.message for f in findings)
