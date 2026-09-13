@@ -19,7 +19,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   slice, not contributing, issue-template, scratchpad, postmortem, archive
   snapshot, security policy, routing/identity, or Dependabot). Aligns
   `ci_required_actions` pins to post-#17 `actions/setup-python@v7` /
-  `actions/upload-artifact@v7`.
+  `actions/upload-artifact@v7` (rebase onto alpha after #17).
 
 - Contributing guide **v22** deepeners (post-#44): `contributing-who`,
   `contributing-branches`, `contributing-pr` validators; CONTRIBUTING.md Who Can
