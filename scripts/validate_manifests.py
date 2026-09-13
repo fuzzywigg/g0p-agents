@@ -57,6 +57,7 @@ Checks structural correctness of:
 - Dependabot directory set inventory lock (file untouched)
 - Issue template frontmatter name/about locks
 - README badge phrase locks
+- README honesty / historic prompt set / contents section locks
 - CLAUDE.md quarterly-review trigger phrase locks
 - markdownlint MD025/MD033/MD024 siblings_only + MD013 tables/code_blocks locks
 - GitHub agent description lock
@@ -159,7 +160,7 @@ REQUIRED_ARCHIVE_DOCS = (
     "README.md",
 )
 
-INVENTORY_VERSION = 23
+INVENTORY_VERSION = 24
 CURSOR_ENVIRONMENT_NAME = "g0p-agents"
 DEPENDABOT_SCHEDULE_INTERVAL = "weekly"
 DEPENDABOT_DIRECTORIES: frozenset[str] = frozenset({"/"})
@@ -450,6 +451,31 @@ PR_NOTES_REQUIRED_PHRASES: tuple[str, ...] = (
     "[agent-surface]",
     "#[issue-number]",
     "[P1/P2/P3]",
+)
+README_HONESTY_REQUIRED_PHRASES: tuple[str, ...] = (
+    "(archived reference)",
+    "This is not a live hive, runtime, or production swarm",
+    "prompt fiction",
+    "no running hive mind in this tree",
+    "fuzzywigg/agents-standard",
+)
+README_HISTORIC_REQUIRED_PHRASES: tuple[str, ...] = (
+    "## Historic prompt set",
+    "Designing quantum-safe algorithms",
+    "Implementing multi-chain, quantum-resistant contracts",
+    'Creating "walled garden" mobile security',
+    "Managing conflicts via stimgery and YAML recipes",
+)
+README_CONTENTS_REQUIRED_PHRASES: tuple[str, ...] = (
+    "## Contents",
+    "**AGENT-PROMPTS.md**",
+    "**GOOSE-RECIPES.md**",
+    "**IMPLEMENTATION-GUIDE.md**",
+    "**AGENTS-v2.2.md**",
+    "## Cloud agents",
+    ".cursor/environment.json",
+    "## Manifest validation",
+    "## License",
 )
 LICENSE_REQUIRED_PHRASES: tuple[str, ...] = (
     "MIT License",
@@ -778,7 +804,7 @@ SCRATCHPAD_STATUS_MARKERS: tuple[str, ...] = (
 SPECIALIST_AGENTS: tuple[str, ...] = DOCUMENTED_AGENTS[:-1]
 
 MIN_COVERAGE_FAIL_UNDER = 99
-MIN_VALIDATOR_COUNT = 82
+MIN_VALIDATOR_COUNT = 85
 
 
 @dataclass(frozen=True)
@@ -1577,6 +1603,24 @@ def validate_packaging_inventory(root: Path) -> list[Finding]:
         != PR_NOTES_REQUIRED_PHRASES
     ):
         findings.append(_lock_mismatch(schema_path, "pr_notes_required_phrases"))
+
+    if (
+        tuple(inventory.get("readme_honesty_required_phrases", ()))
+        != README_HONESTY_REQUIRED_PHRASES
+    ):
+        findings.append(_lock_mismatch(schema_path, "readme_honesty_required_phrases"))
+
+    if (
+        tuple(inventory.get("readme_historic_required_phrases", ()))
+        != README_HISTORIC_REQUIRED_PHRASES
+    ):
+        findings.append(_lock_mismatch(schema_path, "readme_historic_required_phrases"))
+
+    if (
+        tuple(inventory.get("readme_contents_required_phrases", ()))
+        != README_CONTENTS_REQUIRED_PHRASES
+    ):
+        findings.append(_lock_mismatch(schema_path, "readme_contents_required_phrases"))
 
     expected_validator_names = tuple(sorted(VALIDATORS))
     if tuple(inventory.get("validator_names", ())) != expected_validator_names:
@@ -2904,6 +2948,106 @@ def _inventory_lock_consistency(
                     schema_path,
                     "pr_notes_required_phrases must include Notes for Reviewer/"
                     "agent-surface/priority placeholders",
+                )
+            )
+
+    honesty = list(inventory.get("readme_honesty_required_phrases", ()))
+    if len(honesty) != len(set(honesty)):
+        findings.append(
+            Finding(schema_path, "readme_honesty_required_phrases must be unique")
+        )
+    if not honesty:
+        findings.append(
+            Finding(schema_path, "readme_honesty_required_phrases must not be empty")
+        )
+    for phrase in honesty:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "readme_honesty_required_phrases entries must be non-empty strings",
+                )
+            )
+            break
+    else:
+        required_honesty = {
+            "(archived reference)",
+            "prompt fiction",
+            "fuzzywigg/agents-standard",
+        }
+        if honesty and not required_honesty <= set(honesty):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "readme_honesty_required_phrases must include archived reference/"
+                    "prompt fiction/agents-standard",
+                )
+            )
+
+    historic = list(inventory.get("readme_historic_required_phrases", ()))
+    if len(historic) != len(set(historic)):
+        findings.append(
+            Finding(schema_path, "readme_historic_required_phrases must be unique")
+        )
+    if not historic:
+        findings.append(
+            Finding(schema_path, "readme_historic_required_phrases must not be empty")
+        )
+    for phrase in historic:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "readme_historic_required_phrases entries must be non-empty strings",
+                )
+            )
+            break
+    else:
+        required_historic = {
+            "## Historic prompt set",
+            "Designing quantum-safe algorithms",
+            "Managing conflicts via stimgery and YAML recipes",
+        }
+        if historic and not required_historic <= set(historic):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "readme_historic_required_phrases must include Historic prompt set/"
+                    "QuantumArchitect/Orchestration role locks",
+                )
+            )
+
+    contents = list(inventory.get("readme_contents_required_phrases", ()))
+    if len(contents) != len(set(contents)):
+        findings.append(
+            Finding(schema_path, "readme_contents_required_phrases must be unique")
+        )
+    if not contents:
+        findings.append(
+            Finding(schema_path, "readme_contents_required_phrases must not be empty")
+        )
+    for phrase in contents:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "readme_contents_required_phrases entries must be non-empty strings",
+                )
+            )
+            break
+    else:
+        required_contents = {
+            "## Contents",
+            "## Cloud agents",
+            "## Manifest validation",
+            "## License",
+        }
+        if contents and not required_contents <= set(contents):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "readme_contents_required_phrases must include Contents/"
+                    "Cloud agents/Manifest validation/License",
                 )
             )
 
@@ -4630,6 +4774,57 @@ def validate_pr_notes(root: Path) -> list[Finding]:
     return findings
 
 
+def validate_readme_honesty(root: Path) -> list[Finding]:
+    rel = "README.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "README.md missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    for phrase in README_HONESTY_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(rel, f"missing locked readme-honesty phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_readme_historic(root: Path) -> list[Finding]:
+    rel = "README.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "README.md missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## Historic prompt set" not in text:
+        findings.append(Finding(rel, "missing Historic prompt set section"))
+    for phrase in README_HISTORIC_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(rel, f"missing locked readme-historic phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_readme_contents(root: Path) -> list[Finding]:
+    rel = "README.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "README.md missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## Contents" not in text:
+        findings.append(Finding(rel, "missing Contents section"))
+    if "## Manifest validation" not in text:
+        findings.append(Finding(rel, "missing Manifest validation section"))
+    for phrase in README_CONTENTS_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(rel, f"missing locked readme-contents phrase: {phrase}")
+            )
+    return findings
+
+
 def validate_agent_task_template(root: Path) -> list[Finding]:
     rel = ".github/ISSUE_TEMPLATE/agent_task.md"
     path = root / rel
@@ -5801,6 +5996,9 @@ VALIDATORS: dict[str, ValidatorFn] = {
     "license-mit": validate_license_mit,
     "readme": validate_readme_packaging,
     "readme-badges": validate_readme_badges,
+    "readme-honesty": validate_readme_honesty,
+    "readme-historic": validate_readme_historic,
+    "readme-contents": validate_readme_contents,
     "security": validate_security_packaging,
     "contributing": validate_contributing_packaging,
     "contributing-who": validate_contributing_who,
