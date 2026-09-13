@@ -160,7 +160,7 @@ REQUIRED_ARCHIVE_DOCS = (
     "README.md",
 )
 
-INVENTORY_VERSION = 27
+INVENTORY_VERSION = 28
 CURSOR_ENVIRONMENT_NAME = "g0p-agents"
 DEPENDABOT_SCHEDULE_INTERVAL = "weekly"
 DEPENDABOT_DIRECTORIES: frozenset[str] = frozenset({"/"})
@@ -887,6 +887,33 @@ IMPLEMENTATION_SUCCESS_REQUIRED_PHRASES: tuple[str, ...] = (
     "Deployment to Sepolia testnet",
 )
 
+
+EXECUTION_TIMELINE_REQUIRED_PHRASES: tuple[str, ...] = (
+    "## Implementation Timeline",
+    "### Week 1 Checklist",
+    "WSL2 development environment",
+    "Goose recipes created",
+    "### By End of Month",
+    "Testnet deployment on Sepolia",
+    "Ready for mainnet",
+)
+EXECUTION_TECHNOLOGIES_REQUIRED_PHRASES: tuple[str, ...] = (
+    "## Key Technologies (All Covered)",
+    "Google Cirq (circuit construction)",
+    "Qualtran (algorithm analysis)",
+    "Hardhat (development environment)",
+    "liboqs (post-quantum on mobile)",
+    "Goose (agent framework)",
+    "Scratchpad state machine (checkpoint tracking)",
+)
+EXECUTION_WORKFLOW_REQUIRED_PHRASES: tuple[str, ...] = (
+    "## Workflow Overview",
+    "### Step 1: Single Agent Task",
+    "### Step 2: Multi-Agent Workflow",
+    "### Step 3: Escalation (If Conflict)",
+    "Agents Disagree → OrchestrationAgent Reviews",
+)
+
 CONTRIBUTING_BRANCH_SURFACES: tuple[str, ...] = ("copilot", "geryon", "cursor")
 
 SCRATCHPAD_STATUS_MARKERS: tuple[str, ...] = (
@@ -899,7 +926,7 @@ SCRATCHPAD_STATUS_MARKERS: tuple[str, ...] = (
 SPECIALIST_AGENTS: tuple[str, ...] = DOCUMENTED_AGENTS[:-1]
 
 MIN_COVERAGE_FAIL_UNDER = 99
-MIN_VALIDATOR_COUNT = 94
+MIN_VALIDATOR_COUNT = 97
 
 
 @dataclass(frozen=True)
@@ -1778,6 +1805,30 @@ def validate_packaging_inventory(root: Path) -> list[Finding]:
     ):
         findings.append(
             _lock_mismatch(schema_path, "implementation_success_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("execution_timeline_required_phrases", ()))
+        != EXECUTION_TIMELINE_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "execution_timeline_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("execution_technologies_required_phrases", ()))
+        != EXECUTION_TECHNOLOGIES_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "execution_technologies_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("execution_workflow_required_phrases", ()))
+        != EXECUTION_WORKFLOW_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "execution_workflow_required_phrases")
         )
 
     expected_validator_names = tuple(sorted(VALIDATORS))
@@ -3531,6 +3582,113 @@ def _inventory_lock_consistency(
                     schema_path,
                     "implementation_success_required_phrases must include Success "
                     "Criteria/Week 1/Common Issues/Next Steps",
+                )
+            )
+
+    timeline = list(inventory.get("execution_timeline_required_phrases", ()))
+    if len(timeline) != len(set(timeline)):
+        findings.append(
+            Finding(schema_path, "execution_timeline_required_phrases must be unique")
+        )
+    if not timeline:
+        findings.append(
+            Finding(schema_path, "execution_timeline_required_phrases must not be empty")
+        )
+    for phrase in timeline:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "execution_timeline_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_timeline = {
+            "## Implementation Timeline",
+            "### Week 1 Checklist",
+            "### By End of Month",
+        }
+        if timeline and not required_timeline <= set(timeline):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "execution_timeline_required_phrases must include Implementation "
+                    "Timeline/Week 1/By End of Month",
+                )
+            )
+
+    technologies = list(inventory.get("execution_technologies_required_phrases", ()))
+    if len(technologies) != len(set(technologies)):
+        findings.append(
+            Finding(
+                schema_path, "execution_technologies_required_phrases must be unique"
+            )
+        )
+    if not technologies:
+        findings.append(
+            Finding(
+                schema_path,
+                "execution_technologies_required_phrases must not be empty",
+            )
+        )
+    for phrase in technologies:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "execution_technologies_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_tech = {
+            "## Key Technologies (All Covered)",
+            "Google Cirq (circuit construction)",
+            "Goose (agent framework)",
+        }
+        if technologies and not required_tech <= set(technologies):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "execution_technologies_required_phrases must include Key "
+                    "Technologies/Cirq/Goose",
+                )
+            )
+
+    workflow = list(inventory.get("execution_workflow_required_phrases", ()))
+    if len(workflow) != len(set(workflow)):
+        findings.append(
+            Finding(schema_path, "execution_workflow_required_phrases must be unique")
+        )
+    if not workflow:
+        findings.append(
+            Finding(schema_path, "execution_workflow_required_phrases must not be empty")
+        )
+    for phrase in workflow:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "execution_workflow_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_workflow = {
+            "## Workflow Overview",
+            "### Step 1: Single Agent Task",
+            "### Step 3: Escalation (If Conflict)",
+        }
+        if workflow and not required_workflow <= set(workflow):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "execution_workflow_required_phrases must include Workflow "
+                    "Overview/Single Agent/Escalation",
                 )
             )
 
@@ -5474,6 +5632,59 @@ def validate_implementation_success(root: Path) -> list[Finding]:
     return findings
 
 
+def validate_execution_timeline(root: Path) -> list[Finding]:
+    rel = "EXECUTION-SUMMARY.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "EXECUTION-SUMMARY.md missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## Implementation Timeline" not in text:
+        findings.append(Finding(rel, "missing Implementation Timeline section"))
+    for phrase in EXECUTION_TIMELINE_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(rel, f"missing locked execution-timeline phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_execution_technologies(root: Path) -> list[Finding]:
+    rel = "EXECUTION-SUMMARY.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "EXECUTION-SUMMARY.md missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## Key Technologies (All Covered)" not in text:
+        findings.append(Finding(rel, "missing Key Technologies section"))
+    for phrase in EXECUTION_TECHNOLOGIES_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(
+                    rel, f"missing locked execution-technologies phrase: {phrase}"
+                )
+            )
+    return findings
+
+
+def validate_execution_workflow(root: Path) -> list[Finding]:
+    rel = "EXECUTION-SUMMARY.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "EXECUTION-SUMMARY.md missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## Workflow Overview" not in text:
+        findings.append(Finding(rel, "missing Workflow Overview section"))
+    for phrase in EXECUTION_WORKFLOW_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(rel, f"missing locked execution-workflow phrase: {phrase}")
+            )
+    return findings
+
+
 def validate_agent_task_template(root: Path) -> list[Finding]:
     rel = ".github/ISSUE_TEMPLATE/agent_task.md"
     path = root / rel
@@ -6657,6 +6868,9 @@ VALIDATORS: dict[str, ValidatorFn] = {
     "implementation-phases": validate_implementation_phases,
     "implementation-tools": validate_implementation_tools,
     "implementation-success": validate_implementation_success,
+    "execution-timeline": validate_execution_timeline,
+    "execution-technologies": validate_execution_technologies,
+    "execution-workflow": validate_execution_workflow,
     "security": validate_security_packaging,
     "contributing": validate_contributing_packaging,
     "contributing-who": validate_contributing_who,
