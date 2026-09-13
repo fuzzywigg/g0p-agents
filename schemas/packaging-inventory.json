@@ -1,5 +1,5 @@
 {
-  "version": 17,
+  "version": 18,
   "documented_agents": [
     "QuantumArchitectAgent",
     "BlockchainArchitectAgent",
@@ -294,6 +294,7 @@
     "environment",
     "escalation-format",
     "escalation-usage",
+    "execution-specialists",
     "execution-summary",
     "feature-template",
     "github-agent-desc",
@@ -301,7 +302,9 @@
     "gitignore",
     "goose",
     "hydration",
+    "hydration-list-b",
     "implementation-guide",
+    "implementation-quickstart",
     "inventory",
     "issue-names",
     "issue-templates",
@@ -336,7 +339,7 @@
     "yaml-configs"
   ],
   "min_coverage_fail_under": 99,
-  "min_validator_count": 64,
+  "min_validator_count": 67,
   "required_paths": [
     "README.md",
     "LICENSE",
@@ -631,5 +634,35 @@
     "Slither audit pass",
     "Never commit secrets",
     "Never expose plaintext keys"
+  ],
+  "implementation_quickstart_required_phrases": [
+    "## Quick Start (30 minutes)",
+    "mkdir -p agentic_flows",
+    "mkdir -p quantum_circuits",
+    "mkdir -p contracts",
+    "touch agentic_flows/scratchpad.txt",
+    "AGENTS-v2.2.md",
+    "AGENT-PROMPTS.md",
+    "GOOSE-RECIPES.md",
+    "Python 3.11"
+  ],
+  "execution_specialists_required_phrases": [
+    "## Your Four Specialist Agents",
+    "QuantumArchitectAgent",
+    "BlockchainArchitectAgent",
+    "EdgeSecurityAgent",
+    "OrchestrationAgent",
+    "Quantum Computing",
+    "Blockchain Dev",
+    "On-Device Security",
+    "YAML recipes, Docker Compose"
+  ],
+  "hydration_list_b_required_phrases": [
+    "### LIST B \u2014 Requires Andrew (HITL)",
+    "Is g0p-agents meant to be activated into a runnable codebase",
+    "What is PikoClaw exactly",
+    "Should actual Solidity, Python (Cirq), and React Native code be implemented",
+    "What is the `agents-standard` repo",
+    "Is there a Notion page for g0p-agents"
   ]
 }
