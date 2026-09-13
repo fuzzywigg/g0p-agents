@@ -60,11 +60,28 @@ def _copy_schemas(tmp_path: Path) -> None:
 
 def _inventory_payload(**overrides: object) -> dict:
     payload = {
-        "version": 2,
+        "version": 3,
         "documented_agents": list(vm.DOCUMENTED_AGENTS),
         "expected_recipe_names": sorted(vm.EXPECTED_RECIPE_NAMES),
         "expected_recipe_files": list(vm.EXPECTED_RECIPE_FILES),
+        "recipe_bindings": dict(vm.EXPECTED_RECIPE_BINDINGS),
+        "recipe_primary_agents": dict(vm.RECIPE_PRIMARY_AGENT),
         "required_ci_jobs": sorted(vm.REQUIRED_CI_JOBS),
+        "required_python_versions": list(vm.REQUIRED_PYTHON_VERSIONS),
+        "required_manifest_step_markers": list(vm.REQUIRED_MANIFEST_STEP_MARKERS),
+        "required_schema_files": list(vm.SCHEMA_FILES),
+        "required_dev_packages": sorted(vm.REQUIRED_DEV_PACKAGES),
+        "github_agent_files": list(vm.GITHUB_AGENT_FILES),
+        "issue_template_files": list(vm.ISSUE_TEMPLATE_FILES),
+        "pr_template_headings": list(vm.PR_TEMPLATE_HEADINGS),
+        "historic_goose_settings": {
+            "goose_provider": vm.HISTORIC_GOOSE_PROVIDER,
+            "goose_model": vm.HISTORIC_GOOSE_MODEL,
+            "extension_type": vm.HISTORIC_EXTENSION_TYPE,
+            "extension_name": vm.HISTORIC_EXTENSION_NAME,
+        },
+        "min_coverage_fail_under": vm.MIN_COVERAGE_FAIL_UNDER,
+        "min_validator_count": vm.MIN_VALIDATOR_COUNT,
         "required_paths": ["README.md"],
     }
     payload.update(overrides)
@@ -216,10 +233,19 @@ def test_cursor_environment_schema_rejects_empty_terminals() -> None:
     assert findings
 
 
+def _write_locked_issue_templates(tmp_path: Path, *, body: str = "## Details\n") -> None:
+    for rel in vm.ISSUE_TEMPLATE_FILES:
+        name = Path(rel).name
+        _write(
+            tmp_path / ".github" / "ISSUE_TEMPLATE" / name,
+            f"---\nname: {name}\nabout: Something\n---\n\n{body}",
+        )
+
+
 def test_github_agent_frontmatter_roundtrip(tmp_path: Path) -> None:
     agents = tmp_path / ".github" / "agents"
     agents.mkdir(parents=True)
-    (agents / "demo.agent.md").write_text(
+    (agents / "my-agent.agent.md").write_text(
         "---\nname: Demo\ndescription: A demo custom agent.\n---\n\n# Body\n",
         encoding="utf-8",
     )
@@ -230,7 +256,7 @@ def test_github_agent_frontmatter_roundtrip(tmp_path: Path) -> None:
 def test_github_agent_frontmatter_rejects_missing_description(tmp_path: Path) -> None:
     agents = tmp_path / ".github" / "agents"
     agents.mkdir(parents=True)
-    (agents / "bad.agent.md").write_text(
+    (agents / "my-agent.agent.md").write_text(
         "---\nname: Bad\n---\n\n# Body\n", encoding="utf-8"
     )
     findings = vm.validate_github_agents(tmp_path)
@@ -241,7 +267,7 @@ def test_github_agent_frontmatter_rejects_missing_description(tmp_path: Path) ->
 def test_github_agent_rejects_empty_body(tmp_path: Path) -> None:
     agents = tmp_path / ".github" / "agents"
     agents.mkdir(parents=True)
-    (agents / "empty.agent.md").write_text(
+    (agents / "my-agent.agent.md").write_text(
         "---\nname: Empty\ndescription: No body.\n---\n\n",
         encoding="utf-8",
     )
@@ -256,29 +282,24 @@ def test_github_agent_missing_directory(tmp_path: Path) -> None:
 
 def test_issue_template_schema_and_validator(tmp_path: Path) -> None:
     _copy_schemas(tmp_path)
-    templates = tmp_path / ".github" / "ISSUE_TEMPLATE"
-    _write(
-        templates / "bug.md",
-        "---\nname: Bug\nabout: Something broke\n---\n\n## Problem\n",
-    )
+    _write_locked_issue_templates(tmp_path)
     assert vm.validate_issue_templates(tmp_path) == []
 
 
 def test_issue_template_rejects_missing_about(tmp_path: Path) -> None:
     _copy_schemas(tmp_path)
-    templates = tmp_path / ".github" / "ISSUE_TEMPLATE"
-    _write(templates / "bug.md", "---\nname: Bug\n---\n\n## Problem\n")
+    _write_locked_issue_templates(tmp_path)
+    bug = tmp_path / ".github" / "ISSUE_TEMPLATE" / "bug_report.md"
+    bug.write_text("---\nname: Bug\n---\n\n## Problem\n", encoding="utf-8")
     findings = vm.validate_issue_templates(tmp_path)
     assert any("about" in f.message for f in findings)
 
 
 def test_issue_template_rejects_empty_body(tmp_path: Path) -> None:
     _copy_schemas(tmp_path)
-    templates = tmp_path / ".github" / "ISSUE_TEMPLATE"
-    _write(templates / "bug.md", "---\nname: Bug\nabout: x\n---\n\n")
+    _write_locked_issue_templates(tmp_path, body="")
     findings = vm.validate_issue_templates(tmp_path)
     assert any("body after frontmatter is empty" in f.message for f in findings)
-
 
 def test_dependabot_schema_accepts_live_config() -> None:
     data = yaml.safe_load(
@@ -357,16 +378,32 @@ def test_schemas_meta_validation_passes_on_live_repo() -> None:
     assert vm.validate_schemas_meta(REPO_ROOT) == []
 
 
+def _minimal_schema_doc(name: str, **overrides: object) -> dict:
+    payload: dict = {
+        "$schema": vm.SCHEMA_DRAFT_URI,
+        "$id": f"{vm.SCHEMA_ID_PREFIX}{name}",
+        "type": "object",
+    }
+    payload.update(overrides)
+    return payload
+
+
 def test_schemas_meta_detects_invalid_schema(tmp_path: Path) -> None:
     schemas = tmp_path / "schemas"
     schemas.mkdir()
     for name in vm.SCHEMA_FILES:
         if name == "goose-recipe.schema.json":
             (schemas / name).write_text(
-                json.dumps({"type": "not-a-real-type"}), encoding="utf-8"
+                json.dumps(
+                    _minimal_schema_doc(name, type="not-a-real-type"),
+                ),
+                encoding="utf-8",
             )
         else:
-            (schemas / name).write_text("{}", encoding="utf-8")
+            (schemas / name).write_text(
+                json.dumps(_minimal_schema_doc(name)),
+                encoding="utf-8",
+            )
     findings = vm.validate_schemas_meta(tmp_path)
     assert any("goose-recipe.schema.json" in f.path for f in findings)
 
@@ -416,12 +453,13 @@ def test_recipe_agent_bindings_require_primary_agent(tmp_path: Path) -> None:
 
 
 def test_prompts_reject_invented_heading(tmp_path: Path) -> None:
-    body = "\n".join(
-        f"## {i}. {agent} Prompt Template\n\n{agent} body\n"
-        for i, agent in enumerate(vm.DOCUMENTED_AGENTS, start=1)
+    parts: list[str] = []
+    for i, agent in enumerate(vm.DOCUMENTED_AGENTS, start=1):
+        parts.append(f"## {i}. {agent} Prompt Template\n\n```markdown\n{agent} body\n```\n")
+    parts.append(
+        "## 5. InventedGhostAgent Prompt Template\n\n```markdown\nnope\n```\n"
     )
-    body += "\n## 5. InventedGhostAgent Prompt Template\n\nnope\n"
-    _write(tmp_path / "AGENT-PROMPTS.md", body)
+    _write(tmp_path / "AGENT-PROMPTS.md", "\n".join(parts))
     findings = vm.validate_documented_agent_prompts(tmp_path)
     assert any("InventedGhostAgent" in f.message for f in findings)
 
@@ -586,11 +624,16 @@ def test_validators_registry_covers_all_checks() -> None:
         "inventory",
         "goose",
         "recipe-agents",
+        "agent-tokens",
         "environment",
         "github-agents",
         "issue-templates",
+        "pr-template",
         "dependabot",
         "markdownlint",
+        "requirements-dev",
+        "license",
+        "readme",
         "scratchpad",
         "pyproject",
         "yaml-configs",
@@ -599,6 +642,7 @@ def test_validators_registry_covers_all_checks() -> None:
         "cross-docs",
     }
     assert set(vm.VALIDATORS) == expected
+    assert len(vm.VALIDATORS) >= vm.MIN_VALIDATOR_COUNT
 
 
 def test_frontmatter_crlf_opening() -> None:
@@ -731,9 +775,10 @@ def test_github_agents_empty_and_bad_frontmatter(tmp_path: Path) -> None:
     agents = tmp_path / ".github" / "agents"
     agents.mkdir(parents=True)
     assert any("no *.agent.md" in f.message for f in vm.validate_github_agents(tmp_path))
-    _write(agents / "nofm.agent.md", "# no frontmatter\n")
-    _write(agents / "badyml.agent.md", "---\n:\n---\n\n# x\n")
-    _write(agents / "list.agent.md", "---\n- a\n- b\n---\n\n# x\n")
+    _write(agents / "invented.agent.md", "# no frontmatter\n")
+    findings = vm.validate_github_agents(tmp_path)
+    assert any("unexpected/invented" in f.message for f in findings)
+    _write(agents / "my-agent.agent.md", "---\n:\n---\n\n# x\n")
     findings = vm.validate_github_agents(tmp_path)
     assert findings
 
@@ -743,9 +788,12 @@ def test_issue_templates_empty_and_bad(tmp_path: Path) -> None:
     templates = tmp_path / ".github" / "ISSUE_TEMPLATE"
     templates.mkdir(parents=True)
     assert any("no issue template" in f.message for f in vm.validate_issue_templates(tmp_path))
-    _write(templates / "x.md", "# nofm\n")
-    _write(templates / "y.md", "---\n:\n---\n\n# x\n")
-    _write(templates / "z.md", "---\n- a\n---\n\n# x\n")
+    _write(templates / "extra.md", "# nofm\n")
+    findings = vm.validate_issue_templates(tmp_path)
+    assert any("unexpected issue template" in f.message for f in findings)
+    _write_locked_issue_templates(tmp_path)
+    bug = templates / "bug_report.md"
+    bug.write_text("---\n:\n---\n\n# x\n", encoding="utf-8")
     assert vm.validate_issue_templates(tmp_path)
 
 
@@ -1043,11 +1091,42 @@ def test_pyproject_missing_sections(tmp_path: Path) -> None:
     findings = vm.validate_pyproject(tmp_path)
     assert any("fail_under" in f.message for f in findings)
 
+    _write(
+        tmp_path / "pyproject.toml",
+        "\n".join(
+            [
+                "[tool.pytest.ini_options]",
+                'testpaths = ["tests"]',
+                "[tool.ruff]",
+                'target-version = "py311"',
+                "[tool.coverage.report]",
+                "fail_under = 50",
+                "",
+            ]
+        ),
+    )
+    findings = vm.validate_pyproject(tmp_path)
+    assert any("fail_under must be >=" in f.message for f in findings)
 
-def test_ci_workflow_matrix_too_small(tmp_path: Path) -> None:
-    ci_yaml = "\n".join(
+
+def _ci_yaml_with_matrix(versions: list[str], *, markers: list[str] | None = None) -> str:
+    step_markers = markers or [
+        "pip check",
+        "ruff check scripts tests",
+        "python scripts/validate_manifests.py --list-validators",
+        "python scripts/validate_manifests.py",
+        "python -m pytest --cov=scripts",
+        "actions/upload-artifact@v4",
+    ]
+    version_lines = "\n".join(f'          - "{v}"' for v in versions)
+    step_lines = "\n".join(f"      - run: {marker}" for marker in step_markers)
+    return "\n".join(
         [
             "name: CI",
+            "on:",
+            "  push: {}",
+            "concurrency:",
+            "  group: ci-test",
             "jobs:",
             "  markdown-lint: {}",
             "  link-check: {}",
@@ -1055,14 +1134,348 @@ def test_ci_workflow_matrix_too_small(tmp_path: Path) -> None:
             "  manifest-validate:",
             "    strategy:",
             "      matrix:",
-            '        python-version: ["3.12"]',
+            "        python-version:",
+            version_lines,
             "    steps:",
-            "      - run: ruff check scripts tests",
+            step_lines,
+            "",
+        ]
+    )
+
+
+def test_ci_workflow_matrix_too_small(tmp_path: Path) -> None:
+    _write(
+        tmp_path / ".github" / "workflows" / "ci.yml",
+        _ci_yaml_with_matrix(["3.12"]),
+    )
+    findings = vm.validate_ci_workflow(tmp_path)
+    assert any("at least 2 versions" in f.message for f in findings)
+
+
+def test_ci_workflow_matrix_must_match_locked_versions(tmp_path: Path) -> None:
+    _write(
+        tmp_path / ".github" / "workflows" / "ci.yml",
+        _ci_yaml_with_matrix(["3.11", "3.12", "3.14"]),
+    )
+    findings = vm.validate_ci_workflow(tmp_path)
+    assert any("must equal" in f.message for f in findings)
+
+
+def test_ci_workflow_requires_concurrency_and_markers(tmp_path: Path) -> None:
+    ci_yaml = "\n".join(
+        [
+            "name: CI",
+            "on:",
+            "  push: {}",
+            "jobs:",
+            "  markdown-lint: {}",
+            "  link-check: {}",
+            "  actionlint: {}",
+            "  manifest-validate:",
+            "    strategy:",
+            "      matrix:",
+            '        python-version: ["3.11", "3.12", "3.13"]',
+            "    steps:",
             "      - run: python scripts/validate_manifests.py",
-            "      - run: python -m pytest --cov=scripts",
             "",
         ]
     )
     _write(tmp_path / ".github" / "workflows" / "ci.yml", ci_yaml)
     findings = vm.validate_ci_workflow(tmp_path)
-    assert any("at least 2 versions" in f.message for f in findings)
+    assert any("concurrency.group" in f.message for f in findings)
+    assert any("pip check" in f.message for f in findings)
+    assert any("upload validation artifacts" in f.message for f in findings)
+
+
+def _four_locked_recipe_doc(
+    *, settings_override: dict | None = None, drop_extension: bool = False
+) -> str:
+    blocks: list[str] = []
+    for name, primary in vm.RECIPE_PRIMARY_AGENT.items():
+        recipe = json.loads(json.dumps(LOCKED_RECIPE))
+        recipe["name"] = name
+        recipe["recipe"]["instructions"] = f"You are {primary}."
+        recipe["recipe"]["prompt"] = f"STEP for {primary}"
+        if settings_override is not None:
+            recipe["recipe"]["settings"].update(settings_override)
+        if drop_extension:
+            recipe["recipe"]["extensions"] = [{"type": "stdio", "name": "other"}]
+        blocks.append(yaml.safe_dump(recipe, sort_keys=False))
+    body = "\n\n".join(f"```yaml\n{block}```" for block in blocks)
+    for rel in vm.EXPECTED_RECIPE_FILES:
+        body += f"\n**File**: `./{rel}`\n"
+        body += f"\ngoose run ./{rel}\n"
+    return body
+
+
+def test_schemas_meta_rejects_wrong_draft_and_non_mapping(tmp_path: Path) -> None:
+    schemas = tmp_path / "schemas"
+    schemas.mkdir()
+    for name in vm.SCHEMA_FILES:
+        if name == "goose-recipe.schema.json":
+            (schemas / name).write_text(json.dumps([1, 2, 3]), encoding="utf-8")
+        else:
+            bad = _minimal_schema_doc(name)
+            bad["$schema"] = "https://example.com/wrong"
+            bad["$id"] = "wrong-id"
+            (schemas / name).write_text(json.dumps(bad), encoding="utf-8")
+    findings = vm.validate_schemas_meta(tmp_path)
+    assert any("schema root must be a mapping" in f.message for f in findings)
+    assert any("$schema must be" in f.message for f in findings)
+    assert any("$id must be" in f.message for f in findings)
+
+
+def test_packaging_inventory_v3_lock_fields(tmp_path: Path) -> None:
+    _copy_schemas(tmp_path)
+    _write(tmp_path / "README.md", "# hi\n")
+
+    bad_bindings = dict(vm.EXPECTED_RECIPE_BINDINGS)
+    bad_bindings["quantum_algorithm_design_workflow"] = "agentic_flows/wrong.yaml"
+    bad_primaries = dict(vm.RECIPE_PRIMARY_AGENT)
+    bad_primaries["quantum_algorithm_design_workflow"] = "EdgeSecurityAgent"
+    cases = [
+        ("recipe_bindings", bad_bindings),
+        ("recipe_primary_agents", bad_primaries),
+        ("required_python_versions", ["3.11", "3.12"]),
+        (
+            "required_manifest_step_markers",
+            list(vm.REQUIRED_MANIFEST_STEP_MARKERS)[:-1] + ["invented"],
+        ),
+        (
+            "required_schema_files",
+            list(vm.SCHEMA_FILES)[:-1] + ["invented.schema.json"],
+        ),
+        (
+            "required_dev_packages",
+            ["jsonschema", "PyYAML", "pytest", "pytest-cov", "invented"],
+        ),
+        ("github_agent_files", [".github/agents/other.agent.md"]),
+        (
+            "issue_template_files",
+            list(vm.ISSUE_TEMPLATE_FILES)[:-1]
+            + [".github/ISSUE_TEMPLATE/extra.md"],
+        ),
+        (
+            "pr_template_headings",
+            list(vm.PR_TEMPLATE_HEADINGS)[:-1] + ["Invented"],
+        ),
+        (
+            "historic_goose_settings",
+            {
+                "goose_provider": "openai",
+                "goose_model": vm.HISTORIC_GOOSE_MODEL,
+                "extension_type": vm.HISTORIC_EXTENSION_TYPE,
+                "extension_name": vm.HISTORIC_EXTENSION_NAME,
+            },
+        ),
+        ("min_coverage_fail_under", 90),
+        ("min_validator_count", 999),
+    ]
+    for field, value in cases:
+        inventory = _inventory_payload(**{field: value})
+        (tmp_path / "schemas" / "packaging-inventory.json").write_text(
+            json.dumps(inventory), encoding="utf-8"
+        )
+        findings = vm.validate_packaging_inventory(tmp_path)
+        assert any(field in f.message for f in findings), field
+
+
+def test_historic_goose_settings_and_extension_lock(tmp_path: Path) -> None:
+    _write(
+        tmp_path / "GOOSE-RECIPES.md",
+        _four_locked_recipe_doc(settings_override={"goose_provider": "openai"}),
+    )
+    findings = vm.validate_goose_recipes(tmp_path)
+    assert any("goose_provider" in f.message for f in findings)
+
+    _write(
+        tmp_path / "GOOSE-RECIPES.md",
+        _four_locked_recipe_doc(settings_override={"goose_model": "gpt-x"}),
+    )
+    findings = vm.validate_goose_recipes(tmp_path)
+    assert any("goose_model" in f.message for f in findings)
+
+    _write(tmp_path / "GOOSE-RECIPES.md", _four_locked_recipe_doc(drop_extension=True))
+    findings = vm.validate_goose_recipes(tmp_path)
+    assert any("historic" in f.message and "extension" in f.message for f in findings)
+
+
+def test_goose_rejects_orphan_ondisk_and_missing_runs(tmp_path: Path) -> None:
+    body = _four_locked_recipe_doc()
+    # Strip goose run lines
+    body = "\n".join(line for line in body.splitlines() if "goose run" not in line) + "\n"
+    _write(tmp_path / "GOOSE-RECIPES.md", body)
+    flows = tmp_path / "agentic_flows"
+    flows.mkdir()
+    (flows / "invented_extra.yaml").write_text("name: x\n", encoding="utf-8")
+    recipe = json.loads(json.dumps(LOCKED_RECIPE))
+    recipe["name"] = "quantum_algorithm_design_workflow"
+    (flows / "quantum_algorithm_design.yaml").write_text(
+        yaml.safe_dump(recipe), encoding="utf-8"
+    )
+    # Wrong binding: put blockchain name into quantum file path already set;
+    # add blockchain file with mismatched name.
+    wrong = json.loads(json.dumps(LOCKED_RECIPE))
+    wrong["name"] = "quantum_algorithm_design_workflow"
+    (flows / "blockchain_contract_design.yaml").write_text(
+        yaml.safe_dump(wrong), encoding="utf-8"
+    )
+    findings = vm.validate_goose_recipes(tmp_path)
+    assert any("unexpected/invented on-disk" in f.message for f in findings)
+    assert any("missing goose run example" in f.message for f in findings)
+    assert any("must live at" in f.message for f in findings)
+
+
+def test_archive_agent_tokens_rejects_invented(tmp_path: Path) -> None:
+    for rel in vm.AGENT_TOKEN_SCAN_DOCS:
+        text = "\n".join(vm.DOCUMENTED_AGENTS) + "\n"
+        if rel == "README.md":
+            text += "InventedGhostAgent\n"
+        _write(tmp_path / rel, text)
+    findings = vm.validate_archive_agent_tokens(tmp_path)
+    assert any("InventedGhostAgent" in f.message for f in findings)
+
+
+def test_archive_agent_tokens_missing_doc(tmp_path: Path) -> None:
+    findings = vm.validate_archive_agent_tokens(tmp_path)
+    assert any("required documentation file is missing" in f.message for f in findings)
+
+
+def test_pr_template_validator(tmp_path: Path) -> None:
+    assert any("PR template missing" in f.message for f in vm.validate_pr_template(tmp_path))
+    _write(tmp_path / ".github" / "pull_request_template.md", "# Only Summary\n")
+    findings = vm.validate_pr_template(tmp_path)
+    assert any("missing required heading" in f.message for f in findings)
+    assert vm.validate_pr_template(REPO_ROOT) == []
+
+
+def test_requirements_dev_validator(tmp_path: Path) -> None:
+    assert any("missing" in f.message for f in vm.validate_requirements_dev(tmp_path))
+    _write(tmp_path / "requirements-dev.txt", "jsonschema>=4\n# comment\n")
+    findings = vm.validate_requirements_dev(tmp_path)
+    assert any("missing required dev package" in f.message for f in findings)
+    assert vm.validate_requirements_dev(REPO_ROOT) == []
+
+
+def test_license_and_readme_validators(tmp_path: Path) -> None:
+    assert any("LICENSE missing" in f.message for f in vm.validate_license(tmp_path))
+    _write(tmp_path / "LICENSE", "Proprietary\n")
+    findings = vm.validate_license(tmp_path)
+    assert any("MIT" in f.message for f in findings)
+    _write(tmp_path / "LICENSE", "MIT License\nPermission is hereby granted\n")
+    findings = vm.validate_license(tmp_path)
+    assert any("2026" in f.message for f in findings)
+    assert vm.validate_license(REPO_ROOT) == []
+
+    assert any("README.md missing" in f.message for f in vm.validate_readme_packaging(tmp_path))
+    _write(tmp_path / "README.md", "# hi\n")
+    findings = vm.validate_readme_packaging(tmp_path)
+    assert any("packaging phrase" in f.message for f in findings)
+    assert vm.validate_readme_packaging(REPO_ROOT) == []
+
+
+def test_live_new_validators() -> None:
+    assert vm.validate_archive_agent_tokens(REPO_ROOT) == []
+    assert vm.validate_pr_template(REPO_ROOT) == []
+    assert vm.validate_requirements_dev(REPO_ROOT) == []
+    assert vm.validate_license(REPO_ROOT) == []
+    assert vm.validate_readme_packaging(REPO_ROOT) == []
+
+
+def test_environment_non_mapping_root(tmp_path: Path) -> None:
+    _copy_schemas(tmp_path)
+    _write(tmp_path / ".cursor" / "environment.json", json.dumps([1, 2]))
+    findings = vm.validate_cursor_environment(tmp_path)
+    assert any("mapping" in f.message for f in findings)
+
+
+def test_dependabot_updates_must_be_list(tmp_path: Path) -> None:
+    _copy_schemas(tmp_path)
+    # Schema requires array; craft a case that passes schema is hard.
+    # Cover parse of non-dict root via schema failure path already exists.
+    # Force post-schema branch by monkeypatching validate_against_schema.
+    original = vm.validate_against_schema
+
+    def _ok(instance, schema, *, path):  # noqa: ANN001
+        return []
+
+    vm.validate_against_schema = _ok  # type: ignore[assignment]
+    try:
+        _write(tmp_path / ".github" / "dependabot.yml", "version: 2\nupdates: {}\n")
+        findings = vm.validate_dependabot(tmp_path)
+        assert any("updates must be a list" in f.message for f in findings)
+        _write(tmp_path / ".github" / "dependabot.yml", "- just\n")
+        findings = vm.validate_dependabot(tmp_path)
+        assert any("mapping" in f.message for f in findings)
+    finally:
+        vm.validate_against_schema = original  # type: ignore[assignment]
+
+
+def test_ci_workflow_missing_on_trigger(tmp_path: Path) -> None:
+    _write(
+        tmp_path / ".github" / "workflows" / "ci.yml",
+        _ci_yaml_with_matrix(list(vm.REQUIRED_PYTHON_VERSIONS)).replace("on:\n  push: {}\n", ""),
+    )
+    findings = vm.validate_ci_workflow(tmp_path)
+    assert any("on: trigger" in f.message for f in findings)
+
+
+def test_prompts_require_markdown_fences(tmp_path: Path) -> None:
+    body = "\n".join(
+        f"## {i}. {agent} Prompt Template\n\n{agent} body\n"
+        for i, agent in enumerate(vm.DOCUMENTED_AGENTS, start=1)
+    )
+    _write(tmp_path / "AGENT-PROMPTS.md", body)
+    findings = vm.validate_documented_agent_prompts(tmp_path)
+    assert any("markdown prompt fences" in f.message for f in findings)
+
+
+def test_extract_fenced_markdown_blocks() -> None:
+    text = "```markdown\none\n```\n\n```markdown\ntwo\n```\n"
+    assert vm.extract_fenced_markdown_blocks(text) == ["one\n", "two\n"]
+
+
+def test_ondisk_recipe_non_mapping(tmp_path: Path) -> None:
+    body = _four_locked_recipe_doc()
+    _write(tmp_path / "GOOSE-RECIPES.md", body)
+    flows = tmp_path / "agentic_flows"
+    flows.mkdir()
+    (flows / "quantum_algorithm_design.yaml").write_text("- list\n", encoding="utf-8")
+    findings = vm.validate_goose_recipes(tmp_path)
+    assert any("must be a mapping" in f.message for f in findings)
+
+
+def test_github_agent_and_issue_missing_required_files(tmp_path: Path) -> None:
+    agents = tmp_path / ".github" / "agents"
+    agents.mkdir(parents=True)
+    _write(agents / "my-agent.agent.md", "---\nname: X\ndescription: Y\n---\n\n# Body\n")
+    # Remove required by writing only invented after deleting? already has required.
+    # Missing required: empty expected set relative — create dir with wrong name only.
+    for path in agents.glob("*.agent.md"):
+        path.unlink()
+    _write(agents / "other.agent.md", "---\nname: X\ndescription: Y\n---\n\n# Body\n")
+    findings = vm.validate_github_agents(tmp_path)
+    assert any("required GitHub agent packaging file missing" in f.message for f in findings)
+
+    templates = tmp_path / ".github" / "ISSUE_TEMPLATE"
+    templates.mkdir(parents=True)
+    _write(templates / "only.md", "---\nname: X\nabout: Y\n---\n\nbody\n")
+    findings = vm.validate_issue_templates(tmp_path)
+    assert any("required issue template file missing" in f.message for f in findings)
+
+
+def test_pyproject_missing_coverage_table(tmp_path: Path) -> None:
+    _write(
+        tmp_path / "pyproject.toml",
+        "\n".join(
+            [
+                "[tool.pytest.ini_options]",
+                'testpaths = ["tests"]',
+                "[tool.ruff]",
+                'target-version = "py311"',
+                "",
+            ]
+        ),
+    )
+    findings = vm.validate_pyproject(tmp_path)
+    assert any("missing [tool.coverage]" in f.message for f in findings)

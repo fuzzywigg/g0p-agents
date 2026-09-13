@@ -72,10 +72,14 @@ jobs:
           cache-dependency-path: requirements-dev.txt
       - name: Install validation dependencies
         run: python -m pip install -r requirements-dev.txt
+      - name: Pip check
+        run: python -m pip check
       - name: Ruff lint (scripts + tests)
         run: ruff check scripts tests
       - name: List packaging validators
-        run: python scripts/validate_manifests.py --list-validators | tee validators.txt
+        run: |
+          python scripts/validate_manifests.py --list-validators | tee validators.txt
+          test "$(wc -l < validators.txt)" -ge 20
       - name: Validate documented manifests (JSON report)
         run: |
           python scripts/validate_manifests.py --json | tee manifest-findings.json

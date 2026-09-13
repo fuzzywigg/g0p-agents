@@ -1,5 +1,5 @@
 {
-  "version": 2,
+  "version": 3,
   "documented_agents": [
     "QuantumArchitectAgent",
     "BlockchainArchitectAgent",
@@ -18,12 +18,77 @@
     "agentic_flows/edge_security_implementation.yaml",
     "agentic_flows/quantum_nft_mint_orchestration.yaml"
   ],
+  "recipe_bindings": {
+    "quantum_algorithm_design_workflow": "agentic_flows/quantum_algorithm_design.yaml",
+    "blockchain_contract_design_workflow": "agentic_flows/blockchain_contract_design.yaml",
+    "edge_security_implementation_workflow": "agentic_flows/edge_security_implementation.yaml",
+    "quantum_nft_mint_full_orchestration": "agentic_flows/quantum_nft_mint_orchestration.yaml"
+  },
+  "recipe_primary_agents": {
+    "quantum_algorithm_design_workflow": "QuantumArchitectAgent",
+    "blockchain_contract_design_workflow": "BlockchainArchitectAgent",
+    "edge_security_implementation_workflow": "EdgeSecurityAgent",
+    "quantum_nft_mint_full_orchestration": "OrchestrationAgent"
+  },
   "required_ci_jobs": [
     "markdown-lint",
     "link-check",
     "actionlint",
     "manifest-validate"
   ],
+  "required_python_versions": [
+    "3.11",
+    "3.12",
+    "3.13"
+  ],
+  "required_manifest_step_markers": [
+    "validate_manifests.py",
+    "pytest",
+    "ruff",
+    "--cov",
+    "pip check",
+    "--list-validators"
+  ],
+  "required_schema_files": [
+    "goose-recipe.schema.json",
+    "cursor-environment.schema.json",
+    "github-custom-agent.schema.json",
+    "github-issue-template.schema.json",
+    "dependabot-v2.schema.json",
+    "markdownlint.schema.json",
+    "packaging-inventory.schema.json"
+  ],
+  "required_dev_packages": [
+    "jsonschema",
+    "PyYAML",
+    "pytest",
+    "pytest-cov",
+    "ruff"
+  ],
+  "github_agent_files": [
+    ".github/agents/my-agent.agent.md"
+  ],
+  "issue_template_files": [
+    ".github/ISSUE_TEMPLATE/bug_report.md",
+    ".github/ISSUE_TEMPLATE/feature_request.md",
+    ".github/ISSUE_TEMPLATE/agent_task.md"
+  ],
+  "pr_template_headings": [
+    "Summary",
+    "Problem",
+    "Changes",
+    "Acceptance Criteria",
+    "Agent Surface Routing",
+    "Notes for Reviewer"
+  ],
+  "historic_goose_settings": {
+    "goose_provider": "anthropic",
+    "goose_model": "claude-opus-4",
+    "extension_type": "builtin",
+    "extension_name": "developer"
+  },
+  "min_coverage_fail_under": 97,
+  "min_validator_count": 20,
   "required_paths": [
     "README.md",
     "LICENSE",
