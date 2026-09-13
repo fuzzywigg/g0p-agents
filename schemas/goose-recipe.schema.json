@@ -27,8 +27,7 @@
       "properties": {
         "version": {
           "type": "string",
-          "minLength": 1,
-          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+          "const": "1.0.0"
         },
         "title": {
           "type": "string",

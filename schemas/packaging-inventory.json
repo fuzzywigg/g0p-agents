@@ -1,5 +1,5 @@
 {
-  "version": 5,
+  "version": 6,
   "documented_agents": [
     "QuantumArchitectAgent",
     "BlockchainArchitectAgent",
@@ -120,7 +120,9 @@
   "readme_required_phrases": [
     "validate_manifests.py",
     "historic four",
-    "schemas/"
+    "schemas/",
+    "not a live hive",
+    "Docs-only"
   ],
   "security_required_phrases": [
     "Never commit secrets",
@@ -167,19 +169,61 @@
   ],
   "cursor_environment_name": "g0p-agents",
   "dependabot_schedule_interval": "weekly",
+  "dependabot_ecosystems": [
+    "github-actions",
+    "pip"
+  ],
   "ci_permissions_contents": "read",
   "ci_artifact_name_prefix": "manifest-validate-py",
   "ci_pull_request_branch": "alpha",
+  "ci_concurrency_group_prefix": "ci-",
+  "ci_artifact_upload_if": "always()",
   "pyproject_requires_python": ">=3.11",
+  "pyproject_ruff_target_version": "py311",
   "markdownlint_default": true,
+  "markdownlint_md013_line_length": 200,
   "scratchpad_required_phrases": [
     "source of truth",
-    "Never delete entries"
+    "Never delete entries",
+    "g0p-agents Agent Coordination"
+  ],
+  "changelog_required_phrases": [
+    "## [Unreleased]",
+    "Packaging inventory",
+    "historic four"
+  ],
+  "postmortem_required_phrases": [
+    "Decision & Incident Log",
+    "LIST B",
+    "documentation archive"
+  ],
+  "gitignore_required_patterns": [
+    ".env",
+    "*.pem",
+    "*.key",
+    "__pycache__/",
+    ".coverage"
+  ],
+  "negative_constraint_phrases": [
+    "Push to `main` branch",
+    "Merge own PRs on protected repos",
+    "Delete files or repositories without human approval",
+    "Initiate financial transactions or alter billing",
+    "Change repo visibility (private/public)",
+    "Modify branch protection rules",
+    "Create public gists containing secrets or PII"
+  ],
+  "license_copyright_holder": "Andrew Pappas",
+  "historic_recipe_version": "1.0.0",
+  "github_agent_name": "Hydration",
+  "agentic_flows_allowed_files": [
+    "scratchpad.txt"
   ],
   "validator_names": [
     "agent-task",
     "agent-tokens",
     "bug-template",
+    "changelog",
     "ci",
     "constitution",
     "contributing",
@@ -188,11 +232,14 @@
     "environment",
     "feature-template",
     "github-agents",
+    "gitignore",
     "goose",
     "inventory",
     "issue-templates",
     "license",
     "markdownlint",
+    "negative-constraints",
+    "postmortem",
     "pr-template",
     "prompts",
     "pyproject",
@@ -206,7 +253,7 @@
     "yaml-configs"
   ],
   "min_coverage_fail_under": 99,
-  "min_validator_count": 27,
+  "min_validator_count": 31,
   "required_paths": [
     "README.md",
     "LICENSE",
@@ -225,6 +272,7 @@
     "agentic_flows/scratchpad.txt",
     ".cursor/environment.json",
     ".markdownlint.yaml",
+    ".gitignore",
     ".github/workflows/ci.yml",
     ".github/dependabot.yml",
     ".github/pull_request_template.md",

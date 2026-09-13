@@ -11,7 +11,16 @@
       "type": "boolean"
     },
     "MD013": {
-      "type": ["object", "boolean"]
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["line_length"],
+      "properties": {
+        "line_length": {
+          "type": "integer",
+          "minimum": 1,
+          "const": 200
+        }
+      }
     },
     "MD024": {
       "type": ["object", "boolean"]
