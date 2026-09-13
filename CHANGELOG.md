@@ -10,6 +10,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- README surface **v23** deepeners (post-#45): `readme-honesty`,
+  `readme-historic`, `readme-contents` validators; README.md honesty/disclaimer
+  locks + Historic prompt set four-agent locks + Contents archive-doc locks;
+  consistency deepeners for `readme_honesty_required_phrases` /
+  `readme_historic_required_phrases` / `readme_contents_required_phrases`;
+  inventory `ci_required_actions` pin sync to `actions/setup-python@v7` /
+  `actions/upload-artifact@v7` (post-#17 workflow bump; Dependabot.yml untouched)
+  (82 total; historic four only — README slice, not contributing,
+  issue-template, scratchpad, postmortem, archive snapshot, security policy,
+  routing/identity, or Dependabot)
+
 - Contributing guide **v22** deepeners (post-#44): `contributing-who`,
   `contributing-branches`, `contributing-pr` validators; CONTRIBUTING.md Who Can
   Contribute locks + Branch Strategy table locks + PR Requirements / Governance

@@ -49,6 +49,8 @@ Checks structural correctness of:
 - postmortem.md intro / Decision field / Next Steps surface locks
 - agentic_flows/scratchpad.txt intro / format-legend / task-meta locks
 - GitHub issue template metadata / routing-field / bug-repro locks
+- CONTRIBUTING.md Who Can Contribute / Branch Strategy / PR Requirements locks
+- README honesty / Historic prompt set / Contents section locks
 - pyproject project name + version/license/description/readme +
   ruff line-length/src/lint select locks
 - coverage show_missing/skip_empty/source + exact fail_under +
@@ -159,7 +161,7 @@ REQUIRED_ARCHIVE_DOCS = (
     "README.md",
 )
 
-INVENTORY_VERSION = 22
+INVENTORY_VERSION = 23
 CURSOR_ENVIRONMENT_NAME = "g0p-agents"
 DEPENDABOT_SCHEDULE_INTERVAL = "weekly"
 DEPENDABOT_DIRECTORIES: frozenset[str] = frozenset({"/"})
@@ -175,8 +177,8 @@ CI_FAIL_FAST = False
 CI_WORKFLOW_NAME = "CI — Lint, Links & Manifests"
 CI_REQUIRED_ACTIONS: tuple[str, ...] = (
     "actions/checkout@v7",
-    "actions/setup-python@v5",
-    "actions/upload-artifact@v4",
+    "actions/setup-python@v7",
+    "actions/upload-artifact@v7",
     "DavidAnson/markdownlint-cli2-action@v24",
     "lycheeverse/lychee-action@v2",
 )
@@ -430,6 +432,29 @@ CONTRIBUTING_PR_REQUIRED_PHRASES: tuple[str, ...] = (
     "One approval required",
     "## Governance",
     "require Andrew approval",
+)
+README_HONESTY_REQUIRED_PHRASES: tuple[str, ...] = (
+    "This is not a live hive, runtime, or production swarm",
+    "Oracle-Style Quantum Hive Mind",
+    "prompt fiction",
+    "fuzzywigg/agents-standard",
+    "archived reference",
+)
+README_HISTORIC_REQUIRED_PHRASES: tuple[str, ...] = (
+    "## Historic prompt set",
+    "QuantumArchitectAgent",
+    "BlockchainArchitectAgent",
+    "EdgeSecurityAgent",
+    "OrchestrationAgent",
+    "Quantum-Blockchain",
+)
+README_CONTENTS_REQUIRED_PHRASES: tuple[str, ...] = (
+    "## Contents",
+    "AGENT-PROMPTS.md",
+    "GOOSE-RECIPES.md",
+    "IMPLEMENTATION-GUIDE.md",
+    "AGENTS-v2.2.md",
+    "CLAUDE.md",
 )
 LICENSE_REQUIRED_PHRASES: tuple[str, ...] = (
     "MIT License",
@@ -758,7 +783,7 @@ SCRATCHPAD_STATUS_MARKERS: tuple[str, ...] = (
 SPECIALIST_AGENTS: tuple[str, ...] = DOCUMENTED_AGENTS[:-1]
 
 MIN_COVERAGE_FAIL_UNDER = 99
-MIN_VALIDATOR_COUNT = 79
+MIN_VALIDATOR_COUNT = 82
 
 
 @dataclass(frozen=True)
@@ -1539,6 +1564,30 @@ def validate_packaging_inventory(root: Path) -> list[Finding]:
         != CONTRIBUTING_PR_REQUIRED_PHRASES
     ):
         findings.append(_lock_mismatch(schema_path, "contributing_pr_required_phrases"))
+
+    if (
+        tuple(inventory.get("readme_honesty_required_phrases", ()))
+        != README_HONESTY_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "readme_honesty_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("readme_historic_required_phrases", ()))
+        != README_HISTORIC_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "readme_historic_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("readme_contents_required_phrases", ()))
+        != README_CONTENTS_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "readme_contents_required_phrases")
+        )
 
     expected_validator_names = tuple(sorted(VALIDATORS))
     if tuple(inventory.get("validator_names", ())) != expected_validator_names:
@@ -2771,6 +2820,110 @@ def _inventory_lock_consistency(
                     schema_path,
                     "contributing_pr_required_phrases must include PR Requirements, "
                     "CI pass gate, and Governance",
+                )
+            )
+
+    honesty = list(inventory.get("readme_honesty_required_phrases", ()))
+    if len(honesty) != len(set(honesty)):
+        findings.append(
+            Finding(schema_path, "readme_honesty_required_phrases must be unique")
+        )
+    if not honesty:
+        findings.append(
+            Finding(schema_path, "readme_honesty_required_phrases must not be empty")
+        )
+    for phrase in honesty:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "readme_honesty_required_phrases entries must be non-empty strings",
+                )
+            )
+            break
+    else:
+        required_honesty = {
+            "prompt fiction",
+            "fuzzywigg/agents-standard",
+            "This is not a live hive, runtime, or production swarm",
+        }
+        if honesty and not required_honesty <= set(honesty):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "readme_honesty_required_phrases must include prompt fiction, "
+                    "agents-standard, and not-a-live-hive disclaimer",
+                )
+            )
+
+    historic = list(inventory.get("readme_historic_required_phrases", ()))
+    if len(historic) != len(set(historic)):
+        findings.append(
+            Finding(schema_path, "readme_historic_required_phrases must be unique")
+        )
+    if not historic:
+        findings.append(
+            Finding(schema_path, "readme_historic_required_phrases must not be empty")
+        )
+    for phrase in historic:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "readme_historic_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_historic = {
+            "## Historic prompt set",
+            "QuantumArchitectAgent",
+            "BlockchainArchitectAgent",
+            "EdgeSecurityAgent",
+            "OrchestrationAgent",
+        }
+        if historic and not required_historic <= set(historic):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "readme_historic_required_phrases must include Historic prompt "
+                    "set heading and the historic four agents",
+                )
+            )
+
+    contents = list(inventory.get("readme_contents_required_phrases", ()))
+    if len(contents) != len(set(contents)):
+        findings.append(
+            Finding(schema_path, "readme_contents_required_phrases must be unique")
+        )
+    if not contents:
+        findings.append(
+            Finding(schema_path, "readme_contents_required_phrases must not be empty")
+        )
+    for phrase in contents:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "readme_contents_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_contents = {
+            "## Contents",
+            "AGENT-PROMPTS.md",
+            "GOOSE-RECIPES.md",
+            "AGENTS-v2.2.md",
+        }
+        if contents and not required_contents <= set(contents):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "readme_contents_required_phrases must include Contents heading "
+                    "and AGENT-PROMPTS/GOOSE-RECIPES/AGENTS-v2.2.md",
                 )
             )
 
@@ -4448,6 +4601,55 @@ def validate_contributing_pr(root: Path) -> list[Finding]:
     return findings
 
 
+def validate_readme_honesty(root: Path) -> list[Finding]:
+    rel = "README.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "README.md missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    for phrase in README_HONESTY_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(rel, f"missing locked readme-honesty phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_readme_historic(root: Path) -> list[Finding]:
+    rel = "README.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "README.md missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## Historic prompt set" not in text:
+        findings.append(Finding(rel, "missing Historic prompt set section"))
+    for phrase in README_HISTORIC_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(rel, f"missing locked readme-historic phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_readme_contents(root: Path) -> list[Finding]:
+    rel = "README.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "README.md missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## Contents" not in text:
+        findings.append(Finding(rel, "missing Contents section"))
+    for phrase in README_CONTENTS_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(rel, f"missing locked readme-contents phrase: {phrase}")
+            )
+    return findings
+
+
 def validate_agent_task_template(root: Path) -> list[Finding]:
     rel = ".github/ISSUE_TEMPLATE/agent_task.md"
     path = root / rel
@@ -5616,6 +5818,9 @@ VALIDATORS: dict[str, ValidatorFn] = {
     "license-mit": validate_license_mit,
     "readme": validate_readme_packaging,
     "readme-badges": validate_readme_badges,
+    "readme-honesty": validate_readme_honesty,
+    "readme-historic": validate_readme_historic,
+    "readme-contents": validate_readme_contents,
     "security": validate_security_packaging,
     "contributing": validate_contributing_packaging,
     "contributing-who": validate_contributing_who,
