@@ -1,5 +1,5 @@
 {
-  "version": 20,
+  "version": 21,
   "documented_agents": [
     "QuantumArchitectAgent",
     "BlockchainArchitectAgent",
@@ -273,6 +273,7 @@
     "actionlint-shell",
     "agent-task",
     "agent-tokens",
+    "bug-repro",
     "bug-template",
     "changelog",
     "ci",
@@ -306,7 +307,9 @@
     "implementation-guide",
     "implementation-quickstart",
     "inventory",
+    "issue-metadata",
     "issue-names",
+    "issue-routing",
     "issue-templates",
     "key-files",
     "license",
@@ -345,7 +348,7 @@
     "yaml-configs"
   ],
   "min_coverage_fail_under": 99,
-  "min_validator_count": 73,
+  "min_validator_count": 76,
   "required_paths": [
     "README.md",
     "LICENSE",
@@ -711,5 +714,25 @@
     "Created:",
     "Owner:",
     "Current blocker:"
+  ],
+  "issue_metadata_required_phrases": [
+    "Status: ACTIVE",
+    "Tier: 1",
+    "Created: YYYY-MM-DD",
+    "Owner:",
+    "Edit policy: Agent-editable; structural changes require Andrew approval"
+  ],
+  "issue_routing_required_phrases": [
+    "## Agent Surface Routing",
+    "| Surface |",
+    "| Rationale |",
+    "| Priority |",
+    "| Branch |",
+    "| Dependencies |"
+  ],
+  "bug_repro_required_phrases": [
+    "## Steps to Reproduce",
+    "## Expected Behavior",
+    "## Actual Behavior"
   ]
 }

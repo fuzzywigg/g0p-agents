@@ -48,6 +48,7 @@ Checks structural correctness of:
   hydration LIST B HITL question locks (Dec 2025 archive snapshot slice)
 - postmortem.md intro / Decision field / Next Steps surface locks
 - agentic_flows/scratchpad.txt intro / format-legend / task-meta locks
+- GitHub issue template metadata / routing-field / bug-repro locks
 - pyproject project name + version/license/description/readme +
   ruff line-length/src/lint select locks
 - coverage show_missing/skip_empty/source + exact fail_under +
@@ -158,7 +159,7 @@ REQUIRED_ARCHIVE_DOCS = (
     "README.md",
 )
 
-INVENTORY_VERSION = 20
+INVENTORY_VERSION = 21
 CURSOR_ENVIRONMENT_NAME = "g0p-agents"
 DEPENDABOT_SCHEDULE_INTERVAL = "weekly"
 DEPENDABOT_DIRECTORIES: frozenset[str] = frozenset({"/"})
@@ -384,6 +385,26 @@ SCRATCHPAD_TASK_META_REQUIRED_PHRASES: tuple[str, ...] = (
     "Created:",
     "Owner:",
     "Current blocker:",
+)
+ISSUE_METADATA_REQUIRED_PHRASES: tuple[str, ...] = (
+    "Status: ACTIVE",
+    "Tier: 1",
+    "Created: YYYY-MM-DD",
+    "Owner:",
+    "Edit policy: Agent-editable; structural changes require Andrew approval",
+)
+ISSUE_ROUTING_REQUIRED_PHRASES: tuple[str, ...] = (
+    "## Agent Surface Routing",
+    "| Surface |",
+    "| Rationale |",
+    "| Priority |",
+    "| Branch |",
+    "| Dependencies |",
+)
+BUG_REPRO_REQUIRED_PHRASES: tuple[str, ...] = (
+    "## Steps to Reproduce",
+    "## Expected Behavior",
+    "## Actual Behavior",
 )
 LICENSE_REQUIRED_PHRASES: tuple[str, ...] = (
     "MIT License",
@@ -712,7 +733,7 @@ SCRATCHPAD_STATUS_MARKERS: tuple[str, ...] = (
 SPECIALIST_AGENTS: tuple[str, ...] = DOCUMENTED_AGENTS[:-1]
 
 MIN_COVERAGE_FAIL_UNDER = 99
-MIN_VALIDATOR_COUNT = 73
+MIN_VALIDATOR_COUNT = 76
 
 
 @dataclass(frozen=True)
@@ -1453,6 +1474,24 @@ def validate_packaging_inventory(root: Path) -> list[Finding]:
         findings.append(
             _lock_mismatch(schema_path, "scratchpad_task_meta_required_phrases")
         )
+
+    if (
+        tuple(inventory.get("issue_metadata_required_phrases", ()))
+        != ISSUE_METADATA_REQUIRED_PHRASES
+    ):
+        findings.append(_lock_mismatch(schema_path, "issue_metadata_required_phrases"))
+
+    if (
+        tuple(inventory.get("issue_routing_required_phrases", ()))
+        != ISSUE_ROUTING_REQUIRED_PHRASES
+    ):
+        findings.append(_lock_mismatch(schema_path, "issue_routing_required_phrases"))
+
+    if (
+        tuple(inventory.get("bug_repro_required_phrases", ()))
+        != BUG_REPRO_REQUIRED_PHRASES
+    ):
+        findings.append(_lock_mismatch(schema_path, "bug_repro_required_phrases"))
 
     expected_validator_names = tuple(sorted(VALIDATORS))
     if tuple(inventory.get("validator_names", ())) != expected_validator_names:
@@ -2487,6 +2526,107 @@ def _inventory_lock_consistency(
                     schema_path,
                     "scratchpad_task_meta_required_phrases must include Status/"
                     "Created/Owner/Current blocker",
+                )
+            )
+
+    meta_phrases = list(inventory.get("issue_metadata_required_phrases", ()))
+    if len(meta_phrases) != len(set(meta_phrases)):
+        findings.append(
+            Finding(schema_path, "issue_metadata_required_phrases must be unique")
+        )
+    if not meta_phrases:
+        findings.append(
+            Finding(schema_path, "issue_metadata_required_phrases must not be empty")
+        )
+    for phrase in meta_phrases:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "issue_metadata_required_phrases entries must be non-empty strings",
+                )
+            )
+            break
+    else:
+        required_meta_hdr = {
+            "Status: ACTIVE",
+            "Tier: 1",
+            "Edit policy: Agent-editable; structural changes require Andrew approval",
+        }
+        if meta_phrases and not required_meta_hdr <= set(meta_phrases):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "issue_metadata_required_phrases must include Status ACTIVE/"
+                    "Tier/Edit policy",
+                )
+            )
+
+    routing_phrases = list(inventory.get("issue_routing_required_phrases", ()))
+    if len(routing_phrases) != len(set(routing_phrases)):
+        findings.append(
+            Finding(schema_path, "issue_routing_required_phrases must be unique")
+        )
+    if not routing_phrases:
+        findings.append(
+            Finding(schema_path, "issue_routing_required_phrases must not be empty")
+        )
+    for phrase in routing_phrases:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "issue_routing_required_phrases entries must be non-empty strings",
+                )
+            )
+            break
+    else:
+        required_routing = {
+            "| Surface |",
+            "| Rationale |",
+            "| Priority |",
+            "| Branch |",
+            "| Dependencies |",
+        }
+        if routing_phrases and not required_routing <= set(routing_phrases):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "issue_routing_required_phrases must include Surface/Rationale/"
+                    "Priority/Branch/Dependencies",
+                )
+            )
+
+    bug_repro = list(inventory.get("bug_repro_required_phrases", ()))
+    if len(bug_repro) != len(set(bug_repro)):
+        findings.append(
+            Finding(schema_path, "bug_repro_required_phrases must be unique")
+        )
+    if not bug_repro:
+        findings.append(
+            Finding(schema_path, "bug_repro_required_phrases must not be empty")
+        )
+    for phrase in bug_repro:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "bug_repro_required_phrases entries must be non-empty strings",
+                )
+            )
+            break
+    else:
+        required_repro = {
+            "## Steps to Reproduce",
+            "## Expected Behavior",
+            "## Actual Behavior",
+        }
+        if bug_repro and not required_repro <= set(bug_repro):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "bug_repro_required_phrases must include Steps to Reproduce/"
+                    "Expected/Actual Behavior",
                 )
             )
 
@@ -4289,6 +4429,55 @@ def validate_scratchpad_task_meta(root: Path) -> list[Finding]:
     return findings
 
 
+def validate_issue_metadata(root: Path) -> list[Finding]:
+    findings: list[Finding] = []
+    for rel in ISSUE_TEMPLATE_FILES:
+        path = root / rel
+        if not path.is_file():
+            findings.append(Finding(rel, "issue template missing"))
+            continue
+        text = path.read_text(encoding="utf-8")
+        for phrase in ISSUE_METADATA_REQUIRED_PHRASES:
+            if phrase not in text:
+                findings.append(
+                    Finding(rel, f"missing locked issue-metadata phrase: {phrase}")
+                )
+    return findings
+
+
+def validate_issue_routing(root: Path) -> list[Finding]:
+    findings: list[Finding] = []
+    for rel in ISSUE_TEMPLATE_FILES:
+        path = root / rel
+        if not path.is_file():
+            findings.append(Finding(rel, "issue template missing"))
+            continue
+        text = path.read_text(encoding="utf-8")
+        if "## Agent Surface Routing" not in text:
+            findings.append(Finding(rel, "missing Agent Surface Routing section"))
+        for phrase in ISSUE_ROUTING_REQUIRED_PHRASES:
+            if phrase not in text:
+                findings.append(
+                    Finding(rel, f"missing locked issue-routing phrase: {phrase}")
+                )
+    return findings
+
+
+def validate_bug_repro(root: Path) -> list[Finding]:
+    rel = ".github/ISSUE_TEMPLATE/bug_report.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "bug report issue template missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    for phrase in BUG_REPRO_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(rel, f"missing locked bug-repro phrase: {phrase}")
+            )
+    return findings
+
+
 def validate_gitignore_packaging(root: Path) -> list[Finding]:
     rel = ".gitignore"
     path = root / rel
@@ -5221,6 +5410,9 @@ VALIDATORS: dict[str, ValidatorFn] = {
     "agent-task": validate_agent_task_template,
     "bug-template": validate_bug_report_template,
     "feature-template": validate_feature_request_template,
+    "issue-metadata": validate_issue_metadata,
+    "issue-routing": validate_issue_routing,
+    "bug-repro": validate_bug_repro,
     "pr-template": validate_pr_template,
     "dependabot": validate_dependabot,
     "markdownlint": validate_markdownlint,

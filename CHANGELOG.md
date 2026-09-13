@@ -10,6 +10,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- GitHub issue-template **v21** deepeners (post-#42): `issue-metadata`,
+  `issue-routing`, `bug-repro` validators; shared Status/Tier/Created/Owner/Edit
+  policy locks across bug/feature/agent-task templates; Agent Surface Routing
+  field locks (Surface/Rationale/Priority/Branch/Dependencies); bug Steps to
+  Reproduce / Expected / Actual Behavior locks; consistency deepeners for
+  `issue_metadata_required_phrases` / `issue_routing_required_phrases` /
+  `bug_repro_required_phrases` (76 total; historic four only — issue-template
+  slice, not scratchpad, postmortem, archive snapshot, security policy,
+  routing/identity, or Dependabot)
+
 - Scratchpad coordination **v20** deepeners (post-#41): `scratchpad-intro`,
   `scratchpad-format`, `scratchpad-task-meta` validators; scratchpad.txt intro/
   update mandate locks + Format legend locks + Task Repo Hydration meta locks;
