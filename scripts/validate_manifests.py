@@ -22,9 +22,12 @@ Checks structural correctness of:
 - requirements-dev.txt required validation packages
 - LICENSE MIT marker; README packaging section
 - agentic_flows/scratchpad.txt coordination markers
-- pyproject.toml validation tooling keys (+ coverage / requires-python locks)
+- pyproject.toml validation tooling keys (+ coverage / requires-python / ruff locks)
 - CI workflow job/step/matrix/concurrency/permissions presence (no orphan jobs)
 - Packaging inventory lock + internal consistency + schema meta-validation
+- postmortem.md / docs/agent-hydration.md / .gitignore packaging locks
+- CLAUDE.md negative-constraint phrase locks; Dependabot group name locks
+- Cursor install required path refs; historic Goose recipe version lock
 - Parseability of known YAML config files
 
 Does not invent agents or scaffold new specialist definitions.
@@ -123,19 +126,72 @@ REQUIRED_ARCHIVE_DOCS = (
     "README.md",
 )
 
-INVENTORY_VERSION = 5
+INVENTORY_VERSION = 6
 CURSOR_ENVIRONMENT_NAME = "g0p-agents"
 DEPENDABOT_SCHEDULE_INTERVAL = "weekly"
 DEPENDABOT_DIRECTORIES: frozenset[str] = frozenset({"/"})
+DEPENDABOT_ECOSYSTEMS: tuple[str, ...] = ("github-actions", "pip")
+DEPENDABOT_GROUP_NAMES: frozenset[str] = frozenset({"github_actions", "python_dev"})
 CI_PERMISSIONS_CONTENTS = "read"
 CI_ARTIFACT_NAME_PREFIX = "manifest-validate-py"
 CI_PULL_REQUEST_BRANCH = "alpha"
+CI_CANCEL_IN_PROGRESS = True
+CI_FAIL_FAST = False
 PYPROJECT_REQUIRES_PYTHON = ">=3.11"
+RUFF_TARGET_VERSION = "py311"
+COVERAGE_BRANCH = True
 MARKDOWNLINT_DEFAULT = True
+LICENSE_COPYRIGHT_MARKER = "Copyright (c) 2026 Andrew Pappas"
+HISTORIC_RECIPE_VERSION = "1.0.0"
 
 SCRATCHPAD_REQUIRED_PHRASES = (
     "source of truth",
     "Never delete entries",
+)
+
+POSTMORTEM_REQUIRED_PHRASES = (
+    "Decision & Incident Log",
+    "LIST B Deferred",
+    "Risk Level",
+)
+
+HYDRATION_REQUIRED_SECTIONS = (
+    "## PHASE 1: FINDINGS REPORT",
+    "## PHASE 2: QUESTIONS",
+    "### LIST B — Requires Andrew (HITL)",
+    "## PHASE 3: RESOLVED (LIST A)",
+    "## PHASE 4: ISSUES GENERATED",
+    "## PHASE 5: Roadmap",
+    "## LIST B — Deferred to Andrew",
+)
+
+GITIGNORE_REQUIRED_PATTERNS = (
+    ".env",
+    "*.pem",
+    "*.key",
+    ".venv/",
+    "coverage.xml",
+)
+
+CLAUDE_NEGATIVE_CONSTRAINTS = (
+    "Push to `main` branch",
+    "Merge own PRs on protected repos",
+    "Delete files or repositories without human approval",
+    "Initiate financial transactions or alter billing",
+    "Change repo visibility (private/public)",
+    "Modify branch protection rules",
+    "Create public gists containing secrets or PII",
+)
+
+CURSOR_INSTALL_REQUIRED_REFS: tuple[str, ...] = (
+    "README.md",
+    "LICENSE",
+    "scripts/validate_manifests.py",
+    "schemas/packaging-inventory.json",
+    "schemas/packaging-inventory.schema.json",
+    "tests/test_validate_manifests.py",
+    "requirements-dev.txt",
+    "pyproject.toml",
 )
 
 AGENT_TOKEN_SCAN_DOCS = (
@@ -165,6 +221,8 @@ REQUIRED_MANIFEST_STEP_MARKERS = (
     "Smoke each",
     "--only",
     "junitxml",
+    "Lock inventory",
+    "INVENTORY_VERSION",
 )
 
 GITHUB_AGENT_FILES: tuple[str, ...] = (".github/agents/my-agent.agent.md",)
@@ -278,7 +336,7 @@ SCRATCHPAD_STATUS_MARKERS: tuple[str, ...] = (
 SPECIALIST_AGENTS: tuple[str, ...] = DOCUMENTED_AGENTS[:-1]
 
 MIN_COVERAGE_FAIL_UNDER = 99
-MIN_VALIDATOR_COUNT = 27
+MIN_VALIDATOR_COUNT = 30
 
 
 @dataclass(frozen=True)
@@ -615,6 +673,48 @@ def validate_packaging_inventory(root: Path) -> list[Finding]:
     if tuple(inventory.get("scratchpad_status_markers", ())) != SCRATCHPAD_STATUS_MARKERS:
         findings.append(_lock_mismatch(schema_path, "scratchpad_status_markers"))
 
+    if tuple(inventory.get("postmortem_required_phrases", ())) != POSTMORTEM_REQUIRED_PHRASES:
+        findings.append(_lock_mismatch(schema_path, "postmortem_required_phrases"))
+
+    if tuple(inventory.get("hydration_required_sections", ())) != HYDRATION_REQUIRED_SECTIONS:
+        findings.append(_lock_mismatch(schema_path, "hydration_required_sections"))
+
+    if tuple(inventory.get("gitignore_required_patterns", ())) != GITIGNORE_REQUIRED_PATTERNS:
+        findings.append(_lock_mismatch(schema_path, "gitignore_required_patterns"))
+
+    if tuple(inventory.get("claude_negative_constraints", ())) != CLAUDE_NEGATIVE_CONSTRAINTS:
+        findings.append(_lock_mismatch(schema_path, "claude_negative_constraints"))
+
+    if inventory.get("license_copyright_marker") != LICENSE_COPYRIGHT_MARKER:
+        findings.append(_lock_mismatch(schema_path, "license_copyright_marker"))
+
+    if inventory.get("ruff_target_version") != RUFF_TARGET_VERSION:
+        findings.append(_lock_mismatch(schema_path, "ruff_target_version"))
+
+    if inventory.get("coverage_branch") is not COVERAGE_BRANCH:
+        findings.append(_lock_mismatch(schema_path, "coverage_branch"))
+
+    if inventory.get("ci_cancel_in_progress") is not CI_CANCEL_IN_PROGRESS:
+        findings.append(_lock_mismatch(schema_path, "ci_cancel_in_progress"))
+
+    if inventory.get("ci_fail_fast") is not CI_FAIL_FAST:
+        findings.append(_lock_mismatch(schema_path, "ci_fail_fast"))
+
+    if tuple(inventory.get("dependabot_ecosystems", ())) != DEPENDABOT_ECOSYSTEMS:
+        findings.append(_lock_mismatch(schema_path, "dependabot_ecosystems"))
+
+    if frozenset(inventory.get("dependabot_group_names", ())) != DEPENDABOT_GROUP_NAMES:
+        findings.append(_lock_mismatch(schema_path, "dependabot_group_names"))
+
+    if inventory.get("historic_recipe_version") != HISTORIC_RECIPE_VERSION:
+        findings.append(_lock_mismatch(schema_path, "historic_recipe_version"))
+
+    if (
+        tuple(inventory.get("cursor_install_required_refs", ()))
+        != CURSOR_INSTALL_REQUIRED_REFS
+    ):
+        findings.append(_lock_mismatch(schema_path, "cursor_install_required_refs"))
+
     expected_validator_names = tuple(sorted(VALIDATORS))
     if tuple(inventory.get("validator_names", ())) != expected_validator_names:
         findings.append(_lock_mismatch(schema_path, "validator_names"))
@@ -706,6 +806,52 @@ def _inventory_lock_consistency(
                 "validator_names length below min_validator_count",
             )
         )
+
+    specialists = set(inventory.get("specialist_agents", ()))
+    if specialists | {"OrchestrationAgent"} != agents:
+        findings.append(
+            Finding(
+                schema_path,
+                "specialist_agents + OrchestrationAgent must equal documented_agents",
+            )
+        )
+    if "OrchestrationAgent" in specialists:
+        findings.append(
+            Finding(
+                schema_path,
+                "specialist_agents must not include OrchestrationAgent",
+            )
+        )
+    if orch in primaries and primaries.get(orch) != "OrchestrationAgent":
+        findings.append(
+            Finding(
+                schema_path,
+                "orchestration recipe primary agent must be OrchestrationAgent",
+            )
+        )
+
+    install_refs = set(inventory.get("cursor_install_required_refs", ()))
+    required_paths = set(inventory.get("required_paths", ()))
+    if install_refs and not install_refs <= required_paths:
+        findings.append(
+            Finding(
+                schema_path,
+                "cursor_install_required_refs must be subset of required_paths",
+            )
+        )
+
+    ecosystems = list(inventory.get("dependabot_ecosystems", ()))
+    if len(ecosystems) != len(set(ecosystems)):
+        findings.append(Finding(schema_path, "dependabot_ecosystems must be unique"))
+    group_names = list(inventory.get("dependabot_group_names", ()))
+    if len(group_names) != len(set(group_names)):
+        findings.append(Finding(schema_path, "dependabot_group_names must be unique"))
+
+    negatives = set(inventory.get("claude_negative_constraints", ()))
+    if not negatives:
+        findings.append(
+            Finding(schema_path, "claude_negative_constraints must not be empty")
+        )
     return findings
 
 
@@ -714,6 +860,17 @@ def _validate_historic_recipe_settings(data: dict[str, Any], *, path: str) -> li
     recipe = data.get("recipe")
     if not isinstance(recipe, dict):
         return findings
+    version = recipe.get("version")
+    if version != HISTORIC_RECIPE_VERSION:
+        findings.append(
+            Finding(
+                path,
+                (
+                    f"historic recipe version must be "
+                    f"{HISTORIC_RECIPE_VERSION!r}, found {version!r}"
+                ),
+            )
+        )
     settings = recipe.get("settings")
     if isinstance(settings, dict):
         provider = settings.get("goose_provider")
@@ -1002,6 +1159,14 @@ def validate_cursor_environment(root: Path) -> list[Finding]:
                 findings.append(
                     Finding(rel, f"install references missing file: {ref}")
                 )
+        for required_ref in CURSOR_INSTALL_REQUIRED_REFS:
+            if required_ref not in install:
+                findings.append(
+                    Finding(
+                        rel,
+                        f"install missing required path ref: {required_ref}",
+                    )
+                )
     return findings
 
 
@@ -1132,11 +1297,12 @@ def validate_dependabot(root: Path) -> list[Finding]:
         for item in updates
         if isinstance(item, dict)
     }
-    for required in ("github-actions", "pip"):
+    for required in DEPENDABOT_ECOSYSTEMS:
         if required not in ecosystems:
             findings.append(
                 Finding(rel, f"missing required package-ecosystem: {required}")
             )
+    found_groups: set[str] = set()
     for item in updates:
         if not isinstance(item, dict):
             continue
@@ -1162,6 +1328,18 @@ def validate_dependabot(root: Path) -> list[Finding]:
                         ),
                     )
                 )
+        elif schedule is not None:
+            findings.append(Finding(rel, "Dependabot schedule must be a mapping"))
+        groups = item.get("groups")
+        if isinstance(groups, dict):
+            found_groups.update(str(name) for name in groups)
+        elif groups is not None:
+            findings.append(Finding(rel, "Dependabot groups must be a mapping"))
+    missing_groups = sorted(DEPENDABOT_GROUP_NAMES - found_groups)
+    for group_name in missing_groups:
+        findings.append(
+            Finding(rel, f"missing required Dependabot group: {group_name}")
+        )
     return findings
 
 
@@ -1220,6 +1398,10 @@ def validate_license(root: Path) -> list[Finding]:
         findings.append(Finding(rel, "LICENSE does not look like MIT text"))
     if "2026" not in text:
         findings.append(Finding(rel, "LICENSE missing expected copyright year 2026"))
+    if LICENSE_COPYRIGHT_MARKER not in text:
+        findings.append(
+            Finding(rel, f"LICENSE missing copyright marker: {LICENSE_COPYRIGHT_MARKER}")
+        )
     return findings
 
 
@@ -1300,11 +1482,36 @@ def validate_pyproject(root: Path) -> list[Finding]:
     ruff = tool.get("ruff")
     if not isinstance(ruff, dict):
         findings.append(Finding(rel, "missing [tool.ruff]"))
+    else:
+        target = ruff.get("target-version")
+        if target != RUFF_TARGET_VERSION:
+            findings.append(
+                Finding(
+                    rel,
+                    (
+                        f"ruff target-version must be {RUFF_TARGET_VERSION!r}, "
+                        f"found {target!r}"
+                    ),
+                )
+            )
 
     coverage = tool.get("coverage")
     if not isinstance(coverage, dict):
         findings.append(Finding(rel, "missing [tool.coverage]"))
         return findings
+
+    run = coverage.get("run")
+    if isinstance(run, dict):
+        branch = run.get("branch")
+        if branch is not COVERAGE_BRANCH:
+            findings.append(
+                Finding(
+                    rel,
+                    f"coverage run.branch must be {COVERAGE_BRANCH}, found {branch!r}",
+                )
+            )
+    else:
+        findings.append(Finding(rel, "missing [tool.coverage.run]"))
 
     report = coverage.get("report")
     if not isinstance(report, dict) or "fail_under" not in report:
@@ -1374,13 +1581,21 @@ def validate_ci_workflow(root: Path) -> list[Finding]:
                 )
         else:
             findings.append(Finding(rel, "CI workflow missing pull_request trigger"))
+    else:
+        findings.append(Finding(rel, "CI workflow on: trigger must be a mapping"))
 
     concurrency = data.get("concurrency")
     if not isinstance(concurrency, dict) or "group" not in concurrency:
         findings.append(Finding(rel, "CI workflow must define concurrency.group"))
-    elif concurrency.get("cancel-in-progress") is not True:
+    elif concurrency.get("cancel-in-progress") is not CI_CANCEL_IN_PROGRESS:
         findings.append(
-            Finding(rel, "CI workflow concurrency.cancel-in-progress must be true")
+            Finding(
+                rel,
+                (
+                    "CI workflow concurrency.cancel-in-progress must be "
+                    f"{CI_CANCEL_IN_PROGRESS}"
+                ),
+            )
         )
 
     jobs = data.get("jobs")
@@ -1446,11 +1661,11 @@ def validate_ci_workflow(root: Path) -> list[Finding]:
                 Finding(rel, "manifest-validate job must define a Python version matrix")
             )
         else:
-            if strategy.get("fail-fast") is not False:
+            if strategy.get("fail-fast") is not CI_FAIL_FAST:
                 findings.append(
                     Finding(
                         rel,
-                        "manifest-validate strategy.fail-fast must be false",
+                        f"manifest-validate strategy.fail-fast must be {CI_FAIL_FAST}",
                     )
                 )
             matrix = strategy.get("matrix")
@@ -1624,6 +1839,62 @@ def validate_routing_surfaces(root: Path) -> list[Finding]:
             findings.append(
                 Finding(rel, f"documented agent missing from routing/doc identity: {agent}")
             )
+    for constraint in CLAUDE_NEGATIVE_CONSTRAINTS:
+        if constraint not in text:
+            findings.append(
+                Finding(rel, f"missing locked negative constraint: {constraint}")
+            )
+    return findings
+
+
+def validate_postmortem_packaging(root: Path) -> list[Finding]:
+    rel = "postmortem.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "postmortem.md missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    for phrase in POSTMORTEM_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(Finding(rel, f"postmortem missing required phrase: {phrase}"))
+    invented = sorted(agent_tokens(text) - set(DOCUMENTED_AGENTS))
+    if invented:
+        findings.append(
+            Finding(rel, f"invented or unknown agent token(s): {', '.join(invented)}")
+        )
+    return findings
+
+
+def validate_hydration_report(root: Path) -> list[Finding]:
+    rel = "docs/agent-hydration.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "hydration report missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    for section in HYDRATION_REQUIRED_SECTIONS:
+        if section not in text:
+            findings.append(Finding(rel, f"hydration missing required section: {section}"))
+    invented = sorted(agent_tokens(text) - set(DOCUMENTED_AGENTS))
+    if invented:
+        findings.append(
+            Finding(rel, f"invented or unknown agent token(s): {', '.join(invented)}")
+        )
+    return findings
+
+
+def validate_gitignore_packaging(root: Path) -> list[Finding]:
+    rel = ".gitignore"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, ".gitignore missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if not text.strip():
+        return [Finding(rel, ".gitignore is empty")]
+    for pattern in GITIGNORE_REQUIRED_PATTERNS:
+        if pattern not in text:
+            findings.append(Finding(rel, f".gitignore missing required pattern: {pattern}"))
     return findings
 
 
@@ -1728,6 +1999,9 @@ VALIDATORS: dict[str, ValidatorFn] = {
     "security": validate_security_packaging,
     "contributing": validate_contributing_packaging,
     "scratchpad": validate_scratchpad,
+    "postmortem": validate_postmortem_packaging,
+    "hydration": validate_hydration_report,
+    "gitignore": validate_gitignore_packaging,
     "pyproject": validate_pyproject,
     "yaml-configs": validate_yaml_configs,
     "ci": validate_ci_workflow,

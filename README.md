@@ -38,8 +38,9 @@ Docs-only bootstrap lives in [`.cursor/environment.json`](.cursor/environment.js
 
 This archive has no runtime agent code. CI still enforces structural checks on
 documented packaging (Goose recipes, Cursor env, GitHub agent/issue frontmatter,
-Dependabot, markdownlint, scratchpad, pyproject tooling, inventory v5 locks (coverage gate 99%),
+Dependabot, markdownlint, scratchpad, pyproject tooling, inventory v6 locks (coverage gate 99%),
 PR/license/requirements/security/contributing, constitution + routing surfaces,
+postmortem / hydration / gitignore packaging locks, Dependabot group locks,
 bug/feature/agent-task template headings, prompt escalation locks, CI matrix
 permissions/fail-fast/artifact naming, and locked four-agent cross-doc consistency):
 

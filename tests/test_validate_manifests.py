@@ -109,11 +109,32 @@ def _inventory_payload(**overrides: object) -> dict:
         "claude_required_sections": list(vm.CLAUDE_REQUIRED_SECTIONS),
         "contributing_branch_surfaces": list(vm.CONTRIBUTING_BRANCH_SURFACES),
         "scratchpad_status_markers": list(vm.SCRATCHPAD_STATUS_MARKERS),
+        "postmortem_required_phrases": list(vm.POSTMORTEM_REQUIRED_PHRASES),
+        "hydration_required_sections": list(vm.HYDRATION_REQUIRED_SECTIONS),
+        "gitignore_required_patterns": list(vm.GITIGNORE_REQUIRED_PATTERNS),
+        "claude_negative_constraints": list(vm.CLAUDE_NEGATIVE_CONSTRAINTS),
+        "license_copyright_marker": vm.LICENSE_COPYRIGHT_MARKER,
+        "ruff_target_version": vm.RUFF_TARGET_VERSION,
+        "coverage_branch": vm.COVERAGE_BRANCH,
+        "ci_cancel_in_progress": vm.CI_CANCEL_IN_PROGRESS,
+        "ci_fail_fast": vm.CI_FAIL_FAST,
+        "dependabot_ecosystems": list(vm.DEPENDABOT_ECOSYSTEMS),
+        "dependabot_group_names": sorted(vm.DEPENDABOT_GROUP_NAMES),
+        "historic_recipe_version": vm.HISTORIC_RECIPE_VERSION,
+        "cursor_install_required_refs": list(vm.CURSOR_INSTALL_REQUIRED_REFS),
         "validator_names": sorted(vm.VALIDATORS),
         "min_coverage_fail_under": vm.MIN_COVERAGE_FAIL_UNDER,
         "min_validator_count": vm.MIN_VALIDATOR_COUNT,
-        "required_paths": ["README.md"],
+        "required_paths": ["README.md", *vm.CURSOR_INSTALL_REQUIRED_REFS],
     }
+    # dedupe required_paths while preserving order
+    seen: set[str] = set()
+    paths: list[str] = []
+    for item in payload["required_paths"]:
+        if item not in seen:
+            seen.add(item)
+            paths.append(item)
+    payload["required_paths"] = paths
     payload.update(overrides)
     return payload
 
@@ -672,6 +693,9 @@ def test_validators_registry_covers_all_checks() -> None:
         "security",
         "contributing",
         "scratchpad",
+        "postmortem",
+        "hydration",
+        "gitignore",
         "pyproject",
         "yaml-configs",
         "ci",
@@ -680,6 +704,8 @@ def test_validators_registry_covers_all_checks() -> None:
     }
     assert set(vm.VALIDATORS) == expected
     assert len(vm.VALIDATORS) == vm.MIN_VALIDATOR_COUNT
+    assert vm.MIN_VALIDATOR_COUNT == 30
+    assert vm.INVENTORY_VERSION == 6
 
 
 def test_frontmatter_crlf_opening() -> None:
@@ -1152,6 +1178,7 @@ def _ci_yaml_with_matrix(versions: list[str], *, markers: list[str] | None = Non
         "ruff check scripts tests",
         "python scripts/validate_manifests.py --list-validators",
         "Smoke each validator subset --only schemas",
+        "Lock inventory version INVENTORY_VERSION",
         "python scripts/validate_manifests.py",
         "python -m pytest --cov=scripts --junitxml=pytest-junit.xml",
         "echo uses actions/upload-artifact@v4 name=manifest-validate-pyX",
@@ -1399,15 +1426,54 @@ def test_packaging_inventory_v5_lock_fields(tmp_path: Path) -> None:
             list(vm.SCRATCHPAD_STATUS_MARKERS)[:-1] + ["INVENTED"],
         ),
         (
+            "postmortem_required_phrases",
+            list(vm.POSTMORTEM_REQUIRED_PHRASES)[:-1] + ["invented"],
+        ),
+        (
+            "hydration_required_sections",
+            list(vm.HYDRATION_REQUIRED_SECTIONS)[:-1] + ["## Invented"],
+        ),
+        (
+            "gitignore_required_patterns",
+            list(vm.GITIGNORE_REQUIRED_PATTERNS)[:-1] + ["invented"],
+        ),
+        (
+            "claude_negative_constraints",
+            list(vm.CLAUDE_NEGATIVE_CONSTRAINTS)[:-1] + ["invented constraint"],
+        ),
+        ("license_copyright_marker", "Copyright (c) 1999 Nobody"),
+        ("ruff_target_version", "py312"),
+        ("coverage_branch", False),
+        ("ci_cancel_in_progress", False),
+        ("ci_fail_fast", True),
+        (
+            "dependabot_ecosystems",
+            list(vm.DEPENDABOT_ECOSYSTEMS)[:-1] + ["npm"],
+        ),
+        (
+            "dependabot_group_names",
+            sorted(vm.DEPENDABOT_GROUP_NAMES)[:-1] + ["invented_group"],
+        ),
+        ("historic_recipe_version", "9.9.9"),
+        (
+            "cursor_install_required_refs",
+            list(vm.CURSOR_INSTALL_REQUIRED_REFS)[:-1] + ["invented.md"],
+        ),
+        (
             "validator_names",
             list(sorted(vm.VALIDATORS))[:-1] + ["invented"],
         ),
-        ("version", 6),
+        ("version", 5),
         ("min_coverage_fail_under", 90),
         ("min_validator_count", 999),
     ]
     for field, value in cases:
         inventory = _inventory_payload(**{field: value})
+        # Keep schema-valid required_paths when testing cursor_install refs mismatch
+        if field == "cursor_install_required_refs":
+            inventory["required_paths"] = list(
+                dict.fromkeys([*inventory["required_paths"], "invented.md"])
+            )
         (tmp_path / "schemas" / "packaging-inventory.json").write_text(
             json.dumps(inventory), encoding="utf-8"
         )
@@ -2070,13 +2136,13 @@ def test_ci_workflow_v5_deepeners(tmp_path: Path) -> None:
     yaml_text = yaml_text.replace("cancel-in-progress: true", "cancel-in-progress: false")
     _write(tmp_path / ".github" / "workflows" / "ci.yml", yaml_text)
     findings = vm.validate_ci_workflow(tmp_path)
-    assert any("cancel-in-progress must be true" in f.message for f in findings)
+    assert any("cancel-in-progress must be" in f.message for f in findings)
 
     yaml_text = _ci_yaml_with_matrix(list(vm.REQUIRED_PYTHON_VERSIONS))
     yaml_text = yaml_text.replace("fail-fast: false", "fail-fast: true")
     _write(tmp_path / ".github" / "workflows" / "ci.yml", yaml_text)
     findings = vm.validate_ci_workflow(tmp_path)
-    assert any("fail-fast must be false" in f.message for f in findings)
+    assert any("fail-fast must be" in f.message for f in findings)
 
     yaml_text = _ci_yaml_with_matrix(list(vm.REQUIRED_PYTHON_VERSIONS))
     yaml_text = yaml_text.replace("contents: read", "contents: write")
@@ -2102,6 +2168,8 @@ def test_ci_workflow_v5_deepeners(tmp_path: Path) -> None:
             "Smoke each",
             "--only",
             "junitxml",
+            "Lock inventory",
+            "INVENTORY_VERSION",
             "actions/upload-artifact@v4",
         ],
     )
@@ -2110,21 +2178,36 @@ def test_ci_workflow_v5_deepeners(tmp_path: Path) -> None:
     assert any("artifact name must include" in f.message for f in findings)
 
 
-def test_live_v5_validators() -> None:
+def test_live_v6_validators() -> None:
     assert vm.validate_bug_report_template(REPO_ROOT) == []
     assert vm.validate_feature_request_template(REPO_ROOT) == []
-    assert vm.INVENTORY_VERSION == 5
-    assert len(vm.VALIDATORS) == 27
+    assert vm.validate_postmortem_packaging(REPO_ROOT) == []
+    assert vm.validate_hydration_report(REPO_ROOT) == []
+    assert vm.validate_gitignore_packaging(REPO_ROOT) == []
+    assert vm.INVENTORY_VERSION == 6
+    assert len(vm.VALIDATORS) == 30
+    assert vm.MIN_VALIDATOR_COUNT == 30
 
 
 def test_historic_settings_skips_non_dict_settings_and_non_list_extensions() -> None:
     assert (
         vm._validate_historic_recipe_settings(
-            {"recipe": {"settings": "scalar", "extensions": "scalar"}},
+            {
+                "recipe": {
+                    "version": vm.HISTORIC_RECIPE_VERSION,
+                    "settings": "scalar",
+                    "extensions": "scalar",
+                }
+            },
             path="x",
         )
         == []
     )
+    findings = vm._validate_historic_recipe_settings(
+        {"recipe": {"version": "2.0.0", "settings": {}, "extensions": []}},
+        path="x",
+    )
+    assert any("historic recipe version" in f.message for f in findings)
 
 
 def test_goose_recipes_extra_only_and_ondisk_parse_none(tmp_path: Path) -> None:
@@ -2267,3 +2350,319 @@ def test_module_main_entrypoint(monkeypatch: pytest.MonkeyPatch) -> None:
             run_name="__main__",
         )
     assert excinfo.value.code == 0
+
+
+def test_v6_postmortem_hydration_gitignore_validators(tmp_path: Path) -> None:
+    assert any("missing" in f.message for f in vm.validate_postmortem_packaging(tmp_path))
+    _write(tmp_path / "postmortem.md", "Decision log only\n")
+    findings = vm.validate_postmortem_packaging(tmp_path)
+    assert any("required phrase" in f.message for f in findings)
+    _write(
+        tmp_path / "postmortem.md",
+        "\n".join(vm.POSTMORTEM_REQUIRED_PHRASES) + "\nInventedGhostAgent\n",
+    )
+    findings = vm.validate_postmortem_packaging(tmp_path)
+    assert any("InventedGhostAgent" in f.message for f in findings)
+
+    assert any("missing" in f.message for f in vm.validate_hydration_report(tmp_path))
+    _write(tmp_path / "docs" / "agent-hydration.md", "# nope\n")
+    findings = vm.validate_hydration_report(tmp_path)
+    assert any("required section" in f.message for f in findings)
+    body = "\n".join(vm.HYDRATION_REQUIRED_SECTIONS) + "\nInventedGhostAgent\n"
+    _write(tmp_path / "docs" / "agent-hydration.md", body)
+    findings = vm.validate_hydration_report(tmp_path)
+    assert any("InventedGhostAgent" in f.message for f in findings)
+
+    assert any("missing" in f.message for f in vm.validate_gitignore_packaging(tmp_path))
+    _write(tmp_path / ".gitignore", "   \n")
+    assert any("empty" in f.message for f in vm.validate_gitignore_packaging(tmp_path))
+    _write(tmp_path / ".gitignore", ".env\n")
+    findings = vm.validate_gitignore_packaging(tmp_path)
+    assert any("required pattern" in f.message for f in findings)
+
+
+def test_v6_routing_negative_constraints(tmp_path: Path) -> None:
+    text = "\n".join(
+        [
+            *vm.CLAUDE_REQUIRED_SECTIONS,
+            *vm.ROUTING_SURFACES,
+            *vm.DOCUMENTED_AGENTS,
+        ]
+    )
+    _write(tmp_path / "CLAUDE.md", text + "\n")
+    findings = vm.validate_routing_surfaces(tmp_path)
+    assert any("negative constraint" in f.message for f in findings)
+    _write(
+        tmp_path / "CLAUDE.md",
+        text + "\n" + "\n".join(vm.CLAUDE_NEGATIVE_CONSTRAINTS) + "\n",
+    )
+    assert vm.validate_routing_surfaces(tmp_path) == []
+
+
+def test_v6_license_copyright_marker(tmp_path: Path) -> None:
+    _write(tmp_path / "LICENSE", "MIT License\nPermission is hereby granted\n2026\n")
+    findings = vm.validate_license(tmp_path)
+    assert any("copyright marker" in f.message for f in findings)
+
+
+def test_v6_pyproject_ruff_and_coverage_branch(tmp_path: Path) -> None:
+    _write(
+        tmp_path / "pyproject.toml",
+        "\n".join(
+            [
+                "[project]",
+                'name = "x"',
+                f'requires-python = "{vm.PYPROJECT_REQUIRES_PYTHON}"',
+                "[tool.pytest.ini_options]",
+                'testpaths = ["tests"]',
+                "[tool.ruff]",
+                'target-version = "py310"',
+                "[tool.coverage.run]",
+                "branch = false",
+                "[tool.coverage.report]",
+                f"fail_under = {vm.MIN_COVERAGE_FAIL_UNDER}",
+                "",
+            ]
+        ),
+    )
+    findings = vm.validate_pyproject(tmp_path)
+    assert any("target-version" in f.message for f in findings)
+    assert any("coverage run.branch" in f.message for f in findings)
+
+    _write(
+        tmp_path / "pyproject.toml",
+        "\n".join(
+            [
+                "[project]",
+                'name = "x"',
+                f'requires-python = "{vm.PYPROJECT_REQUIRES_PYTHON}"',
+                "[tool.pytest.ini_options]",
+                'testpaths = ["tests"]',
+                "[tool.ruff]",
+                f'target-version = "{vm.RUFF_TARGET_VERSION}"',
+                "[tool.coverage.report]",
+                f"fail_under = {vm.MIN_COVERAGE_FAIL_UNDER}",
+                "",
+            ]
+        ),
+    )
+    findings = vm.validate_pyproject(tmp_path)
+    assert any("missing [tool.coverage.run]" in f.message for f in findings)
+
+
+def test_v6_dependabot_groups_and_schedule_edge(tmp_path: Path) -> None:
+    _copy_schemas(tmp_path)
+    _write(
+        tmp_path / ".github" / "dependabot.yml",
+        "\n".join(
+            [
+                "version: 2",
+                "updates:",
+                '  - package-ecosystem: "github-actions"',
+                '    directory: "/"',
+                "    schedule:",
+                '      interval: "weekly"',
+                '  - package-ecosystem: "pip"',
+                '    directory: "/"',
+                "    schedule:",
+                '      interval: "weekly"',
+                "",
+            ]
+        ),
+    )
+    findings = vm.validate_dependabot(tmp_path)
+    assert any("missing required Dependabot group" in f.message for f in findings)
+
+    original = vm.validate_against_schema
+
+    def _ok(instance, schema, *, path):  # noqa: ANN001
+        return []
+
+    vm.validate_against_schema = _ok  # type: ignore[assignment]
+    try:
+        _write(
+            tmp_path / ".github" / "dependabot.yml",
+            "version: 2\nupdates:\n"
+            '  - package-ecosystem: "pip"\n    directory: "/"\n'
+            "    schedule: weekly\n"
+            "    groups: not-a-map\n",
+        )
+        findings = vm.validate_dependabot(tmp_path)
+        assert any("schedule must be a mapping" in f.message for f in findings)
+        assert any("groups must be a mapping" in f.message for f in findings)
+    finally:
+        vm.validate_against_schema = original  # type: ignore[assignment]
+
+
+def test_v6_environment_requires_install_refs(tmp_path: Path) -> None:
+    _copy_schemas(tmp_path)
+    for rel in vm.CURSOR_INSTALL_REQUIRED_REFS:
+        _write(tmp_path / rel, "ok\n")
+    env = {
+        "name": vm.CURSOR_ENVIRONMENT_NAME,
+        "install": "test -f README.md && test -f LICENSE",
+    }
+    _write(tmp_path / ".cursor" / "environment.json", json.dumps(env))
+    findings = vm.validate_cursor_environment(tmp_path)
+    assert any("install missing required path ref" in f.message for f in findings)
+
+
+def test_v6_inventory_consistency_specialists_and_refs(tmp_path: Path) -> None:
+    _copy_schemas(tmp_path)
+    for rel in ["README.md", *vm.CURSOR_INSTALL_REQUIRED_REFS]:
+        _write(tmp_path / rel, "ok\n")
+
+    inventory = _inventory_payload(
+        specialist_agents=[
+            "QuantumArchitectAgent",
+            "BlockchainArchitectAgent",
+            "OrchestrationAgent",
+        ]
+    )
+    (tmp_path / "schemas" / "packaging-inventory.json").write_text(
+        json.dumps(inventory), encoding="utf-8"
+    )
+    findings = vm.validate_packaging_inventory(tmp_path)
+    assert any(
+        "specialist_agents + OrchestrationAgent" in f.message
+        or "must not include OrchestrationAgent" in f.message
+        for f in findings
+    )
+
+    bad_primary = dict(vm.RECIPE_PRIMARY_AGENT)
+    bad_primary[vm.ORCHESTRATION_RECIPE_NAME] = "QuantumArchitectAgent"
+    inventory = _inventory_payload(recipe_primary_agents=bad_primary)
+    (tmp_path / "schemas" / "packaging-inventory.json").write_text(
+        json.dumps(inventory), encoding="utf-8"
+    )
+    findings = vm.validate_packaging_inventory(tmp_path)
+    assert any("orchestration recipe primary" in f.message for f in findings)
+
+    inventory = _inventory_payload(
+        cursor_install_required_refs=["README.md", "not-in-required-paths.md"],
+        required_paths=["README.md"],
+    )
+    (tmp_path / "schemas" / "packaging-inventory.json").write_text(
+        json.dumps(inventory), encoding="utf-8"
+    )
+    findings = vm.validate_packaging_inventory(tmp_path)
+    assert any(
+        "cursor_install_required_refs must be subset" in f.message for f in findings
+    )
+
+
+def test_v6_ci_on_trigger_non_mapping(tmp_path: Path) -> None:
+    yaml_text = _ci_yaml_with_matrix(list(vm.REQUIRED_PYTHON_VERSIONS))
+    yaml_text = yaml_text.replace(
+        "on:\n  push: {}\n  pull_request:\n    branches: [\"alpha\"]\n",
+        "on: [push]\n",
+    )
+    _write(tmp_path / ".github" / "workflows" / "ci.yml", yaml_text)
+    findings = vm.validate_ci_workflow(tmp_path)
+    assert any("on: trigger must be a mapping" in f.message for f in findings)
+
+
+def test_v6_ondisk_recipe_unbound_name_branch(tmp_path: Path) -> None:
+    body = _four_locked_recipe_doc()
+    _write(tmp_path / "GOOSE-RECIPES.md", body)
+    flows = tmp_path / "agentic_flows"
+    flows.mkdir()
+    recipe = json.loads(json.dumps(LOCKED_RECIPE))
+    recipe["name"] = "not_in_bindings_workflow"
+    (flows / "quantum_algorithm_design.yaml").write_text(
+        yaml.safe_dump(recipe), encoding="utf-8"
+    )
+    findings = vm.validate_goose_recipes(tmp_path)
+    assert not any(
+        "must live at" in f.message and "quantum_algorithm_design.yaml" in f.path
+        for f in findings
+    )
+
+
+def test_v6_inventory_consistency_uniques_and_empty_negatives(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    _copy_schemas(tmp_path)
+    for rel in ["README.md", *vm.CURSOR_INSTALL_REQUIRED_REFS]:
+        _write(tmp_path / rel, "ok\n")
+
+    inventory = _inventory_payload()
+    # Bypass schema uniqueness so consistency checks can fire.
+    monkeypatch.setattr(vm, "validate_against_schema", lambda *a, **k: [])
+    inventory["dependabot_ecosystems"] = ["pip", "pip"]
+    inventory["dependabot_group_names"] = ["python_dev", "python_dev"]
+    inventory["claude_negative_constraints"] = []
+    # Also exercise version lock after schema soft-pass
+    inventory["version"] = 5
+    (tmp_path / "schemas" / "packaging-inventory.json").write_text(
+        json.dumps(inventory), encoding="utf-8"
+    )
+    findings = vm.validate_packaging_inventory(tmp_path)
+    messages = [f.message for f in findings]
+    assert any("dependabot_ecosystems must be unique" in m for m in messages)
+    assert any("dependabot_group_names must be unique" in m for m in messages)
+    assert any("claude_negative_constraints must not be empty" in m for m in messages)
+    assert any("version do not match" in m for m in messages)
+
+
+def test_packaging_inventory_v6_constants() -> None:
+    assert vm.INVENTORY_VERSION == 6
+    assert "postmortem" in vm.VALIDATORS
+    assert "hydration" in vm.VALIDATORS
+    assert "gitignore" in vm.VALIDATORS
+    assert vm.HISTORIC_RECIPE_VERSION == "1.0.0"
+
+
+def test_v6_ci_pull_request_branches_not_list(tmp_path: Path) -> None:
+    yaml_text = _ci_yaml_with_matrix(list(vm.REQUIRED_PYTHON_VERSIONS))
+    yaml_text = yaml_text.replace(
+        'branches: ["alpha"]',
+        "branches: alpha",
+    )
+    _write(tmp_path / ".github" / "workflows" / "ci.yml", yaml_text)
+    findings = vm.validate_ci_workflow(tmp_path)
+    assert any("pull_request.branches must include" in f.message for f in findings)
+
+
+def test_v6_ondisk_recipe_non_string_name(tmp_path: Path) -> None:
+    body = _four_locked_recipe_doc()
+    _write(tmp_path / "GOOSE-RECIPES.md", body)
+    flows = tmp_path / "agentic_flows"
+    flows.mkdir()
+    recipe = json.loads(json.dumps(LOCKED_RECIPE))
+    recipe["name"] = 123
+    (flows / "quantum_algorithm_design.yaml").write_text(
+        yaml.safe_dump(recipe), encoding="utf-8"
+    )
+    findings = vm.validate_goose_recipes(tmp_path)
+    assert any("quantum_algorithm_design.yaml" in f.path for f in findings)
+
+
+def test_v6_dependabot_schedule_none_skips_interval(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    _copy_schemas(tmp_path)
+    monkeypatch.setattr(vm, "validate_against_schema", lambda *a, **k: [])
+    _write(
+        tmp_path / ".github" / "dependabot.yml",
+        "\n".join(
+            [
+                "version: 2",
+                "updates:",
+                '  - package-ecosystem: "github-actions"',
+                '    directory: "/"',
+                "    groups:",
+                "      github_actions:",
+                '        patterns: ["*"]',
+                '  - package-ecosystem: "pip"',
+                '    directory: "/"',
+                "    groups:",
+                "      python_dev:",
+                '        patterns: ["*"]',
+                "",
+            ]
+        ),
+    )
+    findings = vm.validate_dependabot(tmp_path)
+    # schedule omitted -> no interval findings; groups present
+    assert not any("schedule.interval" in f.message for f in findings)

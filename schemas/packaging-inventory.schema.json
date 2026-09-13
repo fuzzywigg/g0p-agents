@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/fuzzywigg/g0p-agents/schemas/packaging-inventory.schema.json",
   "title": "Archive packaging inventory",
-  "description": "Locked packaging paths and historic agent/recipe inventory for this docs-only archive (v5).",
+  "description": "Locked packaging paths and historic agent/recipe inventory for this docs-only archive (v6).",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -52,13 +52,26 @@
     "claude_required_sections",
     "contributing_branch_surfaces",
     "scratchpad_status_markers",
+    "postmortem_required_phrases",
+    "hydration_required_sections",
+    "gitignore_required_patterns",
+    "claude_negative_constraints",
+    "license_copyright_marker",
+    "ruff_target_version",
+    "coverage_branch",
+    "ci_cancel_in_progress",
+    "ci_fail_fast",
+    "dependabot_ecosystems",
+    "dependabot_group_names",
+    "historic_recipe_version",
+    "cursor_install_required_refs",
     "min_coverage_fail_under",
     "min_validator_count"
   ],
   "properties": {
     "version": {
       "type": "integer",
-      "minimum": 5
+      "minimum": 6
     },
     "required_paths": {
       "type": "array",
@@ -439,6 +452,93 @@
         "type": "string",
         "minLength": 1,
         "pattern": "^[A-Z][A-Z0-9_]*$"
+      }
+    },
+    "postmortem_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "hydration_required_sections": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "gitignore_required_patterns": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "claude_negative_constraints": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "license_copyright_marker": {
+      "type": "string",
+      "minLength": 1
+    },
+    "ruff_target_version": {
+      "type": "string",
+      "pattern": "^py3[0-9]+$"
+    },
+    "coverage_branch": {
+      "type": "boolean"
+    },
+    "ci_cancel_in_progress": {
+      "type": "boolean"
+    },
+    "ci_fail_fast": {
+      "type": "boolean"
+    },
+    "dependabot_ecosystems": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "pattern": "^[a-z][a-z0-9-]*$"
+      }
+    },
+    "dependabot_group_names": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "pattern": "^[a-z][a-z0-9_]*$"
+      }
+    },
+    "historic_recipe_version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "cursor_install_required_refs": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "pattern": "^[^\\\\]+$"
       }
     }
   }

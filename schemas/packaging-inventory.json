@@ -1,5 +1,5 @@
 {
-  "version": 5,
+  "version": 6,
   "documented_agents": [
     "QuantumArchitectAgent",
     "BlockchainArchitectAgent",
@@ -51,7 +51,9 @@
     "--list-validators",
     "Smoke each",
     "--only",
-    "junitxml"
+    "junitxml",
+    "Lock inventory",
+    "INVENTORY_VERSION"
   ],
   "required_schema_files": [
     "goose-recipe.schema.json",
@@ -188,11 +190,14 @@
     "environment",
     "feature-template",
     "github-agents",
+    "gitignore",
     "goose",
+    "hydration",
     "inventory",
     "issue-templates",
     "license",
     "markdownlint",
+    "postmortem",
     "pr-template",
     "prompts",
     "pyproject",
@@ -206,7 +211,7 @@
     "yaml-configs"
   ],
   "min_coverage_fail_under": 99,
-  "min_validator_count": 27,
+  "min_validator_count": 30,
   "required_paths": [
     "README.md",
     "LICENSE",
@@ -241,7 +246,9 @@
     "schemas/packaging-inventory.schema.json",
     "schemas/packaging-inventory.json",
     "scripts/validate_manifests.py",
-    "tests/test_validate_manifests.py"
+    "tests/test_validate_manifests.py",
+    ".gitignore",
+    "docs/agent-hydration.md"
   ],
   "specialist_agents": [
     "QuantumArchitectAgent",
@@ -269,5 +276,59 @@
     "PENDING",
     "IN_PROGRESS",
     "BLOCKED"
+  ],
+  "postmortem_required_phrases": [
+    "Decision & Incident Log",
+    "LIST B Deferred",
+    "Risk Level"
+  ],
+  "hydration_required_sections": [
+    "## PHASE 1: FINDINGS REPORT",
+    "## PHASE 2: QUESTIONS",
+    "### LIST B \u2014 Requires Andrew (HITL)",
+    "## PHASE 3: RESOLVED (LIST A)",
+    "## PHASE 4: ISSUES GENERATED",
+    "## PHASE 5: Roadmap",
+    "## LIST B \u2014 Deferred to Andrew"
+  ],
+  "gitignore_required_patterns": [
+    ".env",
+    "*.pem",
+    "*.key",
+    ".venv/",
+    "coverage.xml"
+  ],
+  "claude_negative_constraints": [
+    "Push to `main` branch",
+    "Merge own PRs on protected repos",
+    "Delete files or repositories without human approval",
+    "Initiate financial transactions or alter billing",
+    "Change repo visibility (private/public)",
+    "Modify branch protection rules",
+    "Create public gists containing secrets or PII"
+  ],
+  "license_copyright_marker": "Copyright (c) 2026 Andrew Pappas",
+  "ruff_target_version": "py311",
+  "coverage_branch": true,
+  "ci_cancel_in_progress": true,
+  "ci_fail_fast": false,
+  "dependabot_ecosystems": [
+    "github-actions",
+    "pip"
+  ],
+  "dependabot_group_names": [
+    "github_actions",
+    "python_dev"
+  ],
+  "historic_recipe_version": "1.0.0",
+  "cursor_install_required_refs": [
+    "README.md",
+    "LICENSE",
+    "scripts/validate_manifests.py",
+    "schemas/packaging-inventory.json",
+    "schemas/packaging-inventory.schema.json",
+    "tests/test_validate_manifests.py",
+    "requirements-dev.txt",
+    "pyproject.toml"
   ]
 }

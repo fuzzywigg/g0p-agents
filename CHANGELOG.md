@@ -10,6 +10,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Packaging inventory **v6** locks: postmortem / hydration / gitignore packaging,
+  CLAUDE negative constraints, license copyright marker, ruff target-version,
+  coverage branch, CI cancel/fail-fast bools, Dependabot ecosystems + group
+  names, historic Goose recipe version, Cursor install required path refs
+- New validators: `postmortem`, `hydration`, `gitignore` (**30** total; historic
+  four only)
+- Inventory consistency deepeners: specialist+OrchestrationAgent identity,
+  orchestration primary agent, install-refs ⊆ required_paths
+- CI deepeners: validator-count ≥30, inventory v6 registry lock, `Lock inventory`
+  / `INVENTORY_VERSION` step markers
+
 - Packaging inventory **v5** deepeners (post-#21): specialist agents, schema
   `$schema`/`$id` prefixes, CLAUDE required sections, contributing branch
   surfaces, scratchpad status markers (DONE/PENDING/IN_PROGRESS/BLOCKED)
@@ -80,6 +91,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 
+- Coverage gate remains **99%**; inventory schema minimum version is **6**;
+  CI validator-count gate raised to ≥30
 - Inventory schema minimum version is **5**; CI validator-count gate raised to ≥27
 - Coverage gate raised to 97%; inventory schema minimum version is 3
 - Coverage gate raised to 95%; Dependabot now tracks pip (`requirements-dev.txt`)
