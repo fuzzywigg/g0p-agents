@@ -159,7 +159,7 @@ REQUIRED_ARCHIVE_DOCS = (
     "README.md",
 )
 
-INVENTORY_VERSION = 22
+INVENTORY_VERSION = 23
 CURSOR_ENVIRONMENT_NAME = "g0p-agents"
 DEPENDABOT_SCHEDULE_INTERVAL = "weekly"
 DEPENDABOT_DIRECTORIES: frozenset[str] = frozenset({"/"})
@@ -175,8 +175,8 @@ CI_FAIL_FAST = False
 CI_WORKFLOW_NAME = "CI — Lint, Links & Manifests"
 CI_REQUIRED_ACTIONS: tuple[str, ...] = (
     "actions/checkout@v7",
-    "actions/setup-python@v5",
-    "actions/upload-artifact@v4",
+    "actions/setup-python@v7",
+    "actions/upload-artifact@v7",
     "DavidAnson/markdownlint-cli2-action@v24",
     "lycheeverse/lychee-action@v2",
 )
@@ -430,6 +430,26 @@ CONTRIBUTING_PR_REQUIRED_PHRASES: tuple[str, ...] = (
     "One approval required",
     "## Governance",
     "require Andrew approval",
+)
+PR_SUMMARY_REQUIRED_PHRASES: tuple[str, ...] = (
+    "# Summary",
+    "One sentence: what does this PR accomplish?",
+    "## Problem",
+    "Closes #N",
+)
+PR_ACCEPTANCE_REQUIRED_PHRASES: tuple[str, ...] = (
+    "## Changes",
+    "List of files changed and what was done",
+    "## Acceptance Criteria",
+    "Copy from the linked issue",
+    "- [ ]",
+)
+PR_NOTES_REQUIRED_PHRASES: tuple[str, ...] = (
+    "## Notes for Reviewer",
+    "Anything Andrew or the reviewing agent should know",
+    "[agent-surface]",
+    "#[issue-number]",
+    "[P1/P2/P3]",
 )
 LICENSE_REQUIRED_PHRASES: tuple[str, ...] = (
     "MIT License",
@@ -758,7 +778,7 @@ SCRATCHPAD_STATUS_MARKERS: tuple[str, ...] = (
 SPECIALIST_AGENTS: tuple[str, ...] = DOCUMENTED_AGENTS[:-1]
 
 MIN_COVERAGE_FAIL_UNDER = 99
-MIN_VALIDATOR_COUNT = 79
+MIN_VALIDATOR_COUNT = 82
 
 
 @dataclass(frozen=True)
@@ -1539,6 +1559,24 @@ def validate_packaging_inventory(root: Path) -> list[Finding]:
         != CONTRIBUTING_PR_REQUIRED_PHRASES
     ):
         findings.append(_lock_mismatch(schema_path, "contributing_pr_required_phrases"))
+
+    if (
+        tuple(inventory.get("pr_summary_required_phrases", ()))
+        != PR_SUMMARY_REQUIRED_PHRASES
+    ):
+        findings.append(_lock_mismatch(schema_path, "pr_summary_required_phrases"))
+
+    if (
+        tuple(inventory.get("pr_acceptance_required_phrases", ()))
+        != PR_ACCEPTANCE_REQUIRED_PHRASES
+    ):
+        findings.append(_lock_mismatch(schema_path, "pr_acceptance_required_phrases"))
+
+    if (
+        tuple(inventory.get("pr_notes_required_phrases", ()))
+        != PR_NOTES_REQUIRED_PHRASES
+    ):
+        findings.append(_lock_mismatch(schema_path, "pr_notes_required_phrases"))
 
     expected_validator_names = tuple(sorted(VALIDATORS))
     if tuple(inventory.get("validator_names", ())) != expected_validator_names:
@@ -2771,6 +2809,101 @@ def _inventory_lock_consistency(
                     schema_path,
                     "contributing_pr_required_phrases must include PR Requirements, "
                     "CI pass gate, and Governance",
+                )
+            )
+
+    pr_summary = list(inventory.get("pr_summary_required_phrases", ()))
+    if len(pr_summary) != len(set(pr_summary)):
+        findings.append(
+            Finding(schema_path, "pr_summary_required_phrases must be unique")
+        )
+    if not pr_summary:
+        findings.append(
+            Finding(schema_path, "pr_summary_required_phrases must not be empty")
+        )
+    for phrase in pr_summary:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "pr_summary_required_phrases entries must be non-empty strings",
+                )
+            )
+            break
+    else:
+        required_summary = {"# Summary", "## Problem", "Closes #N"}
+        if pr_summary and not required_summary <= set(pr_summary):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "pr_summary_required_phrases must include Summary/Problem/"
+                    "Closes #N",
+                )
+            )
+
+    pr_acceptance = list(inventory.get("pr_acceptance_required_phrases", ()))
+    if len(pr_acceptance) != len(set(pr_acceptance)):
+        findings.append(
+            Finding(schema_path, "pr_acceptance_required_phrases must be unique")
+        )
+    if not pr_acceptance:
+        findings.append(
+            Finding(schema_path, "pr_acceptance_required_phrases must not be empty")
+        )
+    for phrase in pr_acceptance:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "pr_acceptance_required_phrases entries must be non-empty strings",
+                )
+            )
+            break
+    else:
+        required_acceptance = {
+            "## Changes",
+            "## Acceptance Criteria",
+            "- [ ]",
+        }
+        if pr_acceptance and not required_acceptance <= set(pr_acceptance):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "pr_acceptance_required_phrases must include Changes/"
+                    "Acceptance Criteria/checkbox",
+                )
+            )
+
+    pr_notes = list(inventory.get("pr_notes_required_phrases", ()))
+    if len(pr_notes) != len(set(pr_notes)):
+        findings.append(
+            Finding(schema_path, "pr_notes_required_phrases must be unique")
+        )
+    if not pr_notes:
+        findings.append(
+            Finding(schema_path, "pr_notes_required_phrases must not be empty")
+        )
+    for phrase in pr_notes:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "pr_notes_required_phrases entries must be non-empty strings",
+                )
+            )
+            break
+    else:
+        required_notes = {
+            "## Notes for Reviewer",
+            "[agent-surface]",
+            "[P1/P2/P3]",
+        }
+        if pr_notes and not required_notes <= set(pr_notes):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "pr_notes_required_phrases must include Notes for Reviewer/"
+                    "agent-surface/priority placeholders",
                 )
             )
 
@@ -4448,6 +4581,55 @@ def validate_contributing_pr(root: Path) -> list[Finding]:
     return findings
 
 
+def validate_pr_summary(root: Path) -> list[Finding]:
+    rel = ".github/pull_request_template.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "PR template missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    for phrase in PR_SUMMARY_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(rel, f"missing locked pr-summary phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_pr_acceptance(root: Path) -> list[Finding]:
+    rel = ".github/pull_request_template.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "PR template missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## Acceptance Criteria" not in text:
+        findings.append(Finding(rel, "missing Acceptance Criteria section"))
+    for phrase in PR_ACCEPTANCE_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(rel, f"missing locked pr-acceptance phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_pr_notes(root: Path) -> list[Finding]:
+    rel = ".github/pull_request_template.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "PR template missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## Notes for Reviewer" not in text:
+        findings.append(Finding(rel, "missing Notes for Reviewer section"))
+    for phrase in PR_NOTES_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(rel, f"missing locked pr-notes phrase: {phrase}")
+            )
+    return findings
+
+
 def validate_agent_task_template(root: Path) -> list[Finding]:
     rel = ".github/ISSUE_TEMPLATE/agent_task.md"
     path = root / rel
@@ -5609,6 +5791,9 @@ VALIDATORS: dict[str, ValidatorFn] = {
     "issue-routing": validate_issue_routing,
     "bug-repro": validate_bug_repro,
     "pr-template": validate_pr_template,
+    "pr-summary": validate_pr_summary,
+    "pr-acceptance": validate_pr_acceptance,
+    "pr-notes": validate_pr_notes,
     "dependabot": validate_dependabot,
     "markdownlint": validate_markdownlint,
     "requirements-dev": validate_requirements_dev,
