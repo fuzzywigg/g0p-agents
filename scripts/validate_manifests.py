@@ -40,6 +40,9 @@ Checks structural correctness of:
 - CLAUDE.md Agent Routing Matrix task-row locks (six surfaces)
 - CLAUDE.md Repo Identity north-star / purpose locks
 - CLAUDE.md Escalation Format block field locks (banner + four fields)
+- CLAUDE.md routing-matrix rationale column locks (six surfaces)
+- CLAUDE.md header metadata locks (Status/Tier/Owner/Created/Edit/Canonical)
+- CLAUDE.md escalation usage intro + fenced placeholder field locks
 - pyproject project name + version/license/description/readme +
   ruff line-length/src/lint select locks
 - coverage show_missing/skip_empty/source + exact fail_under +
@@ -150,7 +153,7 @@ REQUIRED_ARCHIVE_DOCS = (
     "README.md",
 )
 
-INVENTORY_VERSION = 15
+INVENTORY_VERSION = 16
 CURSOR_ENVIRONMENT_NAME = "g0p-agents"
 DEPENDABOT_SCHEDULE_INTERVAL = "weekly"
 DEPENDABOT_DIRECTORIES: frozenset[str] = frozenset({"/"})
@@ -256,6 +259,30 @@ ESCALATION_BLOCK_REQUIRED_PHRASES: tuple[str, ...] = (
     "Conflict:",
     "Recommendation:",
     "Timeline:",
+)
+ROUTING_MATRIX_RATIONALE_PHRASES: tuple[str, ...] = (
+    "Single-repo, syntax-level work",
+    "Deep coding, long-running, 60–90 min",
+    "Cross-system state, Notion truth",
+    "UI-only settings",
+    "Test automation",
+    "Non-automatable",
+)
+CLAUDE_METADATA_REQUIRED_PHRASES: tuple[str, ...] = (
+    "Status: ACTIVE",
+    "Tier: 1",
+    "Owner: claude-cowork",
+    "Created: 2026-04-13",
+    "Edit policy: Agent-editable",
+    "Canonical source: This file",
+)
+ESCALATION_USAGE_REQUIRED_PHRASES: tuple[str, ...] = (
+    "When blocked, use this format in PR comments or Slack:",
+    "```text",
+    "From Agent: [surface name]",
+    "Conflict: [What constraint am I hitting?]",
+    "Recommendation: [How should we resolve this?]",
+    "Timeline: [How long until decision needed?]",
 )
 LICENSE_REQUIRED_PHRASES: tuple[str, ...] = (
     "MIT License",
@@ -584,7 +611,7 @@ SCRATCHPAD_STATUS_MARKERS: tuple[str, ...] = (
 SPECIALIST_AGENTS: tuple[str, ...] = DOCUMENTED_AGENTS[:-1]
 
 MIN_COVERAGE_FAIL_UNDER = 99
-MIN_VALIDATOR_COUNT = 58
+MIN_VALIDATOR_COUNT = 61
 
 
 @dataclass(frozen=True)
@@ -1218,6 +1245,24 @@ def validate_packaging_inventory(root: Path) -> list[Finding]:
             _lock_mismatch(schema_path, "escalation_block_required_phrases")
         )
 
+    if (
+        tuple(inventory.get("routing_matrix_rationale_phrases", ()))
+        != ROUTING_MATRIX_RATIONALE_PHRASES
+    ):
+        findings.append(_lock_mismatch(schema_path, "routing_matrix_rationale_phrases"))
+
+    if (
+        tuple(inventory.get("claude_metadata_required_phrases", ()))
+        != CLAUDE_METADATA_REQUIRED_PHRASES
+    ):
+        findings.append(_lock_mismatch(schema_path, "claude_metadata_required_phrases"))
+
+    if (
+        tuple(inventory.get("escalation_usage_required_phrases", ()))
+        != ESCALATION_USAGE_REQUIRED_PHRASES
+    ):
+        findings.append(_lock_mismatch(schema_path, "escalation_usage_required_phrases"))
+
     expected_validator_names = tuple(sorted(VALIDATORS))
     if tuple(inventory.get("validator_names", ())) != expected_validator_names:
         findings.append(_lock_mismatch(schema_path, "validator_names"))
@@ -1780,6 +1825,99 @@ def _inventory_lock_consistency(
                 Finding(
                     schema_path,
                     "escalation_block_required_phrases must include banner and four fields",
+                )
+            )
+
+    rationales = list(inventory.get("routing_matrix_rationale_phrases", ()))
+    if len(rationales) != len(set(rationales)):
+        findings.append(
+            Finding(schema_path, "routing_matrix_rationale_phrases must be unique")
+        )
+    if not rationales:
+        findings.append(
+            Finding(schema_path, "routing_matrix_rationale_phrases must not be empty")
+        )
+    for phrase in rationales:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "routing_matrix_rationale_phrases entries must be non-empty strings",
+                )
+            )
+            break
+    else:
+        surfaces = list(inventory.get("routing_surfaces", ()))
+        if rationales and surfaces and len(rationales) != len(surfaces):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "routing_matrix_rationale_phrases length must match routing_surfaces",
+                )
+            )
+
+    metadata = list(inventory.get("claude_metadata_required_phrases", ()))
+    if len(metadata) != len(set(metadata)):
+        findings.append(
+            Finding(schema_path, "claude_metadata_required_phrases must be unique")
+        )
+    if not metadata:
+        findings.append(
+            Finding(schema_path, "claude_metadata_required_phrases must not be empty")
+        )
+    for phrase in metadata:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "claude_metadata_required_phrases entries must be non-empty strings",
+                )
+            )
+            break
+    else:
+        required_meta = {
+            "Status: ACTIVE",
+            "Tier: 1",
+            "Owner: claude-cowork",
+            "Created: 2026-04-13",
+        }
+        if metadata and not required_meta <= set(metadata):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "claude_metadata_required_phrases must include Status/Tier/Owner/Created",
+                )
+            )
+
+    usage = list(inventory.get("escalation_usage_required_phrases", ()))
+    if len(usage) != len(set(usage)):
+        findings.append(
+            Finding(schema_path, "escalation_usage_required_phrases must be unique")
+        )
+    if not usage:
+        findings.append(
+            Finding(schema_path, "escalation_usage_required_phrases must not be empty")
+        )
+    for phrase in usage:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "escalation_usage_required_phrases entries must be non-empty strings",
+                )
+            )
+            break
+    else:
+        required_usage = {
+            "When blocked, use this format in PR comments or Slack:",
+            "```text",
+            "From Agent: [surface name]",
+        }
+        if usage and not required_usage <= set(usage):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "escalation_usage_required_phrases must include intro, fence, and From Agent",
                 )
             )
 
@@ -2348,6 +2486,57 @@ def validate_escalation_format(root: Path) -> list[Finding]:
         if phrase not in text:
             findings.append(
                 Finding(rel, f"missing locked escalation-format phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_routing_rationales(root: Path) -> list[Finding]:
+    rel = "CLAUDE.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "CLAUDE.md missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## Agent Routing Matrix" not in text:
+        findings.append(Finding(rel, "missing Agent Routing Matrix section"))
+    if "Task | Surface | Rationale" not in text:
+        findings.append(Finding(rel, "missing routing-matrix column header"))
+    for phrase in ROUTING_MATRIX_RATIONALE_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(rel, f"missing locked routing-rationale phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_claude_metadata(root: Path) -> list[Finding]:
+    rel = "CLAUDE.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "CLAUDE.md missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    for phrase in CLAUDE_METADATA_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(rel, f"missing locked claude-metadata phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_escalation_usage(root: Path) -> list[Finding]:
+    rel = "CLAUDE.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "CLAUDE.md missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## Escalation Format" not in text:
+        findings.append(Finding(rel, "missing Escalation Format section"))
+    for phrase in ESCALATION_USAGE_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(rel, f"missing locked escalation-usage phrase: {phrase}")
             )
     return findings
 
@@ -4291,6 +4480,9 @@ VALIDATORS: dict[str, ValidatorFn] = {
     "routing-matrix": validate_routing_matrix,
     "repo-identity": validate_repo_identity,
     "escalation-format": validate_escalation_format,
+    "routing-rationales": validate_routing_rationales,
+    "claude-metadata": validate_claude_metadata,
+    "escalation-usage": validate_escalation_usage,
     "link-check": validate_link_check,
     "prompts": validate_documented_agent_prompts,
     "cross-docs": validate_cross_doc_agents,
