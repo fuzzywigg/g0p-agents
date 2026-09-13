@@ -32,8 +32,10 @@ Checks structural correctness of:
 - Historic Goose recipe title locks (four recipes only)
 - CI required GitHub Actions pins + workflow name + actionlint markers
 - CI link-check lychee args/fail + markdown-lint globs/config + job display names
-- pyproject project name + version/license + ruff line-length/src/lint select locks
-- coverage show_missing/skip_empty + pytest addopts locks
+- CI runs-on ubuntu-latest + artifact paths/if-no-files-found + actionlint shell/id locks
+- pyproject project name + version/license/description/readme +
+  ruff line-length/src/lint select locks
+- coverage show_missing/skip_empty/source + pytest addopts/testpaths/pythonpath locks
 - Dependabot directory set inventory lock (file untouched)
 - Issue template frontmatter name/about locks
 - README badge phrase locks
@@ -139,7 +141,7 @@ REQUIRED_ARCHIVE_DOCS = (
     "README.md",
 )
 
-INVENTORY_VERSION = 10
+INVENTORY_VERSION = 11
 CURSOR_ENVIRONMENT_NAME = "g0p-agents"
 DEPENDABOT_SCHEDULE_INTERVAL = "weekly"
 DEPENDABOT_DIRECTORIES: frozenset[str] = frozenset({"/"})
@@ -176,7 +178,22 @@ CI_JOB_DISPLAY_NAMES: dict[str, str] = {
     "actionlint": "Actionlint",
     "manifest-validate": "Manifest Validate (Py ${{ matrix.python-version }})",
 }
+CI_RUNS_ON = "ubuntu-latest"
+CI_ARTIFACT_IF_NO_FILES_FOUND = "warn"
+CI_ARTIFACT_PATHS: tuple[str, ...] = (
+    "manifest-findings.json",
+    "validators.txt",
+    "coverage.xml",
+    "pytest-junit.xml",
+)
+CI_ACTIONLINT_SHELL = "bash"
+CI_ACTIONLINT_STEP_ID = "get_actionlint"
 PYPROJECT_NAME = "g0p-agents-validation"
+PYPROJECT_DESCRIPTION = (
+    "Dev-only packaging validators for the g0p-agents docs archive "
+    "(not a runtime package)."
+)
+PYPROJECT_README = "README.md"
 PYPROJECT_VERSION = "0.0.0"
 PYPROJECT_LICENSE_TEXT = "MIT"
 PYPROJECT_REQUIRES_PYTHON = ">=3.11"
@@ -185,9 +202,12 @@ PYPROJECT_LINE_LENGTH = 100
 PYPROJECT_RUFF_SRC: tuple[str, ...] = ("scripts", "tests")
 PYPROJECT_RUFF_LINT_SELECT: tuple[str, ...] = ("E", "F", "I", "UP", "B")
 PYTEST_ADDOPTS = "-q"
+PYTEST_TESTPATHS: tuple[str, ...] = ("tests",)
+PYTEST_PYTHONPATH: tuple[str, ...] = ("scripts",)
 COVERAGE_BRANCH = True
 COVERAGE_SHOW_MISSING = True
 COVERAGE_SKIP_EMPTY = True
+COVERAGE_SOURCE: tuple[str, ...] = ("scripts",)
 RECIPE_TITLES: dict[str, str] = {
     "quantum_algorithm_design_workflow": (
         "Design and Optimize Quantum Algorithm for Cryptographic Operation"
@@ -490,7 +510,7 @@ SCRATCHPAD_STATUS_MARKERS: tuple[str, ...] = (
 SPECIALIST_AGENTS: tuple[str, ...] = DOCUMENTED_AGENTS[:-1]
 
 MIN_COVERAGE_FAIL_UNDER = 99
-MIN_VALIDATOR_COUNT = 43
+MIN_VALIDATOR_COUNT = 46
 
 
 @dataclass(frozen=True)
@@ -1029,6 +1049,39 @@ def validate_packaging_inventory(root: Path) -> list[Finding]:
     ):
         findings.append(_lock_mismatch(schema_path, "markdownlint_md013_code_blocks"))
 
+    if inventory.get("ci_runs_on") != CI_RUNS_ON:
+        findings.append(_lock_mismatch(schema_path, "ci_runs_on"))
+
+    if (
+        inventory.get("ci_artifact_if_no_files_found")
+        != CI_ARTIFACT_IF_NO_FILES_FOUND
+    ):
+        findings.append(_lock_mismatch(schema_path, "ci_artifact_if_no_files_found"))
+
+    if tuple(inventory.get("ci_artifact_paths", ())) != CI_ARTIFACT_PATHS:
+        findings.append(_lock_mismatch(schema_path, "ci_artifact_paths"))
+
+    if inventory.get("ci_actionlint_shell") != CI_ACTIONLINT_SHELL:
+        findings.append(_lock_mismatch(schema_path, "ci_actionlint_shell"))
+
+    if inventory.get("ci_actionlint_step_id") != CI_ACTIONLINT_STEP_ID:
+        findings.append(_lock_mismatch(schema_path, "ci_actionlint_step_id"))
+
+    if inventory.get("pyproject_description") != PYPROJECT_DESCRIPTION:
+        findings.append(_lock_mismatch(schema_path, "pyproject_description"))
+
+    if inventory.get("pyproject_readme") != PYPROJECT_README:
+        findings.append(_lock_mismatch(schema_path, "pyproject_readme"))
+
+    if tuple(inventory.get("pytest_testpaths", ())) != PYTEST_TESTPATHS:
+        findings.append(_lock_mismatch(schema_path, "pytest_testpaths"))
+
+    if tuple(inventory.get("pytest_pythonpath", ())) != PYTEST_PYTHONPATH:
+        findings.append(_lock_mismatch(schema_path, "pytest_pythonpath"))
+
+    if tuple(inventory.get("coverage_source", ())) != COVERAGE_SOURCE:
+        findings.append(_lock_mismatch(schema_path, "coverage_source"))
+
     expected_validator_names = tuple(sorted(VALIDATORS))
     if tuple(inventory.get("validator_names", ())) != expected_validator_names:
         findings.append(_lock_mismatch(schema_path, "validator_names"))
@@ -1280,6 +1333,69 @@ def _inventory_lock_consistency(
         findings.append(
             Finding(schema_path, "ci_link_check_args must be a non-empty string")
         )
+
+    runs_on = inventory.get("ci_runs_on")
+    if not isinstance(runs_on, str) or not runs_on.strip():
+        findings.append(
+            Finding(schema_path, "ci_runs_on must be a non-empty string")
+        )
+
+    artifact_paths = list(inventory.get("ci_artifact_paths", ()))
+    if len(artifact_paths) != len(set(artifact_paths)):
+        findings.append(Finding(schema_path, "ci_artifact_paths must be unique"))
+    if not artifact_paths:
+        findings.append(Finding(schema_path, "ci_artifact_paths must not be empty"))
+
+    if_no_files = inventory.get("ci_artifact_if_no_files_found")
+    if not isinstance(if_no_files, str) or not if_no_files.strip():
+        findings.append(
+            Finding(
+                schema_path,
+                "ci_artifact_if_no_files_found must be a non-empty string",
+            )
+        )
+
+    actionlint_shell = inventory.get("ci_actionlint_shell")
+    if not isinstance(actionlint_shell, str) or not actionlint_shell.strip():
+        findings.append(
+            Finding(schema_path, "ci_actionlint_shell must be a non-empty string")
+        )
+
+    actionlint_step_id = inventory.get("ci_actionlint_step_id")
+    if not isinstance(actionlint_step_id, str) or not actionlint_step_id.strip():
+        findings.append(
+            Finding(schema_path, "ci_actionlint_step_id must be a non-empty string")
+        )
+
+    pyproject_desc = inventory.get("pyproject_description")
+    if not isinstance(pyproject_desc, str) or not pyproject_desc.strip():
+        findings.append(
+            Finding(schema_path, "pyproject_description must be a non-empty string")
+        )
+
+    pyproject_readme = inventory.get("pyproject_readme")
+    if not isinstance(pyproject_readme, str) or not pyproject_readme.strip():
+        findings.append(
+            Finding(schema_path, "pyproject_readme must be a non-empty string")
+        )
+
+    testpaths = list(inventory.get("pytest_testpaths", ()))
+    if len(testpaths) != len(set(testpaths)):
+        findings.append(Finding(schema_path, "pytest_testpaths must be unique"))
+    if not testpaths:
+        findings.append(Finding(schema_path, "pytest_testpaths must not be empty"))
+
+    pythonpath = list(inventory.get("pytest_pythonpath", ()))
+    if len(pythonpath) != len(set(pythonpath)):
+        findings.append(Finding(schema_path, "pytest_pythonpath must be unique"))
+    if not pythonpath:
+        findings.append(Finding(schema_path, "pytest_pythonpath must not be empty"))
+
+    coverage_source = list(inventory.get("coverage_source", ()))
+    if len(coverage_source) != len(set(coverage_source)):
+        findings.append(Finding(schema_path, "coverage_source must be unique"))
+    if not coverage_source:
+        findings.append(Finding(schema_path, "coverage_source must not be empty"))
 
     return findings
 
@@ -2054,6 +2170,25 @@ def validate_pyproject(root: Path) -> list[Finding]:
                     ),
                 )
             )
+        description = project.get("description")
+        if description != PYPROJECT_DESCRIPTION:
+            findings.append(
+                Finding(
+                    rel,
+                    (
+                        "project.description must be "
+                        f"{PYPROJECT_DESCRIPTION!r}, found {description!r}"
+                    ),
+                )
+            )
+        readme = project.get("readme")
+        if readme != PYPROJECT_README:
+            findings.append(
+                Finding(
+                    rel,
+                    f"project.readme must be {PYPROJECT_README!r}, found {readme!r}",
+                )
+            )
         requires = project.get("requires-python")
         if requires != PYPROJECT_REQUIRES_PYTHON:
             findings.append(
@@ -2086,6 +2221,34 @@ def validate_pyproject(root: Path) -> list[Finding]:
                         (
                             f"pytest addopts must be {PYTEST_ADDOPTS!r}, "
                             f"found {addopts!r}"
+                        ),
+                    )
+                )
+            testpaths = ini_options.get("testpaths")
+            if (
+                not isinstance(testpaths, list)
+                or tuple(testpaths) != PYTEST_TESTPATHS
+            ):
+                findings.append(
+                    Finding(
+                        rel,
+                        (
+                            "pytest testpaths must equal "
+                            f"{list(PYTEST_TESTPATHS)!r}, found {testpaths!r}"
+                        ),
+                    )
+                )
+            pythonpath = ini_options.get("pythonpath")
+            if (
+                not isinstance(pythonpath, list)
+                or tuple(pythonpath) != PYTEST_PYTHONPATH
+            ):
+                findings.append(
+                    Finding(
+                        rel,
+                        (
+                            "pytest pythonpath must equal "
+                            f"{list(PYTEST_PYTHONPATH)!r}, found {pythonpath!r}"
                         ),
                     )
                 )
@@ -2155,6 +2318,17 @@ def validate_pyproject(root: Path) -> list[Finding]:
                 Finding(
                     rel,
                     f"coverage run.branch must be {COVERAGE_BRANCH}, found {branch!r}",
+                )
+            )
+        source = run.get("source")
+        if not isinstance(source, list) or tuple(source) != COVERAGE_SOURCE:
+            findings.append(
+                Finding(
+                    rel,
+                    (
+                        "coverage run.source must equal "
+                        f"{list(COVERAGE_SOURCE)!r}, found {source!r}"
+                    ),
                 )
             )
     else:
@@ -3167,6 +3341,183 @@ def validate_github_agent_description(root: Path) -> list[Finding]:
     return findings
 
 
+
+def validate_ci_runs_on(root: Path) -> list[Finding]:
+    rel = ".github/workflows/ci.yml"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "CI workflow missing")]
+    data, parse_findings = parse_yaml_text(path.read_text(encoding="utf-8"), path=rel)
+    findings = list(parse_findings)
+    if data is None:
+        return findings
+    if not isinstance(data, dict):
+        return findings + [Finding(rel, "CI workflow root must be a mapping")]
+    jobs = data.get("jobs")
+    if not isinstance(jobs, dict):
+        return findings + [Finding(rel, "CI workflow missing jobs mapping")]
+    for job_id in sorted(REQUIRED_CI_JOBS):
+        job = jobs.get(job_id)
+        if not isinstance(job, dict):
+            findings.append(Finding(rel, f"CI workflow missing job: {job_id}"))
+            continue
+        runs_on = job.get("runs-on")
+        if runs_on != CI_RUNS_ON:
+            findings.append(
+                Finding(
+                    rel,
+                    (
+                        f"CI job {job_id!r} runs-on must be {CI_RUNS_ON!r}, "
+                        f"found {runs_on!r}"
+                    ),
+                )
+            )
+    return findings
+
+
+def validate_ci_artifacts(root: Path) -> list[Finding]:
+    rel = ".github/workflows/ci.yml"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "CI workflow missing")]
+    data, parse_findings = parse_yaml_text(path.read_text(encoding="utf-8"), path=rel)
+    findings = list(parse_findings)
+    if data is None:
+        return findings
+    if not isinstance(data, dict):
+        return findings + [Finding(rel, "CI workflow root must be a mapping")]
+    jobs = data.get("jobs")
+    if not isinstance(jobs, dict):
+        return findings + [Finding(rel, "CI workflow missing jobs mapping")]
+    manifest = jobs.get("manifest-validate")
+    if not isinstance(manifest, dict):
+        return findings + [Finding(rel, "CI workflow missing manifest-validate job")]
+    steps = manifest.get("steps")
+    if not isinstance(steps, list):
+        return findings + [Finding(rel, "manifest-validate job missing steps")]
+    found_upload = False
+    for step in steps:
+        if not isinstance(step, dict):
+            continue
+        uses = str(step.get("uses", ""))
+        if "upload-artifact" not in uses:
+            continue
+        found_upload = True
+        with_block = step.get("with")
+        if not isinstance(with_block, dict):
+            findings.append(
+                Finding(rel, "upload-artifact step missing with: mapping")
+            )
+            continue
+        if_no_files = with_block.get("if-no-files-found")
+        if if_no_files != CI_ARTIFACT_IF_NO_FILES_FOUND:
+            findings.append(
+                Finding(
+                    rel,
+                    (
+                        "upload-artifact if-no-files-found must be "
+                        f"{CI_ARTIFACT_IF_NO_FILES_FOUND!r}, found {if_no_files!r}"
+                    ),
+                )
+            )
+        path_field = with_block.get("path")
+        if isinstance(path_field, str):
+            present = {
+                line.strip()
+                for line in path_field.splitlines()
+                if line.strip()
+            }
+        elif isinstance(path_field, list):
+            present = {str(item).strip() for item in path_field if str(item).strip()}
+        else:
+            present = set()
+            findings.append(
+                Finding(rel, "upload-artifact path must be a string or sequence")
+            )
+        missing = [p for p in CI_ARTIFACT_PATHS if p not in present]
+        for artifact_path in missing:
+            findings.append(
+                Finding(
+                    rel,
+                    f"upload-artifact path missing locked artifact: {artifact_path}",
+                )
+            )
+        extras = sorted(present - set(CI_ARTIFACT_PATHS))
+        for extra in extras:
+            findings.append(
+                Finding(
+                    rel,
+                    f"upload-artifact path has unexpected artifact: {extra}",
+                )
+            )
+    if not found_upload:
+        findings.append(Finding(rel, "manifest-validate missing upload-artifact step"))
+    return findings
+
+
+def validate_actionlint_shell(root: Path) -> list[Finding]:
+    rel = ".github/workflows/ci.yml"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "CI workflow missing")]
+    data, parse_findings = parse_yaml_text(path.read_text(encoding="utf-8"), path=rel)
+    findings = list(parse_findings)
+    if data is None:
+        return findings
+    if not isinstance(data, dict):
+        return findings + [Finding(rel, "CI workflow root must be a mapping")]
+    jobs = data.get("jobs")
+    if not isinstance(jobs, dict):
+        return findings + [Finding(rel, "CI workflow missing jobs mapping")]
+    actionlint = jobs.get("actionlint")
+    if not isinstance(actionlint, dict):
+        return findings + [Finding(rel, "CI workflow missing actionlint job")]
+    steps = actionlint.get("steps")
+    if not isinstance(steps, list):
+        return findings + [Finding(rel, "actionlint job missing steps")]
+    found_shell = False
+    found_step_id = False
+    for step in steps:
+        if not isinstance(step, dict):
+            continue
+        step_id = step.get("id")
+        if step_id == CI_ACTIONLINT_STEP_ID:
+            found_step_id = True
+        shell = step.get("shell")
+        if shell is None:
+            continue
+        if shell != CI_ACTIONLINT_SHELL:
+            findings.append(
+                Finding(
+                    rel,
+                    (
+                        "actionlint step shell must be "
+                        f"{CI_ACTIONLINT_SHELL!r}, found {shell!r}"
+                    ),
+                )
+            )
+        else:
+            found_shell = True
+    if not found_shell:
+        findings.append(
+            Finding(
+                rel,
+                f"actionlint job must set shell: {CI_ACTIONLINT_SHELL!r} on a step",
+            )
+        )
+    if not found_step_id:
+        findings.append(
+            Finding(
+                rel,
+                (
+                    "actionlint job must include step id "
+                    f"{CI_ACTIONLINT_STEP_ID!r}"
+                ),
+            )
+        )
+    return findings
+
+
 VALIDATORS: dict[str, ValidatorFn] = {
     "schemas": validate_schemas_meta,
     "inventory": validate_packaging_inventory,
@@ -3199,6 +3550,9 @@ VALIDATORS: dict[str, ValidatorFn] = {
     "ci": validate_ci_workflow,
     "ci-actions": validate_ci_actions,
     "ci-job-names": validate_ci_job_names,
+    "ci-runs-on": validate_ci_runs_on,
+    "ci-artifacts": validate_ci_artifacts,
+    "actionlint-shell": validate_actionlint_shell,
     "link-check": validate_link_check,
     "prompts": validate_documented_agent_prompts,
     "cross-docs": validate_cross_doc_agents,

@@ -160,6 +160,16 @@ def _inventory_payload(**overrides: object) -> dict:
         "coverage_show_missing": vm.COVERAGE_SHOW_MISSING,
         "coverage_skip_empty": vm.COVERAGE_SKIP_EMPTY,
         "github_agent_description": vm.GITHUB_AGENT_DESCRIPTION,
+        "ci_runs_on": vm.CI_RUNS_ON,
+        "ci_artifact_if_no_files_found": vm.CI_ARTIFACT_IF_NO_FILES_FOUND,
+        "ci_artifact_paths": list(vm.CI_ARTIFACT_PATHS),
+        "ci_actionlint_shell": vm.CI_ACTIONLINT_SHELL,
+        "ci_actionlint_step_id": vm.CI_ACTIONLINT_STEP_ID,
+        "pyproject_description": vm.PYPROJECT_DESCRIPTION,
+        "pyproject_readme": vm.PYPROJECT_README,
+        "pytest_testpaths": list(vm.PYTEST_TESTPATHS),
+        "pytest_pythonpath": list(vm.PYTEST_PYTHONPATH),
+        "coverage_source": list(vm.COVERAGE_SOURCE),
         "validator_names": sorted(vm.VALIDATORS),
         "specialist_agents": list(vm.SPECIALIST_AGENTS),
         "schema_draft_uri": vm.SCHEMA_DRAFT_URI,
@@ -756,6 +766,9 @@ def test_validators_registry_covers_all_checks() -> None:
         "recipe-titles",
         "ci-actions",
         "ci-job-names",
+        "ci-runs-on",
+        "ci-artifacts",
+        "actionlint-shell",
         "link-check",
         "github-agent-desc",
     }
@@ -1515,7 +1528,7 @@ def test_packaging_inventory_v5_lock_fields(tmp_path: Path) -> None:
                 "scratchpad_status_markers",
                 list(vm.SCRATCHPAD_STATUS_MARKERS)[:-1] + ["INVENTED"],
             ),
-            ("version", 11),
+            ("version", 12),
             ("min_coverage_fail_under", 90),
             ("min_validator_count", 999),
             ("dependabot_group_names", ["github_actions"]),
@@ -2369,8 +2382,8 @@ def test_ci_workflow_v5_deepeners(tmp_path: Path) -> None:
 def test_live_v5_validators() -> None:
     assert vm.validate_bug_report_template(REPO_ROOT) == []
     assert vm.validate_feature_request_template(REPO_ROOT) == []
-    assert vm.INVENTORY_VERSION == 10
-    assert len(vm.VALIDATORS) == 43
+    assert vm.INVENTORY_VERSION == 11
+    assert len(vm.VALIDATORS) == 46
     assert vm.MIN_COVERAGE_FAIL_UNDER == 99
 
 
@@ -2379,7 +2392,7 @@ def test_live_v6_validators() -> None:
     assert vm.validate_postmortem_packaging(REPO_ROOT) == []
     assert vm.validate_gitignore_packaging(REPO_ROOT) == []
     assert vm.validate_negative_constraints(REPO_ROOT) == []
-    assert vm.INVENTORY_VERSION == 10
+    assert vm.INVENTORY_VERSION == 11
     assert len(vm.VALIDATORS) >= 43
     assert sorted(vm.VALIDATORS) == json.loads(
         (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
@@ -2390,7 +2403,7 @@ def test_live_v7_validators() -> None:
     assert vm.validate_hydration_report(REPO_ROOT) == []
     assert vm.validate_execution_summary(REPO_ROOT) == []
     assert vm.validate_implementation_guide(REPO_ROOT) == []
-    assert vm.INVENTORY_VERSION == 10
+    assert vm.INVENTORY_VERSION == 11
     assert len(vm.VALIDATORS) >= 43
     assert "Lock inventory" in vm.REQUIRED_MANIFEST_STEP_MARKERS
     assert "INVENTORY_VERSION" in vm.REQUIRED_MANIFEST_STEP_MARKERS
@@ -2411,9 +2424,9 @@ def test_live_v8_validators() -> None:
     assert vm.validate_claude_packaging(REPO_ROOT) == []
     assert vm.validate_recipe_titles(REPO_ROOT) == []
     assert vm.validate_ci_actions(REPO_ROOT) == []
-    assert vm.INVENTORY_VERSION == 10
-    assert len(vm.VALIDATORS) == 43
-    assert vm.MIN_VALIDATOR_COUNT == 43
+    assert vm.INVENTORY_VERSION == 11
+    assert len(vm.VALIDATORS) == 46
+    assert vm.MIN_VALIDATOR_COUNT == 46
     assert vm.PYPROJECT_NAME == "g0p-agents-validation"
     assert set(vm.DEPENDABOT_DIRECTORIES) == {"/"}
     assert dict(vm.RECIPE_TITLES) == json.loads(
@@ -2428,9 +2441,9 @@ def test_live_v9_validators() -> None:
     assert vm.validate_issue_template_names(REPO_ROOT) == []
     assert vm.validate_readme_badges(REPO_ROOT) == []
     assert vm.validate_quarterly_review(REPO_ROOT) == []
-    assert vm.INVENTORY_VERSION == 10
-    assert len(vm.VALIDATORS) == 43
-    assert vm.MIN_VALIDATOR_COUNT == 43
+    assert vm.INVENTORY_VERSION == 11
+    assert len(vm.VALIDATORS) == 46
+    assert vm.MIN_VALIDATOR_COUNT == 46
     assert vm.CI_WORKFLOW_NAME == "CI — Lint, Links & Manifests"
     assert vm.MARKDOWNLINT_MD025 is False
     assert vm.MARKDOWNLINT_MD033 is False
@@ -2456,9 +2469,9 @@ def test_live_v10_validators() -> None:
     assert vm.validate_link_check(REPO_ROOT) == []
     assert vm.validate_ci_job_names(REPO_ROOT) == []
     assert vm.validate_github_agent_description(REPO_ROOT) == []
-    assert vm.INVENTORY_VERSION == 10
-    assert len(vm.VALIDATORS) == 43
-    assert vm.MIN_VALIDATOR_COUNT == 43
+    assert vm.INVENTORY_VERSION == 11
+    assert len(vm.VALIDATORS) == 46
+    assert vm.MIN_VALIDATOR_COUNT == 46
     assert vm.CI_LINK_CHECK_ARGS == "--verbose --no-progress '**/*.md'"
     assert vm.CI_LINK_CHECK_FAIL is True
     assert vm.CI_MARKDOWN_LINT_GLOBS == "**/*.md"
@@ -3958,3 +3971,461 @@ def test_module_main_entrypoint(monkeypatch: pytest.MonkeyPatch) -> None:
             run_name="__main__",
         )
     assert excinfo.value.code == 0
+
+
+def test_live_v11_validators() -> None:
+    assert vm.validate_ci_runs_on(REPO_ROOT) == []
+    assert vm.validate_ci_artifacts(REPO_ROOT) == []
+    assert vm.validate_actionlint_shell(REPO_ROOT) == []
+    assert vm.INVENTORY_VERSION == 11
+    assert len(vm.VALIDATORS) == 46
+    assert vm.MIN_VALIDATOR_COUNT == 46
+    assert vm.CI_RUNS_ON == "ubuntu-latest"
+    assert vm.CI_ARTIFACT_IF_NO_FILES_FOUND == "warn"
+    assert tuple(vm.CI_ARTIFACT_PATHS) == (
+        "manifest-findings.json",
+        "validators.txt",
+        "coverage.xml",
+        "pytest-junit.xml",
+    )
+    assert vm.CI_ACTIONLINT_SHELL == "bash"
+    assert vm.CI_ACTIONLINT_STEP_ID == "get_actionlint"
+    assert vm.PYPROJECT_README == "README.md"
+    assert "docs archive" in vm.PYPROJECT_DESCRIPTION
+    assert tuple(vm.PYTEST_TESTPATHS) == ("tests",)
+    assert tuple(vm.PYTEST_PYTHONPATH) == ("scripts",)
+    assert tuple(vm.COVERAGE_SOURCE) == ("scripts",)
+    inventory = json.loads(
+        (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
+    )
+    assert inventory["version"] == 11
+    assert inventory["ci_runs_on"] == vm.CI_RUNS_ON
+    assert inventory["ci_artifact_paths"] == list(vm.CI_ARTIFACT_PATHS)
+    assert inventory["ci_artifact_if_no_files_found"] == vm.CI_ARTIFACT_IF_NO_FILES_FOUND
+    assert inventory["ci_actionlint_shell"] == vm.CI_ACTIONLINT_SHELL
+    assert inventory["ci_actionlint_step_id"] == vm.CI_ACTIONLINT_STEP_ID
+    assert inventory["pyproject_description"] == vm.PYPROJECT_DESCRIPTION
+    assert inventory["pyproject_readme"] == vm.PYPROJECT_README
+    assert inventory["pytest_testpaths"] == list(vm.PYTEST_TESTPATHS)
+    assert inventory["pytest_pythonpath"] == list(vm.PYTEST_PYTHONPATH)
+    assert inventory["coverage_source"] == list(vm.COVERAGE_SOURCE)
+    assert vm.validate_pyproject(REPO_ROOT) == []
+    assert vm.validate_ci_workflow(REPO_ROOT) == []
+
+
+def test_v11_ci_runs_on_artifacts_actionlint_shell_edge_cases(tmp_path: Path) -> None:
+    assert any("missing" in f.message for f in vm.validate_ci_runs_on(tmp_path))
+    assert any("missing" in f.message for f in vm.validate_ci_artifacts(tmp_path))
+    assert any("missing" in f.message for f in vm.validate_actionlint_shell(tmp_path))
+
+    _write(
+        tmp_path / ".github" / "workflows" / "ci.yml",
+        "\n".join(
+            [
+                f"name: {vm.CI_WORKFLOW_NAME}",
+                "on: push",
+                "jobs:",
+                "  markdown-lint:",
+                "    runs-on: windows-latest",
+                "  link-check:",
+                "    runs-on: windows-latest",
+                "  actionlint:",
+                "    runs-on: windows-latest",
+                "    steps:",
+                "      - id: wrong-id",
+                "        run: echo hi",
+                "        shell: pwsh",
+                "  manifest-validate:",
+                "    runs-on: windows-latest",
+                "    steps:",
+                "      - uses: actions/upload-artifact@v4",
+                "        with:",
+                "          name: manifest-validate-pyX",
+                "          if-no-files-found: error",
+                "          path: |",
+                "            wrong.json",
+                "            also-wrong.txt",
+                "",
+            ]
+        ),
+    )
+    findings = vm.validate_ci_runs_on(tmp_path)
+    assert any("runs-on must be" in f.message for f in findings)
+    findings = vm.validate_ci_artifacts(tmp_path)
+    assert any("if-no-files-found must be" in f.message for f in findings)
+    assert any("path missing locked artifact" in f.message for f in findings)
+    assert any("unexpected artifact" in f.message for f in findings)
+    findings = vm.validate_actionlint_shell(tmp_path)
+    assert any("shell must be" in f.message for f in findings)
+    assert any("step id" in f.message for f in findings)
+
+    _write(tmp_path / ".github" / "workflows" / "ci.yml", "- just-a-list\n")
+    assert any("root must be a mapping" in f.message for f in vm.validate_ci_runs_on(tmp_path))
+    assert any(
+        "root must be a mapping" in f.message for f in vm.validate_ci_artifacts(tmp_path)
+    )
+    assert any(
+        "root must be a mapping" in f.message
+        for f in vm.validate_actionlint_shell(tmp_path)
+    )
+
+    _write(tmp_path / ".github" / "workflows" / "ci.yml", "null\n")
+    assert vm.validate_ci_runs_on(tmp_path) == []
+    assert vm.validate_ci_artifacts(tmp_path) == []
+    assert vm.validate_actionlint_shell(tmp_path) == []
+
+    _write(tmp_path / ".github" / "workflows" / "ci.yml", "name: only\n")
+    assert any(
+        "missing jobs mapping" in f.message for f in vm.validate_ci_runs_on(tmp_path)
+    )
+    assert any(
+        "missing jobs mapping" in f.message for f in vm.validate_ci_artifacts(tmp_path)
+    )
+    assert any(
+        "missing jobs mapping" in f.message
+        for f in vm.validate_actionlint_shell(tmp_path)
+    )
+
+    _write(
+        tmp_path / ".github" / "workflows" / "ci.yml",
+        "\n".join(
+            [
+                "name: CI",
+                "jobs:",
+                "  other:",
+                "    runs-on: ubuntu-latest",
+                "",
+            ]
+        ),
+    )
+    findings = vm.validate_ci_runs_on(tmp_path)
+    assert any("missing job:" in f.message for f in findings)
+    findings = vm.validate_ci_artifacts(tmp_path)
+    assert any("missing manifest-validate job" in f.message for f in findings)
+    findings = vm.validate_actionlint_shell(tmp_path)
+    assert any("missing actionlint job" in f.message for f in findings)
+
+    _write(
+        tmp_path / ".github" / "workflows" / "ci.yml",
+        "\n".join(
+            [
+                "name: CI",
+                "jobs:",
+                "  actionlint:",
+                "    runs-on: ubuntu-latest",
+                "  manifest-validate:",
+                "    runs-on: ubuntu-latest",
+                "",
+            ]
+        ),
+    )
+    findings = vm.validate_actionlint_shell(tmp_path)
+    assert any("actionlint job missing steps" in f.message for f in findings)
+    findings = vm.validate_ci_artifacts(tmp_path)
+    assert any("manifest-validate job missing steps" in f.message for f in findings)
+
+    _write(
+        tmp_path / ".github" / "workflows" / "ci.yml",
+        "\n".join(
+            [
+                "name: CI",
+                "jobs:",
+                "  actionlint:",
+                f"    runs-on: {vm.CI_RUNS_ON}",
+                "    steps:",
+                "      - not-a-mapping-step",
+                "      - run: echo hi",
+                "  manifest-validate:",
+                f"    runs-on: {vm.CI_RUNS_ON}",
+                "    steps:",
+                "      - not-a-mapping-step",
+                "      - uses: actions/upload-artifact@v4",
+                "        with: not-a-mapping",
+                "",
+            ]
+        ),
+    )
+    findings = vm.validate_actionlint_shell(tmp_path)
+    assert any("must set shell" in f.message for f in findings)
+    assert any("step id" in f.message for f in findings)
+    findings = vm.validate_ci_artifacts(tmp_path)
+    assert any("upload-artifact step missing with" in f.message for f in findings)
+
+    _write(
+        tmp_path / ".github" / "workflows" / "ci.yml",
+        "\n".join(
+            [
+                "name: CI",
+                "jobs:",
+                "  markdown-lint:",
+                f"    runs-on: {vm.CI_RUNS_ON}",
+                "  link-check:",
+                f"    runs-on: {vm.CI_RUNS_ON}",
+                "  actionlint:",
+                f"    runs-on: {vm.CI_RUNS_ON}",
+                "    steps:",
+                f"      - id: {vm.CI_ACTIONLINT_STEP_ID}",
+                "        run: echo download",
+                f"        shell: {vm.CI_ACTIONLINT_SHELL}",
+                "      - run: ./actionlint -color",
+                f"        shell: {vm.CI_ACTIONLINT_SHELL}",
+                "  manifest-validate:",
+                f"    runs-on: {vm.CI_RUNS_ON}",
+                "    steps:",
+                "      - uses: actions/upload-artifact@v4",
+                "        with:",
+                "          name: manifest-validate-pyX",
+                f"          if-no-files-found: {vm.CI_ARTIFACT_IF_NO_FILES_FOUND}",
+                "          path: |",
+                *[f"            {p}" for p in vm.CI_ARTIFACT_PATHS],
+                "",
+            ]
+        ),
+    )
+    assert vm.validate_ci_runs_on(tmp_path) == []
+    assert vm.validate_ci_artifacts(tmp_path) == []
+    assert vm.validate_actionlint_shell(tmp_path) == []
+
+    _write(
+        tmp_path / ".github" / "workflows" / "ci.yml",
+        "\n".join(
+            [
+                "name: CI",
+                "jobs:",
+                "  manifest-validate:",
+                "    runs-on: ubuntu-latest",
+                "    steps:",
+                "      - run: echo no upload",
+                "",
+            ]
+        ),
+    )
+    findings = vm.validate_ci_artifacts(tmp_path)
+    assert any("missing upload-artifact step" in f.message for f in findings)
+
+    _write(
+        tmp_path / ".github" / "workflows" / "ci.yml",
+        "\n".join(
+            [
+                "name: CI",
+                "jobs:",
+                "  manifest-validate:",
+                "    runs-on: ubuntu-latest",
+                "    steps:",
+                "      - uses: actions/upload-artifact@v4",
+                "        with:",
+                f"          if-no-files-found: {vm.CI_ARTIFACT_IF_NO_FILES_FOUND}",
+                "          path:",
+                *[f"            - {p}" for p in vm.CI_ARTIFACT_PATHS],
+                "",
+            ]
+        ),
+    )
+    assert vm.validate_ci_artifacts(tmp_path) == []
+
+    _write(
+        tmp_path / ".github" / "workflows" / "ci.yml",
+        "\n".join(
+            [
+                "name: CI",
+                "jobs:",
+                "  manifest-validate:",
+                "    runs-on: ubuntu-latest",
+                "    steps:",
+                "      - uses: actions/upload-artifact@v4",
+                "        with:",
+                f"          if-no-files-found: {vm.CI_ARTIFACT_IF_NO_FILES_FOUND}",
+                "          path: 42",
+                "",
+            ]
+        ),
+    )
+    findings = vm.validate_ci_artifacts(tmp_path)
+    assert any("path must be a string or sequence" in f.message for f in findings)
+
+    _write(
+        tmp_path / "pyproject.toml",
+        "\n".join(
+            [
+                "[project]",
+                f'name = "{vm.PYPROJECT_NAME}"',
+                f'version = "{vm.PYPROJECT_VERSION}"',
+                f'license = {{ text = "{vm.PYPROJECT_LICENSE_TEXT}" }}',
+                'description = "wrong description"',
+                'readme = "WRONG.md"',
+                f'requires-python = "{vm.PYPROJECT_REQUIRES_PYTHON}"',
+                "[tool.pytest.ini_options]",
+                'testpaths = ["elsewhere"]',
+                'pythonpath = ["elsewhere"]',
+                f'addopts = "{vm.PYTEST_ADDOPTS}"',
+                "[tool.ruff]",
+                f'target-version = "{vm.PYPROJECT_RUFF_TARGET_VERSION}"',
+                f"line-length = {vm.PYPROJECT_LINE_LENGTH}",
+                f"src = {list(vm.PYPROJECT_RUFF_SRC)!r}".replace("'", '"'),
+                "[tool.ruff.lint]",
+                f"select = {list(vm.PYPROJECT_RUFF_LINT_SELECT)!r}".replace("'", '"'),
+                "[tool.coverage.run]",
+                "branch = true",
+                'source = ["elsewhere"]',
+                "[tool.coverage.report]",
+                "show_missing = true",
+                "skip_empty = true",
+                "fail_under = 99",
+                "",
+            ]
+        ),
+    )
+    findings = vm.validate_pyproject(tmp_path)
+    assert any("project.description must be" in f.message for f in findings)
+    assert any("project.readme must be" in f.message for f in findings)
+    assert any("pytest testpaths must equal" in f.message for f in findings)
+    assert any("pytest pythonpath must equal" in f.message for f in findings)
+    assert any("coverage run.source must equal" in f.message for f in findings)
+
+    _copy_schemas(tmp_path)
+    inventory = json.loads(
+        (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
+    )
+
+    blank_runs = dict(inventory)
+    blank_runs["ci_runs_on"] = "  "
+    findings = vm._inventory_lock_consistency(
+        blank_runs, schema_path="schemas/packaging-inventory.json"
+    )
+    assert any("ci_runs_on must be a non-empty string" in f.message for f in findings)
+
+    empty_paths = dict(inventory)
+    empty_paths["ci_artifact_paths"] = []
+    findings = vm._inventory_lock_consistency(
+        empty_paths, schema_path="schemas/packaging-inventory.json"
+    )
+    assert any("ci_artifact_paths must not be empty" in f.message for f in findings)
+
+    dup_paths = dict(inventory)
+    dup_paths["ci_artifact_paths"] = ["a.json", "a.json"]
+    findings = vm._inventory_lock_consistency(
+        dup_paths, schema_path="schemas/packaging-inventory.json"
+    )
+    assert any("ci_artifact_paths must be unique" in f.message for f in findings)
+
+    blank_if = dict(inventory)
+    blank_if["ci_artifact_if_no_files_found"] = ""
+    findings = vm._inventory_lock_consistency(
+        blank_if, schema_path="schemas/packaging-inventory.json"
+    )
+    assert any(
+        "ci_artifact_if_no_files_found must be a non-empty string" in f.message
+        for f in findings
+    )
+
+    blank_shell = dict(inventory)
+    blank_shell["ci_actionlint_shell"] = ""
+    findings = vm._inventory_lock_consistency(
+        blank_shell, schema_path="schemas/packaging-inventory.json"
+    )
+    assert any(
+        "ci_actionlint_shell must be a non-empty string" in f.message for f in findings
+    )
+
+    blank_id = dict(inventory)
+    blank_id["ci_actionlint_step_id"] = " "
+    findings = vm._inventory_lock_consistency(
+        blank_id, schema_path="schemas/packaging-inventory.json"
+    )
+    assert any(
+        "ci_actionlint_step_id must be a non-empty string" in f.message for f in findings
+    )
+
+    blank_desc = dict(inventory)
+    blank_desc["pyproject_description"] = ""
+    findings = vm._inventory_lock_consistency(
+        blank_desc, schema_path="schemas/packaging-inventory.json"
+    )
+    assert any(
+        "pyproject_description must be a non-empty string" in f.message for f in findings
+    )
+
+    blank_readme = dict(inventory)
+    blank_readme["pyproject_readme"] = ""
+    findings = vm._inventory_lock_consistency(
+        blank_readme, schema_path="schemas/packaging-inventory.json"
+    )
+    assert any(
+        "pyproject_readme must be a non-empty string" in f.message for f in findings
+    )
+
+    empty_tp = dict(inventory)
+    empty_tp["pytest_testpaths"] = []
+    findings = vm._inventory_lock_consistency(
+        empty_tp, schema_path="schemas/packaging-inventory.json"
+    )
+    assert any("pytest_testpaths must not be empty" in f.message for f in findings)
+
+    dup_tp = dict(inventory)
+    dup_tp["pytest_testpaths"] = ["tests", "tests"]
+    findings = vm._inventory_lock_consistency(
+        dup_tp, schema_path="schemas/packaging-inventory.json"
+    )
+    assert any("pytest_testpaths must be unique" in f.message for f in findings)
+
+    empty_pp = dict(inventory)
+    empty_pp["pytest_pythonpath"] = []
+    findings = vm._inventory_lock_consistency(
+        empty_pp, schema_path="schemas/packaging-inventory.json"
+    )
+    assert any("pytest_pythonpath must not be empty" in f.message for f in findings)
+
+    dup_pp = dict(inventory)
+    dup_pp["pytest_pythonpath"] = ["scripts", "scripts"]
+    findings = vm._inventory_lock_consistency(
+        dup_pp, schema_path="schemas/packaging-inventory.json"
+    )
+    assert any("pytest_pythonpath must be unique" in f.message for f in findings)
+
+    empty_cs = dict(inventory)
+    empty_cs["coverage_source"] = []
+    findings = vm._inventory_lock_consistency(
+        empty_cs, schema_path="schemas/packaging-inventory.json"
+    )
+    assert any("coverage_source must not be empty" in f.message for f in findings)
+
+    dup_cs = dict(inventory)
+    dup_cs["coverage_source"] = ["scripts", "scripts"]
+    findings = vm._inventory_lock_consistency(
+        dup_cs, schema_path="schemas/packaging-inventory.json"
+    )
+    assert any("coverage_source must be unique" in f.message for f in findings)
+
+    for rel in _inventory_payload()["required_paths"]:
+        target = tmp_path / rel
+        target.parent.mkdir(parents=True, exist_ok=True)
+        if not target.exists():
+            target.write_text("ok\n", encoding="utf-8")
+    (tmp_path / "schemas" / "packaging-inventory.json").write_text(
+        json.dumps(
+            _inventory_payload(
+                ci_runs_on="windows-latest",
+                ci_artifact_paths=["only.json"],
+                ci_artifact_if_no_files_found="error",
+                ci_actionlint_shell="pwsh",
+                ci_actionlint_step_id="wrong",
+                pyproject_description="wrong",
+                pyproject_readme="WRONG.md",
+                pytest_testpaths=["elsewhere"],
+                pytest_pythonpath=["elsewhere"],
+                coverage_source=["elsewhere"],
+            )
+        ),
+        encoding="utf-8",
+    )
+    findings = vm.validate_packaging_inventory(tmp_path)
+    assert any("ci_runs_on" in f.message for f in findings)
+    assert any("ci_artifact_paths" in f.message for f in findings)
+    assert any("ci_artifact_if_no_files_found" in f.message for f in findings)
+    assert any("ci_actionlint_shell" in f.message for f in findings)
+    assert any("ci_actionlint_step_id" in f.message for f in findings)
+    assert any("pyproject_description" in f.message for f in findings)
+    assert any("pyproject_readme" in f.message for f in findings)
+    assert any("pytest_testpaths" in f.message for f in findings)
+    assert any("pytest_pythonpath" in f.message for f in findings)
+    assert any("coverage_source" in f.message for f in findings)

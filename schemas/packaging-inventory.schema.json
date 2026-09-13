@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/fuzzywigg/g0p-agents/schemas/packaging-inventory.schema.json",
   "title": "Archive packaging inventory",
-  "description": "Locked packaging paths and historic agent/recipe inventory for this docs-only archive (v10).",
+  "description": "Locked packaging paths and historic agent/recipe inventory for this docs-only archive (v11).",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -63,6 +63,11 @@
     "ci_markdown_lint_config",
     "ci_cache_dependency_path",
     "ci_job_display_names",
+    "ci_actionlint_step_id",
+    "ci_actionlint_shell",
+    "ci_artifact_paths",
+    "ci_artifact_if_no_files_found",
+    "ci_runs_on",
     "pyproject_name",
     "pyproject_version",
     "pyproject_license_text",
@@ -71,10 +76,15 @@
     "pyproject_ruff_lint_select",
     "pyproject_line_length",
     "pyproject_ruff_src",
+    "pyproject_readme",
+    "pyproject_description",
     "pytest_addopts",
+    "pytest_pythonpath",
+    "pytest_testpaths",
     "coverage_branch",
     "coverage_show_missing",
     "coverage_skip_empty",
+    "coverage_source",
     "markdownlint_default",
     "markdownlint_md013_line_length",
     "markdownlint_md013_tables",
@@ -113,7 +123,7 @@
   "properties": {
     "version": {
       "type": "integer",
-      "minimum": 10
+      "minimum": 11
     },
     "required_paths": {
       "type": "array",
@@ -832,6 +842,66 @@
         "type": "string",
         "minLength": 1,
         "pattern": "^[A-Z][A-Z0-9_]*$"
+      }
+    },
+    "ci_runs_on": {
+      "type": "string",
+      "minLength": 1
+    },
+    "ci_artifact_if_no_files_found": {
+      "type": "string",
+      "minLength": 1
+    },
+    "ci_artifact_paths": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "ci_actionlint_shell": {
+      "type": "string",
+      "minLength": 1
+    },
+    "ci_actionlint_step_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "pyproject_description": {
+      "type": "string",
+      "minLength": 1
+    },
+    "pyproject_readme": {
+      "type": "string",
+      "minLength": 1
+    },
+    "pytest_testpaths": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "pytest_pythonpath": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "coverage_source": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
       }
     }
   }

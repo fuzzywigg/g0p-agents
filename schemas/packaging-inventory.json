@@ -1,5 +1,5 @@
 {
-  "version": 10,
+  "version": 11,
   "documented_agents": [
     "QuantumArchitectAgent",
     "BlockchainArchitectAgent",
@@ -270,13 +270,16 @@
     "goose run"
   ],
   "validator_names": [
+    "actionlint-shell",
     "agent-task",
     "agent-tokens",
     "bug-template",
     "changelog",
     "ci",
     "ci-actions",
+    "ci-artifacts",
     "ci-job-names",
+    "ci-runs-on",
     "claude",
     "constitution",
     "contributing",
@@ -315,7 +318,7 @@
     "yaml-configs"
   ],
   "min_coverage_fail_under": 99,
-  "min_validator_count": 43,
+  "min_validator_count": 46,
   "required_paths": [
     "README.md",
     "LICENSE",
@@ -475,5 +478,26 @@
   "coverage_show_missing": true,
   "coverage_skip_empty": true,
   "markdownlint_md013_tables": false,
-  "markdownlint_md013_code_blocks": false
+  "markdownlint_md013_code_blocks": false,
+  "ci_runs_on": "ubuntu-latest",
+  "ci_artifact_if_no_files_found": "warn",
+  "ci_artifact_paths": [
+    "manifest-findings.json",
+    "validators.txt",
+    "coverage.xml",
+    "pytest-junit.xml"
+  ],
+  "ci_actionlint_shell": "bash",
+  "ci_actionlint_step_id": "get_actionlint",
+  "pyproject_description": "Dev-only packaging validators for the g0p-agents docs archive (not a runtime package).",
+  "pyproject_readme": "README.md",
+  "pytest_testpaths": [
+    "tests"
+  ],
+  "pytest_pythonpath": [
+    "scripts"
+  ],
+  "coverage_source": [
+    "scripts"
+  ]
 }

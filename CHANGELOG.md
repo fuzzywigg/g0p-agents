@@ -10,6 +10,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Packaging inventory **v11** deepeners (post-#28): `ci-runs-on`, `ci-artifacts`,
+  `actionlint-shell` validators; CI `runs-on` ubuntu-latest + artifact
+  paths/if-no-files-found + actionlint shell/step-id locks; pyproject
+  description/readme + pytest testpaths/pythonpath + coverage source locks;
+  consistency deepeners for ci_runs_on / ci_artifact_paths /
+  ci_artifact_if_no_files_found / ci_actionlint_shell / ci_actionlint_step_id /
+  pyproject_description / pyproject_readme / pytest_testpaths /
+  pytest_pythonpath / coverage_source (46 total; historic four only)
+
 - Packaging inventory **v10** deepeners (post-#27): `link-check`, `ci-job-names`,
   `github-agent-desc` validators; CI lychee args/fail + markdown-lint
   globs/config + cache-dependency-path + job display-name locks; GitHub agent
