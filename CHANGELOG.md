@@ -10,6 +10,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Packaging inventory **v8** deepeners (post-#25): `claude`, `recipe-titles`,
+  `ci-actions` validators; historic recipe title locks; CI required action pins;
+  CLAUDE identity/escalation-format phrases; Dependabot directory set inventory
+  lock (file untouched); pyproject project-name lock; consistency deepeners for
+  recipe_titles / ci_required_actions / dependabot_directories (37 total;
+  historic four only)
+
 - Packaging inventory **v7** deepeners (post-#23): hydration / execution-summary /
   implementation-guide validators; Dependabot group-name locks (file untouched);
   CI cancel-in-progress / fail-fast inventory bools; coverage branch lock; Cursor

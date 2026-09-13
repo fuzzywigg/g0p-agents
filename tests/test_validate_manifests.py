@@ -66,6 +66,7 @@ def _inventory_payload(**overrides: object) -> dict:
         "expected_recipe_files": list(vm.EXPECTED_RECIPE_FILES),
         "recipe_bindings": dict(vm.EXPECTED_RECIPE_BINDINGS),
         "recipe_primary_agents": dict(vm.RECIPE_PRIMARY_AGENT),
+        "recipe_titles": dict(vm.RECIPE_TITLES),
         "orchestration_recipe_name": vm.ORCHESTRATION_RECIPE_NAME,
         "required_ci_jobs": sorted(vm.REQUIRED_CI_JOBS),
         "required_python_versions": list(vm.REQUIRED_PYTHON_VERSIONS),
@@ -99,6 +100,7 @@ def _inventory_payload(**overrides: object) -> dict:
         "dependabot_schedule_interval": vm.DEPENDABOT_SCHEDULE_INTERVAL,
         "dependabot_ecosystems": sorted(vm.DEPENDABOT_ECOSYSTEMS),
         "dependabot_group_names": sorted(vm.DEPENDABOT_GROUP_NAMES),
+        "dependabot_directories": sorted(vm.DEPENDABOT_DIRECTORIES),
         "ci_permissions_contents": vm.CI_PERMISSIONS_CONTENTS,
         "ci_artifact_name_prefix": vm.CI_ARTIFACT_NAME_PREFIX,
         "ci_pull_request_branch": vm.CI_PULL_REQUEST_BRANCH,
@@ -106,6 +108,8 @@ def _inventory_payload(**overrides: object) -> dict:
         "ci_artifact_upload_if": vm.CI_ARTIFACT_UPLOAD_IF,
         "ci_cancel_in_progress": vm.CI_CANCEL_IN_PROGRESS,
         "ci_fail_fast": vm.CI_FAIL_FAST,
+        "ci_required_actions": list(vm.CI_REQUIRED_ACTIONS),
+        "pyproject_name": vm.PYPROJECT_NAME,
         "pyproject_requires_python": vm.PYPROJECT_REQUIRES_PYTHON,
         "pyproject_ruff_target_version": vm.PYPROJECT_RUFF_TARGET_VERSION,
         "coverage_branch": vm.COVERAGE_BRANCH,
@@ -127,6 +131,9 @@ def _inventory_payload(**overrides: object) -> dict:
         "implementation_guide_required_phrases": list(
             vm.IMPLEMENTATION_GUIDE_REQUIRED_PHRASES
         ),
+        "claude_required_phrases": list(vm.CLAUDE_REQUIRED_PHRASES),
+        "escalation_format_phrases": list(vm.ESCALATION_FORMAT_PHRASES),
+        "goose_docs_required_phrases": list(vm.GOOSE_DOCS_REQUIRED_PHRASES),
         "validator_names": sorted(vm.VALIDATORS),
         "specialist_agents": list(vm.SPECIALIST_AGENTS),
         "schema_draft_uri": vm.SCHEMA_DRAFT_URI,
@@ -705,9 +712,12 @@ def test_validators_registry_covers_all_checks() -> None:
         "postmortem",
         "gitignore",
         "negative-constraints",
+        "claude",
         "hydration",
         "execution-summary",
         "implementation-guide",
+        "recipe-titles",
+        "ci-actions",
     }
     assert set(vm.VALIDATORS) == expected
     assert len(vm.VALIDATORS) == vm.MIN_VALIDATOR_COUNT
@@ -1462,10 +1472,11 @@ def test_packaging_inventory_v5_lock_fields(tmp_path: Path) -> None:
                 "scratchpad_status_markers",
                 list(vm.SCRATCHPAD_STATUS_MARKERS)[:-1] + ["INVENTED"],
             ),
-            ("version", 8),
+            ("version", 9),
             ("min_coverage_fail_under", 90),
             ("min_validator_count", 999),
             ("dependabot_group_names", ["github_actions"]),
+            ("dependabot_directories", ["/apps"]),
             ("ci_cancel_in_progress", False),
             ("ci_fail_fast", True),
             ("coverage_branch", False),
@@ -1485,6 +1496,30 @@ def test_packaging_inventory_v5_lock_fields(tmp_path: Path) -> None:
             (
                 "implementation_guide_required_phrases",
                 list(vm.IMPLEMENTATION_GUIDE_REQUIRED_PHRASES)[:-1] + ["invented"],
+            ),
+            (
+                "recipe_titles",
+                {
+                    name: f"Invented {i}"
+                    for i, name in enumerate(sorted(vm.EXPECTED_RECIPE_NAMES), start=1)
+                },
+            ),
+            (
+                "ci_required_actions",
+                list(vm.CI_REQUIRED_ACTIONS)[:-1] + ["actions/checkout@v1"],
+            ),
+            ("pyproject_name", "wrong-package"),
+            (
+                "claude_required_phrases",
+                list(vm.CLAUDE_REQUIRED_PHRASES)[:-1] + ["invented"],
+            ),
+            (
+                "escalation_format_phrases",
+                list(vm.ESCALATION_FORMAT_PHRASES)[:-1] + ["Invented:"],
+            ),
+            (
+                "goose_docs_required_phrases",
+                list(vm.GOOSE_DOCS_REQUIRED_PHRASES)[:-1] + ["invented"],
             ),
         ]
     for field, value in cases:
@@ -2234,8 +2269,8 @@ def test_ci_workflow_v5_deepeners(tmp_path: Path) -> None:
 def test_live_v5_validators() -> None:
     assert vm.validate_bug_report_template(REPO_ROOT) == []
     assert vm.validate_feature_request_template(REPO_ROOT) == []
-    assert vm.INVENTORY_VERSION == 7
-    assert len(vm.VALIDATORS) == 34
+    assert vm.INVENTORY_VERSION == 8
+    assert len(vm.VALIDATORS) == 37
     assert vm.MIN_COVERAGE_FAIL_UNDER == 99
 
 
@@ -2244,8 +2279,8 @@ def test_live_v6_validators() -> None:
     assert vm.validate_postmortem_packaging(REPO_ROOT) == []
     assert vm.validate_gitignore_packaging(REPO_ROOT) == []
     assert vm.validate_negative_constraints(REPO_ROOT) == []
-    assert vm.INVENTORY_VERSION == 7
-    assert len(vm.VALIDATORS) >= 34
+    assert vm.INVENTORY_VERSION == 8
+    assert len(vm.VALIDATORS) >= 37
     assert sorted(vm.VALIDATORS) == json.loads(
         (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
     )["validator_names"]
@@ -2255,9 +2290,8 @@ def test_live_v7_validators() -> None:
     assert vm.validate_hydration_report(REPO_ROOT) == []
     assert vm.validate_execution_summary(REPO_ROOT) == []
     assert vm.validate_implementation_guide(REPO_ROOT) == []
-    assert vm.INVENTORY_VERSION == 7
-    assert len(vm.VALIDATORS) == 34
-    assert vm.MIN_VALIDATOR_COUNT == 34
+    assert vm.INVENTORY_VERSION == 8
+    assert len(vm.VALIDATORS) >= 37
     assert "Lock inventory" in vm.REQUIRED_MANIFEST_STEP_MARKERS
     assert "INVENTORY_VERSION" in vm.REQUIRED_MANIFEST_STEP_MARKERS
     assert vm.CI_CANCEL_IN_PROGRESS is True
@@ -2271,6 +2305,23 @@ def test_live_v7_validators() -> None:
             )
         )["required_paths"]
     )
+
+
+def test_live_v8_validators() -> None:
+    assert vm.validate_claude_packaging(REPO_ROOT) == []
+    assert vm.validate_recipe_titles(REPO_ROOT) == []
+    assert vm.validate_ci_actions(REPO_ROOT) == []
+    assert vm.INVENTORY_VERSION == 8
+    assert len(vm.VALIDATORS) == 37
+    assert vm.MIN_VALIDATOR_COUNT == 37
+    assert vm.PYPROJECT_NAME == "g0p-agents-validation"
+    assert set(vm.DEPENDABOT_DIRECTORIES) == {"/"}
+    assert dict(vm.RECIPE_TITLES) == json.loads(
+        (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
+    )["recipe_titles"]
+    assert list(vm.CI_REQUIRED_ACTIONS) == json.loads(
+        (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
+    )["ci_required_actions"]
 
 
 def test_hydration_execution_implementation_edge_cases(tmp_path: Path) -> None:
@@ -2732,6 +2783,174 @@ def test_prompt_non_specialist_non_orchestration_skips(
     assert findings == []
 
 
+
+
+def test_v8_claude_recipe_titles_ci_actions_edge_cases(tmp_path: Path) -> None:
+    assert any("missing" in f.message for f in vm.validate_claude_packaging(tmp_path))
+    _write(tmp_path / "CLAUDE.md", "# Claude\nInventedGhostAgent\n")
+    findings = vm.validate_claude_packaging(tmp_path)
+    assert any("required section" in f.message for f in findings)
+    assert any("packaging phrase" in f.message for f in findings)
+    assert any("escalation-format phrase" in f.message for f in findings)
+    assert any("invented or unknown" in f.message for f in findings)
+
+    assert any("missing" in f.message for f in vm.validate_recipe_titles(tmp_path))
+    _write(
+        tmp_path / "GOOSE-RECIPES.md",
+        "\n".join(
+            [
+                "# Goose",
+                "```yaml",
+                "name: quantum_algorithm_design_workflow",
+                "recipe:",
+                "  version: 1.0.0",
+                "  title: Wrong Title",
+                "  settings:",
+                "    goose_provider: anthropic",
+                "    goose_model: claude-opus-4",
+                "  instructions: QuantumArchitectAgent",
+                "  prompt: STEP",
+                "  extensions:",
+                "    - type: builtin",
+                "      name: developer",
+                "      timeout: 30",
+                "```",
+                "",
+            ]
+        ),
+    )
+    findings = vm.validate_recipe_titles(tmp_path)
+    assert any("packaging phrase" in f.message for f in findings)
+    assert any("historic recipe title must be" in f.message for f in findings)
+    assert any("missing locked recipe title" in f.message for f in findings)
+
+    assert any("missing" in f.message for f in vm.validate_ci_actions(tmp_path))
+    _write(tmp_path / ".github" / "workflows" / "ci.yml", "name: CI\non: push\n")
+    findings = vm.validate_ci_actions(tmp_path)
+    assert any("missing required action pin" in f.message for f in findings)
+
+    _copy_schemas(tmp_path)
+    broken_titles = _inventory_payload(
+        recipe_titles={
+            "invented_a": "A",
+            "invented_b": "B",
+            "invented_c": "C",
+            "invented_d": "D",
+        }
+    )
+    (tmp_path / "schemas" / "packaging-inventory.json").write_text(
+        json.dumps(broken_titles), encoding="utf-8"
+    )
+    findings = vm.validate_packaging_inventory(tmp_path)
+    assert any("recipe_titles" in f.message for f in findings)
+
+    inventory = json.loads(
+        (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
+    )
+    dup_titles = dict(inventory)
+    titles = dict(dup_titles["recipe_titles"])
+    first_key = next(iter(titles))
+    second_key = next(k for k in titles if k != first_key)
+    titles[second_key] = titles[first_key]
+    dup_titles["recipe_titles"] = titles
+    findings = vm._inventory_lock_consistency(
+        dup_titles, schema_path="schemas/packaging-inventory.json"
+    )
+    assert any("recipe_titles values must be unique" in f.message for f in findings)
+
+    empty_actions = dict(inventory)
+    empty_actions["ci_required_actions"] = []
+    findings = vm._inventory_lock_consistency(
+        empty_actions, schema_path="schemas/packaging-inventory.json"
+    )
+    assert any("ci_required_actions must not be empty" in f.message for f in findings)
+
+    empty_dirs = dict(inventory)
+    empty_dirs["dependabot_directories"] = []
+    findings = vm._inventory_lock_consistency(
+        empty_dirs, schema_path="schemas/packaging-inventory.json"
+    )
+    assert any(
+        "dependabot_directories must not be empty" in f.message for f in findings
+    )
+
+    dup_actions = dict(inventory)
+    dup_actions["ci_required_actions"] = [
+        vm.CI_REQUIRED_ACTIONS[0],
+        vm.CI_REQUIRED_ACTIONS[0],
+    ]
+    findings = vm._inventory_lock_consistency(
+        dup_actions, schema_path="schemas/packaging-inventory.json"
+    )
+    assert any("ci_required_actions must be unique" in f.message for f in findings)
+
+    dup_dirs = dict(inventory)
+    dup_dirs["dependabot_directories"] = ["/", "/"]
+    findings = vm._inventory_lock_consistency(
+        dup_dirs, schema_path="schemas/packaging-inventory.json"
+    )
+    assert any("dependabot_directories must be unique" in f.message for f in findings)
+
+    _write(
+        tmp_path / "GOOSE-RECIPES.md",
+        "\n".join(
+            [
+                "Recipe-Based Agent Orchestration",
+                "./agentic_flows/",
+                "goose run",
+                "```yaml",
+                "name: invented_ghost_workflow",
+                "recipe:",
+                "  title: Ghost Title",
+                "```",
+                "```yaml",
+                "not: a mapping recipe",
+                "```",
+                "",
+            ]
+        ),
+    )
+    findings = vm.validate_recipe_titles(tmp_path)
+    assert any("unexpected/invented recipe name" in f.message for f in findings)
+
+    _write(
+        tmp_path / "GOOSE-RECIPES.md",
+        "\n".join(
+            [
+                "Recipe-Based Agent Orchestration",
+                "./agentic_flows/",
+                "goose run",
+                "```yaml",
+                "- just a list",
+                "```",
+                "",
+            ]
+        ),
+    )
+    findings = vm.validate_recipe_titles(tmp_path)
+    assert any("missing locked recipe title" in f.message for f in findings)
+
+    _write(
+        tmp_path / "pyproject.toml",
+        "\n".join(
+            [
+                "[project]",
+                'name = "wrong-name"',
+                'requires-python = ">=3.11"',
+                "[tool.pytest.ini_options]",
+                'testpaths = ["tests"]',
+                "[tool.ruff]",
+                'target-version = "py311"',
+                "[tool.coverage.run]",
+                "branch = true",
+                "[tool.coverage.report]",
+                "fail_under = 99",
+                "",
+            ]
+        ),
+    )
+    findings = vm.validate_pyproject(tmp_path)
+    assert any("project.name must be" in f.message for f in findings)
 
 
 def test_module_main_entrypoint(monkeypatch: pytest.MonkeyPatch) -> None:

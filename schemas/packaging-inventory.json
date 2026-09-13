@@ -1,5 +1,5 @@
 {
-  "version": 7,
+  "version": 8,
   "documented_agents": [
     "QuantumArchitectAgent",
     "BlockchainArchitectAgent",
@@ -7,9 +7,9 @@
     "OrchestrationAgent"
   ],
   "expected_recipe_names": [
-    "quantum_algorithm_design_workflow",
     "blockchain_contract_design_workflow",
     "edge_security_implementation_workflow",
+    "quantum_algorithm_design_workflow",
     "quantum_nft_mint_full_orchestration"
   ],
   "expected_recipe_files": [
@@ -32,10 +32,10 @@
   },
   "orchestration_recipe_name": "quantum_nft_mint_full_orchestration",
   "required_ci_jobs": [
-    "markdown-lint",
-    "link-check",
     "actionlint",
-    "manifest-validate"
+    "link-check",
+    "manifest-validate",
+    "markdown-lint"
   ],
   "required_python_versions": [
     "3.11",
@@ -65,8 +65,8 @@
     "packaging-inventory.schema.json"
   ],
   "required_dev_packages": [
-    "jsonschema",
     "PyYAML",
+    "jsonschema",
     "pytest",
     "pytest-cov",
     "ruff"
@@ -265,6 +265,8 @@
     "bug-template",
     "changelog",
     "ci",
+    "ci-actions",
+    "claude",
     "constitution",
     "contributing",
     "cross-docs",
@@ -288,6 +290,7 @@
     "pyproject",
     "readme",
     "recipe-agents",
+    "recipe-titles",
     "requirements-dev",
     "routing",
     "schemas",
@@ -296,7 +299,7 @@
     "yaml-configs"
   ],
   "min_coverage_fail_under": 99,
-  "min_validator_count": 34,
+  "min_validator_count": 37,
   "required_paths": [
     "README.md",
     "LICENSE",
@@ -361,5 +364,39 @@
     "PENDING",
     "IN_PROGRESS",
     "BLOCKED"
+  ],
+  "recipe_titles": {
+    "quantum_algorithm_design_workflow": "Design and Optimize Quantum Algorithm for Cryptographic Operation",
+    "blockchain_contract_design_workflow": "Design and Audit Smart Contract for Quantum-Resistant Multi-Chain",
+    "edge_security_implementation_workflow": "Implement Quantum-Safe Cryptography on Mobile Device",
+    "quantum_nft_mint_full_orchestration": "Full Quantum-Blockchain-Mobile Orchestration for NFT Mint Operation"
+  },
+  "dependabot_directories": [
+    "/"
+  ],
+  "ci_required_actions": [
+    "actions/checkout@v7",
+    "actions/setup-python@v5",
+    "actions/upload-artifact@v4",
+    "DavidAnson/markdownlint-cli2-action@v24",
+    "lycheeverse/lychee-action@v2"
+  ],
+  "pyproject_name": "g0p-agents-validation",
+  "claude_required_phrases": [
+    "fuzzywigg/g0p-agents",
+    "PikoClaw demo at Panathenea",
+    "Documentation archive",
+    "LIST B"
+  ],
+  "escalation_format_phrases": [
+    "From Agent:",
+    "Conflict:",
+    "Recommendation:",
+    "Timeline:"
+  ],
+  "goose_docs_required_phrases": [
+    "Recipe-Based Agent Orchestration",
+    "./agentic_flows/",
+    "goose run"
   ]
 }
