@@ -10,6 +10,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Packaging inventory **v9** deepeners (post-#26): `issue-names`, `readme-badges`,
+  `quarterly-review` validators; issue template name/about locks; README badge
+  phrases; CLAUDE quarterly-review phrases; CI workflow name + actionlint/text
+  markers; markdownlint MD025/MD033/MD024 siblings_only locks; pyproject ruff
+  lint.select lock; expanded Cursor install refs matching live
+  `environment.json`; SECURITY reporting phrases; consistency deepeners for
+  issue_template_names/abouts, badge/quarterly/text-marker/lint-select sets
+  (40 total; historic four only)
+
 - Packaging inventory **v8** deepeners (post-#25): `claude`, `recipe-titles`,
   `ci-actions` validators; historic recipe title locks; CI required action pins;
   CLAUDE identity/escalation-format phrases; Dependabot directory set inventory

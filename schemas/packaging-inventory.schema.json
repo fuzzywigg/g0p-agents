@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/fuzzywigg/g0p-agents/schemas/packaging-inventory.schema.json",
   "title": "Archive packaging inventory",
-  "description": "Locked packaging paths and historic agent/recipe inventory for this docs-only archive (v8).",
+  "description": "Locked packaging paths and historic agent/recipe inventory for this docs-only archive (v9).",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -22,6 +22,8 @@
     "required_dev_packages",
     "github_agent_files",
     "issue_template_files",
+    "issue_template_names",
+    "issue_template_abouts",
     "pr_template_headings",
     "historic_goose_settings",
     "routing_surfaces",
@@ -31,6 +33,7 @@
     "orchestration_escalation_marker",
     "agent_token_scan_docs",
     "readme_required_phrases",
+    "readme_badge_phrases",
     "security_required_phrases",
     "contributing_required_phrases",
     "issue_agent_task_headings",
@@ -51,12 +54,18 @@
     "ci_cancel_in_progress",
     "ci_fail_fast",
     "ci_required_actions",
+    "ci_required_text_markers",
+    "ci_workflow_name",
     "pyproject_name",
     "pyproject_requires_python",
     "pyproject_ruff_target_version",
+    "pyproject_ruff_lint_select",
     "coverage_branch",
     "markdownlint_default",
     "markdownlint_md013_line_length",
+    "markdownlint_md025",
+    "markdownlint_md033",
+    "markdownlint_md024_siblings_only",
     "scratchpad_required_phrases",
     "changelog_required_phrases",
     "postmortem_required_phrases",
@@ -74,6 +83,7 @@
     "claude_required_phrases",
     "escalation_format_phrases",
     "goose_docs_required_phrases",
+    "quarterly_review_phrases",
     "validator_names",
     "specialist_agents",
     "schema_draft_uri",
@@ -87,7 +97,7 @@
   "properties": {
     "version": {
       "type": "integer",
-      "minimum": 8
+      "minimum": 9
     },
     "required_paths": {
       "type": "array",
@@ -613,6 +623,74 @@
       "items": {
         "type": "string",
         "minLength": 1
+      }
+    },
+    "issue_template_names": {
+      "type": "object",
+      "minProperties": 3,
+      "maxProperties": 3,
+      "additionalProperties": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "issue_template_abouts": {
+      "type": "object",
+      "minProperties": 3,
+      "maxProperties": 3,
+      "additionalProperties": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "readme_badge_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "quarterly_review_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "ci_workflow_name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "ci_required_text_markers": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "markdownlint_md025": {
+      "type": "boolean"
+    },
+    "markdownlint_md033": {
+      "type": "boolean"
+    },
+    "markdownlint_md024_siblings_only": {
+      "type": "boolean"
+    },
+    "pyproject_ruff_lint_select": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "pattern": "^[A-Z0-9]+$"
       }
     },
     "validator_names": {
