@@ -440,7 +440,7 @@ goose run ./agentic_flows/edge_security_implementation.yaml
 
 ```bash
 # Orchestrate the entire NFT mint workflow
-goose run ./agentic_flows/quantum_nft_mint_full_orchestration.yaml
+goose run ./agentic_flows/quantum_nft_mint_orchestration.yaml
 ```
 
 This will:

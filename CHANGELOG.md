@@ -10,8 +10,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Expanded packaging validators: schema meta-check, packaging inventory,
+  issue-template + Dependabot schemas, recipe/agent lock (no invented agents),
+  cross-doc agent presence, CI job presence, Cursor install path refs,
+  `goose run` path consistency
+- `schemas/packaging-inventory.json` (+ schema), `github-issue-template.schema.json`,
+  `dependabot-v2.schema.json`
+- `pyproject.toml` — pytest / ruff / coverage config for validation tooling
+- CI: Python 3.11/3.12 matrix, ruff, coverage gate, actionlint, JSON validation report artifact
 - `schemas/` + `scripts/validate_manifests.py` + `tests/` — structural validation for documented Goose recipes, Cursor `environment.json`, GitHub custom-agent frontmatter, and known YAML configs
-- `requirements-dev.txt` — jsonschema / PyYAML / pytest for local + CI validation
+- `requirements-dev.txt` — jsonschema / PyYAML / pytest / pytest-cov / ruff for local + CI validation
 - CI job `manifest-validate` (pytest + `scripts/validate_manifests.py`) in `.github/workflows/ci.yml`
 - `.cursor/environment.json` — minimal Cloud Agent install check (docs archive; no runtime services)
 - `.gitignore` — exclude local env/secret and editor noise
@@ -29,6 +37,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 
+- Expanded CI workflow: Python matrix, ruff, coverage, actionlint, validation artifacts
+- Aligned `GOOSE-RECIPES.md` master `goose run` path with declared recipe **File**
 - CI workflow renamed to cover manifest validation in addition to markdown lint/link check
 - CI `pull_request` trigger targets `alpha` (default branch), not `main`
 - `CONTRIBUTING.md` branch strategy aligned with live default branch `alpha`

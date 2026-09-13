@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/fuzzywigg/g0p-agents/schemas/github-issue-template.schema.json",
+  "title": "GitHub issue template frontmatter",
+  "description": "Required YAML frontmatter for .github/ISSUE_TEMPLATE/*.md files.",
+  "type": "object",
+  "additionalProperties": true,
+  "required": ["name", "about"],
+  "properties": {
+    "name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "about": {
+      "type": "string",
+      "minLength": 1
+    },
+    "title": {
+      "type": "string"
+    },
+    "labels": {
+      "oneOf": [
+        { "type": "string" },
+        {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      ]
+    },
+    "assignees": {
+      "oneOf": [
+        { "type": "string" },
+        {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      ]
+    }
+  }
+}

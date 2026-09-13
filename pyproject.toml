@@ -1,0 +1,29 @@
+[project]
+name = "g0p-agents-validation"
+version = "0.0.0"
+description = "Dev-only packaging validators for the g0p-agents docs archive (not a runtime package)."
+requires-python = ">=3.11"
+readme = "README.md"
+license = { text = "MIT" }
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["scripts"]
+addopts = "-q"
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+src = ["scripts", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.coverage.run]
+branch = true
+source = ["scripts"]
+
+[tool.coverage.report]
+show_missing = true
+skip_empty = true
+fail_under = 85

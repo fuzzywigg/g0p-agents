@@ -35,11 +35,14 @@ This repo is part of the FUZZYWIGG multi-agent ecosystem. Contributions come fro
 
 ```bash
 python -m pip install -r requirements-dev.txt
+ruff check scripts tests
+python scripts/validate_manifests.py --list-validators
 python scripts/validate_manifests.py
-python -m pytest -q
+python -m pytest --cov=scripts --cov-report=term-missing
 ```
 
-Do not invent new specialist agents in PRs; validate against the documented set in `AGENT-PROMPTS.md` / `GOOSE-RECIPES.md`.
+Do not invent new specialist agents in PRs; CI locks the documented set in
+`AGENT-PROMPTS.md` / `GOOSE-RECIPES.md` / `AGENTS-v2.2.md` (four agents only).
 
 ## Issue Reporting
 

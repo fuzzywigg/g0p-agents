@@ -5,6 +5,10 @@ on:
   pull_request:
     branches: [alpha]
 
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   markdown-lint:
     name: Markdown Lint
@@ -34,22 +38,54 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  manifest-validate:
-    name: Manifest Validate
+  actionlint:
+    name: Actionlint
     runs-on: ubuntu-latest
     permissions:
       contents: read
     steps:
       - uses: actions/checkout@v7
+      - name: Download actionlint
+        id: get_actionlint
+        run: bash <(curl --fail -sSfL https://raw.githubusercontent.com/rhysd/actionlint/main/scripts/download-actionlint.bash)
+        shell: bash
+      - name: Check workflow files
+        run: ${{ steps.get_actionlint.outputs.executable }} -color
+        shell: bash
+
+  manifest-validate:
+    name: Manifest Validate (Py ${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v7
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
+          python-version: ${{ matrix.python-version }}
           cache: pip
           cache-dependency-path: requirements-dev.txt
       - name: Install validation dependencies
         run: python -m pip install -r requirements-dev.txt
-      - name: Validate documented manifests
-        run: python scripts/validate_manifests.py
-      - name: Run unit tests
-        run: python -m pytest -q
+      - name: Ruff lint (scripts + tests)
+        run: ruff check scripts tests
+      - name: Validate documented manifests (JSON report)
+        run: |
+          python scripts/validate_manifests.py --json | tee manifest-findings.json
+          python scripts/validate_manifests.py
+      - name: Run unit tests with coverage
+        run: python -m pytest --cov=scripts --cov-report=term-missing --cov-report=xml
+      - name: Upload validation artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: manifest-validate-py${{ matrix.python-version }}
+          path: |
+            manifest-findings.json
+            coverage.xml
+          if-no-files-found: warn
