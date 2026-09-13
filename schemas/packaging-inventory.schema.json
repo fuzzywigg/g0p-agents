@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/fuzzywigg/g0p-agents/schemas/packaging-inventory.schema.json",
   "title": "Archive packaging inventory",
-  "description": "Locked packaging paths and historic agent/recipe inventory for this docs-only archive (v9).",
+  "description": "Locked packaging paths and historic agent/recipe inventory for this docs-only archive (v10).",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -21,6 +21,7 @@
     "required_schema_files",
     "required_dev_packages",
     "github_agent_files",
+    "github_agent_description",
     "issue_template_files",
     "issue_template_names",
     "issue_template_abouts",
@@ -56,13 +57,28 @@
     "ci_required_actions",
     "ci_required_text_markers",
     "ci_workflow_name",
+    "ci_link_check_args",
+    "ci_link_check_fail",
+    "ci_markdown_lint_globs",
+    "ci_markdown_lint_config",
+    "ci_cache_dependency_path",
+    "ci_job_display_names",
     "pyproject_name",
+    "pyproject_version",
+    "pyproject_license_text",
     "pyproject_requires_python",
     "pyproject_ruff_target_version",
     "pyproject_ruff_lint_select",
+    "pyproject_line_length",
+    "pyproject_ruff_src",
+    "pytest_addopts",
     "coverage_branch",
+    "coverage_show_missing",
+    "coverage_skip_empty",
     "markdownlint_default",
     "markdownlint_md013_line_length",
+    "markdownlint_md013_tables",
+    "markdownlint_md013_code_blocks",
     "markdownlint_md025",
     "markdownlint_md033",
     "markdownlint_md024_siblings_only",
@@ -97,7 +113,7 @@
   "properties": {
     "version": {
       "type": "integer",
-      "minimum": 9
+      "minimum": 10
     },
     "required_paths": {
       "type": "array",
@@ -692,6 +708,75 @@
         "minLength": 1,
         "pattern": "^[A-Z0-9]+$"
       }
+    },
+    "ci_link_check_args": {
+      "type": "string",
+      "minLength": 1
+    },
+    "ci_link_check_fail": {
+      "type": "boolean"
+    },
+    "ci_markdown_lint_globs": {
+      "type": "string",
+      "minLength": 1
+    },
+    "ci_markdown_lint_config": {
+      "type": "string",
+      "minLength": 1
+    },
+    "ci_cache_dependency_path": {
+      "type": "string",
+      "minLength": 1
+    },
+    "ci_job_display_names": {
+      "type": "object",
+      "minProperties": 4,
+      "maxProperties": 4,
+      "additionalProperties": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "github_agent_description": {
+      "type": "string",
+      "minLength": 1
+    },
+    "pyproject_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "pyproject_license_text": {
+      "type": "string",
+      "minLength": 1
+    },
+    "pyproject_line_length": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "pyproject_ruff_src": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "pytest_addopts": {
+      "type": "string",
+      "minLength": 1
+    },
+    "coverage_show_missing": {
+      "type": "boolean"
+    },
+    "coverage_skip_empty": {
+      "type": "boolean"
+    },
+    "markdownlint_md013_tables": {
+      "type": "boolean"
+    },
+    "markdownlint_md013_code_blocks": {
+      "type": "boolean"
     },
     "validator_names": {
       "type": "array",

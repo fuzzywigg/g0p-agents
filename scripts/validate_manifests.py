@@ -31,12 +31,15 @@ Checks structural correctness of:
 - CLAUDE.md required sections / identity / escalation-format phrases
 - Historic Goose recipe title locks (four recipes only)
 - CI required GitHub Actions pins + workflow name + actionlint markers
-- pyproject project name + ruff lint select locks
+- CI link-check lychee args/fail + markdown-lint globs/config + job display names
+- pyproject project name + version/license + ruff line-length/src/lint select locks
+- coverage show_missing/skip_empty + pytest addopts locks
 - Dependabot directory set inventory lock (file untouched)
 - Issue template frontmatter name/about locks
 - README badge phrase locks
 - CLAUDE.md quarterly-review trigger phrase locks
-- markdownlint MD025/MD033/MD024 siblings_only locks
+- markdownlint MD025/MD033/MD024 siblings_only + MD013 tables/code_blocks locks
+- GitHub agent description lock
 - Expanded Cursor install refs matching live environment.json
 
 Does not invent agents or scaffold new specialist definitions.
@@ -136,7 +139,7 @@ REQUIRED_ARCHIVE_DOCS = (
     "README.md",
 )
 
-INVENTORY_VERSION = 9
+INVENTORY_VERSION = 10
 CURSOR_ENVIRONMENT_NAME = "g0p-agents"
 DEPENDABOT_SCHEDULE_INTERVAL = "weekly"
 DEPENDABOT_DIRECTORIES: frozenset[str] = frozenset({"/"})
@@ -162,11 +165,29 @@ CI_REQUIRED_TEXT_MARKERS: tuple[str, ...] = (
     "actionlint",
     "cache: pip",
 )
+CI_LINK_CHECK_ARGS = "--verbose --no-progress '**/*.md'"
+CI_LINK_CHECK_FAIL = True
+CI_MARKDOWN_LINT_GLOBS = "**/*.md"
+CI_MARKDOWN_LINT_CONFIG = ".markdownlint.yaml"
+CI_CACHE_DEPENDENCY_PATH = "requirements-dev.txt"
+CI_JOB_DISPLAY_NAMES: dict[str, str] = {
+    "markdown-lint": "Markdown Lint",
+    "link-check": "Link Check",
+    "actionlint": "Actionlint",
+    "manifest-validate": "Manifest Validate (Py ${{ matrix.python-version }})",
+}
 PYPROJECT_NAME = "g0p-agents-validation"
+PYPROJECT_VERSION = "0.0.0"
+PYPROJECT_LICENSE_TEXT = "MIT"
 PYPROJECT_REQUIRES_PYTHON = ">=3.11"
 PYPROJECT_RUFF_TARGET_VERSION = "py311"
+PYPROJECT_LINE_LENGTH = 100
+PYPROJECT_RUFF_SRC: tuple[str, ...] = ("scripts", "tests")
 PYPROJECT_RUFF_LINT_SELECT: tuple[str, ...] = ("E", "F", "I", "UP", "B")
+PYTEST_ADDOPTS = "-q"
 COVERAGE_BRANCH = True
+COVERAGE_SHOW_MISSING = True
+COVERAGE_SKIP_EMPTY = True
 RECIPE_TITLES: dict[str, str] = {
     "quantum_algorithm_design_workflow": (
         "Design and Optimize Quantum Algorithm for Cryptographic Operation"
@@ -183,10 +204,16 @@ RECIPE_TITLES: dict[str, str] = {
 }
 MARKDOWNLINT_DEFAULT = True
 MARKDOWNLINT_MD013_LINE_LENGTH = 200
+MARKDOWNLINT_MD013_TABLES = False
+MARKDOWNLINT_MD013_CODE_BLOCKS = False
 MARKDOWNLINT_MD025 = False
 MARKDOWNLINT_MD033 = False
 MARKDOWNLINT_MD024_SIBLINGS_ONLY = True
 GITHUB_AGENT_NAME = "Hydration"
+GITHUB_AGENT_DESCRIPTION = (
+    "Poeseidon hydrator, powerful. moves earth, controls the flow of water, "
+    "powerful god of olympus."
+)
 LICENSE_COPYRIGHT_HOLDER = "Andrew Pappas"
 LICENSE_COPYRIGHT_MARKER = "Copyright (c) 2026 Andrew Pappas"
 AGENTIC_FLOWS_ALLOWED_FILES: frozenset[str] = frozenset({"scratchpad.txt"})
@@ -463,7 +490,7 @@ SCRATCHPAD_STATUS_MARKERS: tuple[str, ...] = (
 SPECIALIST_AGENTS: tuple[str, ...] = DOCUMENTED_AGENTS[:-1]
 
 MIN_COVERAGE_FAIL_UNDER = 99
-MIN_VALIDATOR_COUNT = 40
+MIN_VALIDATOR_COUNT = 43
 
 
 @dataclass(frozen=True)
@@ -951,6 +978,57 @@ def validate_packaging_inventory(root: Path) -> list[Finding]:
     ):
         findings.append(_lock_mismatch(schema_path, "pyproject_ruff_lint_select"))
 
+    if inventory.get("ci_link_check_args") != CI_LINK_CHECK_ARGS:
+        findings.append(_lock_mismatch(schema_path, "ci_link_check_args"))
+
+    if inventory.get("ci_link_check_fail") is not CI_LINK_CHECK_FAIL:
+        findings.append(_lock_mismatch(schema_path, "ci_link_check_fail"))
+
+    if inventory.get("ci_markdown_lint_globs") != CI_MARKDOWN_LINT_GLOBS:
+        findings.append(_lock_mismatch(schema_path, "ci_markdown_lint_globs"))
+
+    if inventory.get("ci_markdown_lint_config") != CI_MARKDOWN_LINT_CONFIG:
+        findings.append(_lock_mismatch(schema_path, "ci_markdown_lint_config"))
+
+    if inventory.get("ci_cache_dependency_path") != CI_CACHE_DEPENDENCY_PATH:
+        findings.append(_lock_mismatch(schema_path, "ci_cache_dependency_path"))
+
+    if dict(inventory.get("ci_job_display_names", {})) != CI_JOB_DISPLAY_NAMES:
+        findings.append(_lock_mismatch(schema_path, "ci_job_display_names"))
+
+    if inventory.get("github_agent_description") != GITHUB_AGENT_DESCRIPTION:
+        findings.append(_lock_mismatch(schema_path, "github_agent_description"))
+
+    if inventory.get("pyproject_version") != PYPROJECT_VERSION:
+        findings.append(_lock_mismatch(schema_path, "pyproject_version"))
+
+    if inventory.get("pyproject_license_text") != PYPROJECT_LICENSE_TEXT:
+        findings.append(_lock_mismatch(schema_path, "pyproject_license_text"))
+
+    if inventory.get("pyproject_line_length") != PYPROJECT_LINE_LENGTH:
+        findings.append(_lock_mismatch(schema_path, "pyproject_line_length"))
+
+    if tuple(inventory.get("pyproject_ruff_src", ())) != PYPROJECT_RUFF_SRC:
+        findings.append(_lock_mismatch(schema_path, "pyproject_ruff_src"))
+
+    if inventory.get("pytest_addopts") != PYTEST_ADDOPTS:
+        findings.append(_lock_mismatch(schema_path, "pytest_addopts"))
+
+    if inventory.get("coverage_show_missing") is not COVERAGE_SHOW_MISSING:
+        findings.append(_lock_mismatch(schema_path, "coverage_show_missing"))
+
+    if inventory.get("coverage_skip_empty") is not COVERAGE_SKIP_EMPTY:
+        findings.append(_lock_mismatch(schema_path, "coverage_skip_empty"))
+
+    if inventory.get("markdownlint_md013_tables") is not MARKDOWNLINT_MD013_TABLES:
+        findings.append(_lock_mismatch(schema_path, "markdownlint_md013_tables"))
+
+    if (
+        inventory.get("markdownlint_md013_code_blocks")
+        is not MARKDOWNLINT_MD013_CODE_BLOCKS
+    ):
+        findings.append(_lock_mismatch(schema_path, "markdownlint_md013_code_blocks"))
+
     expected_validator_names = tuple(sorted(VALIDATORS))
     if tuple(inventory.get("validator_names", ())) != expected_validator_names:
         findings.append(_lock_mismatch(schema_path, "validator_names"))
@@ -1165,6 +1243,43 @@ def _inventory_lock_consistency(
     workflow_name = inventory.get("ci_workflow_name")
     if not isinstance(workflow_name, str) or not workflow_name.strip():
         findings.append(Finding(schema_path, "ci_workflow_name must be a non-empty string"))
+
+    job_names = dict(inventory.get("ci_job_display_names", {}))
+    required_jobs = set(inventory.get("required_ci_jobs", ()))
+    if set(job_names) != required_jobs:
+        findings.append(
+            Finding(
+                schema_path,
+                "ci_job_display_names keys inconsistent with required_ci_jobs",
+            )
+        )
+    job_values = list(job_names.values())
+    if len(job_values) != len(set(job_values)):
+        findings.append(
+            Finding(schema_path, "ci_job_display_names values must be unique")
+        )
+    if not job_names:
+        findings.append(
+            Finding(schema_path, "ci_job_display_names must not be empty")
+        )
+
+    ruff_src = list(inventory.get("pyproject_ruff_src", ()))
+    if len(ruff_src) != len(set(ruff_src)):
+        findings.append(Finding(schema_path, "pyproject_ruff_src must be unique"))
+    if not ruff_src:
+        findings.append(Finding(schema_path, "pyproject_ruff_src must not be empty"))
+
+    agent_desc = inventory.get("github_agent_description")
+    if not isinstance(agent_desc, str) or not agent_desc.strip():
+        findings.append(
+            Finding(schema_path, "github_agent_description must be a non-empty string")
+        )
+
+    link_args = inventory.get("ci_link_check_args")
+    if not isinstance(link_args, str) or not link_args.strip():
+        findings.append(
+            Finding(schema_path, "ci_link_check_args must be a non-empty string")
+        )
 
     return findings
 
@@ -1545,6 +1660,22 @@ def validate_github_agents(root: Path) -> list[Finding]:
                     ),
                 )
             )
+        agent_description = data.get("description")
+        if (
+            isinstance(agent_description, str)
+            and agent_description.strip() != GITHUB_AGENT_DESCRIPTION
+        ):
+            findings.append(
+                Finding(
+                    rel,
+                    (
+                        "GitHub agent description must be "
+                        f"{GITHUB_AGENT_DESCRIPTION!r}, found {agent_description!r}"
+                    ),
+                )
+            )
+        elif not isinstance(agent_description, str):
+            findings.append(Finding(rel, "GitHub agent description missing or not a string"))
         body = extract_frontmatter_body(text).strip()
         if not body:
             findings.append(Finding(rel, "agent markdown body after frontmatter is empty"))
@@ -1730,6 +1861,28 @@ def validate_markdownlint(root: Path) -> list[Finding]:
                         ),
                     )
                 )
+            tables = md013.get("tables")
+            if tables is not MARKDOWNLINT_MD013_TABLES:
+                findings.append(
+                    Finding(
+                        rel,
+                        (
+                            "markdownlint MD013.tables must be "
+                            f"{MARKDOWNLINT_MD013_TABLES!r}, found {tables!r}"
+                        ),
+                    )
+                )
+            code_blocks = md013.get("code_blocks")
+            if code_blocks is not MARKDOWNLINT_MD013_CODE_BLOCKS:
+                findings.append(
+                    Finding(
+                        rel,
+                        (
+                            "markdownlint MD013.code_blocks must be "
+                            f"{MARKDOWNLINT_MD013_CODE_BLOCKS!r}, found {code_blocks!r}"
+                        ),
+                    )
+                )
         md025 = data.get("MD025")
         if md025 is not MARKDOWNLINT_MD025:
             findings.append(
@@ -1879,6 +2032,28 @@ def validate_pyproject(root: Path) -> list[Finding]:
                     f"project.name must be {PYPROJECT_NAME!r}, found {name!r}",
                 )
             )
+        version = project.get("version")
+        if version != PYPROJECT_VERSION:
+            findings.append(
+                Finding(
+                    rel,
+                    f"project.version must be {PYPROJECT_VERSION!r}, found {version!r}",
+                )
+            )
+        license_field = project.get("license")
+        license_text = (
+            license_field.get("text") if isinstance(license_field, dict) else None
+        )
+        if license_text != PYPROJECT_LICENSE_TEXT:
+            findings.append(
+                Finding(
+                    rel,
+                    (
+                        "project.license.text must be "
+                        f"{PYPROJECT_LICENSE_TEXT!r}, found {license_text!r}"
+                    ),
+                )
+            )
         requires = project.get("requires-python")
         if requires != PYPROJECT_REQUIRES_PYTHON:
             findings.append(
@@ -1900,6 +2075,22 @@ def validate_pyproject(root: Path) -> list[Finding]:
     pytest_opts = tool.get("pytest", {})
     if not isinstance(pytest_opts, dict) or "ini_options" not in pytest_opts:
         findings.append(Finding(rel, "missing [tool.pytest.ini_options]"))
+    else:
+        ini_options = pytest_opts.get("ini_options")
+        if isinstance(ini_options, dict):
+            addopts = ini_options.get("addopts")
+            if addopts != PYTEST_ADDOPTS:
+                findings.append(
+                    Finding(
+                        rel,
+                        (
+                            f"pytest addopts must be {PYTEST_ADDOPTS!r}, "
+                            f"found {addopts!r}"
+                        ),
+                    )
+                )
+        else:
+            findings.append(Finding(rel, "pytest.ini_options must be a mapping"))
 
     ruff = tool.get("ruff")
     if not isinstance(ruff, dict):
@@ -1914,6 +2105,25 @@ def validate_pyproject(root: Path) -> list[Finding]:
                         "ruff target-version must be "
                         f"{PYPROJECT_RUFF_TARGET_VERSION!r}, found {target!r}"
                     ),
+                )
+            )
+        line_length = ruff.get("line-length")
+        if line_length != PYPROJECT_LINE_LENGTH:
+            findings.append(
+                Finding(
+                    rel,
+                    (
+                        "ruff line-length must be "
+                        f"{PYPROJECT_LINE_LENGTH!r}, found {line_length!r}"
+                    ),
+                )
+            )
+        src = ruff.get("src")
+        if not isinstance(src, list) or tuple(src) != PYPROJECT_RUFF_SRC:
+            findings.append(
+                Finding(
+                    rel,
+                    f"ruff src must equal {list(PYPROJECT_RUFF_SRC)!r}, found {src!r}",
                 )
             )
         lint = ruff.get("lint")
@@ -1954,6 +2164,29 @@ def validate_pyproject(root: Path) -> list[Finding]:
     if not isinstance(report, dict) or "fail_under" not in report:
         findings.append(Finding(rel, "missing [tool.coverage.report].fail_under"))
         return findings
+
+    show_missing = report.get("show_missing")
+    if show_missing is not COVERAGE_SHOW_MISSING:
+        findings.append(
+            Finding(
+                rel,
+                (
+                    "coverage report.show_missing must be "
+                    f"{COVERAGE_SHOW_MISSING}, found {show_missing!r}"
+                ),
+            )
+        )
+    skip_empty = report.get("skip_empty")
+    if skip_empty is not COVERAGE_SKIP_EMPTY:
+        findings.append(
+            Finding(
+                rel,
+                (
+                    "coverage report.skip_empty must be "
+                    f"{COVERAGE_SKIP_EMPTY}, found {skip_empty!r}"
+                ),
+            )
+        )
 
     fail_under = report.get("fail_under")
     if not isinstance(fail_under, (int, float)) or fail_under < MIN_COVERAGE_FAIL_UNDER:
@@ -2716,6 +2949,224 @@ def validate_quarterly_review(root: Path) -> list[Finding]:
     return findings
 
 
+def validate_link_check(root: Path) -> list[Finding]:
+    rel = ".github/workflows/ci.yml"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "CI workflow missing")]
+    data, parse_findings = parse_yaml_text(path.read_text(encoding="utf-8"), path=rel)
+    findings = list(parse_findings)
+    if data is None:
+        return findings
+    if not isinstance(data, dict):
+        return findings + [Finding(rel, "CI workflow root must be a mapping")]
+    jobs = data.get("jobs")
+    if not isinstance(jobs, dict):
+        return findings + [Finding(rel, "CI workflow missing jobs mapping")]
+    link_job = jobs.get("link-check")
+    if not isinstance(link_job, dict):
+        return findings + [Finding(rel, "CI workflow missing link-check job")]
+    steps = link_job.get("steps")
+    if not isinstance(steps, list):
+        return findings + [Finding(rel, "link-check job missing steps")]
+    found_args = False
+    found_fail = False
+    for step in steps:
+        if not isinstance(step, dict):
+            continue
+        uses = str(step.get("uses", ""))
+        if "lychee-action" not in uses:
+            continue
+        with_block = step.get("with")
+        if not isinstance(with_block, dict):
+            findings.append(Finding(rel, "lychee-action step missing with: mapping"))
+            continue
+        args = with_block.get("args")
+        if args != CI_LINK_CHECK_ARGS:
+            findings.append(
+                Finding(
+                    rel,
+                    (
+                        "link-check args must be "
+                        f"{CI_LINK_CHECK_ARGS!r}, found {args!r}"
+                    ),
+                )
+            )
+        else:
+            found_args = True
+        fail = with_block.get("fail")
+        if fail is not CI_LINK_CHECK_FAIL:
+            findings.append(
+                Finding(
+                    rel,
+                    f"link-check fail must be {CI_LINK_CHECK_FAIL!r}, found {fail!r}",
+                )
+            )
+        else:
+            found_fail = True
+    if not found_args:
+        findings.append(Finding(rel, "link-check lychee args lock not found"))
+    if not found_fail:
+        findings.append(Finding(rel, "link-check lychee fail lock not found"))
+
+    markdown_job = jobs.get("markdown-lint")
+    if isinstance(markdown_job, dict):
+        steps = markdown_job.get("steps")
+        if isinstance(steps, list):
+            found_globs = False
+            found_config = False
+            for step in steps:
+                if not isinstance(step, dict):
+                    continue
+                uses = str(step.get("uses", ""))
+                if "markdownlint-cli2-action" not in uses:
+                    continue
+                with_block = step.get("with")
+                if not isinstance(with_block, dict):
+                    findings.append(
+                        Finding(rel, "markdownlint-cli2-action step missing with: mapping")
+                    )
+                    continue
+                globs = with_block.get("globs")
+                if globs != CI_MARKDOWN_LINT_GLOBS:
+                    findings.append(
+                        Finding(
+                            rel,
+                            (
+                                "markdown-lint globs must be "
+                                f"{CI_MARKDOWN_LINT_GLOBS!r}, found {globs!r}"
+                            ),
+                        )
+                    )
+                else:
+                    found_globs = True
+                config = with_block.get("config")
+                if config != CI_MARKDOWN_LINT_CONFIG:
+                    findings.append(
+                        Finding(
+                            rel,
+                            (
+                                "markdown-lint config must be "
+                                f"{CI_MARKDOWN_LINT_CONFIG!r}, found {config!r}"
+                            ),
+                        )
+                    )
+                else:
+                    found_config = True
+            if not found_globs:
+                findings.append(Finding(rel, "markdown-lint globs lock not found"))
+            if not found_config:
+                findings.append(Finding(rel, "markdown-lint config lock not found"))
+        else:
+            findings.append(Finding(rel, "markdown-lint job missing steps"))
+    else:
+        findings.append(Finding(rel, "CI workflow missing markdown-lint job"))
+
+    manifest_job = jobs.get("manifest-validate")
+    if isinstance(manifest_job, dict):
+        steps = manifest_job.get("steps")
+        if isinstance(steps, list):
+            found_cache_path = False
+            for step in steps:
+                if not isinstance(step, dict):
+                    continue
+                uses = str(step.get("uses", ""))
+                if "setup-python" not in uses:
+                    continue
+                with_block = step.get("with")
+                if not isinstance(with_block, dict):
+                    continue
+                cache_path = with_block.get("cache-dependency-path")
+                if cache_path != CI_CACHE_DEPENDENCY_PATH:
+                    findings.append(
+                        Finding(
+                            rel,
+                            (
+                                "setup-python cache-dependency-path must be "
+                                f"{CI_CACHE_DEPENDENCY_PATH!r}, found {cache_path!r}"
+                            ),
+                        )
+                    )
+                else:
+                    found_cache_path = True
+            if not found_cache_path:
+                findings.append(
+                    Finding(rel, "setup-python cache-dependency-path lock not found")
+                )
+    return findings
+
+
+def validate_ci_job_names(root: Path) -> list[Finding]:
+    rel = ".github/workflows/ci.yml"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "CI workflow missing")]
+    data, parse_findings = parse_yaml_text(path.read_text(encoding="utf-8"), path=rel)
+    findings = list(parse_findings)
+    if data is None:
+        return findings
+    if not isinstance(data, dict):
+        return findings + [Finding(rel, "CI workflow root must be a mapping")]
+    jobs = data.get("jobs")
+    if not isinstance(jobs, dict):
+        return findings + [Finding(rel, "CI workflow missing jobs mapping")]
+    for job_id, expected_name in CI_JOB_DISPLAY_NAMES.items():
+        job = jobs.get(job_id)
+        if not isinstance(job, dict):
+            findings.append(Finding(rel, f"CI workflow missing job: {job_id}"))
+            continue
+        name = job.get("name")
+        if name != expected_name:
+            findings.append(
+                Finding(
+                    rel,
+                    (
+                        f"CI job {job_id!r} name must be {expected_name!r}, "
+                        f"found {name!r}"
+                    ),
+                )
+            )
+    return findings
+
+
+def validate_github_agent_description(root: Path) -> list[Finding]:
+    findings: list[Finding] = []
+    for rel in GITHUB_AGENT_FILES:
+        path = root / rel
+        if not path.is_file():
+            findings.append(Finding(rel, "required GitHub agent packaging file missing"))
+            continue
+        text = path.read_text(encoding="utf-8")
+        frontmatter, fm_findings = extract_yaml_frontmatter(text)
+        findings.extend(
+            Finding(rel, f.message) if f.path == "<frontmatter>" else f
+            for f in fm_findings
+        )
+        if frontmatter is None:
+            continue
+        data, parse_findings = parse_yaml_text(frontmatter, path=rel)
+        findings.extend(parse_findings)
+        if not isinstance(data, dict):
+            if data is not None:
+                findings.append(Finding(rel, "frontmatter must be a mapping"))
+            continue
+        description = data.get("description")
+        if not isinstance(description, str):
+            findings.append(Finding(rel, "GitHub agent description missing or not a string"))
+            continue
+        if description.strip() != GITHUB_AGENT_DESCRIPTION:
+            findings.append(
+                Finding(
+                    rel,
+                    (
+                        "GitHub agent description must be "
+                        f"{GITHUB_AGENT_DESCRIPTION!r}, found {description!r}"
+                    ),
+                )
+            )
+    return findings
+
+
 VALIDATORS: dict[str, ValidatorFn] = {
     "schemas": validate_schemas_meta,
     "inventory": validate_packaging_inventory,
@@ -2727,6 +3178,7 @@ VALIDATORS: dict[str, ValidatorFn] = {
     "routing": validate_routing_surfaces,
     "environment": validate_cursor_environment,
     "github-agents": validate_github_agents,
+    "github-agent-desc": validate_github_agent_description,
     "issue-templates": validate_issue_templates,
     "issue-names": validate_issue_template_names,
     "agent-task": validate_agent_task_template,
@@ -2746,6 +3198,8 @@ VALIDATORS: dict[str, ValidatorFn] = {
     "yaml-configs": validate_yaml_configs,
     "ci": validate_ci_workflow,
     "ci-actions": validate_ci_actions,
+    "ci-job-names": validate_ci_job_names,
+    "link-check": validate_link_check,
     "prompts": validate_documented_agent_prompts,
     "cross-docs": validate_cross_doc_agents,
     "changelog": validate_changelog_packaging,

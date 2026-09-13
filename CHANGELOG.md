@@ -10,6 +10,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Packaging inventory **v10** deepeners (post-#27): `link-check`, `ci-job-names`,
+  `github-agent-desc` validators; CI lychee args/fail + markdown-lint
+  globs/config + cache-dependency-path + job display-name locks; GitHub agent
+  description lock; pyproject version/license/line-length/src + pytest addopts +
+  coverage show_missing/skip_empty locks; markdownlint MD013 tables/code_blocks
+  locks; consistency deepeners for ci_job_display_names / pyproject_ruff_src /
+  github_agent_description / ci_link_check_args (43 total; historic four only)
+
 - Packaging inventory **v9** deepeners (post-#26): `issue-names`, `readme-badges`,
   `quarterly-review` validators; issue template name/about locks; README badge
   phrases; CLAUDE quarterly-review phrases; CI workflow name + actionlint/text

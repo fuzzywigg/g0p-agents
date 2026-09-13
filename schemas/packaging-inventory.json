@@ -1,5 +1,5 @@
 {
-  "version": 9,
+  "version": 10,
   "documented_agents": [
     "QuantumArchitectAgent",
     "BlockchainArchitectAgent",
@@ -276,6 +276,7 @@
     "changelog",
     "ci",
     "ci-actions",
+    "ci-job-names",
     "claude",
     "constitution",
     "contributing",
@@ -284,6 +285,7 @@
     "environment",
     "execution-summary",
     "feature-template",
+    "github-agent-desc",
     "github-agents",
     "gitignore",
     "goose",
@@ -293,6 +295,7 @@
     "issue-names",
     "issue-templates",
     "license",
+    "link-check",
     "markdownlint",
     "negative-constraints",
     "postmortem",
@@ -312,7 +315,7 @@
     "yaml-configs"
   ],
   "min_coverage_fail_under": 99,
-  "min_validator_count": 40,
+  "min_validator_count": 43,
   "required_paths": [
     "README.md",
     "LICENSE",
@@ -448,5 +451,29 @@
     "I",
     "UP",
     "B"
-  ]
+  ],
+  "ci_link_check_args": "--verbose --no-progress '**/*.md'",
+  "ci_link_check_fail": true,
+  "ci_markdown_lint_globs": "**/*.md",
+  "ci_markdown_lint_config": ".markdownlint.yaml",
+  "ci_cache_dependency_path": "requirements-dev.txt",
+  "ci_job_display_names": {
+    "markdown-lint": "Markdown Lint",
+    "link-check": "Link Check",
+    "actionlint": "Actionlint",
+    "manifest-validate": "Manifest Validate (Py ${{ matrix.python-version }})"
+  },
+  "github_agent_description": "Poeseidon hydrator, powerful. moves earth, controls the flow of water, powerful god of olympus.",
+  "pyproject_version": "0.0.0",
+  "pyproject_license_text": "MIT",
+  "pyproject_line_length": 100,
+  "pyproject_ruff_src": [
+    "scripts",
+    "tests"
+  ],
+  "pytest_addopts": "-q",
+  "coverage_show_missing": true,
+  "coverage_skip_empty": true,
+  "markdownlint_md013_tables": false,
+  "markdownlint_md013_code_blocks": false
 }
