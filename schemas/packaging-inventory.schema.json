@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/fuzzywigg/g0p-agents/schemas/packaging-inventory.schema.json",
   "title": "Archive packaging inventory",
-  "description": "Locked packaging paths and historic agent/recipe inventory for this docs-only archive (v5).",
+  "description": "Locked packaging paths and historic agent/recipe inventory for this docs-only archive (v6).",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -39,12 +39,25 @@
     "known_yaml_configs",
     "cursor_environment_name",
     "dependabot_schedule_interval",
+    "dependabot_ecosystems",
     "ci_permissions_contents",
     "ci_artifact_name_prefix",
     "ci_pull_request_branch",
+    "ci_concurrency_group_prefix",
+    "ci_artifact_upload_if",
     "pyproject_requires_python",
+    "pyproject_ruff_target_version",
     "markdownlint_default",
+    "markdownlint_md013_line_length",
     "scratchpad_required_phrases",
+    "changelog_required_phrases",
+    "postmortem_required_phrases",
+    "gitignore_required_patterns",
+    "negative_constraint_phrases",
+    "license_copyright_holder",
+    "historic_recipe_version",
+    "github_agent_name",
+    "agentic_flows_allowed_files",
     "validator_names",
     "specialist_agents",
     "schema_draft_uri",
@@ -58,7 +71,7 @@
   "properties": {
     "version": {
       "type": "integer",
-      "minimum": 5
+      "minimum": 6
     },
     "required_paths": {
       "type": "array",
@@ -357,6 +370,15 @@
         "monthly"
       ]
     },
+    "dependabot_ecosystems": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
     "ci_permissions_contents": {
       "type": "string",
       "minLength": 1
@@ -369,14 +391,87 @@
       "type": "string",
       "minLength": 1
     },
+    "ci_concurrency_group_prefix": {
+      "type": "string",
+      "minLength": 1
+    },
+    "ci_artifact_upload_if": {
+      "type": "string",
+      "minLength": 1
+    },
     "pyproject_requires_python": {
+      "type": "string",
+      "minLength": 1
+    },
+    "pyproject_ruff_target_version": {
       "type": "string",
       "minLength": 1
     },
     "markdownlint_default": {
       "type": "boolean"
     },
+    "markdownlint_md013_line_length": {
+      "type": "integer",
+      "minimum": 1
+    },
     "scratchpad_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "changelog_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "postmortem_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "gitignore_required_patterns": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "negative_constraint_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "license_copyright_holder": {
+      "type": "string",
+      "minLength": 1
+    },
+    "historic_recipe_version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "github_agent_name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "agentic_flows_allowed_files": {
       "type": "array",
       "minItems": 1,
       "uniqueItems": true,

@@ -10,11 +10,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
-- Packaging inventory **v5** deepeners (post-#21): specialist agents, schema
-  `$schema`/`$id` prefixes, CLAUDE required sections, contributing branch
-  surfaces, scratchpad status markers (DONE/PENDING/IN_PROGRESS/BLOCKED)
-- Coverage gate raised to **99%** (keeps `bug-template` / `feature-template`
-  validators from #21; no Dependabot edits)
+- Packaging inventory **v6** locks (rebased onto #22): changelog/postmortem/gitignore/negative-
+  constraint phrases, Dependabot ecosystem set, historic recipe version,
+  markdownlint MD013 line_length, CI concurrency prefix + artifact `if`,
+  pyproject ruff target-version, GitHub agent name, LICENSE copyright holder,
+  agentic_flows allow-list, README honesty phrases; plus #22 deepeners for
+  specialist agents, schema `$schema`/`$id` prefixes, CLAUDE required sections,
+  contributing branch surfaces, scratchpad status markers
+- New validators: `changelog`, `postmortem`, `gitignore`, `negative-constraints`
+  (31 total; historic four only)
+- Coverage gate raised to **99%** (from #22) while keeping the v6 validator set
+- CI deepeners: validator-count ≥31 + inventory v6 registry lock step
+- Schema deepeners: Goose recipe `version` const `1.0.0`; Cursor env
+  `additionalProperties: false`; markdownlint MD013.line_length const 200
 
 - Packaging inventory **v5** locks: bug/feature template headings, archive-doc /
   yaml-config sets, cursor env name, Dependabot weekly schedule, CI permissions /
@@ -80,6 +88,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 
+- Inventory schema minimum version is **6**; CI validator-count gate raised to ≥31; coverage gate **99%**
 - Inventory schema minimum version is **5**; CI validator-count gate raised to ≥27
 - Coverage gate raised to 97%; inventory schema minimum version is 3
 - Coverage gate raised to 95%; Dependabot now tracks pip (`requirements-dev.txt`)

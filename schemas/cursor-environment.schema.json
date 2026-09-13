@@ -4,7 +4,7 @@
   "title": "Cursor Cloud Agent environment.json",
   "description": "Structural schema for .cursor/environment.json in this docs archive.",
   "type": "object",
-  "additionalProperties": true,
+  "additionalProperties": false,
   "required": ["name", "install"],
   "properties": {
     "name": {
