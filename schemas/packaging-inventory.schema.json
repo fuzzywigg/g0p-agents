@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/fuzzywigg/g0p-agents/schemas/packaging-inventory.schema.json",
   "title": "Archive packaging inventory",
-  "description": "Locked packaging paths and historic agent/recipe inventory for this docs-only archive (v13).",
+  "description": "Locked packaging paths and historic agent/recipe inventory for this docs-only archive (v14).",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -124,12 +124,15 @@
     "license_required_phrases",
     "ci_pip_install_command",
     "ci_pip_check_command",
-    "ci_pytest_required_markers"
+    "ci_pytest_required_markers",
+    "state_residency_required_phrases",
+    "key_files_required_entries",
+    "pr_routing_required_fields"
   ],
   "properties": {
     "version": {
       "type": "integer",
-      "minimum": 13
+      "minimum": 14
     },
     "required_paths": {
       "type": "array",
@@ -938,6 +941,33 @@
     "ci_pytest_required_markers": {
       "type": "array",
       "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "state_residency_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "key_files_required_entries": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "pr_routing_required_fields": {
+      "type": "array",
+      "minItems": 4,
       "uniqueItems": true,
       "items": {
         "type": "string",
