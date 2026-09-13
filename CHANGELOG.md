@@ -10,6 +10,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Packaging inventory **v3** locks: recipe bindings, primary agents, schema file
+  set, CI Python matrix, manifest step markers, dev packages, GitHub agent /
+  issue-template file sets, PR template headings, historic Goose settings,
+  coverage + validator-count floors
+- New validators: `agent-tokens`, `pr-template`, `requirements-dev`, `license`,
+  `readme` (20 total; no invented specialists)
+- Goose deepeners: refuse orphan on-disk recipes, require all `goose run`
+  examples, lock historic `anthropic` / `claude-opus-4` + `builtin/developer`
+- Schema meta: enforce Draft 2020-12 `$schema` + canonical `$id` URIs
+- CI: `pip check`, validator-count gate (≥20), exact Py 3.11/3.12/3.13 matrix
 - Deepened packaging validators (wave 2): markdownlint + scratchpad + pyproject
   checks, recipe name↔file bindings, orphan-schema detection, non-empty agent /
   issue-template bodies, Dependabot pip ecosystem requirement, inventory lock for
@@ -43,6 +53,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 
+- Coverage gate raised to 97%; inventory schema minimum version is 3
 - Coverage gate raised to 95%; Dependabot now tracks pip (`requirements-dev.txt`)
   alongside github-actions
 - Manifest CI requires actionlint job + ruff/`--cov` step markers and a multi-version

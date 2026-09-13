@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/fuzzywigg/g0p-agents/schemas/packaging-inventory.schema.json",
   "title": "Archive packaging inventory",
-  "description": "Locked packaging paths and historic agent/recipe inventory for this docs-only archive.",
+  "description": "Locked packaging paths and historic agent/recipe inventory for this docs-only archive (v3).",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -11,12 +11,24 @@
     "documented_agents",
     "expected_recipe_names",
     "expected_recipe_files",
-    "required_ci_jobs"
+    "recipe_bindings",
+    "recipe_primary_agents",
+    "required_ci_jobs",
+    "required_python_versions",
+    "required_manifest_step_markers",
+    "required_schema_files",
+    "required_dev_packages",
+    "github_agent_files",
+    "issue_template_files",
+    "pr_template_headings",
+    "historic_goose_settings",
+    "min_coverage_fail_under",
+    "min_validator_count"
   ],
   "properties": {
     "version": {
       "type": "integer",
-      "minimum": 2
+      "minimum": 3
     },
     "required_paths": {
       "type": "array",
@@ -58,6 +70,24 @@
         "pattern": "^agentic_flows/[a-z0-9_]+\\.ya?ml$"
       }
     },
+    "recipe_bindings": {
+      "type": "object",
+      "minProperties": 4,
+      "maxProperties": 4,
+      "additionalProperties": {
+        "type": "string",
+        "pattern": "^agentic_flows/[a-z0-9_]+\\.ya?ml$"
+      }
+    },
+    "recipe_primary_agents": {
+      "type": "object",
+      "minProperties": 4,
+      "maxProperties": 4,
+      "additionalProperties": {
+        "type": "string",
+        "pattern": "^[A-Z][A-Za-z0-9]*Agent$"
+      }
+    },
     "required_ci_jobs": {
       "type": "array",
       "minItems": 1,
@@ -67,6 +97,102 @@
         "minLength": 1,
         "pattern": "^[a-z][a-z0-9-]*$"
       }
+    },
+    "required_python_versions": {
+      "type": "array",
+      "minItems": 2,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^3\\.[0-9]+$"
+      }
+    },
+    "required_manifest_step_markers": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "required_schema_files": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z0-9-]+\\.schema\\.json$"
+      }
+    },
+    "required_dev_packages": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]*$"
+      }
+    },
+    "github_agent_files": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^\\.github/agents/[A-Za-z0-9._-]+\\.agent\\.md$"
+      }
+    },
+    "issue_template_files": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^\\.github/ISSUE_TEMPLATE/[A-Za-z0-9._-]+\\.md$"
+      }
+    },
+    "pr_template_headings": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "historic_goose_settings": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["goose_provider", "goose_model", "extension_type", "extension_name"],
+      "properties": {
+        "goose_provider": {
+          "type": "string",
+          "minLength": 1
+        },
+        "goose_model": {
+          "type": "string",
+          "minLength": 1
+        },
+        "extension_type": {
+          "type": "string",
+          "enum": ["builtin", "stdio", "sse", "streamable_http"]
+        },
+        "extension_name": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "min_coverage_fail_under": {
+      "type": "integer",
+      "minimum": 85,
+      "maximum": 100
+    },
+    "min_validator_count": {
+      "type": "integer",
+      "minimum": 1
     }
   }
 }
