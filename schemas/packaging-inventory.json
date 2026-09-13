@@ -1,5 +1,5 @@
 {
-  "version": 16,
+  "version": 17,
   "documented_agents": [
     "QuantumArchitectAgent",
     "BlockchainArchitectAgent",
@@ -329,11 +329,14 @@
     "schemas",
     "scratchpad",
     "security",
+    "security-reporting",
+    "security-standards",
+    "security-supported",
     "state-residency",
     "yaml-configs"
   ],
   "min_coverage_fail_under": 99,
-  "min_validator_count": 61,
+  "min_validator_count": 64,
   "required_paths": [
     "README.md",
     "LICENSE",
@@ -603,5 +606,30 @@
     "Conflict: [What constraint am I hitting?]",
     "Recommendation: [How should we resolve this?]",
     "Timeline: [How long until decision needed?]"
+  ],
+  "security_supported_required_phrases": [
+    "This repository is a documentation archive",
+    "No executable code is deployed",
+    "YAML recipe templates",
+    "Agent system prompts",
+    "Future: Solidity contracts"
+  ],
+  "security_reporting_required_phrases": [
+    "Do NOT open a public GitHub issue for security vulnerabilities",
+    "To report a vulnerability:",
+    "Email:",
+    "Include: description, affected files, reproduction steps, suggested fix",
+    "acknowledgment within 48 hours"
+  ],
+  "security_standards_required_phrases": [
+    "Cryptography",
+    "Smart contracts",
+    "Mobile",
+    "Secrets",
+    "Keys",
+    "NIST post-quantum standards",
+    "Slither audit pass",
+    "Never commit secrets",
+    "Never expose plaintext keys"
   ]
 }

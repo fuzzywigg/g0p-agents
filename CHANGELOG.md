@@ -10,6 +10,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Security policy **v17** deepeners (post-#35): `security-supported`,
+  `security-reporting`, `security-standards` validators; SECURITY.md Supported
+  Versions surface locks + Reporting a Vulnerability channel locks + Security
+  Standards domain-row locks; consistency deepeners for
+  `security_supported_required_phrases` / `security_reporting_required_phrases` /
+  `security_standards_required_phrases` (64 total; historic four only — security
+  policy slice, not packaging-inventory meta or routing/identity deepeners)
+
 - Agent routing / identity / escalation **v16** deepeners (post-#33):
   `routing-rationales`, `claude-metadata`, `escalation-usage` validators; CLAUDE.md
   routing-matrix rationale column locks + header Status/Tier/Owner/Created/Edit/
