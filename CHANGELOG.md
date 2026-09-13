@@ -15,15 +15,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   instructional locks + Changes list locks + Acceptance Criteria checkbox /
   Notes for Reviewer locks; consistency deepeners for
   `pr_summary_required_phrases` / `pr_changes_required_phrases` /
-  `pr_acceptance_required_phrases` (82 total; historic four only — PR template
-  slice, not contributing guide, docs-gov, issue-template, scratchpad,
-  postmortem, archive snapshot, security policy, routing/identity, or Dependabot)
-
-### Changed
-
-- Sync `ci_required_actions` locks to post-#17 pins (`actions/setup-python@v7`,
-  `actions/upload-artifact@v7`) so inventory matches live CI (Dependabot.yml
-  untouched)
+  `pr_acceptance_required_phrases`; sync `ci_required_actions` to post-#17
+  pins (`actions/setup-python@v7`, `actions/upload-artifact@v7`) so inventory
+  matches live CI (82 total; historic four only — PR template slice, not
+  contributing guide, docs-gov, issue-template, scratchpad, postmortem,
+  archive snapshot, security policy, routing/identity, or Dependabot)
 
 - Contributing guide **v22** deepeners (post-#44): `contributing-who`,
   `contributing-branches`, `contributing-pr` validators; CONTRIBUTING.md Who Can
