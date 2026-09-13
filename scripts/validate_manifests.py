@@ -159,7 +159,7 @@ REQUIRED_ARCHIVE_DOCS = (
     "README.md",
 )
 
-INVENTORY_VERSION = 21
+INVENTORY_VERSION = 22
 CURSOR_ENVIRONMENT_NAME = "g0p-agents"
 DEPENDABOT_SCHEDULE_INTERVAL = "weekly"
 DEPENDABOT_DIRECTORIES: frozenset[str] = frozenset({"/"})
@@ -405,6 +405,31 @@ BUG_REPRO_REQUIRED_PHRASES: tuple[str, ...] = (
     "## Steps to Reproduce",
     "## Expected Behavior",
     "## Actual Behavior",
+)
+CONTRIBUTING_WHO_REQUIRED_PHRASES: tuple[str, ...] = (
+    "## Who Can Contribute",
+    "FUZZYWIGG multi-agent ecosystem",
+    "Agent surfaces",
+    "Andrew Pappas",
+    "Ecosystem collaborators",
+)
+CONTRIBUTING_BRANCH_REQUIRED_PHRASES: tuple[str, ...] = (
+    "## Branch Strategy",
+    "`alpha`",
+    "Default / protected",
+    "`copilot/<task>`",
+    "`geryon/<task>`",
+    "`claude/<task>`",
+    "`cursor/<task>`",
+)
+CONTRIBUTING_PR_REQUIRED_PHRASES: tuple[str, ...] = (
+    "## PR Requirements",
+    "Branch off from `alpha`",
+    "Fill in the PR template completely",
+    "All CI checks must pass before merge",
+    "One approval required",
+    "## Governance",
+    "require Andrew approval",
 )
 LICENSE_REQUIRED_PHRASES: tuple[str, ...] = (
     "MIT License",
@@ -733,7 +758,7 @@ SCRATCHPAD_STATUS_MARKERS: tuple[str, ...] = (
 SPECIALIST_AGENTS: tuple[str, ...] = DOCUMENTED_AGENTS[:-1]
 
 MIN_COVERAGE_FAIL_UNDER = 99
-MIN_VALIDATOR_COUNT = 76
+MIN_VALIDATOR_COUNT = 79
 
 
 @dataclass(frozen=True)
@@ -1492,6 +1517,28 @@ def validate_packaging_inventory(root: Path) -> list[Finding]:
         != BUG_REPRO_REQUIRED_PHRASES
     ):
         findings.append(_lock_mismatch(schema_path, "bug_repro_required_phrases"))
+
+    if (
+        tuple(inventory.get("contributing_who_required_phrases", ()))
+        != CONTRIBUTING_WHO_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "contributing_who_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("contributing_branch_required_phrases", ()))
+        != CONTRIBUTING_BRANCH_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "contributing_branch_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("contributing_pr_required_phrases", ()))
+        != CONTRIBUTING_PR_REQUIRED_PHRASES
+    ):
+        findings.append(_lock_mismatch(schema_path, "contributing_pr_required_phrases"))
 
     expected_validator_names = tuple(sorted(VALIDATORS))
     if tuple(inventory.get("validator_names", ())) != expected_validator_names:
@@ -2627,6 +2674,103 @@ def _inventory_lock_consistency(
                     schema_path,
                     "bug_repro_required_phrases must include Steps to Reproduce/"
                     "Expected/Actual Behavior",
+                )
+            )
+
+    who = list(inventory.get("contributing_who_required_phrases", ()))
+    if len(who) != len(set(who)):
+        findings.append(
+            Finding(schema_path, "contributing_who_required_phrases must be unique")
+        )
+    if not who:
+        findings.append(
+            Finding(schema_path, "contributing_who_required_phrases must not be empty")
+        )
+    for phrase in who:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "contributing_who_required_phrases entries must be non-empty strings",
+                )
+            )
+            break
+    else:
+        if who and not any("Andrew Pappas" in phrase for phrase in who):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "contributing_who_required_phrases must name Andrew Pappas",
+                )
+            )
+
+    branches = list(inventory.get("contributing_branch_required_phrases", ()))
+    if len(branches) != len(set(branches)):
+        findings.append(
+            Finding(schema_path, "contributing_branch_required_phrases must be unique")
+        )
+    if not branches:
+        findings.append(
+            Finding(
+                schema_path, "contributing_branch_required_phrases must not be empty"
+            )
+        )
+    for phrase in branches:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "contributing_branch_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_branches = {
+            "`alpha`",
+            "`copilot/<task>`",
+            "`geryon/<task>`",
+            "`cursor/<task>`",
+        }
+        if branches and not required_branches <= set(branches):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "contributing_branch_required_phrases must include alpha/"
+                    "copilot/geryon/cursor branch rows",
+                )
+            )
+
+    pr_reqs = list(inventory.get("contributing_pr_required_phrases", ()))
+    if len(pr_reqs) != len(set(pr_reqs)):
+        findings.append(
+            Finding(schema_path, "contributing_pr_required_phrases must be unique")
+        )
+    if not pr_reqs:
+        findings.append(
+            Finding(schema_path, "contributing_pr_required_phrases must not be empty")
+        )
+    for phrase in pr_reqs:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "contributing_pr_required_phrases entries must be non-empty strings",
+                )
+            )
+            break
+    else:
+        required_pr = {
+            "## PR Requirements",
+            "All CI checks must pass before merge",
+            "## Governance",
+        }
+        if pr_reqs and not required_pr <= set(pr_reqs):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "contributing_pr_required_phrases must include PR Requirements, "
+                    "CI pass gate, and Governance",
                 )
             )
 
@@ -4253,6 +4397,57 @@ def validate_contributing_packaging(root: Path) -> list[Finding]:
     return findings
 
 
+def validate_contributing_who(root: Path) -> list[Finding]:
+    rel = "CONTRIBUTING.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "CONTRIBUTING.md missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    for phrase in CONTRIBUTING_WHO_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(rel, f"missing locked contributing-who phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_contributing_branches(root: Path) -> list[Finding]:
+    rel = "CONTRIBUTING.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "CONTRIBUTING.md missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## Branch Strategy" not in text:
+        findings.append(Finding(rel, "missing Branch Strategy section"))
+    for phrase in CONTRIBUTING_BRANCH_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(rel, f"missing locked contributing-branches phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_contributing_pr(root: Path) -> list[Finding]:
+    rel = "CONTRIBUTING.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "CONTRIBUTING.md missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## PR Requirements" not in text:
+        findings.append(Finding(rel, "missing PR Requirements section"))
+    if "## Governance" not in text:
+        findings.append(Finding(rel, "missing Governance section"))
+    for phrase in CONTRIBUTING_PR_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(rel, f"missing locked contributing-pr phrase: {phrase}")
+            )
+    return findings
+
+
 def validate_agent_task_template(root: Path) -> list[Finding]:
     rel = ".github/ISSUE_TEMPLATE/agent_task.md"
     path = root / rel
@@ -5423,6 +5618,9 @@ VALIDATORS: dict[str, ValidatorFn] = {
     "readme-badges": validate_readme_badges,
     "security": validate_security_packaging,
     "contributing": validate_contributing_packaging,
+    "contributing-who": validate_contributing_who,
+    "contributing-branches": validate_contributing_branches,
+    "contributing-pr": validate_contributing_pr,
     "scratchpad": validate_scratchpad,
     "scratchpad-intro": validate_scratchpad_intro,
     "scratchpad-format": validate_scratchpad_format,
