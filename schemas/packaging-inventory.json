@@ -1,5 +1,5 @@
 {
-  "version": 21,
+  "version": 22,
   "documented_agents": [
     "QuantumArchitectAgent",
     "BlockchainArchitectAgent",
@@ -290,6 +290,9 @@
     "claude-metadata",
     "constitution",
     "contributing",
+    "contributing-branches",
+    "contributing-pr",
+    "contributing-who",
     "cross-docs",
     "dependabot",
     "environment",
@@ -348,7 +351,7 @@
     "yaml-configs"
   ],
   "min_coverage_fail_under": 99,
-  "min_validator_count": 76,
+  "min_validator_count": 79,
   "required_paths": [
     "README.md",
     "LICENSE",
@@ -734,5 +737,32 @@
     "## Steps to Reproduce",
     "## Expected Behavior",
     "## Actual Behavior"
+  ],
+  "contributing_who_required_phrases": [
+    "## Who Can Contribute",
+    "FUZZYWIGG multi-agent ecosystem",
+    "Agent surfaces",
+    "Andrew Pappas",
+    "Ecosystem collaborators",
+    "PikoClaw"
+  ],
+  "contributing_branches_required_phrases": [
+    "## Branch Strategy",
+    "| Branch | Purpose |",
+    "`alpha`",
+    "`copilot/<task>`",
+    "`geryon/<task>`",
+    "`claude/<task>`",
+    "`cursor/<task>`",
+    "Never push directly"
+  ],
+  "contributing_pr_required_phrases": [
+    "## PR Requirements",
+    "Branch off from `alpha`",
+    "Fill in the PR template completely",
+    "All CI checks must pass",
+    "One approval required",
+    "manifest validate",
+    "Python 3.11/3.12/3.13"
   ]
 }

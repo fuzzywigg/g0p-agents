@@ -10,6 +10,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Contributing guide **v22** deepeners (post-#44): `contributing-who`,
+  `contributing-branches`, `contributing-pr` validators; CONTRIBUTING.md Who Can
+  Contribute locks + Branch Strategy table locks + PR Requirements locks;
+  consistency deepeners for `contributing_who_required_phrases` /
+  `contributing_branches_required_phrases` / `contributing_pr_required_phrases`
+  (79 total; historic four only — contributing slice, not issue-template,
+  scratchpad, postmortem, archive snapshot, security policy, or Dependabot)
+
 - GitHub issue-template **v21** deepeners (post-#42): `issue-metadata`,
   `issue-routing`, `bug-repro` validators; shared Status/Tier/Created/Owner/Edit
   policy locks across bug/feature/agent-task templates; Agent Surface Routing

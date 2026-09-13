@@ -49,6 +49,7 @@ Checks structural correctness of:
 - postmortem.md intro / Decision field / Next Steps surface locks
 - agentic_flows/scratchpad.txt intro / format-legend / task-meta locks
 - GitHub issue template metadata / routing-field / bug-repro locks
+- CONTRIBUTING.md Who Can Contribute / Branch Strategy / PR Requirements locks
 - pyproject project name + version/license/description/readme +
   ruff line-length/src/lint select locks
 - coverage show_missing/skip_empty/source + exact fail_under +
@@ -159,7 +160,7 @@ REQUIRED_ARCHIVE_DOCS = (
     "README.md",
 )
 
-INVENTORY_VERSION = 21
+INVENTORY_VERSION = 22
 CURSOR_ENVIRONMENT_NAME = "g0p-agents"
 DEPENDABOT_SCHEDULE_INTERVAL = "weekly"
 DEPENDABOT_DIRECTORIES: frozenset[str] = frozenset({"/"})
@@ -405,6 +406,33 @@ BUG_REPRO_REQUIRED_PHRASES: tuple[str, ...] = (
     "## Steps to Reproduce",
     "## Expected Behavior",
     "## Actual Behavior",
+)
+CONTRIBUTING_WHO_REQUIRED_PHRASES: tuple[str, ...] = (
+    "## Who Can Contribute",
+    "FUZZYWIGG multi-agent ecosystem",
+    "Agent surfaces",
+    "Andrew Pappas",
+    "Ecosystem collaborators",
+    "PikoClaw",
+)
+CONTRIBUTING_BRANCHES_REQUIRED_PHRASES: tuple[str, ...] = (
+    "## Branch Strategy",
+    "| Branch | Purpose |",
+    "`alpha`",
+    "`copilot/<task>`",
+    "`geryon/<task>`",
+    "`claude/<task>`",
+    "`cursor/<task>`",
+    "Never push directly",
+)
+CONTRIBUTING_PR_REQUIRED_PHRASES: tuple[str, ...] = (
+    "## PR Requirements",
+    "Branch off from `alpha`",
+    "Fill in the PR template completely",
+    "All CI checks must pass",
+    "One approval required",
+    "manifest validate",
+    "Python 3.11/3.12/3.13",
 )
 LICENSE_REQUIRED_PHRASES: tuple[str, ...] = (
     "MIT License",
@@ -733,7 +761,7 @@ SCRATCHPAD_STATUS_MARKERS: tuple[str, ...] = (
 SPECIALIST_AGENTS: tuple[str, ...] = DOCUMENTED_AGENTS[:-1]
 
 MIN_COVERAGE_FAIL_UNDER = 99
-MIN_VALIDATOR_COUNT = 76
+MIN_VALIDATOR_COUNT = 79
 
 
 @dataclass(frozen=True)
@@ -1492,6 +1520,28 @@ def validate_packaging_inventory(root: Path) -> list[Finding]:
         != BUG_REPRO_REQUIRED_PHRASES
     ):
         findings.append(_lock_mismatch(schema_path, "bug_repro_required_phrases"))
+
+    if (
+        tuple(inventory.get("contributing_who_required_phrases", ()))
+        != CONTRIBUTING_WHO_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "contributing_who_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("contributing_branches_required_phrases", ()))
+        != CONTRIBUTING_BRANCHES_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "contributing_branches_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("contributing_pr_required_phrases", ()))
+        != CONTRIBUTING_PR_REQUIRED_PHRASES
+    ):
+        findings.append(_lock_mismatch(schema_path, "contributing_pr_required_phrases"))
 
     expected_validator_names = tuple(sorted(VALIDATORS))
     if tuple(inventory.get("validator_names", ())) != expected_validator_names:
@@ -2627,6 +2677,113 @@ def _inventory_lock_consistency(
                     schema_path,
                     "bug_repro_required_phrases must include Steps to Reproduce/"
                     "Expected/Actual Behavior",
+                )
+            )
+
+    who_phrases = list(inventory.get("contributing_who_required_phrases", ()))
+    if len(who_phrases) != len(set(who_phrases)):
+        findings.append(
+            Finding(schema_path, "contributing_who_required_phrases must be unique")
+        )
+    if not who_phrases:
+        findings.append(
+            Finding(schema_path, "contributing_who_required_phrases must not be empty")
+        )
+    for phrase in who_phrases:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "contributing_who_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_who = {
+            "## Who Can Contribute",
+            "Andrew Pappas",
+            "Agent surfaces",
+        }
+        if who_phrases and not required_who <= set(who_phrases):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "contributing_who_required_phrases must include Who Can "
+                    "Contribute/Andrew Pappas/Agent surfaces",
+                )
+            )
+
+    branch_phrases = list(inventory.get("contributing_branches_required_phrases", ()))
+    if len(branch_phrases) != len(set(branch_phrases)):
+        findings.append(
+            Finding(
+                schema_path, "contributing_branches_required_phrases must be unique"
+            )
+        )
+    if not branch_phrases:
+        findings.append(
+            Finding(
+                schema_path,
+                "contributing_branches_required_phrases must not be empty",
+            )
+        )
+    for phrase in branch_phrases:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "contributing_branches_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_branches = {
+            "## Branch Strategy",
+            "`alpha`",
+            "Never push directly",
+        }
+        if branch_phrases and not required_branches <= set(branch_phrases):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "contributing_branches_required_phrases must include Branch "
+                    "Strategy/alpha/Never push directly",
+                )
+            )
+
+    pr_phrases = list(inventory.get("contributing_pr_required_phrases", ()))
+    if len(pr_phrases) != len(set(pr_phrases)):
+        findings.append(
+            Finding(schema_path, "contributing_pr_required_phrases must be unique")
+        )
+    if not pr_phrases:
+        findings.append(
+            Finding(schema_path, "contributing_pr_required_phrases must not be empty")
+        )
+    for phrase in pr_phrases:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "contributing_pr_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_pr = {
+            "## PR Requirements",
+            "All CI checks must pass",
+            "One approval required",
+        }
+        if pr_phrases and not required_pr <= set(pr_phrases):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "contributing_pr_required_phrases must include PR Requirements/"
+                    "All CI checks must pass/One approval required",
                 )
             )
 
@@ -4478,6 +4635,57 @@ def validate_bug_repro(root: Path) -> list[Finding]:
     return findings
 
 
+def validate_contributing_who(root: Path) -> list[Finding]:
+    rel = "CONTRIBUTING.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "CONTRIBUTING.md missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## Who Can Contribute" not in text:
+        findings.append(Finding(rel, "missing Who Can Contribute section"))
+    for phrase in CONTRIBUTING_WHO_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(rel, f"missing locked contributing-who phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_contributing_branches(root: Path) -> list[Finding]:
+    rel = "CONTRIBUTING.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "CONTRIBUTING.md missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## Branch Strategy" not in text:
+        findings.append(Finding(rel, "missing Branch Strategy section"))
+    for phrase in CONTRIBUTING_BRANCHES_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(rel, f"missing locked contributing-branches phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_contributing_pr(root: Path) -> list[Finding]:
+    rel = "CONTRIBUTING.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "CONTRIBUTING.md missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## PR Requirements" not in text:
+        findings.append(Finding(rel, "missing PR Requirements section"))
+    for phrase in CONTRIBUTING_PR_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(rel, f"missing locked contributing-pr phrase: {phrase}")
+            )
+    return findings
+
+
 def validate_gitignore_packaging(root: Path) -> list[Finding]:
     rel = ".gitignore"
     path = root / rel
@@ -5423,6 +5631,9 @@ VALIDATORS: dict[str, ValidatorFn] = {
     "readme-badges": validate_readme_badges,
     "security": validate_security_packaging,
     "contributing": validate_contributing_packaging,
+    "contributing-who": validate_contributing_who,
+    "contributing-branches": validate_contributing_branches,
+    "contributing-pr": validate_contributing_pr,
     "scratchpad": validate_scratchpad,
     "scratchpad-intro": validate_scratchpad_intro,
     "scratchpad-format": validate_scratchpad_format,
