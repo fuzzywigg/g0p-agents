@@ -49,6 +49,7 @@ Checks structural correctness of:
 - postmortem.md intro / Decision field / Next Steps surface locks
 - agentic_flows/scratchpad.txt intro / format-legend / task-meta locks
 - GitHub issue template metadata / routing-field / bug-repro locks
+- README honesty / CONTRIBUTING issue-reporting / shared issue-section locks
 - pyproject project name + version/license/description/readme +
   ruff line-length/src/lint select locks
 - coverage show_missing/skip_empty/source + exact fail_under +
@@ -159,7 +160,7 @@ REQUIRED_ARCHIVE_DOCS = (
     "README.md",
 )
 
-INVENTORY_VERSION = 21
+INVENTORY_VERSION = 22
 CURSOR_ENVIRONMENT_NAME = "g0p-agents"
 DEPENDABOT_SCHEDULE_INTERVAL = "weekly"
 DEPENDABOT_DIRECTORIES: frozenset[str] = frozenset({"/"})
@@ -405,6 +406,25 @@ BUG_REPRO_REQUIRED_PHRASES: tuple[str, ...] = (
     "## Steps to Reproduce",
     "## Expected Behavior",
     "## Actual Behavior",
+)
+README_HONESTY_REQUIRED_PHRASES: tuple[str, ...] = (
+    "This is not a live hive, runtime, or production swarm",
+    "archived reference",
+    "no running hive mind",
+    "prompt fiction",
+    "Docs-only archive",
+)
+CONTRIBUTING_ISSUES_REQUIRED_PHRASES: tuple[str, ...] = (
+    "## Issue Reporting",
+    "**Bug**",
+    "**Feature**",
+    "**Agent Task**",
+    "metadata header defined in CLAUDE.md",
+)
+ISSUE_SECTIONS_REQUIRED_PHRASES: tuple[str, ...] = (
+    "## Problem",
+    "## Proposed Solution",
+    "## Acceptance Criteria",
 )
 LICENSE_REQUIRED_PHRASES: tuple[str, ...] = (
     "MIT License",
@@ -733,7 +753,7 @@ SCRATCHPAD_STATUS_MARKERS: tuple[str, ...] = (
 SPECIALIST_AGENTS: tuple[str, ...] = DOCUMENTED_AGENTS[:-1]
 
 MIN_COVERAGE_FAIL_UNDER = 99
-MIN_VALIDATOR_COUNT = 76
+MIN_VALIDATOR_COUNT = 79
 
 
 @dataclass(frozen=True)
@@ -1492,6 +1512,26 @@ def validate_packaging_inventory(root: Path) -> list[Finding]:
         != BUG_REPRO_REQUIRED_PHRASES
     ):
         findings.append(_lock_mismatch(schema_path, "bug_repro_required_phrases"))
+
+    if (
+        tuple(inventory.get("readme_honesty_required_phrases", ()))
+        != README_HONESTY_REQUIRED_PHRASES
+    ):
+        findings.append(_lock_mismatch(schema_path, "readme_honesty_required_phrases"))
+
+    if (
+        tuple(inventory.get("contributing_issues_required_phrases", ()))
+        != CONTRIBUTING_ISSUES_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "contributing_issues_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("issue_sections_required_phrases", ()))
+        != ISSUE_SECTIONS_REQUIRED_PHRASES
+    ):
+        findings.append(_lock_mismatch(schema_path, "issue_sections_required_phrases"))
 
     expected_validator_names = tuple(sorted(VALIDATORS))
     if tuple(inventory.get("validator_names", ())) != expected_validator_names:
@@ -2627,6 +2667,106 @@ def _inventory_lock_consistency(
                     schema_path,
                     "bug_repro_required_phrases must include Steps to Reproduce/"
                     "Expected/Actual Behavior",
+                )
+            )
+
+    honesty = list(inventory.get("readme_honesty_required_phrases", ()))
+    if len(honesty) != len(set(honesty)):
+        findings.append(
+            Finding(schema_path, "readme_honesty_required_phrases must be unique")
+        )
+    if not honesty:
+        findings.append(
+            Finding(schema_path, "readme_honesty_required_phrases must not be empty")
+        )
+    for phrase in honesty:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "readme_honesty_required_phrases entries must be non-empty strings",
+                )
+            )
+            break
+    else:
+        required_honesty = {
+            "This is not a live hive, runtime, or production swarm",
+            "no running hive mind",
+            "prompt fiction",
+        }
+        if honesty and not required_honesty <= set(honesty):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "readme_honesty_required_phrases must include not-a-live-hive/"
+                    "no running hive mind/prompt fiction",
+                )
+            )
+
+    contrib_issues = list(inventory.get("contributing_issues_required_phrases", ()))
+    if len(contrib_issues) != len(set(contrib_issues)):
+        findings.append(
+            Finding(
+                schema_path, "contributing_issues_required_phrases must be unique"
+            )
+        )
+    if not contrib_issues:
+        findings.append(
+            Finding(
+                schema_path, "contributing_issues_required_phrases must not be empty"
+            )
+        )
+    for phrase in contrib_issues:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "contributing_issues_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_issues = {"## Issue Reporting", "**Bug**", "**Feature**", "**Agent Task**"}
+        if contrib_issues and not required_issues <= set(contrib_issues):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "contributing_issues_required_phrases must include Issue Reporting/"
+                    "Bug/Feature/Agent Task",
+                )
+            )
+
+    issue_sections = list(inventory.get("issue_sections_required_phrases", ()))
+    if len(issue_sections) != len(set(issue_sections)):
+        findings.append(
+            Finding(schema_path, "issue_sections_required_phrases must be unique")
+        )
+    if not issue_sections:
+        findings.append(
+            Finding(schema_path, "issue_sections_required_phrases must not be empty")
+        )
+    for phrase in issue_sections:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "issue_sections_required_phrases entries must be non-empty strings",
+                )
+            )
+            break
+    else:
+        required_sections = {
+            "## Problem",
+            "## Proposed Solution",
+            "## Acceptance Criteria",
+        }
+        if issue_sections and not required_sections <= set(issue_sections):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "issue_sections_required_phrases must include Problem/"
+                    "Proposed Solution/Acceptance Criteria",
                 )
             )
 
@@ -4478,6 +4618,54 @@ def validate_bug_repro(root: Path) -> list[Finding]:
     return findings
 
 
+def validate_readme_honesty(root: Path) -> list[Finding]:
+    rel = "README.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "README.md missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    for phrase in README_HONESTY_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(rel, f"missing locked readme-honesty phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_contributing_issues(root: Path) -> list[Finding]:
+    rel = "CONTRIBUTING.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "CONTRIBUTING.md missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## Issue Reporting" not in text:
+        findings.append(Finding(rel, "missing Issue Reporting section"))
+    for phrase in CONTRIBUTING_ISSUES_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(rel, f"missing locked contributing-issues phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_issue_sections(root: Path) -> list[Finding]:
+    findings: list[Finding] = []
+    for rel in ISSUE_TEMPLATE_FILES:
+        path = root / rel
+        if not path.is_file():
+            findings.append(Finding(rel, "issue template missing"))
+            continue
+        text = path.read_text(encoding="utf-8")
+        for phrase in ISSUE_SECTIONS_REQUIRED_PHRASES:
+            if phrase not in text:
+                findings.append(
+                    Finding(rel, f"missing locked issue-sections phrase: {phrase}")
+                )
+    return findings
+
+
 def validate_gitignore_packaging(root: Path) -> list[Finding]:
     rel = ".gitignore"
     path = root / rel
@@ -5413,6 +5601,7 @@ VALIDATORS: dict[str, ValidatorFn] = {
     "issue-metadata": validate_issue_metadata,
     "issue-routing": validate_issue_routing,
     "bug-repro": validate_bug_repro,
+    "issue-sections": validate_issue_sections,
     "pr-template": validate_pr_template,
     "dependabot": validate_dependabot,
     "markdownlint": validate_markdownlint,
@@ -5421,8 +5610,10 @@ VALIDATORS: dict[str, ValidatorFn] = {
     "license-mit": validate_license_mit,
     "readme": validate_readme_packaging,
     "readme-badges": validate_readme_badges,
+    "readme-honesty": validate_readme_honesty,
     "security": validate_security_packaging,
     "contributing": validate_contributing_packaging,
+    "contributing-issues": validate_contributing_issues,
     "scratchpad": validate_scratchpad,
     "scratchpad-intro": validate_scratchpad_intro,
     "scratchpad-format": validate_scratchpad_format,

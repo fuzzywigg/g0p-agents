@@ -148,12 +148,15 @@
     "scratchpad_task_meta_required_phrases",
     "issue_metadata_required_phrases",
     "issue_routing_required_phrases",
-    "bug_repro_required_phrases"
+    "bug_repro_required_phrases",
+    "readme_honesty_required_phrases",
+    "contributing_issues_required_phrases",
+    "issue_sections_required_phrases"
   ],
   "properties": {
     "version": {
       "type": "integer",
-      "minimum": 21
+      "minimum": 22
     },
     "required_paths": {
       "type": "array",
@@ -1176,6 +1179,33 @@
       }
     },
     "bug_repro_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "readme_honesty_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "contributing_issues_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "issue_sections_required_phrases": {
       "type": "array",
       "minItems": 1,
       "uniqueItems": true,

@@ -1,5 +1,5 @@
 {
-  "version": 21,
+  "version": 22,
   "documented_agents": [
     "QuantumArchitectAgent",
     "BlockchainArchitectAgent",
@@ -290,6 +290,7 @@
     "claude-metadata",
     "constitution",
     "contributing",
+    "contributing-issues",
     "cross-docs",
     "dependabot",
     "environment",
@@ -310,6 +311,7 @@
     "issue-metadata",
     "issue-names",
     "issue-routing",
+    "issue-sections",
     "issue-templates",
     "key-files",
     "license",
@@ -328,6 +330,7 @@
     "quarterly-review",
     "readme",
     "readme-badges",
+    "readme-honesty",
     "recipe-agents",
     "recipe-titles",
     "repo-identity",
@@ -348,7 +351,7 @@
     "yaml-configs"
   ],
   "min_coverage_fail_under": 99,
-  "min_validator_count": 76,
+  "min_validator_count": 79,
   "required_paths": [
     "README.md",
     "LICENSE",
@@ -734,5 +737,24 @@
     "## Steps to Reproduce",
     "## Expected Behavior",
     "## Actual Behavior"
+  ],
+  "readme_honesty_required_phrases": [
+    "This is not a live hive, runtime, or production swarm",
+    "archived reference",
+    "no running hive mind",
+    "prompt fiction",
+    "Docs-only archive"
+  ],
+  "contributing_issues_required_phrases": [
+    "## Issue Reporting",
+    "**Bug**",
+    "**Feature**",
+    "**Agent Task**",
+    "metadata header defined in CLAUDE.md"
+  ],
+  "issue_sections_required_phrases": [
+    "## Problem",
+    "## Proposed Solution",
+    "## Acceptance Criteria"
   ]
 }

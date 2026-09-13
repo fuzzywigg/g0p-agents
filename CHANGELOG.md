@@ -10,6 +10,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Docs-governance **v22** deepeners (post-#44): `readme-honesty`,
+  `contributing-issues`, `issue-sections` validators; README archive honesty
+  locks (not-a-live-hive / no running hive mind / prompt fiction); CONTRIBUTING
+  Issue Reporting locks (Bug/Feature/Agent Task + CLAUDE.md metadata header);
+  shared issue-template Problem / Proposed Solution / Acceptance Criteria
+  locks; consistency deepeners for `readme_honesty_required_phrases` /
+  `contributing_issues_required_phrases` / `issue_sections_required_phrases`
+  (79 total; historic four only — README/CONTRIBUTING/issue-template docs
+  slice, not postmortem, scratchpad, archive snapshot, security policy,
+  routing/identity, or Dependabot)
+
 - GitHub issue-template **v21** deepeners (post-#42): `issue-metadata`,
   `issue-routing`, `bug-repro` validators; shared Status/Tier/Created/Owner/Edit
   policy locks across bug/feature/agent-task templates; Agent Surface Routing
