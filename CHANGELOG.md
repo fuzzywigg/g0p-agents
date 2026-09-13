@@ -10,6 +10,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Archive snapshot **v18** deepeners (post-#36): `implementation-quickstart`,
+  `execution-specialists`, `hydration-list-b` validators; IMPLEMENTATION-GUIDE
+  Quick Start surface locks + EXECUTION-SUMMARY four-specialist table locks +
+  hydration LIST B HITL question locks; consistency deepeners for
+  `implementation_quickstart_required_phrases` /
+  `execution_specialists_required_phrases` / `hydration_list_b_required_phrases`
+  (67 total; historic four only — Dec 2025 archive snapshot slice, not security
+  policy or routing/identity deepeners)
+
 - Security policy **v17** deepeners (post-#35): `security-supported`,
   `security-reporting`, `security-standards` validators; SECURITY.md Supported
   Versions surface locks + Reporting a Vulnerability channel locks + Security

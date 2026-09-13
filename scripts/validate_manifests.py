@@ -44,6 +44,8 @@ Checks structural correctness of:
 - CLAUDE.md header metadata locks (Status/Tier/Owner/Created/Edit/Canonical)
 - CLAUDE.md escalation usage intro + fenced placeholder field locks
 - SECURITY.md Supported Versions / Reporting / Standards domain locks
+- IMPLEMENTATION-GUIDE Quick Start / EXECUTION-SUMMARY specialist table /
+  hydration LIST B HITL question locks (Dec 2025 archive snapshot slice)
 - pyproject project name + version/license/description/readme +
   ruff line-length/src/lint select locks
 - coverage show_missing/skip_empty/source + exact fail_under +
@@ -154,7 +156,7 @@ REQUIRED_ARCHIVE_DOCS = (
     "README.md",
 )
 
-INVENTORY_VERSION = 17
+INVENTORY_VERSION = 18
 CURSOR_ENVIRONMENT_NAME = "g0p-agents"
 DEPENDABOT_SCHEDULE_INTERVAL = "weekly"
 DEPENDABOT_DIRECTORIES: frozenset[str] = frozenset({"/"})
@@ -309,6 +311,36 @@ SECURITY_STANDARDS_REQUIRED_PHRASES: tuple[str, ...] = (
     "Slither audit pass",
     "Never commit secrets",
     "Never expose plaintext keys",
+)
+IMPLEMENTATION_QUICKSTART_REQUIRED_PHRASES: tuple[str, ...] = (
+    "## Quick Start (30 minutes)",
+    "mkdir -p agentic_flows",
+    "mkdir -p quantum_circuits",
+    "mkdir -p contracts",
+    "touch agentic_flows/scratchpad.txt",
+    "AGENTS-v2.2.md",
+    "AGENT-PROMPTS.md",
+    "GOOSE-RECIPES.md",
+    "Python 3.11",
+)
+EXECUTION_SPECIALISTS_REQUIRED_PHRASES: tuple[str, ...] = (
+    "## Your Four Specialist Agents",
+    "QuantumArchitectAgent",
+    "BlockchainArchitectAgent",
+    "EdgeSecurityAgent",
+    "OrchestrationAgent",
+    "Quantum Computing",
+    "Blockchain Dev",
+    "On-Device Security",
+    "YAML recipes, Docker Compose",
+)
+HYDRATION_LIST_B_REQUIRED_PHRASES: tuple[str, ...] = (
+    "### LIST B — Requires Andrew (HITL)",
+    "Is g0p-agents meant to be activated into a runnable codebase",
+    "What is PikoClaw exactly",
+    "Should actual Solidity, Python (Cirq), and React Native code be implemented",
+    "What is the `agents-standard` repo",
+    "Is there a Notion page for g0p-agents",
 )
 LICENSE_REQUIRED_PHRASES: tuple[str, ...] = (
     "MIT License",
@@ -637,7 +669,7 @@ SCRATCHPAD_STATUS_MARKERS: tuple[str, ...] = (
 SPECIALIST_AGENTS: tuple[str, ...] = DOCUMENTED_AGENTS[:-1]
 
 MIN_COVERAGE_FAIL_UNDER = 99
-MIN_VALIDATOR_COUNT = 64
+MIN_VALIDATOR_COUNT = 67
 
 
 @dataclass(frozen=True)
@@ -1311,6 +1343,30 @@ def validate_packaging_inventory(root: Path) -> list[Finding]:
     ):
         findings.append(
             _lock_mismatch(schema_path, "security_standards_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("implementation_quickstart_required_phrases", ()))
+        != IMPLEMENTATION_QUICKSTART_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "implementation_quickstart_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("execution_specialists_required_phrases", ()))
+        != EXECUTION_SPECIALISTS_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "execution_specialists_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("hydration_list_b_required_phrases", ()))
+        != HYDRATION_LIST_B_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "hydration_list_b_required_phrases")
         )
 
     expected_validator_names = tuple(sorted(VALIDATORS))
@@ -2067,6 +2123,108 @@ def _inventory_lock_consistency(
                 )
             )
 
+    quickstart = list(inventory.get("implementation_quickstart_required_phrases", ()))
+    if len(quickstart) != len(set(quickstart)):
+        findings.append(
+            Finding(
+                schema_path, "implementation_quickstart_required_phrases must be unique"
+            )
+        )
+    if not quickstart:
+        findings.append(
+            Finding(
+                schema_path,
+                "implementation_quickstart_required_phrases must not be empty",
+            )
+        )
+    for phrase in quickstart:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "implementation_quickstart_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        if quickstart and not any("agentic_flows" in phrase for phrase in quickstart):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "implementation_quickstart_required_phrases must mention agentic_flows",
+                )
+            )
+
+    specialists = list(inventory.get("execution_specialists_required_phrases", ()))
+    if len(specialists) != len(set(specialists)):
+        findings.append(
+            Finding(
+                schema_path, "execution_specialists_required_phrases must be unique"
+            )
+        )
+    if not specialists:
+        findings.append(
+            Finding(
+                schema_path, "execution_specialists_required_phrases must not be empty"
+            )
+        )
+    for phrase in specialists:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "execution_specialists_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        agents = set(inventory.get("documented_agents", ()))
+        if specialists and agents and not agents <= set(specialists):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "execution_specialists_required_phrases must include all "
+                    "documented agents",
+                )
+            )
+
+    list_b = list(inventory.get("hydration_list_b_required_phrases", ()))
+    if len(list_b) != len(set(list_b)):
+        findings.append(
+            Finding(schema_path, "hydration_list_b_required_phrases must be unique")
+        )
+    if not list_b:
+        findings.append(
+            Finding(schema_path, "hydration_list_b_required_phrases must not be empty")
+        )
+    for phrase in list_b:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "hydration_list_b_required_phrases entries must be non-empty strings",
+                )
+            )
+            break
+    else:
+        joined = " ".join(list_b)
+        if list_b and "LIST B" not in joined:
+            findings.append(
+                Finding(
+                    schema_path,
+                    "hydration_list_b_required_phrases must mention LIST B",
+                )
+            )
+        if list_b and "PikoClaw" not in joined:
+            findings.append(
+                Finding(
+                    schema_path,
+                    "hydration_list_b_required_phrases must mention PikoClaw",
+                )
+            )
+
     return findings
 
 
@@ -2736,6 +2894,57 @@ def validate_security_standards(root: Path) -> list[Finding]:
         if phrase not in text:
             findings.append(
                 Finding(rel, f"missing locked security-standards phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_implementation_quickstart(root: Path) -> list[Finding]:
+    rel = "IMPLEMENTATION-GUIDE.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "IMPLEMENTATION-GUIDE.md missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## Quick Start (30 minutes)" not in text:
+        findings.append(Finding(rel, "missing Quick Start section"))
+    for phrase in IMPLEMENTATION_QUICKSTART_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(rel, f"missing locked implementation-quickstart phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_execution_specialists(root: Path) -> list[Finding]:
+    rel = "EXECUTION-SUMMARY.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "EXECUTION-SUMMARY.md missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## Your Four Specialist Agents" not in text:
+        findings.append(Finding(rel, "missing Your Four Specialist Agents section"))
+    for phrase in EXECUTION_SPECIALISTS_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(rel, f"missing locked execution-specialists phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_hydration_list_b(root: Path) -> list[Finding]:
+    rel = "docs/agent-hydration.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "hydration report missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "### LIST B — Requires Andrew (HITL)" not in text:
+        findings.append(Finding(rel, "missing LIST B HITL section"))
+    for phrase in HYDRATION_LIST_B_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(rel, f"missing locked hydration-list-b phrase: {phrase}")
             )
     return findings
 
@@ -4685,6 +4894,9 @@ VALIDATORS: dict[str, ValidatorFn] = {
     "security-supported": validate_security_supported,
     "security-reporting": validate_security_reporting,
     "security-standards": validate_security_standards,
+    "implementation-quickstart": validate_implementation_quickstart,
+    "execution-specialists": validate_execution_specialists,
+    "hydration-list-b": validate_hydration_list_b,
     "link-check": validate_link_check,
     "prompts": validate_documented_agent_prompts,
     "cross-docs": validate_cross_doc_agents,
