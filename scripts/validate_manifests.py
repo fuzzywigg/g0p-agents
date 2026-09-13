@@ -30,9 +30,14 @@ Checks structural correctness of:
 - Historic Goose recipe version lock (1.0.0)
 - CLAUDE.md required sections / identity / escalation-format phrases
 - Historic Goose recipe title locks (four recipes only)
-- CI required GitHub Actions pins
-- pyproject project name lock
+- CI required GitHub Actions pins + workflow name + actionlint markers
+- pyproject project name + ruff lint select locks
 - Dependabot directory set inventory lock (file untouched)
+- Issue template frontmatter name/about locks
+- README badge phrase locks
+- CLAUDE.md quarterly-review trigger phrase locks
+- markdownlint MD025/MD033/MD024 siblings_only locks
+- Expanded Cursor install refs matching live environment.json
 
 Does not invent agents or scaffold new specialist definitions.
 """
@@ -131,7 +136,7 @@ REQUIRED_ARCHIVE_DOCS = (
     "README.md",
 )
 
-INVENTORY_VERSION = 8
+INVENTORY_VERSION = 9
 CURSOR_ENVIRONMENT_NAME = "g0p-agents"
 DEPENDABOT_SCHEDULE_INTERVAL = "weekly"
 DEPENDABOT_DIRECTORIES: frozenset[str] = frozenset({"/"})
@@ -144,6 +149,7 @@ CI_CONCURRENCY_GROUP_PREFIX = "ci-"
 CI_ARTIFACT_UPLOAD_IF = "always()"
 CI_CANCEL_IN_PROGRESS = True
 CI_FAIL_FAST = False
+CI_WORKFLOW_NAME = "CI — Lint, Links & Manifests"
 CI_REQUIRED_ACTIONS: tuple[str, ...] = (
     "actions/checkout@v7",
     "actions/setup-python@v5",
@@ -151,9 +157,15 @@ CI_REQUIRED_ACTIONS: tuple[str, ...] = (
     "DavidAnson/markdownlint-cli2-action@v24",
     "lycheeverse/lychee-action@v2",
 )
+CI_REQUIRED_TEXT_MARKERS: tuple[str, ...] = (
+    "download-actionlint.bash",
+    "actionlint",
+    "cache: pip",
+)
 PYPROJECT_NAME = "g0p-agents-validation"
 PYPROJECT_REQUIRES_PYTHON = ">=3.11"
 PYPROJECT_RUFF_TARGET_VERSION = "py311"
+PYPROJECT_RUFF_LINT_SELECT: tuple[str, ...] = ("E", "F", "I", "UP", "B")
 COVERAGE_BRANCH = True
 RECIPE_TITLES: dict[str, str] = {
     "quantum_algorithm_design_workflow": (
@@ -171,6 +183,9 @@ RECIPE_TITLES: dict[str, str] = {
 }
 MARKDOWNLINT_DEFAULT = True
 MARKDOWNLINT_MD013_LINE_LENGTH = 200
+MARKDOWNLINT_MD025 = False
+MARKDOWNLINT_MD033 = False
+MARKDOWNLINT_MD024_SIBLINGS_ONLY = True
 GITHUB_AGENT_NAME = "Hydration"
 LICENSE_COPYRIGHT_HOLDER = "Andrew Pappas"
 LICENSE_COPYRIGHT_MARKER = "Copyright (c) 2026 Andrew Pappas"
@@ -178,12 +193,48 @@ AGENTIC_FLOWS_ALLOWED_FILES: frozenset[str] = frozenset({"scratchpad.txt"})
 CURSOR_INSTALL_REQUIRED_REFS: tuple[str, ...] = (
     "README.md",
     "LICENSE",
+    "AGENTS-v2.2.md",
+    "AGENT-PROMPTS.md",
+    "GOOSE-RECIPES.md",
+    ".github/workflows/ci.yml",
     "scripts/validate_manifests.py",
+    "schemas/goose-recipe.schema.json",
     "schemas/packaging-inventory.json",
     "schemas/packaging-inventory.schema.json",
+    "schemas/markdownlint.schema.json",
     "tests/test_validate_manifests.py",
     "requirements-dev.txt",
     "pyproject.toml",
+    "agentic_flows/scratchpad.txt",
+    ".github/pull_request_template.md",
+)
+ISSUE_TEMPLATE_NAMES: dict[str, str] = {
+    ".github/ISSUE_TEMPLATE/bug_report.md": "Bug Report",
+    ".github/ISSUE_TEMPLATE/feature_request.md": "Feature Request",
+    ".github/ISSUE_TEMPLATE/agent_task.md": "Agent Task",
+}
+ISSUE_TEMPLATE_ABOUTS: dict[str, str] = {
+    ".github/ISSUE_TEMPLATE/bug_report.md": (
+        "Something is broken in existing files, workflows, or agent behavior"
+    ),
+    ".github/ISSUE_TEMPLATE/feature_request.md": (
+        "New capability needed in the ecosystem"
+    ),
+    ".github/ISSUE_TEMPLATE/agent_task.md": (
+        "Structured work item for a specific agent surface "
+        "(copilot, geryon, claude-cowork, etc.)"
+    ),
+}
+README_BADGE_PHRASES: tuple[str, ...] = (
+    "actions/workflows/ci.yml/badge.svg?branch=alpha",
+    "label=link-check",
+    "License: MIT",
+)
+QUARTERLY_REVIEW_PHRASES: tuple[str, ...] = (
+    "Risk tolerance update (AGENTS-v2.2.md Section 12.4.1)",
+    "Agent success metrics audit",
+    "Notion Master Index sync",
+    "postmortem.md incident review",
 )
 
 SCRATCHPAD_REQUIRED_PHRASES = (
@@ -281,6 +332,8 @@ README_REQUIRED_PHRASES = (
 SECURITY_REQUIRED_PHRASES = (
     "Never commit secrets",
     "Do NOT open a public GitHub issue for security vulnerabilities",
+    "acknowledgment within 48 hours",
+    "Never expose plaintext keys",
 )
 
 CONTRIBUTING_REQUIRED_PHRASES = (
@@ -410,7 +463,7 @@ SCRATCHPAD_STATUS_MARKERS: tuple[str, ...] = (
 SPECIALIST_AGENTS: tuple[str, ...] = DOCUMENTED_AGENTS[:-1]
 
 MIN_COVERAGE_FAIL_UNDER = 99
-MIN_VALIDATOR_COUNT = 37
+MIN_VALIDATOR_COUNT = 40
 
 
 @dataclass(frozen=True)
@@ -854,6 +907,50 @@ def validate_packaging_inventory(root: Path) -> list[Finding]:
     ):
         findings.append(_lock_mismatch(schema_path, "goose_docs_required_phrases"))
 
+    if dict(inventory.get("issue_template_names", {})) != ISSUE_TEMPLATE_NAMES:
+        findings.append(_lock_mismatch(schema_path, "issue_template_names"))
+
+    if dict(inventory.get("issue_template_abouts", {})) != ISSUE_TEMPLATE_ABOUTS:
+        findings.append(_lock_mismatch(schema_path, "issue_template_abouts"))
+
+    if tuple(inventory.get("readme_badge_phrases", ())) != README_BADGE_PHRASES:
+        findings.append(_lock_mismatch(schema_path, "readme_badge_phrases"))
+
+    if (
+        tuple(inventory.get("quarterly_review_phrases", ()))
+        != QUARTERLY_REVIEW_PHRASES
+    ):
+        findings.append(_lock_mismatch(schema_path, "quarterly_review_phrases"))
+
+    if inventory.get("ci_workflow_name") != CI_WORKFLOW_NAME:
+        findings.append(_lock_mismatch(schema_path, "ci_workflow_name"))
+
+    if (
+        tuple(inventory.get("ci_required_text_markers", ()))
+        != CI_REQUIRED_TEXT_MARKERS
+    ):
+        findings.append(_lock_mismatch(schema_path, "ci_required_text_markers"))
+
+    if inventory.get("markdownlint_md025") is not MARKDOWNLINT_MD025:
+        findings.append(_lock_mismatch(schema_path, "markdownlint_md025"))
+
+    if inventory.get("markdownlint_md033") is not MARKDOWNLINT_MD033:
+        findings.append(_lock_mismatch(schema_path, "markdownlint_md033"))
+
+    if (
+        inventory.get("markdownlint_md024_siblings_only")
+        is not MARKDOWNLINT_MD024_SIBLINGS_ONLY
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "markdownlint_md024_siblings_only")
+        )
+
+    if (
+        tuple(inventory.get("pyproject_ruff_lint_select", ()))
+        != PYPROJECT_RUFF_LINT_SELECT
+    ):
+        findings.append(_lock_mismatch(schema_path, "pyproject_ruff_lint_select"))
+
     expected_validator_names = tuple(sorted(VALIDATORS))
     if tuple(inventory.get("validator_names", ())) != expected_validator_names:
         findings.append(_lock_mismatch(schema_path, "validator_names"))
@@ -1006,6 +1103,68 @@ def _inventory_lock_consistency(
         findings.append(Finding(schema_path, "dependabot_directories must be unique"))
     if not directories:
         findings.append(Finding(schema_path, "dependabot_directories must not be empty"))
+
+    issue_names = dict(inventory.get("issue_template_names", {}))
+    issue_abouts = dict(inventory.get("issue_template_abouts", {}))
+    issue_files = set(inventory.get("issue_template_files", ()))
+    if set(issue_names) != issue_files:
+        findings.append(
+            Finding(
+                schema_path,
+                "issue_template_names keys inconsistent with issue_template_files",
+            )
+        )
+    if set(issue_abouts) != issue_files:
+        findings.append(
+            Finding(
+                schema_path,
+                "issue_template_abouts keys inconsistent with issue_template_files",
+            )
+        )
+    name_values = list(issue_names.values())
+    if len(name_values) != len(set(name_values)):
+        findings.append(Finding(schema_path, "issue_template_names values must be unique"))
+    about_values = list(issue_abouts.values())
+    if len(about_values) != len(set(about_values)):
+        findings.append(
+            Finding(schema_path, "issue_template_abouts values must be unique")
+        )
+
+    badge_phrases = list(inventory.get("readme_badge_phrases", ()))
+    if len(badge_phrases) != len(set(badge_phrases)):
+        findings.append(Finding(schema_path, "readme_badge_phrases must be unique"))
+    if not badge_phrases:
+        findings.append(Finding(schema_path, "readme_badge_phrases must not be empty"))
+
+    quarterly = list(inventory.get("quarterly_review_phrases", ()))
+    if len(quarterly) != len(set(quarterly)):
+        findings.append(Finding(schema_path, "quarterly_review_phrases must be unique"))
+    if not quarterly:
+        findings.append(
+            Finding(schema_path, "quarterly_review_phrases must not be empty")
+        )
+
+    text_markers = list(inventory.get("ci_required_text_markers", ()))
+    if len(text_markers) != len(set(text_markers)):
+        findings.append(Finding(schema_path, "ci_required_text_markers must be unique"))
+    if not text_markers:
+        findings.append(
+            Finding(schema_path, "ci_required_text_markers must not be empty")
+        )
+
+    lint_select = list(inventory.get("pyproject_ruff_lint_select", ()))
+    if len(lint_select) != len(set(lint_select)):
+        findings.append(
+            Finding(schema_path, "pyproject_ruff_lint_select must be unique")
+        )
+    if not lint_select:
+        findings.append(
+            Finding(schema_path, "pyproject_ruff_lint_select must not be empty")
+        )
+
+    workflow_name = inventory.get("ci_workflow_name")
+    if not isinstance(workflow_name, str) or not workflow_name.strip():
+        findings.append(Finding(schema_path, "ci_workflow_name must be a non-empty string"))
 
     return findings
 
@@ -1571,6 +1730,44 @@ def validate_markdownlint(root: Path) -> list[Finding]:
                         ),
                     )
                 )
+        md025 = data.get("MD025")
+        if md025 is not MARKDOWNLINT_MD025:
+            findings.append(
+                Finding(
+                    rel,
+                    (
+                        f"markdownlint MD025 must be {MARKDOWNLINT_MD025!r}, "
+                        f"found {md025!r}"
+                    ),
+                )
+            )
+        md033 = data.get("MD033")
+        if md033 is not MARKDOWNLINT_MD033:
+            findings.append(
+                Finding(
+                    rel,
+                    (
+                        f"markdownlint MD033 must be {MARKDOWNLINT_MD033!r}, "
+                        f"found {md033!r}"
+                    ),
+                )
+            )
+        md024 = data.get("MD024")
+        if not isinstance(md024, dict):
+            findings.append(Finding(rel, "markdownlint MD024 must be a mapping"))
+        else:
+            siblings_only = md024.get("siblings_only")
+            if siblings_only is not MARKDOWNLINT_MD024_SIBLINGS_ONLY:
+                findings.append(
+                    Finding(
+                        rel,
+                        (
+                            "markdownlint MD024.siblings_only must be "
+                            f"{MARKDOWNLINT_MD024_SIBLINGS_ONLY!r}, "
+                            f"found {siblings_only!r}"
+                        ),
+                    )
+                )
     return findings
 
 
@@ -1719,6 +1916,21 @@ def validate_pyproject(root: Path) -> list[Finding]:
                     ),
                 )
             )
+        lint = ruff.get("lint")
+        if isinstance(lint, dict):
+            select = lint.get("select")
+            if not isinstance(select, list) or tuple(select) != PYPROJECT_RUFF_LINT_SELECT:
+                findings.append(
+                    Finding(
+                        rel,
+                        (
+                            "ruff lint.select must equal "
+                            f"{list(PYPROJECT_RUFF_LINT_SELECT)!r}, found {select!r}"
+                        ),
+                    )
+                )
+        else:
+            findings.append(Finding(rel, "missing [tool.ruff.lint]"))
 
     coverage = tool.get("coverage")
     if not isinstance(coverage, dict):
@@ -2406,10 +2618,100 @@ def validate_ci_actions(root: Path) -> list[Finding]:
         return [Finding(rel, "CI workflow missing")]
     text = path.read_text(encoding="utf-8")
     findings: list[Finding] = []
+    data, parse_findings = parse_yaml_text(text, path=rel)
+    findings.extend(parse_findings)
+    if isinstance(data, dict):
+        name = data.get("name")
+        if name != CI_WORKFLOW_NAME:
+            findings.append(
+                Finding(
+                    rel,
+                    f"CI workflow name must be {CI_WORKFLOW_NAME!r}, found {name!r}",
+                )
+            )
     for action in CI_REQUIRED_ACTIONS:
         if action not in text:
             findings.append(
                 Finding(rel, f"CI workflow missing required action pin: {action}")
+            )
+    for marker in CI_REQUIRED_TEXT_MARKERS:
+        if marker not in text:
+            findings.append(
+                Finding(rel, f"CI workflow missing required text marker: {marker}")
+            )
+    return findings
+
+
+def validate_issue_template_names(root: Path) -> list[Finding]:
+    findings: list[Finding] = []
+    for rel, expected_name in ISSUE_TEMPLATE_NAMES.items():
+        path = root / rel
+        if not path.is_file():
+            findings.append(Finding(rel, "required issue template file missing"))
+            continue
+        text = path.read_text(encoding="utf-8")
+        frontmatter, fm_findings = extract_yaml_frontmatter(text)
+        findings.extend(
+            Finding(rel, f.message) if f.path == "<frontmatter>" else f
+            for f in fm_findings
+        )
+        if frontmatter is None:
+            continue
+        data, parse_findings = parse_yaml_text(frontmatter, path=rel)
+        findings.extend(parse_findings)
+        if not isinstance(data, dict):
+            if data is not None:
+                findings.append(Finding(rel, "frontmatter must be a mapping"))
+            continue
+        name = data.get("name")
+        if name != expected_name:
+            findings.append(
+                Finding(
+                    rel,
+                    f"issue template name must be {expected_name!r}, found {name!r}",
+                )
+            )
+        expected_about = ISSUE_TEMPLATE_ABOUTS[rel]
+        about = data.get("about")
+        if about != expected_about:
+            findings.append(
+                Finding(
+                    rel,
+                    (
+                        f"issue template about must be {expected_about!r}, "
+                        f"found {about!r}"
+                    ),
+                )
+            )
+    return findings
+
+
+def validate_readme_badges(root: Path) -> list[Finding]:
+    rel = "README.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "README.md missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    for phrase in README_BADGE_PHRASES:
+        if phrase not in text:
+            findings.append(Finding(rel, f"README missing badge phrase: {phrase}"))
+    return findings
+
+
+def validate_quarterly_review(root: Path) -> list[Finding]:
+    rel = "CLAUDE.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "CLAUDE.md missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## Quarterly Review Triggers" not in text:
+        findings.append(Finding(rel, "missing Quarterly Review Triggers section"))
+    for phrase in QUARTERLY_REVIEW_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(rel, f"CLAUDE.md missing quarterly-review phrase: {phrase}")
             )
     return findings
 
@@ -2426,6 +2728,7 @@ VALIDATORS: dict[str, ValidatorFn] = {
     "environment": validate_cursor_environment,
     "github-agents": validate_github_agents,
     "issue-templates": validate_issue_templates,
+    "issue-names": validate_issue_template_names,
     "agent-task": validate_agent_task_template,
     "bug-template": validate_bug_report_template,
     "feature-template": validate_feature_request_template,
@@ -2435,6 +2738,7 @@ VALIDATORS: dict[str, ValidatorFn] = {
     "requirements-dev": validate_requirements_dev,
     "license": validate_license,
     "readme": validate_readme_packaging,
+    "readme-badges": validate_readme_badges,
     "security": validate_security_packaging,
     "contributing": validate_contributing_packaging,
     "scratchpad": validate_scratchpad,
@@ -2449,6 +2753,7 @@ VALIDATORS: dict[str, ValidatorFn] = {
     "gitignore": validate_gitignore_packaging,
     "negative-constraints": validate_negative_constraints,
     "claude": validate_claude_packaging,
+    "quarterly-review": validate_quarterly_review,
     "hydration": validate_hydration_report,
     "execution-summary": validate_execution_summary,
     "implementation-guide": validate_implementation_guide,

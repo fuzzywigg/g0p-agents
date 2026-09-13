@@ -1,5 +1,5 @@
 {
-  "version": 8,
+  "version": 9,
   "documented_agents": [
     "QuantumArchitectAgent",
     "BlockchainArchitectAgent",
@@ -128,7 +128,9 @@
   ],
   "security_required_phrases": [
     "Never commit secrets",
-    "Do NOT open a public GitHub issue for security vulnerabilities"
+    "Do NOT open a public GitHub issue for security vulnerabilities",
+    "acknowledgment within 48 hours",
+    "Never expose plaintext keys"
   ],
   "contributing_required_phrases": [
     "Do not invent new specialist agents",
@@ -232,12 +234,20 @@
   "cursor_install_required_refs": [
     "README.md",
     "LICENSE",
+    "AGENTS-v2.2.md",
+    "AGENT-PROMPTS.md",
+    "GOOSE-RECIPES.md",
+    ".github/workflows/ci.yml",
     "scripts/validate_manifests.py",
+    "schemas/goose-recipe.schema.json",
     "schemas/packaging-inventory.json",
     "schemas/packaging-inventory.schema.json",
+    "schemas/markdownlint.schema.json",
     "tests/test_validate_manifests.py",
     "requirements-dev.txt",
-    "pyproject.toml"
+    "pyproject.toml",
+    "agentic_flows/scratchpad.txt",
+    ".github/pull_request_template.md"
   ],
   "hydration_required_sections": [
     "## PHASE 1: FINDINGS REPORT",
@@ -280,6 +290,7 @@
     "hydration",
     "implementation-guide",
     "inventory",
+    "issue-names",
     "issue-templates",
     "license",
     "markdownlint",
@@ -288,7 +299,9 @@
     "pr-template",
     "prompts",
     "pyproject",
+    "quarterly-review",
     "readme",
+    "readme-badges",
     "recipe-agents",
     "recipe-titles",
     "requirements-dev",
@@ -299,7 +312,7 @@
     "yaml-configs"
   ],
   "min_coverage_fail_under": 99,
-  "min_validator_count": 37,
+  "min_validator_count": 40,
   "required_paths": [
     "README.md",
     "LICENSE",
@@ -398,5 +411,42 @@
     "Recipe-Based Agent Orchestration",
     "./agentic_flows/",
     "goose run"
+  ],
+  "issue_template_names": {
+    ".github/ISSUE_TEMPLATE/bug_report.md": "Bug Report",
+    ".github/ISSUE_TEMPLATE/feature_request.md": "Feature Request",
+    ".github/ISSUE_TEMPLATE/agent_task.md": "Agent Task"
+  },
+  "issue_template_abouts": {
+    ".github/ISSUE_TEMPLATE/bug_report.md": "Something is broken in existing files, workflows, or agent behavior",
+    ".github/ISSUE_TEMPLATE/feature_request.md": "New capability needed in the ecosystem",
+    ".github/ISSUE_TEMPLATE/agent_task.md": "Structured work item for a specific agent surface (copilot, geryon, claude-cowork, etc.)"
+  },
+  "readme_badge_phrases": [
+    "actions/workflows/ci.yml/badge.svg?branch=alpha",
+    "label=link-check",
+    "License: MIT"
+  ],
+  "quarterly_review_phrases": [
+    "Risk tolerance update (AGENTS-v2.2.md Section 12.4.1)",
+    "Agent success metrics audit",
+    "Notion Master Index sync",
+    "postmortem.md incident review"
+  ],
+  "ci_workflow_name": "CI \u2014 Lint, Links & Manifests",
+  "ci_required_text_markers": [
+    "download-actionlint.bash",
+    "actionlint",
+    "cache: pip"
+  ],
+  "markdownlint_md025": false,
+  "markdownlint_md033": false,
+  "markdownlint_md024_siblings_only": true,
+  "pyproject_ruff_lint_select": [
+    "E",
+    "F",
+    "I",
+    "UP",
+    "B"
   ]
 }

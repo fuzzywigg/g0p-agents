@@ -134,6 +134,16 @@ def _inventory_payload(**overrides: object) -> dict:
         "claude_required_phrases": list(vm.CLAUDE_REQUIRED_PHRASES),
         "escalation_format_phrases": list(vm.ESCALATION_FORMAT_PHRASES),
         "goose_docs_required_phrases": list(vm.GOOSE_DOCS_REQUIRED_PHRASES),
+        "issue_template_names": dict(vm.ISSUE_TEMPLATE_NAMES),
+        "issue_template_abouts": dict(vm.ISSUE_TEMPLATE_ABOUTS),
+        "readme_badge_phrases": list(vm.README_BADGE_PHRASES),
+        "quarterly_review_phrases": list(vm.QUARTERLY_REVIEW_PHRASES),
+        "ci_workflow_name": vm.CI_WORKFLOW_NAME,
+        "ci_required_text_markers": list(vm.CI_REQUIRED_TEXT_MARKERS),
+        "markdownlint_md025": vm.MARKDOWNLINT_MD025,
+        "markdownlint_md033": vm.MARKDOWNLINT_MD033,
+        "markdownlint_md024_siblings_only": vm.MARKDOWNLINT_MD024_SIBLINGS_ONLY,
+        "pyproject_ruff_lint_select": list(vm.PYPROJECT_RUFF_LINT_SELECT),
         "validator_names": sorted(vm.VALIDATORS),
         "specialist_agents": list(vm.SPECIALIST_AGENTS),
         "schema_draft_uri": vm.SCHEMA_DRAFT_URI,
@@ -691,6 +701,7 @@ def test_validators_registry_covers_all_checks() -> None:
         "environment",
         "github-agents",
         "issue-templates",
+        "issue-names",
         "agent-task",
         "bug-template",
         "feature-template",
@@ -700,6 +711,7 @@ def test_validators_registry_covers_all_checks() -> None:
         "requirements-dev",
         "license",
         "readme",
+        "readme-badges",
         "security",
         "contributing",
         "scratchpad",
@@ -713,6 +725,7 @@ def test_validators_registry_covers_all_checks() -> None:
         "gitignore",
         "negative-constraints",
         "claude",
+        "quarterly-review",
         "hydration",
         "execution-summary",
         "implementation-guide",
@@ -1450,6 +1463,9 @@ def test_packaging_inventory_v5_lock_fields(tmp_path: Path) -> None:
             ("github_agent_name", "Wrong"),
             ("agentic_flows_allowed_files", ["invented.txt"]),
             ("markdownlint_md013_line_length", 80),
+            ("markdownlint_md025", True),
+            ("markdownlint_md033", True),
+            ("markdownlint_md024_siblings_only", False),
             (
                 "validator_names",
                 list(sorted(vm.VALIDATORS))[:-1] + ["invented"],
@@ -1472,7 +1488,7 @@ def test_packaging_inventory_v5_lock_fields(tmp_path: Path) -> None:
                 "scratchpad_status_markers",
                 list(vm.SCRATCHPAD_STATUS_MARKERS)[:-1] + ["INVENTED"],
             ),
-            ("version", 9),
+            ("version", 10),
             ("min_coverage_fail_under", 90),
             ("min_validator_count", 999),
             ("dependabot_group_names", ["github_actions"]),
@@ -1521,7 +1537,40 @@ def test_packaging_inventory_v5_lock_fields(tmp_path: Path) -> None:
                 "goose_docs_required_phrases",
                 list(vm.GOOSE_DOCS_REQUIRED_PHRASES)[:-1] + ["invented"],
             ),
-        ]
+            (
+                "issue_template_names",
+                {
+                    ".github/ISSUE_TEMPLATE/bug_report.md": "Wrong A",
+                    ".github/ISSUE_TEMPLATE/feature_request.md": "Wrong B",
+                    ".github/ISSUE_TEMPLATE/agent_task.md": "Wrong C",
+                },
+            ),
+            (
+                "issue_template_abouts",
+                {
+                    ".github/ISSUE_TEMPLATE/bug_report.md": "Wrong about A",
+                    ".github/ISSUE_TEMPLATE/feature_request.md": "Wrong about B",
+                    ".github/ISSUE_TEMPLATE/agent_task.md": "Wrong about C",
+                },
+            ),
+            (
+                "readme_badge_phrases",
+                list(vm.README_BADGE_PHRASES)[:-1] + ["invented-badge"],
+            ),
+            (
+                "quarterly_review_phrases",
+                list(vm.QUARTERLY_REVIEW_PHRASES)[:-1] + ["invented review"],
+            ),
+            ("ci_workflow_name", "Wrong CI Name"),
+            (
+                "ci_required_text_markers",
+                list(vm.CI_REQUIRED_TEXT_MARKERS)[:-1] + ["invented-marker"],
+            ),
+            (
+                "pyproject_ruff_lint_select",
+                list(vm.PYPROJECT_RUFF_LINT_SELECT)[:-1] + ["Z"],
+            ),
+            ]
     for field, value in cases:
         inventory = _inventory_payload(**{field: value})
         # Keep install refs ⊆ required_paths when mutating either field.
@@ -2269,8 +2318,8 @@ def test_ci_workflow_v5_deepeners(tmp_path: Path) -> None:
 def test_live_v5_validators() -> None:
     assert vm.validate_bug_report_template(REPO_ROOT) == []
     assert vm.validate_feature_request_template(REPO_ROOT) == []
-    assert vm.INVENTORY_VERSION == 8
-    assert len(vm.VALIDATORS) == 37
+    assert vm.INVENTORY_VERSION == 9
+    assert len(vm.VALIDATORS) == 40
     assert vm.MIN_COVERAGE_FAIL_UNDER == 99
 
 
@@ -2279,8 +2328,8 @@ def test_live_v6_validators() -> None:
     assert vm.validate_postmortem_packaging(REPO_ROOT) == []
     assert vm.validate_gitignore_packaging(REPO_ROOT) == []
     assert vm.validate_negative_constraints(REPO_ROOT) == []
-    assert vm.INVENTORY_VERSION == 8
-    assert len(vm.VALIDATORS) >= 37
+    assert vm.INVENTORY_VERSION == 9
+    assert len(vm.VALIDATORS) >= 40
     assert sorted(vm.VALIDATORS) == json.loads(
         (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
     )["validator_names"]
@@ -2290,8 +2339,8 @@ def test_live_v7_validators() -> None:
     assert vm.validate_hydration_report(REPO_ROOT) == []
     assert vm.validate_execution_summary(REPO_ROOT) == []
     assert vm.validate_implementation_guide(REPO_ROOT) == []
-    assert vm.INVENTORY_VERSION == 8
-    assert len(vm.VALIDATORS) >= 37
+    assert vm.INVENTORY_VERSION == 9
+    assert len(vm.VALIDATORS) >= 40
     assert "Lock inventory" in vm.REQUIRED_MANIFEST_STEP_MARKERS
     assert "INVENTORY_VERSION" in vm.REQUIRED_MANIFEST_STEP_MARKERS
     assert vm.CI_CANCEL_IN_PROGRESS is True
@@ -2311,9 +2360,9 @@ def test_live_v8_validators() -> None:
     assert vm.validate_claude_packaging(REPO_ROOT) == []
     assert vm.validate_recipe_titles(REPO_ROOT) == []
     assert vm.validate_ci_actions(REPO_ROOT) == []
-    assert vm.INVENTORY_VERSION == 8
-    assert len(vm.VALIDATORS) == 37
-    assert vm.MIN_VALIDATOR_COUNT == 37
+    assert vm.INVENTORY_VERSION == 9
+    assert len(vm.VALIDATORS) == 40
+    assert vm.MIN_VALIDATOR_COUNT == 40
     assert vm.PYPROJECT_NAME == "g0p-agents-validation"
     assert set(vm.DEPENDABOT_DIRECTORIES) == {"/"}
     assert dict(vm.RECIPE_TITLES) == json.loads(
@@ -2322,6 +2371,34 @@ def test_live_v8_validators() -> None:
     assert list(vm.CI_REQUIRED_ACTIONS) == json.loads(
         (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
     )["ci_required_actions"]
+
+
+def test_live_v9_validators() -> None:
+    assert vm.validate_issue_template_names(REPO_ROOT) == []
+    assert vm.validate_readme_badges(REPO_ROOT) == []
+    assert vm.validate_quarterly_review(REPO_ROOT) == []
+    assert vm.INVENTORY_VERSION == 9
+    assert len(vm.VALIDATORS) == 40
+    assert vm.MIN_VALIDATOR_COUNT == 40
+    assert vm.CI_WORKFLOW_NAME == "CI — Lint, Links & Manifests"
+    assert vm.MARKDOWNLINT_MD025 is False
+    assert vm.MARKDOWNLINT_MD033 is False
+    assert vm.MARKDOWNLINT_MD024_SIBLINGS_ONLY is True
+    assert tuple(vm.PYPROJECT_RUFF_LINT_SELECT) == ("E", "F", "I", "UP", "B")
+    inventory = json.loads(
+        (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
+    )
+    assert inventory["issue_template_names"] == vm.ISSUE_TEMPLATE_NAMES
+    assert inventory["issue_template_abouts"] == vm.ISSUE_TEMPLATE_ABOUTS
+    assert inventory["readme_badge_phrases"] == list(vm.README_BADGE_PHRASES)
+    assert inventory["quarterly_review_phrases"] == list(vm.QUARTERLY_REVIEW_PHRASES)
+    assert len(vm.CURSOR_INSTALL_REQUIRED_REFS) == 16
+    assert "acknowledgment within 48 hours" in vm.SECURITY_REQUIRED_PHRASES
+    assert "Never expose plaintext keys" in vm.SECURITY_REQUIRED_PHRASES
+    assert vm.validate_security_packaging(REPO_ROOT) == []
+    assert vm.validate_markdownlint(REPO_ROOT) == []
+    assert vm.validate_pyproject(REPO_ROOT) == []
+    assert vm.validate_cursor_environment(REPO_ROOT) == []
 
 
 def test_hydration_execution_implementation_edge_cases(tmp_path: Path) -> None:
@@ -2951,6 +3028,391 @@ def test_v8_claude_recipe_titles_ci_actions_edge_cases(tmp_path: Path) -> None:
     )
     findings = vm.validate_pyproject(tmp_path)
     assert any("project.name must be" in f.message for f in findings)
+
+
+def test_v9_issue_names_readme_badges_quarterly_edge_cases(tmp_path: Path) -> None:
+    assert any(
+        "missing" in f.message for f in vm.validate_issue_template_names(tmp_path)
+    )
+    _write(
+        tmp_path / ".github" / "ISSUE_TEMPLATE" / "bug_report.md",
+        "---\nname: Wrong\nabout: wrong about\n---\n\nBody\n",
+    )
+    _write(
+        tmp_path / ".github" / "ISSUE_TEMPLATE" / "feature_request.md",
+        "---\nname: Feature Request\nabout: wrong about\n---\n\nBody\n",
+    )
+    _write(
+        tmp_path / ".github" / "ISSUE_TEMPLATE" / "agent_task.md",
+        "name: Agent Task\nabout: x\n---\n\nBody\n",
+    )
+    findings = vm.validate_issue_template_names(tmp_path)
+    assert any("issue template name must be" in f.message for f in findings)
+    assert any("issue template about must be" in f.message for f in findings)
+    assert any("opening" in f.message for f in findings)
+
+    _write(
+        tmp_path / ".github" / "ISSUE_TEMPLATE" / "agent_task.md",
+        "---\n- just a list\n---\n\nBody\n",
+    )
+    findings = vm.validate_issue_template_names(tmp_path)
+    assert any("frontmatter must be a mapping" in f.message for f in findings)
+
+    assert any("missing" in f.message for f in vm.validate_readme_badges(tmp_path))
+    _write(tmp_path / "README.md", "# g0p-agents\nDocs only\n")
+    findings = vm.validate_readme_badges(tmp_path)
+    assert any("badge phrase" in f.message for f in findings)
+
+    assert any("missing" in f.message for f in vm.validate_quarterly_review(tmp_path))
+    _write(tmp_path / "CLAUDE.md", "# Claude\nNo quarterly section\n")
+    findings = vm.validate_quarterly_review(tmp_path)
+    assert any("Quarterly Review Triggers" in f.message for f in findings)
+    assert any("quarterly-review phrase" in f.message for f in findings)
+
+    _copy_schemas(tmp_path)
+    for rel in vm.CURSOR_INSTALL_REQUIRED_REFS:
+        target = tmp_path / rel
+        target.parent.mkdir(parents=True, exist_ok=True)
+        if not target.exists():
+            target.write_text("ok\n", encoding="utf-8")
+    (tmp_path / "schemas" / "packaging-inventory.json").write_text(
+        json.dumps(_inventory_payload()), encoding="utf-8"
+    )
+
+    inventory = json.loads(
+        (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
+    )
+    broken_names = dict(inventory)
+    broken_names["issue_template_names"] = {"wrong.md": "X"}
+    findings = vm._inventory_lock_consistency(
+        broken_names, schema_path="schemas/packaging-inventory.json"
+    )
+    assert any(
+        "issue_template_names keys inconsistent" in f.message for f in findings
+    )
+
+    broken_abouts = dict(inventory)
+    broken_abouts["issue_template_abouts"] = {"wrong.md": "Y"}
+    findings = vm._inventory_lock_consistency(
+        broken_abouts, schema_path="schemas/packaging-inventory.json"
+    )
+    assert any(
+        "issue_template_abouts keys inconsistent" in f.message for f in findings
+    )
+
+    dup_names = dict(inventory)
+    names = dict(dup_names["issue_template_names"])
+    keys = list(names)
+    names[keys[1]] = names[keys[0]]
+    dup_names["issue_template_names"] = names
+    findings = vm._inventory_lock_consistency(
+        dup_names, schema_path="schemas/packaging-inventory.json"
+    )
+    assert any(
+        "issue_template_names values must be unique" in f.message for f in findings
+    )
+
+    dup_abouts = dict(inventory)
+    abouts = dict(dup_abouts["issue_template_abouts"])
+    keys = list(abouts)
+    abouts[keys[1]] = abouts[keys[0]]
+    dup_abouts["issue_template_abouts"] = abouts
+    findings = vm._inventory_lock_consistency(
+        dup_abouts, schema_path="schemas/packaging-inventory.json"
+    )
+    assert any(
+        "issue_template_abouts values must be unique" in f.message for f in findings
+    )
+
+    empty_badges = dict(inventory)
+    empty_badges["readme_badge_phrases"] = []
+    findings = vm._inventory_lock_consistency(
+        empty_badges, schema_path="schemas/packaging-inventory.json"
+    )
+    assert any("readme_badge_phrases must not be empty" in f.message for f in findings)
+
+    dup_badges = dict(inventory)
+    dup_badges["readme_badge_phrases"] = [
+        vm.README_BADGE_PHRASES[0],
+        vm.README_BADGE_PHRASES[0],
+    ]
+    findings = vm._inventory_lock_consistency(
+        dup_badges, schema_path="schemas/packaging-inventory.json"
+    )
+    assert any("readme_badge_phrases must be unique" in f.message for f in findings)
+
+    empty_quarterly = dict(inventory)
+    empty_quarterly["quarterly_review_phrases"] = []
+    findings = vm._inventory_lock_consistency(
+        empty_quarterly, schema_path="schemas/packaging-inventory.json"
+    )
+    assert any(
+        "quarterly_review_phrases must not be empty" in f.message for f in findings
+    )
+
+    dup_quarterly = dict(inventory)
+    dup_quarterly["quarterly_review_phrases"] = [
+        vm.QUARTERLY_REVIEW_PHRASES[0],
+        vm.QUARTERLY_REVIEW_PHRASES[0],
+    ]
+    findings = vm._inventory_lock_consistency(
+        dup_quarterly, schema_path="schemas/packaging-inventory.json"
+    )
+    assert any(
+        "quarterly_review_phrases must be unique" in f.message for f in findings
+    )
+
+    empty_markers = dict(inventory)
+    empty_markers["ci_required_text_markers"] = []
+    findings = vm._inventory_lock_consistency(
+        empty_markers, schema_path="schemas/packaging-inventory.json"
+    )
+    assert any(
+        "ci_required_text_markers must not be empty" in f.message for f in findings
+    )
+
+    dup_markers = dict(inventory)
+    dup_markers["ci_required_text_markers"] = [
+        vm.CI_REQUIRED_TEXT_MARKERS[0],
+        vm.CI_REQUIRED_TEXT_MARKERS[0],
+    ]
+    findings = vm._inventory_lock_consistency(
+        dup_markers, schema_path="schemas/packaging-inventory.json"
+    )
+    assert any(
+        "ci_required_text_markers must be unique" in f.message for f in findings
+    )
+
+    empty_select = dict(inventory)
+    empty_select["pyproject_ruff_lint_select"] = []
+    findings = vm._inventory_lock_consistency(
+        empty_select, schema_path="schemas/packaging-inventory.json"
+    )
+    assert any(
+        "pyproject_ruff_lint_select must not be empty" in f.message for f in findings
+    )
+
+    dup_select = dict(inventory)
+    dup_select["pyproject_ruff_lint_select"] = [
+        vm.PYPROJECT_RUFF_LINT_SELECT[0],
+        vm.PYPROJECT_RUFF_LINT_SELECT[0],
+    ]
+    findings = vm._inventory_lock_consistency(
+        dup_select, schema_path="schemas/packaging-inventory.json"
+    )
+    assert any(
+        "pyproject_ruff_lint_select must be unique" in f.message for f in findings
+    )
+
+    blank_name = dict(inventory)
+    blank_name["ci_workflow_name"] = "   "
+    findings = vm._inventory_lock_consistency(
+        blank_name, schema_path="schemas/packaging-inventory.json"
+    )
+    assert any("ci_workflow_name must be a non-empty string" in f.message for f in findings)
+
+    non_string_name = dict(inventory)
+    non_string_name["ci_workflow_name"] = 123
+    findings = vm._inventory_lock_consistency(
+        non_string_name, schema_path="schemas/packaging-inventory.json"
+    )
+    assert any("ci_workflow_name must be a non-empty string" in f.message for f in findings)
+
+    _write(
+        tmp_path / ".markdownlint.yaml",
+        "\n".join(
+            [
+                "default: true",
+                "MD013:",
+                "  line_length: 200",
+                "MD025: true",
+                "MD033: true",
+                "MD024:",
+                "  siblings_only: false",
+                "",
+            ]
+        ),
+    )
+    findings = vm.validate_markdownlint(tmp_path)
+    assert any("MD025 must be" in f.message for f in findings)
+    assert any("MD033 must be" in f.message for f in findings)
+    assert any("MD024.siblings_only must be" in f.message for f in findings)
+
+    _write(
+        tmp_path / ".markdownlint.yaml",
+        "\n".join(
+            [
+                "default: true",
+                "MD013:",
+                "  line_length: 200",
+                "MD025: false",
+                "MD033: false",
+                "MD024: false",
+                "",
+            ]
+        ),
+    )
+    findings = vm.validate_markdownlint(tmp_path)
+    assert any("MD024 must be a mapping" in f.message for f in findings)
+
+    _write(
+        tmp_path / "pyproject.toml",
+        "\n".join(
+            [
+                "[project]",
+                f'name = "{vm.PYPROJECT_NAME}"',
+                f'requires-python = "{vm.PYPROJECT_REQUIRES_PYTHON}"',
+                "[tool.pytest.ini_options]",
+                'testpaths = ["tests"]',
+                "[tool.ruff]",
+                f'target-version = "{vm.PYPROJECT_RUFF_TARGET_VERSION}"',
+                "[tool.coverage.run]",
+                "branch = true",
+                "[tool.coverage.report]",
+                "fail_under = 99",
+                "",
+            ]
+        ),
+    )
+    findings = vm.validate_pyproject(tmp_path)
+    assert any("missing [tool.ruff.lint]" in f.message for f in findings)
+
+    _write(
+        tmp_path / "pyproject.toml",
+        "\n".join(
+            [
+                "[project]",
+                f'name = "{vm.PYPROJECT_NAME}"',
+                f'requires-python = "{vm.PYPROJECT_REQUIRES_PYTHON}"',
+                "[tool.pytest.ini_options]",
+                'testpaths = ["tests"]',
+                "[tool.ruff]",
+                f'target-version = "{vm.PYPROJECT_RUFF_TARGET_VERSION}"',
+                "[tool.ruff.lint]",
+                'select = ["E", "F"]',
+                "[tool.coverage.run]",
+                "branch = true",
+                "[tool.coverage.report]",
+                "fail_under = 99",
+                "",
+            ]
+        ),
+    )
+    findings = vm.validate_pyproject(tmp_path)
+    assert any("ruff lint.select must equal" in f.message for f in findings)
+
+    _write(
+        tmp_path / ".github" / "workflows" / "ci.yml",
+        "\n".join(
+            [
+                "name: Wrong CI Name",
+                "on: push",
+                "jobs:",
+                "  x:",
+                "    runs-on: ubuntu-latest",
+                "    steps:",
+                "      - uses: actions/checkout@v7",
+                "",
+            ]
+        ),
+    )
+    findings = vm.validate_ci_actions(tmp_path)
+    assert any("CI workflow name must be" in f.message for f in findings)
+    assert any("missing required action pin" in f.message for f in findings)
+    assert any("missing required text marker" in f.message for f in findings)
+
+    _write(tmp_path / ".github" / "workflows" / "ci.yml", "- just-a-list\n")
+    findings = vm.validate_ci_actions(tmp_path)
+    assert any("missing required action pin" in f.message for f in findings)
+
+    _write(
+        tmp_path / ".github" / "ISSUE_TEMPLATE" / "bug_report.md",
+        "---\n: bad yaml\n---\n\nBody\n",
+    )
+    findings = vm.validate_issue_template_names(tmp_path)
+    assert any("YAML parse error" in f.message for f in findings)
+
+    # Skip non-file children under agentic_flows (coverage for directory continue).
+    flows = tmp_path / "agentic_flows"
+    flows.mkdir(parents=True, exist_ok=True)
+    (flows / "nested-dir").mkdir()
+    _write(
+        flows / "scratchpad.txt",
+        "\n".join(
+            [
+                "g0p-agents Agent Coordination",
+                "source of truth",
+                "Never delete entries",
+                "- [ ] task",
+                "",
+            ]
+        ),
+    )
+    _write(tmp_path / "GOOSE-RECIPES.md", "# no recipes yet\n")
+    findings = vm.validate_goose_recipes(tmp_path)
+    assert any("missing" in f.message or "expected" in f.message for f in findings)
+    assert not any(
+        "unexpected/invented agentic_flows file" in f.message for f in findings
+    )
+
+    # Non-dict step before upload-artifact is skipped when resolving upload if.
+    minimal_ci = {
+        True: {"pull_request": {"branches": ["alpha"]}, "push": {"branches": ["**"]}},
+        "name": vm.CI_WORKFLOW_NAME,
+        "concurrency": {"group": "ci-test", "cancel-in-progress": True},
+        "jobs": {
+            "markdown-lint": {"permissions": {"contents": "read"}, "runs-on": "ubuntu"},
+            "link-check": {"permissions": {"contents": "read"}, "runs-on": "ubuntu"},
+            "actionlint": {"permissions": {"contents": "read"}, "runs-on": "ubuntu"},
+            "manifest-validate": {
+                "permissions": {"contents": "read"},
+                "runs-on": "ubuntu",
+                "strategy": {
+                    "fail-fast": False,
+                    "matrix": {"python-version": list(vm.REQUIRED_PYTHON_VERSIONS)},
+                },
+                "steps": [
+                    "not-a-dict",
+                    {
+                        "uses": "actions/upload-artifact@v4",
+                        "if": "always()",
+                        "with": {"name": "manifest-validate-pyX"},
+                    },
+                    {"run": " ".join(vm.REQUIRED_MANIFEST_STEP_MARKERS)},
+                ],
+            },
+        },
+    }
+    _write(
+        tmp_path / ".github" / "workflows" / "ci.yml",
+        yaml.dump(minimal_ci, sort_keys=False),
+    )
+    findings = vm.validate_ci_workflow(tmp_path)
+    assert not any("upload-artifact if must be" in f.message for f in findings)
+
+    for rel in _inventory_payload()["required_paths"]:
+        target = tmp_path / rel
+        target.parent.mkdir(parents=True, exist_ok=True)
+        if not target.exists():
+            target.write_text("ok\n", encoding="utf-8")
+    (tmp_path / "schemas" / "packaging-inventory.json").write_text(
+        json.dumps(
+            _inventory_payload(
+                issue_template_names={
+                    ".github/ISSUE_TEMPLATE/bug_report.md": "Wrong A",
+                    ".github/ISSUE_TEMPLATE/feature_request.md": "Wrong B",
+                    ".github/ISSUE_TEMPLATE/agent_task.md": "Wrong C",
+                },
+                ci_workflow_name="wrong",
+                pyproject_ruff_lint_select=["Z"],
+            )
+        ),
+        encoding="utf-8",
+    )
+    findings = vm.validate_packaging_inventory(tmp_path)
+    assert any("issue_template_names" in f.message for f in findings)
+    assert any("ci_workflow_name" in f.message for f in findings)
+    assert any("pyproject_ruff_lint_select" in f.message for f in findings)
 
 
 def test_module_main_entrypoint(monkeypatch: pytest.MonkeyPatch) -> None:
