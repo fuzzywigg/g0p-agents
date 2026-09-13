@@ -140,10 +140,26 @@ def _inventory_payload(**overrides: object) -> dict:
         "quarterly_review_phrases": list(vm.QUARTERLY_REVIEW_PHRASES),
         "ci_workflow_name": vm.CI_WORKFLOW_NAME,
         "ci_required_text_markers": list(vm.CI_REQUIRED_TEXT_MARKERS),
+        "ci_link_check_args": vm.CI_LINK_CHECK_ARGS,
+        "ci_link_check_fail": vm.CI_LINK_CHECK_FAIL,
+        "ci_markdown_lint_globs": vm.CI_MARKDOWN_LINT_GLOBS,
+        "ci_markdown_lint_config": vm.CI_MARKDOWN_LINT_CONFIG,
+        "ci_cache_dependency_path": vm.CI_CACHE_DEPENDENCY_PATH,
+        "ci_job_display_names": dict(vm.CI_JOB_DISPLAY_NAMES),
         "markdownlint_md025": vm.MARKDOWNLINT_MD025,
         "markdownlint_md033": vm.MARKDOWNLINT_MD033,
         "markdownlint_md024_siblings_only": vm.MARKDOWNLINT_MD024_SIBLINGS_ONLY,
+        "markdownlint_md013_tables": vm.MARKDOWNLINT_MD013_TABLES,
+        "markdownlint_md013_code_blocks": vm.MARKDOWNLINT_MD013_CODE_BLOCKS,
         "pyproject_ruff_lint_select": list(vm.PYPROJECT_RUFF_LINT_SELECT),
+        "pyproject_version": vm.PYPROJECT_VERSION,
+        "pyproject_license_text": vm.PYPROJECT_LICENSE_TEXT,
+        "pyproject_line_length": vm.PYPROJECT_LINE_LENGTH,
+        "pyproject_ruff_src": list(vm.PYPROJECT_RUFF_SRC),
+        "pytest_addopts": vm.PYTEST_ADDOPTS,
+        "coverage_show_missing": vm.COVERAGE_SHOW_MISSING,
+        "coverage_skip_empty": vm.COVERAGE_SKIP_EMPTY,
+        "github_agent_description": vm.GITHUB_AGENT_DESCRIPTION,
         "validator_names": sorted(vm.VALIDATORS),
         "specialist_agents": list(vm.SPECIALIST_AGENTS),
         "schema_draft_uri": vm.SCHEMA_DRAFT_URI,
@@ -317,7 +333,11 @@ def test_github_agent_frontmatter_roundtrip(tmp_path: Path) -> None:
     agents = tmp_path / ".github" / "agents"
     agents.mkdir(parents=True)
     (agents / "my-agent.agent.md").write_text(
-        f"---\nname: {vm.GITHUB_AGENT_NAME}\ndescription: A demo custom agent.\n---\n\n# Body\n",
+        (
+            f"---\nname: {vm.GITHUB_AGENT_NAME}\n"
+            f"description: {vm.GITHUB_AGENT_DESCRIPTION}\n"
+            "---\n\n# Body\n"
+        ),
         encoding="utf-8",
     )
     findings = vm.validate_github_agents(tmp_path)
@@ -339,7 +359,11 @@ def test_github_agent_rejects_empty_body(tmp_path: Path) -> None:
     agents = tmp_path / ".github" / "agents"
     agents.mkdir(parents=True)
     (agents / "my-agent.agent.md").write_text(
-        f"---\nname: {vm.GITHUB_AGENT_NAME}\ndescription: No body.\n---\n\n",
+        (
+            f"---\nname: {vm.GITHUB_AGENT_NAME}\n"
+            f"description: {vm.GITHUB_AGENT_DESCRIPTION}\n"
+            "---\n\n"
+        ),
         encoding="utf-8",
     )
     findings = vm.validate_github_agents(tmp_path)
@@ -731,6 +755,9 @@ def test_validators_registry_covers_all_checks() -> None:
         "implementation-guide",
         "recipe-titles",
         "ci-actions",
+        "ci-job-names",
+        "link-check",
+        "github-agent-desc",
     }
     assert set(vm.VALIDATORS) == expected
     assert len(vm.VALIDATORS) == vm.MIN_VALIDATOR_COUNT
@@ -1488,7 +1515,7 @@ def test_packaging_inventory_v5_lock_fields(tmp_path: Path) -> None:
                 "scratchpad_status_markers",
                 list(vm.SCRATCHPAD_STATUS_MARKERS)[:-1] + ["INVENTED"],
             ),
-            ("version", 10),
+            ("version", 11),
             ("min_coverage_fail_under", 90),
             ("min_validator_count", 999),
             ("dependabot_group_names", ["github_actions"]),
@@ -1570,6 +1597,30 @@ def test_packaging_inventory_v5_lock_fields(tmp_path: Path) -> None:
                 "pyproject_ruff_lint_select",
                 list(vm.PYPROJECT_RUFF_LINT_SELECT)[:-1] + ["Z"],
             ),
+            ("ci_link_check_args", "wrong-args"),
+            ("ci_link_check_fail", False),
+            ("ci_markdown_lint_globs", "*.txt"),
+            ("ci_markdown_lint_config", "wrong.yaml"),
+            ("ci_cache_dependency_path", "wrong.txt"),
+            (
+                "ci_job_display_names",
+                {
+                    "markdown-lint": "Wrong A",
+                    "link-check": "Wrong B",
+                    "actionlint": "Wrong C",
+                    "manifest-validate": "Wrong D",
+                },
+            ),
+            ("github_agent_description", "wrong description"),
+            ("pyproject_version", "9.9.9"),
+            ("pyproject_license_text", "Apache-2.0"),
+            ("pyproject_line_length", 80),
+            ("pyproject_ruff_src", ["elsewhere"]),
+            ("pytest_addopts", "-vv"),
+            ("coverage_show_missing", False),
+            ("coverage_skip_empty", False),
+            ("markdownlint_md013_tables", True),
+            ("markdownlint_md013_code_blocks", True),
             ]
     for field, value in cases:
         inventory = _inventory_payload(**{field: value})
@@ -2318,8 +2369,8 @@ def test_ci_workflow_v5_deepeners(tmp_path: Path) -> None:
 def test_live_v5_validators() -> None:
     assert vm.validate_bug_report_template(REPO_ROOT) == []
     assert vm.validate_feature_request_template(REPO_ROOT) == []
-    assert vm.INVENTORY_VERSION == 9
-    assert len(vm.VALIDATORS) == 40
+    assert vm.INVENTORY_VERSION == 10
+    assert len(vm.VALIDATORS) == 43
     assert vm.MIN_COVERAGE_FAIL_UNDER == 99
 
 
@@ -2328,8 +2379,8 @@ def test_live_v6_validators() -> None:
     assert vm.validate_postmortem_packaging(REPO_ROOT) == []
     assert vm.validate_gitignore_packaging(REPO_ROOT) == []
     assert vm.validate_negative_constraints(REPO_ROOT) == []
-    assert vm.INVENTORY_VERSION == 9
-    assert len(vm.VALIDATORS) >= 40
+    assert vm.INVENTORY_VERSION == 10
+    assert len(vm.VALIDATORS) >= 43
     assert sorted(vm.VALIDATORS) == json.loads(
         (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
     )["validator_names"]
@@ -2339,8 +2390,8 @@ def test_live_v7_validators() -> None:
     assert vm.validate_hydration_report(REPO_ROOT) == []
     assert vm.validate_execution_summary(REPO_ROOT) == []
     assert vm.validate_implementation_guide(REPO_ROOT) == []
-    assert vm.INVENTORY_VERSION == 9
-    assert len(vm.VALIDATORS) >= 40
+    assert vm.INVENTORY_VERSION == 10
+    assert len(vm.VALIDATORS) >= 43
     assert "Lock inventory" in vm.REQUIRED_MANIFEST_STEP_MARKERS
     assert "INVENTORY_VERSION" in vm.REQUIRED_MANIFEST_STEP_MARKERS
     assert vm.CI_CANCEL_IN_PROGRESS is True
@@ -2360,9 +2411,9 @@ def test_live_v8_validators() -> None:
     assert vm.validate_claude_packaging(REPO_ROOT) == []
     assert vm.validate_recipe_titles(REPO_ROOT) == []
     assert vm.validate_ci_actions(REPO_ROOT) == []
-    assert vm.INVENTORY_VERSION == 9
-    assert len(vm.VALIDATORS) == 40
-    assert vm.MIN_VALIDATOR_COUNT == 40
+    assert vm.INVENTORY_VERSION == 10
+    assert len(vm.VALIDATORS) == 43
+    assert vm.MIN_VALIDATOR_COUNT == 43
     assert vm.PYPROJECT_NAME == "g0p-agents-validation"
     assert set(vm.DEPENDABOT_DIRECTORIES) == {"/"}
     assert dict(vm.RECIPE_TITLES) == json.loads(
@@ -2377,9 +2428,9 @@ def test_live_v9_validators() -> None:
     assert vm.validate_issue_template_names(REPO_ROOT) == []
     assert vm.validate_readme_badges(REPO_ROOT) == []
     assert vm.validate_quarterly_review(REPO_ROOT) == []
-    assert vm.INVENTORY_VERSION == 9
-    assert len(vm.VALIDATORS) == 40
-    assert vm.MIN_VALIDATOR_COUNT == 40
+    assert vm.INVENTORY_VERSION == 10
+    assert len(vm.VALIDATORS) == 43
+    assert vm.MIN_VALIDATOR_COUNT == 43
     assert vm.CI_WORKFLOW_NAME == "CI — Lint, Links & Manifests"
     assert vm.MARKDOWNLINT_MD025 is False
     assert vm.MARKDOWNLINT_MD033 is False
@@ -2399,6 +2450,40 @@ def test_live_v9_validators() -> None:
     assert vm.validate_markdownlint(REPO_ROOT) == []
     assert vm.validate_pyproject(REPO_ROOT) == []
     assert vm.validate_cursor_environment(REPO_ROOT) == []
+
+
+def test_live_v10_validators() -> None:
+    assert vm.validate_link_check(REPO_ROOT) == []
+    assert vm.validate_ci_job_names(REPO_ROOT) == []
+    assert vm.validate_github_agent_description(REPO_ROOT) == []
+    assert vm.INVENTORY_VERSION == 10
+    assert len(vm.VALIDATORS) == 43
+    assert vm.MIN_VALIDATOR_COUNT == 43
+    assert vm.CI_LINK_CHECK_ARGS == "--verbose --no-progress '**/*.md'"
+    assert vm.CI_LINK_CHECK_FAIL is True
+    assert vm.CI_MARKDOWN_LINT_GLOBS == "**/*.md"
+    assert vm.CI_MARKDOWN_LINT_CONFIG == ".markdownlint.yaml"
+    assert vm.CI_CACHE_DEPENDENCY_PATH == "requirements-dev.txt"
+    assert vm.PYPROJECT_VERSION == "0.0.0"
+    assert vm.PYPROJECT_LICENSE_TEXT == "MIT"
+    assert vm.PYPROJECT_LINE_LENGTH == 100
+    assert tuple(vm.PYPROJECT_RUFF_SRC) == ("scripts", "tests")
+    assert vm.PYTEST_ADDOPTS == "-q"
+    assert vm.COVERAGE_SHOW_MISSING is True
+    assert vm.COVERAGE_SKIP_EMPTY is True
+    assert vm.MARKDOWNLINT_MD013_TABLES is False
+    assert vm.MARKDOWNLINT_MD013_CODE_BLOCKS is False
+    inventory = json.loads(
+        (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
+    )
+    assert inventory["ci_job_display_names"] == vm.CI_JOB_DISPLAY_NAMES
+    assert inventory["github_agent_description"] == vm.GITHUB_AGENT_DESCRIPTION
+    assert inventory["ci_link_check_args"] == vm.CI_LINK_CHECK_ARGS
+    assert inventory["pyproject_ruff_src"] == list(vm.PYPROJECT_RUFF_SRC)
+    assert "link-check" in vm.VALIDATORS
+    assert "ci-job-names" in vm.VALIDATORS
+    assert "github-agent-desc" in vm.VALIDATORS
+    assert vm.validate_github_agents(REPO_ROOT) == []
 
 
 def test_hydration_execution_implementation_edge_cases(tmp_path: Path) -> None:
@@ -3413,6 +3498,454 @@ def test_v9_issue_names_readme_badges_quarterly_edge_cases(tmp_path: Path) -> No
     assert any("issue_template_names" in f.message for f in findings)
     assert any("ci_workflow_name" in f.message for f in findings)
     assert any("pyproject_ruff_lint_select" in f.message for f in findings)
+
+
+def test_v10_link_check_ci_job_names_github_agent_desc_edge_cases(
+    tmp_path: Path,
+) -> None:
+    assert any("missing" in f.message for f in vm.validate_link_check(tmp_path))
+    assert any("missing" in f.message for f in vm.validate_ci_job_names(tmp_path))
+    assert any(
+        "missing" in f.message for f in vm.validate_github_agent_description(tmp_path)
+    )
+
+    _write(
+        tmp_path / ".github" / "workflows" / "ci.yml",
+        "\n".join(
+            [
+                f"name: {vm.CI_WORKFLOW_NAME}",
+                "on: push",
+                "jobs:",
+                "  markdown-lint:",
+                "    name: Wrong Markdown",
+                "    runs-on: ubuntu-latest",
+                "    steps:",
+                "      - uses: DavidAnson/markdownlint-cli2-action@v24",
+                "        with:",
+                "          globs: '*.md'",
+                "          config: wrong.yaml",
+                "  link-check:",
+                "    name: Wrong Links",
+                "    runs-on: ubuntu-latest",
+                "    steps:",
+                "      - uses: lycheeverse/lychee-action@v2",
+                "        with:",
+                "          args: --quiet",
+                "          fail: false",
+                "  actionlint:",
+                "    name: Wrong Actionlint",
+                "    runs-on: ubuntu-latest",
+                "    steps:",
+                "      - run: echo hi",
+                "  manifest-validate:",
+                "    name: Wrong Manifest",
+                "    runs-on: ubuntu-latest",
+                "    steps:",
+                "      - uses: actions/setup-python@v5",
+                "        with:",
+                "          python-version: '3.12'",
+                "          cache-dependency-path: wrong.txt",
+                "",
+            ]
+        ),
+    )
+    findings = vm.validate_link_check(tmp_path)
+    assert any("link-check args must be" in f.message for f in findings)
+    assert any("link-check fail must be" in f.message for f in findings)
+    assert any("markdown-lint globs must be" in f.message for f in findings)
+    assert any("markdown-lint config must be" in f.message for f in findings)
+    assert any("cache-dependency-path must be" in f.message for f in findings)
+
+    findings = vm.validate_ci_job_names(tmp_path)
+    assert any("CI job 'markdown-lint' name must be" in f.message for f in findings)
+    assert any("CI job 'link-check' name must be" in f.message for f in findings)
+    assert any("CI job 'actionlint' name must be" in f.message for f in findings)
+    assert any("CI job 'manifest-validate' name must be" in f.message for f in findings)
+
+    _write(
+        tmp_path / ".github" / "workflows" / "ci.yml",
+        "\n".join(
+            [
+                "name: CI",
+                "on: push",
+                "jobs:",
+                "  link-check:",
+                "    runs-on: ubuntu-latest",
+                "    steps:",
+                "      - uses: lycheeverse/lychee-action@v2",
+                "        with: not-a-mapping",
+                "",
+            ]
+        ),
+    )
+    findings = vm.validate_link_check(tmp_path)
+    assert any("lychee-action step missing with" in f.message for f in findings)
+    assert any("missing markdown-lint job" in f.message for f in findings)
+
+    _write(
+        tmp_path / ".github" / "workflows" / "ci.yml",
+        "- just-a-list\n",
+    )
+    findings = vm.validate_link_check(tmp_path)
+    assert any("root must be a mapping" in f.message for f in findings)
+    findings = vm.validate_ci_job_names(tmp_path)
+    assert any("root must be a mapping" in f.message for f in findings)
+
+    _write(
+        tmp_path / ".github" / "agents" / "my-agent.agent.md",
+        "---\nname: Hydration\ndescription: wrong desc\n---\n\nBody\n",
+    )
+    findings = vm.validate_github_agent_description(tmp_path)
+    assert any("GitHub agent description must be" in f.message for f in findings)
+    findings = vm.validate_github_agents(tmp_path)
+    assert any("GitHub agent description must be" in f.message for f in findings)
+
+    _write(
+        tmp_path / ".github" / "agents" / "my-agent.agent.md",
+        "---\nname: Hydration\n---\n\nBody\n",
+    )
+    findings = vm.validate_github_agent_description(tmp_path)
+    assert any("description missing or not a string" in f.message for f in findings)
+
+    _write(
+        tmp_path / ".github" / "agents" / "my-agent.agent.md",
+        "---\n- just a list\n---\n\nBody\n",
+    )
+    findings = vm.validate_github_agent_description(tmp_path)
+    assert any("frontmatter must be a mapping" in f.message for f in findings)
+
+    _write(
+        tmp_path / ".markdownlint.yaml",
+        "\n".join(
+            [
+                "default: true",
+                "MD013:",
+                "  line_length: 200",
+                "  tables: true",
+                "  code_blocks: true",
+                "MD025: false",
+                "MD033: false",
+                "MD024:",
+                "  siblings_only: true",
+                "",
+            ]
+        ),
+    )
+    findings = vm.validate_markdownlint(tmp_path)
+    assert any("MD013.tables must be" in f.message for f in findings)
+    assert any("MD013.code_blocks must be" in f.message for f in findings)
+
+    _write(
+        tmp_path / "pyproject.toml",
+        "\n".join(
+            [
+                "[project]",
+                f'name = "{vm.PYPROJECT_NAME}"',
+                'version = "9.9.9"',
+                'license = { text = "Apache-2.0" }',
+                f'requires-python = "{vm.PYPROJECT_REQUIRES_PYTHON}"',
+                "[tool.pytest.ini_options]",
+                'testpaths = ["tests"]',
+                'addopts = "-vv"',
+                "[tool.ruff]",
+                f'target-version = "{vm.PYPROJECT_RUFF_TARGET_VERSION}"',
+                "line-length = 80",
+                'src = ["elsewhere"]',
+                "[tool.ruff.lint]",
+                f"select = {list(vm.PYPROJECT_RUFF_LINT_SELECT)!r}".replace("'", '"'),
+                "[tool.coverage.run]",
+                "branch = true",
+                "[tool.coverage.report]",
+                "show_missing = false",
+                "skip_empty = false",
+                "fail_under = 99",
+                "",
+            ]
+        ),
+    )
+    findings = vm.validate_pyproject(tmp_path)
+    assert any("project.version must be" in f.message for f in findings)
+    assert any("project.license.text must be" in f.message for f in findings)
+    assert any("pytest addopts must be" in f.message for f in findings)
+    assert any("ruff line-length must be" in f.message for f in findings)
+    assert any("ruff src must equal" in f.message for f in findings)
+    assert any("show_missing must be" in f.message for f in findings)
+    assert any("skip_empty must be" in f.message for f in findings)
+
+    _copy_schemas(tmp_path)
+    inventory = json.loads(
+        (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
+    )
+
+    broken_jobs = dict(inventory)
+    broken_jobs["ci_job_display_names"] = {"wrong": "X"}
+    findings = vm._inventory_lock_consistency(
+        broken_jobs, schema_path="schemas/packaging-inventory.json"
+    )
+    assert any(
+        "ci_job_display_names keys inconsistent" in f.message for f in findings
+    )
+
+    dup_jobs = dict(inventory)
+    names = dict(dup_jobs["ci_job_display_names"])
+    keys = list(names)
+    names[keys[1]] = names[keys[0]]
+    dup_jobs["ci_job_display_names"] = names
+    findings = vm._inventory_lock_consistency(
+        dup_jobs, schema_path="schemas/packaging-inventory.json"
+    )
+    assert any(
+        "ci_job_display_names values must be unique" in f.message for f in findings
+    )
+
+    empty_jobs = dict(inventory)
+    empty_jobs["ci_job_display_names"] = {}
+    # Keep required_ci_jobs empty-compatible for key mismatch + empty check
+    empty_jobs["required_ci_jobs"] = []
+    findings = vm._inventory_lock_consistency(
+        empty_jobs, schema_path="schemas/packaging-inventory.json"
+    )
+    assert any("ci_job_display_names must not be empty" in f.message for f in findings)
+
+    empty_src = dict(inventory)
+    empty_src["pyproject_ruff_src"] = []
+    findings = vm._inventory_lock_consistency(
+        empty_src, schema_path="schemas/packaging-inventory.json"
+    )
+    assert any("pyproject_ruff_src must not be empty" in f.message for f in findings)
+
+    dup_src = dict(inventory)
+    dup_src["pyproject_ruff_src"] = ["scripts", "scripts"]
+    findings = vm._inventory_lock_consistency(
+        dup_src, schema_path="schemas/packaging-inventory.json"
+    )
+    assert any("pyproject_ruff_src must be unique" in f.message for f in findings)
+
+    blank_desc = dict(inventory)
+    blank_desc["github_agent_description"] = "   "
+    findings = vm._inventory_lock_consistency(
+        blank_desc, schema_path="schemas/packaging-inventory.json"
+    )
+    assert any(
+        "github_agent_description must be a non-empty string" in f.message
+        for f in findings
+    )
+
+    blank_args = dict(inventory)
+    blank_args["ci_link_check_args"] = ""
+    findings = vm._inventory_lock_consistency(
+        blank_args, schema_path="schemas/packaging-inventory.json"
+    )
+    assert any(
+        "ci_link_check_args must be a non-empty string" in f.message for f in findings
+    )
+
+    for rel in _inventory_payload()["required_paths"]:
+        target = tmp_path / rel
+        target.parent.mkdir(parents=True, exist_ok=True)
+        if not target.exists():
+            target.write_text("ok\n", encoding="utf-8")
+    (tmp_path / "schemas" / "packaging-inventory.json").write_text(
+        json.dumps(
+            _inventory_payload(
+                ci_link_check_args="wrong",
+                ci_job_display_names={
+                    "markdown-lint": "A",
+                    "link-check": "B",
+                    "actionlint": "C",
+                    "manifest-validate": "D",
+                },
+                github_agent_description="wrong",
+                pyproject_version="1.2.3",
+                markdownlint_md013_tables=True,
+            )
+        ),
+        encoding="utf-8",
+    )
+    findings = vm.validate_packaging_inventory(tmp_path)
+    assert any("ci_link_check_args" in f.message for f in findings)
+    assert any("ci_job_display_names" in f.message for f in findings)
+    assert any("github_agent_description" in f.message for f in findings)
+    assert any("pyproject_version" in f.message for f in findings)
+    assert any("markdownlint_md013_tables" in f.message for f in findings)
+
+    # Extra branch coverage for link-check / ci-job-names / github-agent-desc / pyproject.
+    _write(tmp_path / ".github" / "workflows" / "ci.yml", "null\n")
+    assert vm.validate_link_check(tmp_path) == []
+    assert vm.validate_ci_job_names(tmp_path) == []
+
+    _write(tmp_path / ".github" / "workflows" / "ci.yml", "name: only\n")
+    findings = vm.validate_link_check(tmp_path)
+    assert any("missing jobs mapping" in f.message for f in findings)
+    findings = vm.validate_ci_job_names(tmp_path)
+    assert any("missing jobs mapping" in f.message for f in findings)
+
+    _write(
+        tmp_path / ".github" / "workflows" / "ci.yml",
+        "\n".join(
+            [
+                "name: CI",
+                "jobs:",
+                "  other:",
+                "    runs-on: ubuntu-latest",
+                "",
+            ]
+        ),
+    )
+    findings = vm.validate_link_check(tmp_path)
+    assert any("missing link-check job" in f.message for f in findings)
+    # Early return when link-check is absent — probe markdown-lint separately.
+    _write(
+        tmp_path / ".github" / "workflows" / "ci.yml",
+        "\n".join(
+            [
+                "name: CI",
+                "jobs:",
+                "  link-check:",
+                "    runs-on: ubuntu-latest",
+                "    steps:",
+                "      - uses: lycheeverse/lychee-action@v2",
+                "        with:",
+                f"          args: {vm.CI_LINK_CHECK_ARGS}",
+                f"          fail: {str(vm.CI_LINK_CHECK_FAIL).lower()}",
+                "",
+            ]
+        ),
+    )
+    findings = vm.validate_link_check(tmp_path)
+    assert any("missing markdown-lint job" in f.message for f in findings)
+    findings = vm.validate_ci_job_names(tmp_path)
+    assert any("missing job:" in f.message for f in findings)
+
+    _write(
+        tmp_path / ".github" / "workflows" / "ci.yml",
+        "\n".join(
+            [
+                "name: CI",
+                "jobs:",
+                "  link-check:",
+                "    runs-on: ubuntu-latest",
+                "  markdown-lint:",
+                "    runs-on: ubuntu-latest",
+                "",
+            ]
+        ),
+    )
+    findings = vm.validate_link_check(tmp_path)
+    assert any("link-check job missing steps" in f.message for f in findings)
+
+    _write(
+        tmp_path / ".github" / "workflows" / "ci.yml",
+        "\n".join(
+            [
+                "name: CI",
+                "jobs:",
+                "  link-check:",
+                "    runs-on: ubuntu-latest",
+                "    steps:",
+                "      - uses: lycheeverse/lychee-action@v2",
+                "        with:",
+                f"          args: {vm.CI_LINK_CHECK_ARGS}",
+                f"          fail: {str(vm.CI_LINK_CHECK_FAIL).lower()}",
+                "  markdown-lint:",
+                "    runs-on: ubuntu-latest",
+                "",
+            ]
+        ),
+    )
+    findings = vm.validate_link_check(tmp_path)
+    assert any("markdown-lint job missing steps" in f.message for f in findings)
+
+    _write(
+        tmp_path / ".github" / "workflows" / "ci.yml",
+        yaml.dump(
+            {
+                "name": "CI",
+                "jobs": {
+                    "link-check": {
+                        "runs-on": "ubuntu-latest",
+                        "steps": [
+                            "not-a-mapping-step",
+                            {
+                                "uses": "lycheeverse/lychee-action@v2",
+                                "with": {
+                                    "args": vm.CI_LINK_CHECK_ARGS,
+                                    "fail": vm.CI_LINK_CHECK_FAIL,
+                                },
+                            },
+                        ],
+                    },
+                    "markdown-lint": {
+                        "runs-on": "ubuntu-latest",
+                        "steps": [
+                            "not-a-mapping-step",
+                            {"uses": "DavidAnson/markdownlint-cli2-action@v24"},
+                        ],
+                    },
+                    "manifest-validate": {
+                        "runs-on": "ubuntu-latest",
+                        "steps": [
+                            "not-a-mapping-step",
+                            {"uses": "actions/setup-python@v5"},
+                        ],
+                    },
+                },
+            },
+            sort_keys=False,
+        ),
+    )
+    findings = vm.validate_link_check(tmp_path)
+    assert any(
+        "markdownlint-cli2-action step missing with" in f.message for f in findings
+    )
+    assert any(
+        "cache-dependency-path lock not found" in f.message for f in findings
+    )
+
+    _write(
+        tmp_path / "pyproject.toml",
+        "\n".join(
+            [
+                "[project]",
+                f'name = "{vm.PYPROJECT_NAME}"',
+                f'version = "{vm.PYPROJECT_VERSION}"',
+                f'license = {{ text = "{vm.PYPROJECT_LICENSE_TEXT}" }}',
+                f'requires-python = "{vm.PYPROJECT_REQUIRES_PYTHON}"',
+                "[tool.pytest]",
+                "ini_options = 1",
+                "[tool.ruff]",
+                f'target-version = "{vm.PYPROJECT_RUFF_TARGET_VERSION}"',
+                f"line-length = {vm.PYPROJECT_LINE_LENGTH}",
+                f"src = {list(vm.PYPROJECT_RUFF_SRC)!r}".replace("'", '"'),
+                "[tool.ruff.lint]",
+                f"select = {list(vm.PYPROJECT_RUFF_LINT_SELECT)!r}".replace("'", '"'),
+                "[tool.coverage.run]",
+                "branch = true",
+                "[tool.coverage.report]",
+                "show_missing = true",
+                "skip_empty = true",
+                "fail_under = 99",
+                "",
+            ]
+        ),
+    )
+    findings = vm.validate_pyproject(tmp_path)
+    assert any("pytest.ini_options must be a mapping" in f.message for f in findings)
+
+    _write(
+        tmp_path / ".github" / "agents" / "my-agent.agent.md",
+        "body without frontmatter\n",
+    )
+    findings = vm.validate_github_agent_description(tmp_path)
+    assert any("opening" in f.message for f in findings)
+
+    _write(
+        tmp_path / ".github" / "agents" / "my-agent.agent.md",
+        "---\n\n---\n\nBody\n",
+    )
+    findings = vm.validate_github_agent_description(tmp_path)
+    # Empty frontmatter loads as None -> continue without mapping complaint.
+    assert not any("frontmatter must be a mapping" in f.message for f in findings)
 
 
 def test_module_main_entrypoint(monkeypatch: pytest.MonkeyPatch) -> None:
