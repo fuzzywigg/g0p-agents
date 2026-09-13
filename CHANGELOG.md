@@ -10,6 +10,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Goose recipes **v25** deepeners (post-#51): `goose-howto`, `goose-state-machine`,
+  `goose-naming` validators; GOOSE-RECIPES.md How to Use individual/master
+  `goose run` path locks, Scratchpad State Machine locks, and Recipe Naming
+  Convention / Adding New Recipes locks; consistency deepeners for
+  `goose_howto_required_phrases` / `goose_state_machine_required_phrases` /
+  `goose_naming_required_phrases` (88 total; historic four only — goose recipes
+  slice, not README honesty, PR-template, contributing, issue-template,
+  scratchpad, postmortem, archive snapshot, security policy, routing/identity,
+  or Dependabot)
+
 - README archive honesty **v24** deepeners (post-#47): `readme-honesty`,
   `readme-historic`, `readme-contents` validators; README.md archived-reference /
   not-a-live-hive / prompt-fiction locks, Historic prompt set four-agent role
