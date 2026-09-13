@@ -153,7 +153,7 @@ REQUIRED_ARCHIVE_DOCS = (
     "README.md",
 )
 
-INVENTORY_VERSION = 16
+INVENTORY_VERSION = 17
 CURSOR_ENVIRONMENT_NAME = "g0p-agents"
 DEPENDABOT_SCHEDULE_INTERVAL = "weekly"
 DEPENDABOT_DIRECTORIES: frozenset[str] = frozenset({"/"})
@@ -502,6 +502,32 @@ POSTMORTEM_REQUIRED_PHRASES = (
     "documentation archive",
 )
 
+POSTMORTEM_INTRO_REQUIRED_PHRASES: tuple[str, ...] = (
+    "Decision & Incident Log",
+    "Every significant decision, conflict, and resolution is logged here",
+    "Agents MUST log decisions after each workflow",
+    "Andrew reviews quarterly",
+)
+
+POSTMORTEM_FIELD_REQUIRED_PHRASES: tuple[str, ...] = (
+    "**Date**:",
+    "**Decision**:",
+    "**Agent**:",
+    "**Context**:",
+    "**LIST B Deferred**:",
+    "**Risk Level**:",
+    "**Files Created**:",
+    "**Blocked**:",
+    "**Next Steps**:",
+)
+
+POSTMORTEM_NEXT_STEPS_REQUIRED_PHRASES: tuple[str, ...] = (
+    "Andrew answers LIST B (B1–B5) in docs/agent-hydration.md",
+    "browser-claude or claude-cowork creates GitHub issues",
+    "claude-cowork creates/updates Notion page under Active Sprint Work",
+    "geryon scaffolds agentic_flows/ once B1 is answered",
+)
+
 GITIGNORE_REQUIRED_PATTERNS = (
     ".env",
     "*.pem",
@@ -611,7 +637,7 @@ SCRATCHPAD_STATUS_MARKERS: tuple[str, ...] = (
 SPECIALIST_AGENTS: tuple[str, ...] = DOCUMENTED_AGENTS[:-1]
 
 MIN_COVERAGE_FAIL_UNDER = 99
-MIN_VALIDATOR_COUNT = 61
+MIN_VALIDATOR_COUNT = 64
 
 
 @dataclass(frozen=True)
@@ -1262,6 +1288,26 @@ def validate_packaging_inventory(root: Path) -> list[Finding]:
         != ESCALATION_USAGE_REQUIRED_PHRASES
     ):
         findings.append(_lock_mismatch(schema_path, "escalation_usage_required_phrases"))
+
+    if (
+        tuple(inventory.get("postmortem_intro_required_phrases", ()))
+        != POSTMORTEM_INTRO_REQUIRED_PHRASES
+    ):
+        findings.append(_lock_mismatch(schema_path, "postmortem_intro_required_phrases"))
+
+    if (
+        tuple(inventory.get("postmortem_field_required_phrases", ()))
+        != POSTMORTEM_FIELD_REQUIRED_PHRASES
+    ):
+        findings.append(_lock_mismatch(schema_path, "postmortem_field_required_phrases"))
+
+    if (
+        tuple(inventory.get("postmortem_next_steps_required_phrases", ()))
+        != POSTMORTEM_NEXT_STEPS_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "postmortem_next_steps_required_phrases")
+        )
 
     expected_validator_names = tuple(sorted(VALIDATORS))
     if tuple(inventory.get("validator_names", ())) != expected_validator_names:
@@ -1918,6 +1964,95 @@ def _inventory_lock_consistency(
                 Finding(
                     schema_path,
                     "escalation_usage_required_phrases must include intro, fence, and From Agent",
+                )
+            )
+
+    intro = list(inventory.get("postmortem_intro_required_phrases", ()))
+    if len(intro) != len(set(intro)):
+        findings.append(
+            Finding(schema_path, "postmortem_intro_required_phrases must be unique")
+        )
+    if not intro:
+        findings.append(
+            Finding(schema_path, "postmortem_intro_required_phrases must not be empty")
+        )
+    for phrase in intro:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "postmortem_intro_required_phrases entries must be non-empty strings",
+                )
+            )
+            break
+    else:
+        if intro and not any("MUST log decisions" in phrase for phrase in intro):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "postmortem_intro_required_phrases must require agents to log decisions",
+                )
+            )
+
+    fields = list(inventory.get("postmortem_field_required_phrases", ()))
+    if len(fields) != len(set(fields)):
+        findings.append(
+            Finding(schema_path, "postmortem_field_required_phrases must be unique")
+        )
+    if not fields:
+        findings.append(
+            Finding(schema_path, "postmortem_field_required_phrases must not be empty")
+        )
+    for phrase in fields:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "postmortem_field_required_phrases entries must be non-empty strings",
+                )
+            )
+            break
+    else:
+        required_fields = {"**Date**:", "**Decision**:", "**Agent**:"}
+        if fields and not required_fields <= set(fields):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "postmortem_field_required_phrases must include Date/Decision/Agent",
+                )
+            )
+
+    next_steps = list(inventory.get("postmortem_next_steps_required_phrases", ()))
+    if len(next_steps) != len(set(next_steps)):
+        findings.append(
+            Finding(schema_path, "postmortem_next_steps_required_phrases must be unique")
+        )
+    if not next_steps:
+        findings.append(
+            Finding(
+                schema_path, "postmortem_next_steps_required_phrases must not be empty"
+            )
+        )
+    for phrase in next_steps:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "postmortem_next_steps_required_phrases entries must be non-empty strings",
+                )
+            )
+            break
+    else:
+        required_next = {
+            "Andrew answers LIST B (B1–B5) in docs/agent-hydration.md",
+            "geryon scaffolds agentic_flows/ once B1 is answered",
+        }
+        if next_steps and not required_next <= set(next_steps):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "postmortem_next_steps_required_phrases must include "
+                    "LIST B and geryon scaffold",
                 )
             )
 
@@ -3518,6 +3653,55 @@ def validate_postmortem_packaging(root: Path) -> list[Finding]:
     return findings
 
 
+def validate_postmortem_intro(root: Path) -> list[Finding]:
+    rel = "postmortem.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "postmortem.md missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    for phrase in POSTMORTEM_INTRO_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(rel, f"missing locked postmortem-intro phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_postmortem_fields(root: Path) -> list[Finding]:
+    rel = "postmortem.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "postmortem.md missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## Decision: Repo Hydration" not in text:
+        findings.append(Finding(rel, "missing Decision: Repo Hydration section"))
+    for phrase in POSTMORTEM_FIELD_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(rel, f"missing locked postmortem-field phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_postmortem_next_steps(root: Path) -> list[Finding]:
+    rel = "postmortem.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "postmortem.md missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "**Next Steps**:" not in text:
+        findings.append(Finding(rel, "missing Next Steps field"))
+    for phrase in POSTMORTEM_NEXT_STEPS_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(rel, f"missing locked postmortem-next-steps phrase: {phrase}")
+            )
+    return findings
+
+
 def validate_gitignore_packaging(root: Path) -> list[Finding]:
     rel = ".gitignore"
     path = root / rel
@@ -4488,6 +4672,9 @@ VALIDATORS: dict[str, ValidatorFn] = {
     "cross-docs": validate_cross_doc_agents,
     "changelog": validate_changelog_packaging,
     "postmortem": validate_postmortem_packaging,
+    "postmortem-intro": validate_postmortem_intro,
+    "postmortem-fields": validate_postmortem_fields,
+    "postmortem-next-steps": validate_postmortem_next_steps,
     "gitignore": validate_gitignore_packaging,
     "negative-constraints": validate_negative_constraints,
     "claude": validate_claude_packaging,

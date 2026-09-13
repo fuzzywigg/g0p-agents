@@ -133,7 +133,10 @@
     "escalation_block_required_phrases",
     "routing_matrix_rationale_phrases",
     "claude_metadata_required_phrases",
-    "escalation_usage_required_phrases"
+    "escalation_usage_required_phrases",
+    "postmortem_next_steps_required_phrases",
+    "postmortem_field_required_phrases",
+    "postmortem_intro_required_phrases"
   ],
   "properties": {
     "version": {
@@ -1026,6 +1029,33 @@
       }
     },
     "escalation_usage_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "postmortem_intro_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "postmortem_field_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "postmortem_next_steps_required_phrases": {
       "type": "array",
       "minItems": 1,
       "uniqueItems": true,

@@ -1,5 +1,5 @@
 {
-  "version": 16,
+  "version": 17,
   "documented_agents": [
     "QuantumArchitectAgent",
     "BlockchainArchitectAgent",
@@ -312,6 +312,9 @@
     "markdownlint",
     "negative-constraints",
     "postmortem",
+    "postmortem-fields",
+    "postmortem-intro",
+    "postmortem-next-steps",
     "pr-routing",
     "pr-template",
     "prompts",
@@ -333,7 +336,7 @@
     "yaml-configs"
   ],
   "min_coverage_fail_under": 99,
-  "min_validator_count": 61,
+  "min_validator_count": 64,
   "required_paths": [
     "README.md",
     "LICENSE",
@@ -603,5 +606,28 @@
     "Conflict: [What constraint am I hitting?]",
     "Recommendation: [How should we resolve this?]",
     "Timeline: [How long until decision needed?]"
+  ],
+  "postmortem_intro_required_phrases": [
+    "Decision & Incident Log",
+    "Every significant decision, conflict, and resolution is logged here",
+    "Agents MUST log decisions after each workflow",
+    "Andrew reviews quarterly"
+  ],
+  "postmortem_field_required_phrases": [
+    "**Date**:",
+    "**Decision**:",
+    "**Agent**:",
+    "**Context**:",
+    "**LIST B Deferred**:",
+    "**Risk Level**:",
+    "**Files Created**:",
+    "**Blocked**:",
+    "**Next Steps**:"
+  ],
+  "postmortem_next_steps_required_phrases": [
+    "Andrew answers LIST B (B1\u2013B5) in docs/agent-hydration.md",
+    "browser-claude or claude-cowork creates GitHub issues",
+    "claude-cowork creates/updates Notion page under Active Sprint Work",
+    "geryon scaffolds agentic_flows/ once B1 is answered"
   ]
 }
