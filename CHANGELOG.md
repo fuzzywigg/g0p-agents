@@ -10,6 +10,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- PR template **v23** deepeners (post-#45): `pr-summary`, `pr-acceptance`,
+  `pr-notes` validators; pull_request_template.md Summary/Problem guidance locks,
+  Changes/Acceptance Criteria checkbox locks, and Notes for Reviewer / routing
+  placeholder locks; consistency deepeners for `pr_summary_required_phrases` /
+  `pr_acceptance_required_phrases` / `pr_notes_required_phrases` (82 total;
+  historic four only — PR template slice, not contributing, issue-template,
+  scratchpad, postmortem, archive snapshot, security policy, routing/identity,
+  or Dependabot). Also syncs `ci_required_actions` pins to setup-python@v7 /
+  upload-artifact@v7 after merged Dependabot #17 (inventory lock only).
+
 - Contributing guide **v22** deepeners (post-#44): `contributing-who`,
   `contributing-branches`, `contributing-pr` validators; CONTRIBUTING.md Who Can
   Contribute locks + Branch Strategy table locks + PR Requirements / Governance
