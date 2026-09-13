@@ -58,6 +58,19 @@ def _copy_schemas(tmp_path: Path) -> None:
         (dest / src.name).write_bytes(src.read_bytes())
 
 
+def _inventory_payload(**overrides: object) -> dict:
+    payload = {
+        "version": 2,
+        "documented_agents": list(vm.DOCUMENTED_AGENTS),
+        "expected_recipe_names": sorted(vm.EXPECTED_RECIPE_NAMES),
+        "expected_recipe_files": list(vm.EXPECTED_RECIPE_FILES),
+        "required_ci_jobs": sorted(vm.REQUIRED_CI_JOBS),
+        "required_paths": ["README.md"],
+    }
+    payload.update(overrides)
+    return payload
+
+
 def test_extract_fenced_yaml_ignores_indented_nested_fences() -> None:
     markdown = """# Doc
 
@@ -134,6 +147,26 @@ def test_extract_fenced_yaml_multiple_blocks() -> None:
             },
             False,
         ),
+        (
+            {
+                **json.loads(json.dumps(MINIMAL_RECIPE)),
+                "recipe": {
+                    **MINIMAL_RECIPE["recipe"],
+                    "extensions": [{"type": "unknown", "name": "x"}],
+                },
+            },
+            False,
+        ),
+        (
+            {
+                **json.loads(json.dumps(MINIMAL_RECIPE)),
+                "recipe": {
+                    **MINIMAL_RECIPE["recipe"],
+                    "extensions": [{"type": "stdio", "name": "custom", "timeout": 10}],
+                },
+            },
+            True,
+        ),
     ],
 )
 def test_goose_recipe_schema_matrix(payload: dict, expect_empty: bool) -> None:
@@ -159,10 +192,28 @@ def test_goose_recipe_schema_rejects_additional_top_level_keys() -> None:
     assert findings
 
 
+def test_goose_recipe_schema_rejects_timeout_overflow() -> None:
+    schema = vm.load_schema("goose-recipe.schema.json")
+    bad = json.loads(json.dumps(MINIMAL_RECIPE))
+    bad["recipe"]["extensions"][0]["timeout"] = 999999
+    findings = vm.validate_against_schema(bad, schema, path="fixture")
+    assert findings
+
+
 def test_cursor_environment_schema_requires_install() -> None:
     schema = vm.load_schema("cursor-environment.schema.json")
     findings = vm.validate_against_schema({"name": "x"}, schema, path="fixture")
     assert any("install" in f.message for f in findings)
+
+
+def test_cursor_environment_schema_rejects_empty_terminals() -> None:
+    schema = vm.load_schema("cursor-environment.schema.json")
+    findings = vm.validate_against_schema(
+        {"name": "x", "install": "true", "terminals": [""]},
+        schema,
+        path="fixture",
+    )
+    assert findings
 
 
 def test_github_agent_frontmatter_roundtrip(tmp_path: Path) -> None:
@@ -185,6 +236,17 @@ def test_github_agent_frontmatter_rejects_missing_description(tmp_path: Path) ->
     findings = vm.validate_github_agents(tmp_path)
     assert findings
     assert any("description" in f.message for f in findings)
+
+
+def test_github_agent_rejects_empty_body(tmp_path: Path) -> None:
+    agents = tmp_path / ".github" / "agents"
+    agents.mkdir(parents=True)
+    (agents / "empty.agent.md").write_text(
+        "---\nname: Empty\ndescription: No body.\n---\n\n",
+        encoding="utf-8",
+    )
+    findings = vm.validate_github_agents(tmp_path)
+    assert any("body after frontmatter is empty" in f.message for f in findings)
 
 
 def test_github_agent_missing_directory(tmp_path: Path) -> None:
@@ -210,6 +272,14 @@ def test_issue_template_rejects_missing_about(tmp_path: Path) -> None:
     assert any("about" in f.message for f in findings)
 
 
+def test_issue_template_rejects_empty_body(tmp_path: Path) -> None:
+    _copy_schemas(tmp_path)
+    templates = tmp_path / ".github" / "ISSUE_TEMPLATE"
+    _write(templates / "bug.md", "---\nname: Bug\nabout: x\n---\n\n")
+    findings = vm.validate_issue_templates(tmp_path)
+    assert any("body after frontmatter is empty" in f.message for f in findings)
+
+
 def test_dependabot_schema_accepts_live_config() -> None:
     data = yaml.safe_load(
         (REPO_ROOT / ".github" / "dependabot.yml").read_text(encoding="utf-8")
@@ -226,6 +296,25 @@ def test_dependabot_schema_rejects_v1() -> None:
     assert findings
 
 
+def test_dependabot_schema_rejects_unknown_ecosystem() -> None:
+    schema = vm.load_schema("dependabot-v2.schema.json")
+    findings = vm.validate_against_schema(
+        {
+            "version": 2,
+            "updates": [
+                {
+                    "package-ecosystem": "not-real",
+                    "directory": "/",
+                    "schedule": {"interval": "weekly"},
+                }
+            ],
+        },
+        schema,
+        path="fixture",
+    )
+    assert findings
+
+
 def test_packaging_inventory_schema_and_live_paths() -> None:
     inventory = json.loads(
         (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
@@ -237,16 +326,31 @@ def test_packaging_inventory_schema_and_live_paths() -> None:
 
 def test_packaging_inventory_detects_missing_path(tmp_path: Path) -> None:
     _copy_schemas(tmp_path)
-    inventory = {
-        "version": 1,
-        "required_paths": ["README.md", "DOES_NOT_EXIST.md"],
-    }
+    inventory = _inventory_payload(required_paths=["README.md", "DOES_NOT_EXIST.md"])
     (tmp_path / "schemas" / "packaging-inventory.json").write_text(
         json.dumps(inventory), encoding="utf-8"
     )
     _write(tmp_path / "README.md", "# hi\n")
     findings = vm.validate_packaging_inventory(tmp_path)
     assert any("DOES_NOT_EXIST.md" in f.path for f in findings)
+
+
+def test_packaging_inventory_lock_mismatch(tmp_path: Path) -> None:
+    _copy_schemas(tmp_path)
+    inventory = _inventory_payload(
+        documented_agents=[
+            "QuantumArchitectAgent",
+            "BlockchainArchitectAgent",
+            "EdgeSecurityAgent",
+            "InventedGhostAgent",
+        ]
+    )
+    (tmp_path / "schemas" / "packaging-inventory.json").write_text(
+        json.dumps(inventory), encoding="utf-8"
+    )
+    _write(tmp_path / "README.md", "# hi\n")
+    findings = vm.validate_packaging_inventory(tmp_path)
+    assert any("documented_agents" in f.message for f in findings)
 
 
 def test_schemas_meta_validation_passes_on_live_repo() -> None:
@@ -265,6 +369,13 @@ def test_schemas_meta_detects_invalid_schema(tmp_path: Path) -> None:
             (schemas / name).write_text("{}", encoding="utf-8")
     findings = vm.validate_schemas_meta(tmp_path)
     assert any("goose-recipe.schema.json" in f.path for f in findings)
+
+
+def test_schemas_meta_detects_orphan_schema(tmp_path: Path) -> None:
+    _copy_schemas(tmp_path)
+    (tmp_path / "schemas" / "invented.schema.json").write_text("{}", encoding="utf-8")
+    findings = vm.validate_schemas_meta(tmp_path)
+    assert any("orphan schema" in f.message for f in findings)
 
 
 def test_documented_recipe_file_paths_parser() -> None:
@@ -366,6 +477,13 @@ def test_frontmatter_requires_closing_delimiter() -> None:
     assert findings
 
 
+def test_extract_frontmatter_body() -> None:
+    body = vm.extract_frontmatter_body("---\nname: x\n---\n\n# Hello\n")
+    assert body.strip() == "# Hello"
+    assert vm.extract_frontmatter_body("no frontmatter\n") == "no frontmatter\n"
+    assert vm.extract_frontmatter_body("---\nname: x\n") == ""
+
+
 def test_run_all_validations_passes_on_live_repo() -> None:
     findings = vm.run_all_validations(REPO_ROOT)
     assert findings == [], "\n".join(str(f) for f in findings)
@@ -419,6 +537,10 @@ def test_locked_constants_match_live_recipes() -> None:
     assert names == vm.EXPECTED_RECIPE_NAMES
     declared = vm.documented_recipe_file_paths(markdown)
     assert tuple(declared) == vm.EXPECTED_RECIPE_FILES
+    for name, file_path in zip(
+        [yaml.safe_load(block)["name"] for block in blocks], declared, strict=True
+    ):
+        assert vm.EXPECTED_RECIPE_BINDINGS[name] == file_path
 
 
 def test_no_on_disk_recipe_yaml_invented_yet() -> None:
@@ -432,6 +554,18 @@ def test_live_issue_templates_validate() -> None:
 
 def test_live_dependabot_validate() -> None:
     assert vm.validate_dependabot(REPO_ROOT) == []
+
+
+def test_live_markdownlint_validate() -> None:
+    assert vm.validate_markdownlint(REPO_ROOT) == []
+
+
+def test_live_scratchpad_validate() -> None:
+    assert vm.validate_scratchpad(REPO_ROOT) == []
+
+
+def test_live_pyproject_validate() -> None:
+    assert vm.validate_pyproject(REPO_ROOT) == []
 
 
 def test_live_recipe_agent_bindings() -> None:
@@ -456,6 +590,9 @@ def test_validators_registry_covers_all_checks() -> None:
         "github-agents",
         "issue-templates",
         "dependabot",
+        "markdownlint",
+        "scratchpad",
+        "pyproject",
         "yaml-configs",
         "ci",
         "prompts",
@@ -561,6 +698,23 @@ def test_goose_recipes_parse_and_inventory_errors(tmp_path: Path) -> None:
     assert any("goose run path" in msg for msg in messages)
 
 
+def test_goose_recipes_binding_mismatch(tmp_path: Path) -> None:
+    recipes = []
+    for name in sorted(vm.EXPECTED_RECIPE_NAMES):
+        recipe = json.loads(json.dumps(LOCKED_RECIPE))
+        recipe["name"] = name
+        recipes.append(yaml.safe_dump(recipe, sort_keys=False))
+    # Intentionally swap first two file declarations vs names order.
+    files = list(vm.EXPECTED_RECIPE_FILES)
+    files[0], files[1] = files[1], files[0]
+    body = "\n\n".join(f"```yaml\n{block}```" for block in recipes)
+    for rel in files:
+        body += f"\n**File**: `./{rel}`\n"
+    _write(tmp_path / "GOOSE-RECIPES.md", body)
+    findings = vm.validate_goose_recipes(tmp_path)
+    assert any("must bind to" in f.message or "locked recipe file" in f.message for f in findings)
+
+
 def test_recipe_agent_bindings_missing_doc(tmp_path: Path) -> None:
     findings = vm.validate_recipe_agent_bindings(tmp_path)
     assert any("required documentation file is missing" in f.message for f in findings)
@@ -603,6 +757,71 @@ def test_dependabot_missing_empty_and_invalid(tmp_path: Path) -> None:
     assert vm.validate_dependabot(tmp_path)
 
 
+def test_dependabot_requires_pip_ecosystem(tmp_path: Path) -> None:
+    _copy_schemas(tmp_path)
+    _write(
+        tmp_path / ".github" / "dependabot.yml",
+        "\n".join(
+            [
+                "version: 2",
+                "updates:",
+                '  - package-ecosystem: "github-actions"',
+                '    directory: "/"',
+                "    schedule:",
+                '      interval: "weekly"',
+                "",
+            ]
+        ),
+    )
+    findings = vm.validate_dependabot(tmp_path)
+    assert any("pip" in f.message for f in findings)
+
+
+def test_markdownlint_validator_paths(tmp_path: Path) -> None:
+    assert any("missing" in f.message for f in vm.validate_markdownlint(tmp_path))
+    _copy_schemas(tmp_path)
+    _write(tmp_path / ".markdownlint.yaml", "")
+    assert any("empty" in f.message for f in vm.validate_markdownlint(tmp_path))
+    _write(tmp_path / ".markdownlint.yaml", "MD013: false\n")
+    findings = vm.validate_markdownlint(tmp_path)
+    assert any("default" in f.message for f in findings)
+
+
+def test_scratchpad_validator_paths(tmp_path: Path) -> None:
+    assert any("missing" in f.message for f in vm.validate_scratchpad(tmp_path))
+    _write(tmp_path / "agentic_flows" / "scratchpad.txt", "   \n")
+    assert any("empty" in f.message for f in vm.validate_scratchpad(tmp_path))
+    _write(tmp_path / "agentic_flows" / "scratchpad.txt", "coordination notes only\n")
+    findings = vm.validate_scratchpad(tmp_path)
+    assert any("identifying header" in f.message for f in findings)
+    assert any("checkbox" in f.message for f in findings)
+
+
+def test_pyproject_validator_paths(tmp_path: Path) -> None:
+    assert any("missing" in f.message for f in vm.validate_pyproject(tmp_path))
+    _write(tmp_path / "pyproject.toml", "not = [toml")
+    assert any("TOML parse error" in f.message for f in vm.validate_pyproject(tmp_path))
+    _write(tmp_path / "pyproject.toml", "[project]\nname = 'x'\n")
+    findings = vm.validate_pyproject(tmp_path)
+    assert any("[tool]" in f.message for f in findings)
+    _write(
+        tmp_path / "pyproject.toml",
+        "\n".join(
+            [
+                "[tool.pytest.ini_options]",
+                'testpaths = ["tests"]',
+                "[tool.ruff]",
+                'target-version = "py311"',
+                "[tool.coverage.report]",
+                "fail_under = 10",
+                "",
+            ]
+        ),
+    )
+    findings = vm.validate_pyproject(tmp_path)
+    assert any("fail_under must be >=" in f.message for f in findings)
+
+
 def test_yaml_configs_missing(tmp_path: Path) -> None:
     findings = vm.validate_yaml_configs(tmp_path)
     assert len(findings) == len(vm.KNOWN_YAML_CONFIGS)
@@ -622,6 +841,7 @@ def test_ci_workflow_error_paths(tmp_path: Path) -> None:
             "jobs:",
             "  markdown-lint: {}",
             "  link-check: {}",
+            "  actionlint: {}",
             "  manifest-validate:",
             "    steps:",
             "      - run: echo hi",
@@ -632,6 +852,9 @@ def test_ci_workflow_error_paths(tmp_path: Path) -> None:
     findings = vm.validate_ci_workflow(tmp_path)
     assert any("validate_manifests.py" in f.message for f in findings)
     assert any("pytest" in f.message for f in findings)
+    assert any("ruff" in f.message for f in findings)
+    assert any("--cov" in f.message for f in findings)
+    assert any("Python version matrix" in f.message for f in findings)
 
 
 def test_prompts_missing_file_and_agent_token(tmp_path: Path) -> None:
@@ -691,3 +914,155 @@ def test_yaml_configs_parse_error(tmp_path: Path) -> None:
         _write(tmp_path / rel, ":\n")
     findings = vm.validate_yaml_configs(tmp_path)
     assert any("YAML parse error" in f.message for f in findings)
+
+
+def test_markdownlint_yaml_parse_error(tmp_path: Path) -> None:
+    _copy_schemas(tmp_path)
+    _write(tmp_path / ".markdownlint.yaml", ":\n")
+    findings = vm.validate_markdownlint(tmp_path)
+    assert any("YAML parse error" in f.message for f in findings)
+
+
+def test_packaging_inventory_lock_recipe_and_ci_mismatches(tmp_path: Path) -> None:
+    _copy_schemas(tmp_path)
+    _write(tmp_path / "README.md", "# hi\n")
+
+    names = _inventory_payload(
+        expected_recipe_names=[
+            "quantum_algorithm_design_workflow",
+            "blockchain_contract_design_workflow",
+            "edge_security_implementation_workflow",
+            "invented_extra_workflow",
+        ]
+    )
+    (tmp_path / "schemas" / "packaging-inventory.json").write_text(
+        json.dumps(names), encoding="utf-8"
+    )
+    assert any(
+        "expected_recipe_names" in f.message
+        for f in vm.validate_packaging_inventory(tmp_path)
+    )
+
+    files = _inventory_payload(
+        expected_recipe_files=[
+            "agentic_flows/quantum_algorithm_design.yaml",
+            "agentic_flows/blockchain_contract_design.yaml",
+            "agentic_flows/edge_security_implementation.yaml",
+            "agentic_flows/invented.yaml",
+        ]
+    )
+    (tmp_path / "schemas" / "packaging-inventory.json").write_text(
+        json.dumps(files), encoding="utf-8"
+    )
+    assert any(
+        "expected_recipe_files" in f.message
+        for f in vm.validate_packaging_inventory(tmp_path)
+    )
+
+    jobs = _inventory_payload(required_ci_jobs=["markdown-lint", "link-check"])
+    (tmp_path / "schemas" / "packaging-inventory.json").write_text(
+        json.dumps(jobs), encoding="utf-8"
+    )
+    # Schema requires minItems but unique set mismatch still caught after schema if valid;
+    # use a schema-valid but lock-mismatched set.
+    jobs = _inventory_payload(
+        required_ci_jobs=[
+            "markdown-lint",
+            "link-check",
+            "actionlint",
+            "invented-job",
+        ]
+    )
+    (tmp_path / "schemas" / "packaging-inventory.json").write_text(
+        json.dumps(jobs), encoding="utf-8"
+    )
+    assert any(
+        "required_ci_jobs" in f.message for f in vm.validate_packaging_inventory(tmp_path)
+    )
+
+
+def test_goose_recipes_non_mapping_and_missing_names(tmp_path: Path) -> None:
+    blocks = ["- just-a-list\n"] * 4
+    body = "\n\n".join(f"```yaml\n{block}```" for block in blocks)
+    for rel in vm.EXPECTED_RECIPE_FILES:
+        body += f"\n**File**: `./{rel}`\n"
+    _write(tmp_path / "GOOSE-RECIPES.md", body)
+    findings = vm.validate_goose_recipes(tmp_path)
+    assert any("must be a mapping" in f.message for f in findings)
+
+
+def test_recipe_agent_bindings_skips_incomplete_recipe(tmp_path: Path) -> None:
+    body = "```yaml\nname: quantum_algorithm_design_workflow\nrecipe: not-a-map\n```\n"
+    _write(tmp_path / "GOOSE-RECIPES.md", body)
+    findings = vm.validate_recipe_agent_bindings(tmp_path)
+    assert findings == [] or all("primary agent" not in f.message for f in findings)
+
+
+def test_environment_install_non_string(tmp_path: Path) -> None:
+    _copy_schemas(tmp_path)
+    # Bypass schema by writing invalid then... schema rejects non-string install.
+    # Cover branch where install is missing type after schema soft-pass is impossible;
+    # instead assert schema finding for wrong type.
+    env = {"name": "x", "install": 123}
+    _write(tmp_path / ".cursor" / "environment.json", json.dumps(env))
+    findings = vm.validate_cursor_environment(tmp_path)
+    assert findings
+
+
+def test_pyproject_missing_sections(tmp_path: Path) -> None:
+    _write(
+        tmp_path / "pyproject.toml",
+        "\n".join(
+            [
+                "[tool]",
+                "[tool.coverage]",
+                "source = ['scripts']",
+                "",
+            ]
+        ),
+    )
+    findings = vm.validate_pyproject(tmp_path)
+    assert any("pytest.ini_options" in f.message for f in findings)
+    assert any("[tool.ruff]" in f.message for f in findings)
+    assert any("[tool.coverage]" in f.message or "fail_under" in f.message for f in findings)
+
+    _write(
+        tmp_path / "pyproject.toml",
+        "\n".join(
+            [
+                "[tool.pytest.ini_options]",
+                'testpaths = ["tests"]',
+                "[tool.ruff]",
+                'target-version = "py311"',
+                "[tool.coverage.run]",
+                'source = ["scripts"]',
+                "",
+            ]
+        ),
+    )
+    findings = vm.validate_pyproject(tmp_path)
+    assert any("fail_under" in f.message for f in findings)
+
+
+def test_ci_workflow_matrix_too_small(tmp_path: Path) -> None:
+    ci_yaml = "\n".join(
+        [
+            "name: CI",
+            "jobs:",
+            "  markdown-lint: {}",
+            "  link-check: {}",
+            "  actionlint: {}",
+            "  manifest-validate:",
+            "    strategy:",
+            "      matrix:",
+            '        python-version: ["3.12"]',
+            "    steps:",
+            "      - run: ruff check scripts tests",
+            "      - run: python scripts/validate_manifests.py",
+            "      - run: python -m pytest --cov=scripts",
+            "",
+        ]
+    )
+    _write(tmp_path / ".github" / "workflows" / "ci.yml", ci_yaml)
+    findings = vm.validate_ci_workflow(tmp_path)
+    assert any("at least 2 versions" in f.message for f in findings)

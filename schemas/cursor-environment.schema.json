@@ -2,24 +2,30 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/fuzzywigg/g0p-agents/schemas/cursor-environment.schema.json",
   "title": "Cursor Cloud Agent environment.json",
-  "description": "Minimal structural schema for .cursor/environment.json in this docs archive.",
+  "description": "Structural schema for .cursor/environment.json in this docs archive.",
   "type": "object",
   "additionalProperties": true,
   "required": ["name", "install"],
   "properties": {
     "name": {
       "type": "string",
-      "minLength": 1
+      "minLength": 1,
+      "maxLength": 128
     },
     "install": {
       "type": "string",
       "minLength": 1
     },
     "start": {
-      "type": "string"
+      "type": "string",
+      "minLength": 1
     },
     "terminals": {
-      "type": "array"
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
     }
   }
 }

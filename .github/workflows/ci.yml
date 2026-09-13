@@ -61,7 +61,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.11", "3.12"]
+        python-version: ["3.11", "3.12", "3.13"]
     steps:
       - uses: actions/checkout@v7
       - name: Set up Python
@@ -74,12 +74,27 @@ jobs:
         run: python -m pip install -r requirements-dev.txt
       - name: Ruff lint (scripts + tests)
         run: ruff check scripts tests
+      - name: List packaging validators
+        run: python scripts/validate_manifests.py --list-validators | tee validators.txt
       - name: Validate documented manifests (JSON report)
         run: |
           python scripts/validate_manifests.py --json | tee manifest-findings.json
+          test "$(python -c 'import json; print(len(json.load(open("manifest-findings.json"))))')" = "0"
           python scripts/validate_manifests.py
+      - name: Smoke each validator subset
+        run: |
+          set -euo pipefail
+          while IFS= read -r name; do
+            [ -n "$name" ] || continue
+            python scripts/validate_manifests.py --only "$name"
+          done < validators.txt
       - name: Run unit tests with coverage
-        run: python -m pytest --cov=scripts --cov-report=term-missing --cov-report=xml
+        run: >
+          python -m pytest
+          --cov=scripts
+          --cov-report=term-missing
+          --cov-report=xml
+          --junitxml=pytest-junit.xml
       - name: Upload validation artifacts
         if: always()
         uses: actions/upload-artifact@v4
@@ -87,5 +102,7 @@ jobs:
           name: manifest-validate-py${{ matrix.python-version }}
           path: |
             manifest-findings.json
+            validators.txt
             coverage.xml
+            pytest-junit.xml
           if-no-files-found: warn

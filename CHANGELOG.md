@@ -10,6 +10,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Deepened packaging validators (wave 2): markdownlint + scratchpad + pyproject
+  checks, recipe name↔file bindings, orphan-schema detection, non-empty agent /
+  issue-template bodies, Dependabot pip ecosystem requirement, inventory lock for
+  agents/recipes/CI jobs, Goose extension-type enum + timeout bounds
+- `schemas/markdownlint.schema.json`; packaging inventory v2 lock fields
+- CI: Python 3.13 matrix cell, per-validator smoke loop, junit artifact
 - Expanded packaging validators: schema meta-check, packaging inventory,
   issue-template + Dependabot schemas, recipe/agent lock (no invented agents),
   cross-doc agent presence, CI job presence, Cursor install path refs,
@@ -37,6 +43,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 
+- Coverage gate raised to 95%; Dependabot now tracks pip (`requirements-dev.txt`)
+  alongside github-actions
+- Manifest CI requires actionlint job + ruff/`--cov` step markers and a multi-version
+  Python matrix
 - Expanded CI workflow: Python matrix, ruff, coverage, actionlint, validation artifacts
 - Aligned `GOOSE-RECIPES.md` master `goose run` path with declared recipe **File**
 - CI workflow renamed to cover manifest validation in addition to markdown lint/link check
