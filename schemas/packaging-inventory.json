@@ -1,5 +1,5 @@
 {
-  "version": 4,
+  "version": 5,
   "documented_agents": [
     "QuantumArchitectAgent",
     "BlockchainArchitectAgent",
@@ -48,7 +48,10 @@
     "ruff",
     "--cov",
     "pip check",
-    "--list-validators"
+    "--list-validators",
+    "Smoke each",
+    "--only",
+    "junitxml"
   ],
   "required_schema_files": [
     "goose-recipe.schema.json",
@@ -135,8 +138,75 @@
     "Agent Surface Routing",
     "Execution Notes"
   ],
+  "issue_bug_report_headings": [
+    "Problem",
+    "Steps to Reproduce",
+    "Expected Behavior",
+    "Actual Behavior",
+    "Proposed Solution",
+    "Acceptance Criteria",
+    "Agent Surface Routing"
+  ],
+  "issue_feature_request_headings": [
+    "Problem",
+    "Proposed Solution",
+    "Acceptance Criteria",
+    "Agent Surface Routing"
+  ],
+  "required_archive_docs": [
+    "AGENT-PROMPTS.md",
+    "AGENTS-v2.2.md",
+    "CLAUDE.md",
+    "GOOSE-RECIPES.md",
+    "README.md"
+  ],
+  "known_yaml_configs": [
+    ".github/workflows/ci.yml",
+    ".github/dependabot.yml",
+    ".markdownlint.yaml"
+  ],
+  "cursor_environment_name": "g0p-agents",
+  "dependabot_schedule_interval": "weekly",
+  "ci_permissions_contents": "read",
+  "ci_artifact_name_prefix": "manifest-validate-py",
+  "ci_pull_request_branch": "alpha",
+  "pyproject_requires_python": ">=3.11",
+  "markdownlint_default": true,
+  "scratchpad_required_phrases": [
+    "source of truth",
+    "Never delete entries"
+  ],
+  "validator_names": [
+    "agent-task",
+    "agent-tokens",
+    "bug-template",
+    "ci",
+    "constitution",
+    "contributing",
+    "cross-docs",
+    "dependabot",
+    "environment",
+    "feature-template",
+    "github-agents",
+    "goose",
+    "inventory",
+    "issue-templates",
+    "license",
+    "markdownlint",
+    "pr-template",
+    "prompts",
+    "pyproject",
+    "readme",
+    "recipe-agents",
+    "requirements-dev",
+    "routing",
+    "schemas",
+    "scratchpad",
+    "security",
+    "yaml-configs"
+  ],
   "min_coverage_fail_under": 98,
-  "min_validator_count": 25,
+  "min_validator_count": 27,
   "required_paths": [
     "README.md",
     "LICENSE",
