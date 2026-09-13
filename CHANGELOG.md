@@ -18,7 +18,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   (64 total; historic four only — postmortem slice, not packaging-inventory meta,
   routing/identity, security policy, or Dependabot)
 
-
 - Agent routing / identity / escalation **v16** deepeners (post-#33):
   `routing-rationales`, `claude-metadata`, `escalation-usage` validators; CLAUDE.md
   routing-matrix rationale column locks + header Status/Tier/Owner/Created/Edit/
