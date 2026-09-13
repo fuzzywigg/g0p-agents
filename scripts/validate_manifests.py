@@ -35,6 +35,8 @@ Checks structural correctness of:
 - CI runs-on ubuntu-latest + artifact paths/if-no-files-found + actionlint shell/id locks
 - CI setup-python cache: pip + ruff check scripts/tests command locks
 - CI pip install / pip check / pytest cov+junitxml command marker locks
+- CLAUDE.md state-residency / key-files table locks (archive governance)
+- PR template Agent Surface Routing field locks (Surface/Issue/Branch/Priority)
 - pyproject project name + version/license/description/readme +
   ruff line-length/src/lint select locks
 - coverage show_missing/skip_empty/source + exact fail_under +
@@ -145,7 +147,7 @@ REQUIRED_ARCHIVE_DOCS = (
     "README.md",
 )
 
-INVENTORY_VERSION = 13
+INVENTORY_VERSION = 14
 CURSOR_ENVIRONMENT_NAME = "g0p-agents"
 DEPENDABOT_SCHEDULE_INTERVAL = "weekly"
 DEPENDABOT_DIRECTORIES: frozenset[str] = frozenset({"/"})
@@ -201,6 +203,33 @@ CI_PYTEST_REQUIRED_MARKERS: tuple[str, ...] = (
     "--cov-report=term-missing",
     "--cov-report=xml",
     "--junitxml=pytest-junit.xml",
+)
+STATE_RESIDENCY_REQUIRED_PHRASES: tuple[str, ...] = (
+    "Code, config, workflows",
+    "Policies, decisions, rollouts",
+    "Agent operating rules",
+    "Ephemeral execution context",
+    "Reusable prompts/snippets",
+    "This GitHub repo",
+    "Notion Tier 1",
+    "Notion Tier 0",
+    "Slack/Discord threads",
+    "Link, don't canonize",
+)
+KEY_FILES_REQUIRED_ENTRIES: tuple[str, ...] = (
+    "AGENTS-v2.2.md",
+    "AGENT-PROMPTS.md",
+    "GOOSE-RECIPES.md",
+    "IMPLEMENTATION-GUIDE.md",
+    "EXECUTION-SUMMARY.md",
+    "docs/agent-hydration.md",
+    "agentic_flows/",
+)
+PR_ROUTING_REQUIRED_FIELDS: tuple[str, ...] = (
+    "Surface",
+    "Issue",
+    "Branch",
+    "Priority",
 )
 LICENSE_REQUIRED_PHRASES: tuple[str, ...] = (
     "MIT License",
@@ -529,7 +558,7 @@ SCRATCHPAD_STATUS_MARKERS: tuple[str, ...] = (
 SPECIALIST_AGENTS: tuple[str, ...] = DOCUMENTED_AGENTS[:-1]
 
 MIN_COVERAGE_FAIL_UNDER = 99
-MIN_VALIDATOR_COUNT = 52
+MIN_VALIDATOR_COUNT = 55
 
 
 @dataclass(frozen=True)
@@ -1125,6 +1154,24 @@ def validate_packaging_inventory(root: Path) -> list[Finding]:
     ):
         findings.append(_lock_mismatch(schema_path, "ci_pytest_required_markers"))
 
+    if (
+        tuple(inventory.get("state_residency_required_phrases", ()))
+        != STATE_RESIDENCY_REQUIRED_PHRASES
+    ):
+        findings.append(_lock_mismatch(schema_path, "state_residency_required_phrases"))
+
+    if (
+        tuple(inventory.get("key_files_required_entries", ()))
+        != KEY_FILES_REQUIRED_ENTRIES
+    ):
+        findings.append(_lock_mismatch(schema_path, "key_files_required_entries"))
+
+    if (
+        tuple(inventory.get("pr_routing_required_fields", ()))
+        != PR_ROUTING_REQUIRED_FIELDS
+    ):
+        findings.append(_lock_mismatch(schema_path, "pr_routing_required_fields"))
+
     expected_validator_names = tuple(sorted(VALIDATORS))
     if tuple(inventory.get("validator_names", ())) != expected_validator_names:
         findings.append(_lock_mismatch(schema_path, "validator_names"))
@@ -1519,6 +1566,85 @@ def _inventory_lock_consistency(
                 Finding(
                     schema_path,
                     "ci_pytest_required_markers must include a --cov marker",
+                )
+            )
+
+    residency = list(inventory.get("state_residency_required_phrases", ()))
+    if len(residency) != len(set(residency)):
+        findings.append(
+            Finding(schema_path, "state_residency_required_phrases must be unique")
+        )
+    if not residency:
+        findings.append(
+            Finding(schema_path, "state_residency_required_phrases must not be empty")
+        )
+    for phrase in residency:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "state_residency_required_phrases entries must be non-empty strings",
+                )
+            )
+            break
+
+    key_files = list(inventory.get("key_files_required_entries", ()))
+    if len(key_files) != len(set(key_files)):
+        findings.append(
+            Finding(schema_path, "key_files_required_entries must be unique")
+        )
+    if not key_files:
+        findings.append(
+            Finding(schema_path, "key_files_required_entries must not be empty")
+        )
+    for entry in key_files:
+        if not isinstance(entry, str) or not entry.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "key_files_required_entries entries must be non-empty strings",
+                )
+            )
+            break
+    else:
+        archive_docs = set(inventory.get("required_archive_docs", ()))
+        named_files = {e for e in key_files if e.endswith(".md")}
+        if named_files and not named_files <= (
+            archive_docs
+            | {"IMPLEMENTATION-GUIDE.md", "EXECUTION-SUMMARY.md", "docs/agent-hydration.md"}
+        ):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "key_files_required_entries markdown files must be archive/hydration docs",
+                )
+            )
+
+    pr_fields = list(inventory.get("pr_routing_required_fields", ()))
+    if len(pr_fields) != len(set(pr_fields)):
+        findings.append(
+            Finding(schema_path, "pr_routing_required_fields must be unique")
+        )
+    if not pr_fields:
+        findings.append(
+            Finding(schema_path, "pr_routing_required_fields must not be empty")
+        )
+    for field in pr_fields:
+        if not isinstance(field, str) or not field.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "pr_routing_required_fields entries must be non-empty strings",
+                )
+            )
+            break
+    else:
+        required_core = {"Surface", "Issue", "Branch", "Priority"}
+        if pr_fields and not required_core <= set(pr_fields):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "pr_routing_required_fields must include Surface/Issue/Branch/Priority",
                 )
             )
 
@@ -1980,6 +2106,58 @@ def validate_pr_template(root: Path) -> list[Finding]:
     for required in PR_TEMPLATE_HEADINGS:
         if required not in headings:
             findings.append(Finding(rel, f"missing required heading: {required}"))
+    return findings
+
+
+def validate_state_residency(root: Path) -> list[Finding]:
+    rel = "CLAUDE.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "CLAUDE.md missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## State Residency Rules" not in text:
+        findings.append(Finding(rel, "missing State Residency Rules section"))
+    for phrase in STATE_RESIDENCY_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(rel, f"missing locked state-residency phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_key_files(root: Path) -> list[Finding]:
+    rel = "CLAUDE.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "CLAUDE.md missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## Key Files" not in text:
+        findings.append(Finding(rel, "missing Key Files section"))
+    for entry in KEY_FILES_REQUIRED_ENTRIES:
+        if entry not in text:
+            findings.append(
+                Finding(rel, f"missing locked key-files entry: {entry}")
+            )
+    return findings
+
+
+def validate_pr_routing(root: Path) -> list[Finding]:
+    rel = ".github/pull_request_template.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "PR template missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## Agent Surface Routing" not in text:
+        findings.append(Finding(rel, "missing Agent Surface Routing section"))
+    for field in PR_ROUTING_REQUIRED_FIELDS:
+        marker = f"| {field} |"
+        if marker not in text:
+            findings.append(
+                Finding(rel, f"missing locked PR routing field: {field}")
+            )
     return findings
 
 
@@ -3916,6 +4094,9 @@ VALIDATORS: dict[str, ValidatorFn] = {
     "ci-pip-install": validate_ci_pip_install,
     "ci-pip-check": validate_ci_pip_check,
     "ci-pytest": validate_ci_pytest,
+    "state-residency": validate_state_residency,
+    "key-files": validate_key_files,
+    "pr-routing": validate_pr_routing,
     "link-check": validate_link_check,
     "prompts": validate_documented_agent_prompts,
     "cross-docs": validate_cross_doc_agents,

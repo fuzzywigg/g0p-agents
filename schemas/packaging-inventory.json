@@ -1,5 +1,5 @@
 {
-  "version": 13,
+  "version": 14,
   "documented_agents": [
     "QuantumArchitectAgent",
     "BlockchainArchitectAgent",
@@ -302,12 +302,14 @@
     "inventory",
     "issue-names",
     "issue-templates",
+    "key-files",
     "license",
     "license-mit",
     "link-check",
     "markdownlint",
     "negative-constraints",
     "postmortem",
+    "pr-routing",
     "pr-template",
     "prompts",
     "pyproject",
@@ -321,10 +323,11 @@
     "schemas",
     "scratchpad",
     "security",
+    "state-residency",
     "yaml-configs"
   ],
   "min_coverage_fail_under": 99,
-  "min_validator_count": 52,
+  "min_validator_count": 55,
   "required_paths": [
     "README.md",
     "LICENSE",
@@ -520,5 +523,32 @@
     "--cov-report=term-missing",
     "--cov-report=xml",
     "--junitxml=pytest-junit.xml"
+  ],
+  "state_residency_required_phrases": [
+    "Code, config, workflows",
+    "Policies, decisions, rollouts",
+    "Agent operating rules",
+    "Ephemeral execution context",
+    "Reusable prompts/snippets",
+    "This GitHub repo",
+    "Notion Tier 1",
+    "Notion Tier 0",
+    "Slack/Discord threads",
+    "Link, don't canonize"
+  ],
+  "key_files_required_entries": [
+    "AGENTS-v2.2.md",
+    "AGENT-PROMPTS.md",
+    "GOOSE-RECIPES.md",
+    "IMPLEMENTATION-GUIDE.md",
+    "EXECUTION-SUMMARY.md",
+    "docs/agent-hydration.md",
+    "agentic_flows/"
+  ],
+  "pr_routing_required_fields": [
+    "Surface",
+    "Issue",
+    "Branch",
+    "Priority"
   ]
 }

@@ -10,6 +10,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Packaging inventory **v14** deepeners (post-#31): `state-residency`, `key-files`,
+  `pr-routing` validators; CLAUDE.md State Residency Rules + Key Files table locks;
+  PR template Agent Surface Routing field locks (Surface / Issue / Branch /
+  Priority); consistency deepeners for `state_residency_required_phrases` /
+  `key_files_required_entries` / `pr_routing_required_fields` (55 total; historic
+  four only — archive governance slice, not CI command deepeners)
+
 - Packaging inventory **v13** deepeners (post-#30): `ci-pip-install`, `ci-pip-check`,
   `ci-pytest` validators; CI `python -m pip install -r requirements-dev.txt` +
   `python -m pip check` command locks; pytest cov/junitxml required marker locks;
