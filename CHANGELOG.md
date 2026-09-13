@@ -10,6 +10,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- README archive honesty **v24** deepeners (post-#47): `readme-honesty`,
+  `readme-historic`, `readme-contents` validators; README.md archived-reference /
+  not-a-live-hive / prompt-fiction locks, Historic prompt set four-agent role
+  locks, and Contents / Cloud agents / Manifest validation / License section
+  locks; consistency deepeners for `readme_honesty_required_phrases` /
+  `readme_historic_required_phrases` / `readme_contents_required_phrases`
+  (85 total; historic four only — README honesty slice, not PR-template,
+  contributing, issue-template, scratchpad, postmortem, archive snapshot,
+  security policy, routing/identity, or Dependabot).
+
 - PR template **v23** deepeners (post-#45): `pr-summary`, `pr-acceptance`,
   `pr-notes` validators; pull_request_template.md Summary/Problem guidance locks,
   Changes/Acceptance Criteria checkbox locks, and Notes for Reviewer / routing

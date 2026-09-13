@@ -1,5 +1,5 @@
 {
-  "version": 23,
+  "version": 24,
   "documented_agents": [
     "QuantumArchitectAgent",
     "BlockchainArchitectAgent",
@@ -334,6 +334,9 @@
     "quarterly-review",
     "readme",
     "readme-badges",
+    "readme-contents",
+    "readme-historic",
+    "readme-honesty",
     "recipe-agents",
     "recipe-titles",
     "repo-identity",
@@ -354,7 +357,7 @@
     "yaml-configs"
   ],
   "min_coverage_fail_under": 99,
-  "min_validator_count": 82,
+  "min_validator_count": 85,
   "required_paths": [
     "README.md",
     "LICENSE",
@@ -785,5 +788,30 @@
     "[agent-surface]",
     "#[issue-number]",
     "[P1/P2/P3]"
+  ],
+  "readme_honesty_required_phrases": [
+    "(archived reference)",
+    "This is not a live hive, runtime, or production swarm",
+    "prompt fiction",
+    "no running hive mind in this tree",
+    "fuzzywigg/agents-standard"
+  ],
+  "readme_historic_required_phrases": [
+    "## Historic prompt set",
+    "Designing quantum-safe algorithms",
+    "Implementing multi-chain, quantum-resistant contracts",
+    "Creating \"walled garden\" mobile security",
+    "Managing conflicts via stimgery and YAML recipes"
+  ],
+  "readme_contents_required_phrases": [
+    "## Contents",
+    "**AGENT-PROMPTS.md**",
+    "**GOOSE-RECIPES.md**",
+    "**IMPLEMENTATION-GUIDE.md**",
+    "**AGENTS-v2.2.md**",
+    "## Cloud agents",
+    ".cursor/environment.json",
+    "## Manifest validation",
+    "## License"
   ]
 }
