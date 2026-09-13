@@ -10,6 +10,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Implementation guide **v27** deepeners (post-#54): `implementation-phases`,
+  `implementation-tools`, `implementation-success` validators; IMPLEMENTATION-GUIDE.md
+  Full Implementation Phase 1–6 / agent prompt path / recipe path locks; Tools &
+  Software Checklist locks; Success Criteria / Common Issues / FAQ / Next Steps
+  locks; consistency deepeners for `implementation_phases_required_phrases` /
+  `implementation_tools_required_phrases` / `implementation_success_required_phrases`
+  (94 total; historic four only — implementation guide slice, not agent prompts,
+  goose recipes, README honesty, PR-template, contributing, issue-template,
+  scratchpad, postmortem, archive snapshot, security policy, routing/identity,
+  execution-summary, or Dependabot)
+
 - Agent prompts **v26** deepeners (post-#52): `prompt-roles`, `prompt-sections`,
   `prompt-usage` validators; AGENT-PROMPTS.md four-agent role/template heading
   locks, shared specialist/orchestrator section heading locks, and Usage
