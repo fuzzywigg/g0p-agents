@@ -44,7 +44,9 @@ python scripts/validate_manifests.py
 python -m pytest -q
 ```
 
-Schemas live under [`schemas/`](schemas/). The validator reads Goose recipe YAML from [`GOOSE-RECIPES.md`](GOOSE-RECIPES.md), plus `.cursor/environment.json`, `.github/agents/*.agent.md` frontmatter, and known YAML configs.
+Schemas live under [`schemas/`](schemas/). The validator reads Goose recipe YAML
+from [`GOOSE-RECIPES.md`](GOOSE-RECIPES.md), plus `.cursor/environment.json`,
+`.github/agents/*.agent.md` frontmatter, and known YAML configs.
 
 ## License
 
