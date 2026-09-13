@@ -10,6 +10,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Packaging inventory **v5** locks: bug/feature template headings, archive-doc /
+  yaml-config sets, cursor env name, Dependabot weekly schedule, CI permissions /
+  artifact prefix / PR branch, pyproject requires-python, markdownlint default,
+  scratchpad phrases, validator registry names + internal lock consistency
+- New validators: `bug-template`, `feature-template` (27 total; historic four only)
+- CI deepeners: refuse orphan jobs, require `contents: read` per job,
+  `cancel-in-progress`, `fail-fast: false`, artifact prefix, PR→`alpha`,
+  validator-count ≥27 + inventory v5 registry lock step
+- Manifest step marker locks: `Smoke each`, `--only`, `junitxml`
+
 - Packaging inventory **v4** locks: routing surfaces, constitution headings,
   prompt system-header / escalation markers, security + contributing phrases,
   agent-task issue headings, orchestration recipe name, agent-token scan doc set
@@ -19,7 +29,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   orchestration escalation identity locks
 - Goose schema: `goose_provider` / `goose_model` const-locked to historic values;
   GitHub custom-agent frontmatter `additionalProperties: false`
-- Coverage gate raised to **98%** (no workflow file edits this wave)
+- Coverage gate raised to **98%** (no workflow file edits that wave)
 
 - Packaging inventory **v3** locks: recipe bindings, primary agents, schema file
   set, CI Python matrix, manifest step markers, dev packages, GitHub agent /
@@ -64,6 +74,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 
+- Inventory schema minimum version is **5**; CI validator-count gate raised to ≥27
 - Coverage gate raised to 97%; inventory schema minimum version is 3
 - Coverage gate raised to 95%; Dependabot now tracks pip (`requirements-dev.txt`)
   alongside github-actions

@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/fuzzywigg/g0p-agents/schemas/packaging-inventory.schema.json",
   "title": "Archive packaging inventory",
-  "description": "Locked packaging paths and historic agent/recipe inventory for this docs-only archive (v4).",
+  "description": "Locked packaging paths and historic agent/recipe inventory for this docs-only archive (v5).",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -33,13 +33,26 @@
     "security_required_phrases",
     "contributing_required_phrases",
     "issue_agent_task_headings",
+    "issue_bug_report_headings",
+    "issue_feature_request_headings",
+    "required_archive_docs",
+    "known_yaml_configs",
+    "cursor_environment_name",
+    "dependabot_schedule_interval",
+    "ci_permissions_contents",
+    "ci_artifact_name_prefix",
+    "ci_pull_request_branch",
+    "pyproject_requires_python",
+    "markdownlint_default",
+    "scratchpad_required_phrases",
+    "validator_names",
     "min_coverage_fail_under",
     "min_validator_count"
   ],
   "properties": {
     "version": {
       "type": "integer",
-      "minimum": 4
+      "minimum": 5
     },
     "required_paths": {
       "type": "array",
@@ -180,7 +193,12 @@
     "historic_goose_settings": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["goose_provider", "goose_model", "extension_type", "extension_name"],
+      "required": [
+        "goose_provider",
+        "goose_model",
+        "extension_type",
+        "extension_name"
+      ],
       "properties": {
         "goose_provider": {
           "type": "string",
@@ -192,7 +210,12 @@
         },
         "extension_type": {
           "type": "string",
-          "enum": ["builtin", "stdio", "sse", "streamable_http"]
+          "enum": [
+            "builtin",
+            "stdio",
+            "sse",
+            "streamable_http"
+          ]
         },
         "extension_name": {
           "type": "string",
@@ -279,6 +302,91 @@
     "min_validator_count": {
       "type": "integer",
       "minimum": 1
+    },
+    "issue_bug_report_headings": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "issue_feature_request_headings": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "required_archive_docs": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "known_yaml_configs": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "cursor_environment_name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "dependabot_schedule_interval": {
+      "type": "string",
+      "enum": [
+        "daily",
+        "weekly",
+        "monthly"
+      ]
+    },
+    "ci_permissions_contents": {
+      "type": "string",
+      "minLength": 1
+    },
+    "ci_artifact_name_prefix": {
+      "type": "string",
+      "minLength": 1
+    },
+    "ci_pull_request_branch": {
+      "type": "string",
+      "minLength": 1
+    },
+    "pyproject_requires_python": {
+      "type": "string",
+      "minLength": 1
+    },
+    "markdownlint_default": {
+      "type": "boolean"
+    },
+    "scratchpad_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "validator_names": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9-]*$"
+      }
     }
   }
 }

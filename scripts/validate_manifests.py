@@ -11,20 +11,20 @@ Checks structural correctness of:
 - AGENTS-v2.2.md constitution headings for documented agents only
 - CLAUDE.md routing surfaces (packaging surfaces; not specialist agents)
 - SECURITY.md / CONTRIBUTING.md packaging honesty locks
-- Agent-task issue template headings
+- Agent-task / bug / feature issue template headings
 - Orchestration recipe must reference all documented specialists
-- .cursor/environment.json (+ install path refs)
+- .cursor/environment.json (+ install path refs + locked name)
 - .github/agents/*.agent.md frontmatter + locked file set + non-empty body
 - .github/ISSUE_TEMPLATE/*.md frontmatter + locked file set + non-empty body
 - .github/pull_request_template.md required headings
-- .github/dependabot.yml
-- .markdownlint.yaml
+- .github/dependabot.yml (ecosystems + weekly schedule; no version bumps)
+- .markdownlint.yaml (default: true lock)
 - requirements-dev.txt required validation packages
 - LICENSE MIT marker; README packaging section
 - agentic_flows/scratchpad.txt coordination markers
-- pyproject.toml validation tooling keys (+ coverage gate lock)
-- CI workflow job/step/matrix/concurrency presence
-- Packaging inventory lock + schema meta-validation (no orphan schemas; $id/$schema)
+- pyproject.toml validation tooling keys (+ coverage / requires-python locks)
+- CI workflow job/step/matrix/concurrency/permissions presence (no orphan jobs)
+- Packaging inventory lock + internal consistency + schema meta-validation
 - Parseability of known YAML config files
 
 Does not invent agents or scaffold new specialist definitions.
@@ -113,12 +113,29 @@ KNOWN_YAML_CONFIGS = (
     Path(".markdownlint.yaml"),
 )
 
+KNOWN_YAML_CONFIG_RELS: tuple[str, ...] = tuple(str(path) for path in KNOWN_YAML_CONFIGS)
+
 REQUIRED_ARCHIVE_DOCS = (
     "AGENT-PROMPTS.md",
     "AGENTS-v2.2.md",
     "CLAUDE.md",
     "GOOSE-RECIPES.md",
     "README.md",
+)
+
+INVENTORY_VERSION = 5
+CURSOR_ENVIRONMENT_NAME = "g0p-agents"
+DEPENDABOT_SCHEDULE_INTERVAL = "weekly"
+DEPENDABOT_DIRECTORIES: frozenset[str] = frozenset({"/"})
+CI_PERMISSIONS_CONTENTS = "read"
+CI_ARTIFACT_NAME_PREFIX = "manifest-validate-py"
+CI_PULL_REQUEST_BRANCH = "alpha"
+PYPROJECT_REQUIRES_PYTHON = ">=3.11"
+MARKDOWNLINT_DEFAULT = True
+
+SCRATCHPAD_REQUIRED_PHRASES = (
+    "source of truth",
+    "Never delete entries",
 )
 
 AGENT_TOKEN_SCAN_DOCS = (
@@ -145,6 +162,9 @@ REQUIRED_MANIFEST_STEP_MARKERS = (
     "--cov",
     "pip check",
     "--list-validators",
+    "Smoke each",
+    "--only",
+    "junitxml",
 )
 
 GITHUB_AGENT_FILES: tuple[str, ...] = (".github/agents/my-agent.agent.md",)
@@ -219,10 +239,27 @@ ISSUE_AGENT_TASK_HEADINGS: tuple[str, ...] = (
     "Execution Notes",
 )
 
+ISSUE_BUG_REPORT_HEADINGS: tuple[str, ...] = (
+    "Problem",
+    "Steps to Reproduce",
+    "Expected Behavior",
+    "Actual Behavior",
+    "Proposed Solution",
+    "Acceptance Criteria",
+    "Agent Surface Routing",
+)
+
+ISSUE_FEATURE_REQUEST_HEADINGS: tuple[str, ...] = (
+    "Problem",
+    "Proposed Solution",
+    "Acceptance Criteria",
+    "Agent Surface Routing",
+)
+
 SPECIALIST_AGENTS: tuple[str, ...] = DOCUMENTED_AGENTS[:-1]
 
 MIN_COVERAGE_FAIL_UNDER = 98
-MIN_VALIDATOR_COUNT = 25
+MIN_VALIDATOR_COUNT = 27
 
 
 @dataclass(frozen=True)
@@ -411,6 +448,9 @@ def validate_packaging_inventory(root: Path) -> list[Finding]:
     if findings:
         return findings
 
+    if inventory.get("version") != INVENTORY_VERSION:
+        findings.append(_lock_mismatch(schema_path, "version"))
+
     for rel in inventory["required_paths"]:
         if not (root / rel).exists():
             findings.append(Finding(rel, "required packaging path missing"))
@@ -496,6 +536,49 @@ def validate_packaging_inventory(root: Path) -> list[Finding]:
     if tuple(inventory.get("issue_agent_task_headings", ())) != ISSUE_AGENT_TASK_HEADINGS:
         findings.append(_lock_mismatch(schema_path, "issue_agent_task_headings"))
 
+    if tuple(inventory.get("issue_bug_report_headings", ())) != ISSUE_BUG_REPORT_HEADINGS:
+        findings.append(_lock_mismatch(schema_path, "issue_bug_report_headings"))
+
+    if (
+        tuple(inventory.get("issue_feature_request_headings", ()))
+        != ISSUE_FEATURE_REQUEST_HEADINGS
+    ):
+        findings.append(_lock_mismatch(schema_path, "issue_feature_request_headings"))
+
+    if tuple(inventory.get("required_archive_docs", ())) != REQUIRED_ARCHIVE_DOCS:
+        findings.append(_lock_mismatch(schema_path, "required_archive_docs"))
+
+    if tuple(inventory.get("known_yaml_configs", ())) != KNOWN_YAML_CONFIG_RELS:
+        findings.append(_lock_mismatch(schema_path, "known_yaml_configs"))
+
+    if inventory.get("cursor_environment_name") != CURSOR_ENVIRONMENT_NAME:
+        findings.append(_lock_mismatch(schema_path, "cursor_environment_name"))
+
+    if inventory.get("dependabot_schedule_interval") != DEPENDABOT_SCHEDULE_INTERVAL:
+        findings.append(_lock_mismatch(schema_path, "dependabot_schedule_interval"))
+
+    if inventory.get("ci_permissions_contents") != CI_PERMISSIONS_CONTENTS:
+        findings.append(_lock_mismatch(schema_path, "ci_permissions_contents"))
+
+    if inventory.get("ci_artifact_name_prefix") != CI_ARTIFACT_NAME_PREFIX:
+        findings.append(_lock_mismatch(schema_path, "ci_artifact_name_prefix"))
+
+    if inventory.get("ci_pull_request_branch") != CI_PULL_REQUEST_BRANCH:
+        findings.append(_lock_mismatch(schema_path, "ci_pull_request_branch"))
+
+    if inventory.get("pyproject_requires_python") != PYPROJECT_REQUIRES_PYTHON:
+        findings.append(_lock_mismatch(schema_path, "pyproject_requires_python"))
+
+    if inventory.get("markdownlint_default") is not MARKDOWNLINT_DEFAULT:
+        findings.append(_lock_mismatch(schema_path, "markdownlint_default"))
+
+    if tuple(inventory.get("scratchpad_required_phrases", ())) != SCRATCHPAD_REQUIRED_PHRASES:
+        findings.append(_lock_mismatch(schema_path, "scratchpad_required_phrases"))
+
+    expected_validator_names = tuple(sorted(VALIDATORS))
+    if tuple(inventory.get("validator_names", ())) != expected_validator_names:
+        findings.append(_lock_mismatch(schema_path, "validator_names"))
+
     if inventory["min_coverage_fail_under"] != MIN_COVERAGE_FAIL_UNDER:
         findings.append(_lock_mismatch(schema_path, "min_coverage_fail_under"))
 
@@ -510,6 +593,77 @@ def validate_packaging_inventory(root: Path) -> list[Finding]:
                     f"validator registry count {len(VALIDATORS)} "
                     f"below min_validator_count {inventory['min_validator_count']}"
                 ),
+            )
+        )
+
+    findings.extend(_inventory_lock_consistency(inventory, schema_path=schema_path))
+    return findings
+
+
+def _inventory_lock_consistency(
+    inventory: dict[str, Any], *, schema_path: str
+) -> list[Finding]:
+    """Refuse internal inventory drift between related lock fields."""
+    findings: list[Finding] = []
+    names = set(inventory["expected_recipe_names"])
+    files = set(inventory["expected_recipe_files"])
+    bindings = dict(inventory["recipe_bindings"])
+    primaries = dict(inventory["recipe_primary_agents"])
+    agents = set(inventory["documented_agents"])
+
+    if set(bindings) != names:
+        findings.append(
+            Finding(
+                schema_path,
+                "recipe_bindings keys inconsistent with expected_recipe_names",
+            )
+        )
+    if set(bindings.values()) != files:
+        findings.append(
+            Finding(
+                schema_path,
+                "recipe_bindings values inconsistent with expected_recipe_files",
+            )
+        )
+    if set(primaries) != names:
+        findings.append(
+            Finding(
+                schema_path,
+                "recipe_primary_agents keys inconsistent with expected_recipe_names",
+            )
+        )
+    if not set(primaries.values()) <= agents:
+        findings.append(
+            Finding(
+                schema_path,
+                "recipe_primary_agents values must be subset of documented_agents",
+            )
+        )
+    orch = inventory.get("orchestration_recipe_name")
+    if orch not in names:
+        findings.append(
+            Finding(
+                schema_path,
+                "orchestration_recipe_name must be one of expected_recipe_names",
+            )
+        )
+    archive_docs = set(inventory.get("required_archive_docs", ()))
+    scan_docs = set(inventory.get("agent_token_scan_docs", ()))
+    if not archive_docs <= scan_docs:
+        findings.append(
+            Finding(
+                schema_path,
+                "required_archive_docs must be subset of agent_token_scan_docs",
+            )
+        )
+    validator_names = inventory.get("validator_names", [])
+    if len(validator_names) != len(set(validator_names)):
+        findings.append(Finding(schema_path, "validator_names must be unique"))
+    if len(validator_names) < inventory.get("min_validator_count", 0):
+        findings.append(
+            Finding(
+                schema_path,
+                "validator_names length below min_validator_count",
             )
         )
     return findings
@@ -790,6 +944,17 @@ def validate_cursor_environment(root: Path) -> list[Finding]:
     )
     if not isinstance(data, dict):
         return findings + [Finding(rel, "environment root must be a mapping")]
+    name = data.get("name")
+    if name != CURSOR_ENVIRONMENT_NAME:
+        findings.append(
+            Finding(
+                rel,
+                (
+                    f"environment name must be {CURSOR_ENVIRONMENT_NAME!r}, "
+                    f"found {name!r}"
+                ),
+            )
+        )
     install = data.get("install")
     if isinstance(install, str):
         for ref in INSTALL_TEST_F_RE.findall(install):
@@ -932,6 +1097,31 @@ def validate_dependabot(root: Path) -> list[Finding]:
             findings.append(
                 Finding(rel, f"missing required package-ecosystem: {required}")
             )
+    for item in updates:
+        if not isinstance(item, dict):
+            continue
+        directory = item.get("directory")
+        if directory not in DEPENDABOT_DIRECTORIES:
+            findings.append(
+                Finding(
+                    rel,
+                    f"Dependabot directory must be one of {sorted(DEPENDABOT_DIRECTORIES)}, "
+                    f"found {directory!r}",
+                )
+            )
+        schedule = item.get("schedule")
+        if isinstance(schedule, dict):
+            interval = schedule.get("interval")
+            if interval != DEPENDABOT_SCHEDULE_INTERVAL:
+                findings.append(
+                    Finding(
+                        rel,
+                        (
+                            f"Dependabot schedule.interval must be "
+                            f"{DEPENDABOT_SCHEDULE_INTERVAL!r}, found {interval!r}"
+                        ),
+                    )
+                )
     return findings
 
 
@@ -945,9 +1135,18 @@ def validate_markdownlint(root: Path) -> list[Finding]:
         return parse_findings
     if data is None:
         return [Finding(rel, "markdownlint config is empty")]
-    return validate_against_schema(
+    findings = validate_against_schema(
         data, load_schema("markdownlint.schema.json"), path=rel
     )
+    if isinstance(data, dict) and data.get("default") is not MARKDOWNLINT_DEFAULT:
+        findings.append(
+            Finding(
+                rel,
+                f"markdownlint default must be {MARKDOWNLINT_DEFAULT}, "
+                f"found {data.get('default')!r}",
+            )
+        )
+    return findings
 
 
 def validate_requirements_dev(root: Path) -> list[Finding]:
@@ -1014,6 +1213,9 @@ def validate_scratchpad(root: Path) -> list[Finding]:
         findings.append(Finding(rel, "scratchpad missing identifying header text"))
     if not CHECKBOX_RE.search(text):
         findings.append(Finding(rel, "scratchpad missing coordination checkbox markers"))
+    for phrase in SCRATCHPAD_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(Finding(rel, f"scratchpad missing required phrase: {phrase}"))
     return findings
 
 
@@ -1028,9 +1230,25 @@ def validate_pyproject(root: Path) -> list[Finding]:
         return [Finding(rel, f"TOML parse error: {exc}")]
 
     findings: list[Finding] = []
+    project = data.get("project")
+    if isinstance(project, dict):
+        requires = project.get("requires-python")
+        if requires != PYPROJECT_REQUIRES_PYTHON:
+            findings.append(
+                Finding(
+                    rel,
+                    (
+                        f"requires-python must be {PYPROJECT_REQUIRES_PYTHON!r}, "
+                        f"found {requires!r}"
+                    ),
+                )
+            )
+    else:
+        findings.append(Finding(rel, "pyproject.toml missing [project] table"))
+
     tool = data.get("tool")
     if not isinstance(tool, dict):
-        return [Finding(rel, "pyproject.toml missing [tool] table")]
+        return findings + [Finding(rel, "pyproject.toml missing [tool] table")]
 
     pytest_opts = tool.get("pytest", {})
     if not isinstance(pytest_opts, dict) or "ini_options" not in pytest_opts:
@@ -1092,12 +1310,35 @@ def validate_ci_workflow(root: Path) -> list[Finding]:
         return findings + [Finding(rel, "CI workflow root must be a mapping")]
 
     # PyYAML parses bare `on:` as boolean True.
-    if True not in data and "on" not in data:
+    on_trigger = data.get(True, data.get("on"))
+    if on_trigger is None:
         findings.append(Finding(rel, "CI workflow missing on: trigger mapping"))
+    elif isinstance(on_trigger, dict):
+        pull_request = on_trigger.get("pull_request")
+        if isinstance(pull_request, dict):
+            branches = pull_request.get("branches")
+            if not isinstance(branches, list) or CI_PULL_REQUEST_BRANCH not in [
+                str(b) for b in branches
+            ]:
+                findings.append(
+                    Finding(
+                        rel,
+                        (
+                            f"CI pull_request.branches must include "
+                            f"{CI_PULL_REQUEST_BRANCH!r}"
+                        ),
+                    )
+                )
+        else:
+            findings.append(Finding(rel, "CI workflow missing pull_request trigger"))
 
     concurrency = data.get("concurrency")
     if not isinstance(concurrency, dict) or "group" not in concurrency:
         findings.append(Finding(rel, "CI workflow must define concurrency.group"))
+    elif concurrency.get("cancel-in-progress") is not True:
+        findings.append(
+            Finding(rel, "CI workflow concurrency.cancel-in-progress must be true")
+        )
 
     jobs = data.get("jobs")
     if not isinstance(jobs, dict):
@@ -1105,6 +1346,31 @@ def validate_ci_workflow(root: Path) -> list[Finding]:
     missing = sorted(REQUIRED_CI_JOBS - set(jobs))
     if missing:
         findings.append(Finding(rel, f"missing required CI job(s): {', '.join(missing)}"))
+    orphans = sorted(set(jobs) - REQUIRED_CI_JOBS)
+    for orphan in orphans:
+        findings.append(Finding(rel, f"unexpected/orphan CI job: {orphan}"))
+
+    for job_name, job in jobs.items():
+        if not isinstance(job, dict):
+            continue
+        permissions = job.get("permissions")
+        if not isinstance(permissions, dict):
+            findings.append(
+                Finding(rel, f"CI job {job_name} must define permissions mapping")
+            )
+            continue
+        contents = permissions.get("contents")
+        if contents != CI_PERMISSIONS_CONTENTS:
+            findings.append(
+                Finding(
+                    rel,
+                    (
+                        f"CI job {job_name} permissions.contents must be "
+                        f"{CI_PERMISSIONS_CONTENTS!r}, found {contents!r}"
+                    ),
+                )
+            )
+
     manifest = jobs.get("manifest-validate")
     if isinstance(manifest, dict):
         steps = manifest.get("steps")
@@ -1121,12 +1387,29 @@ def validate_ci_workflow(root: Path) -> list[Finding]:
             findings.append(
                 Finding(rel, "manifest-validate job must upload validation artifacts")
             )
+        if CI_ARTIFACT_NAME_PREFIX not in step_blob:
+            findings.append(
+                Finding(
+                    rel,
+                    (
+                        "manifest-validate artifact name must include "
+                        f"{CI_ARTIFACT_NAME_PREFIX!r}"
+                    ),
+                )
+            )
         strategy = manifest.get("strategy")
         if not isinstance(strategy, dict) or "matrix" not in strategy:
             findings.append(
                 Finding(rel, "manifest-validate job must define a Python version matrix")
             )
         else:
+            if strategy.get("fail-fast") is not False:
+                findings.append(
+                    Finding(
+                        rel,
+                        "manifest-validate strategy.fail-fast must be false",
+                    )
+                )
             matrix = strategy.get("matrix")
             versions = matrix.get("python-version") if isinstance(matrix, dict) else None
             if not isinstance(versions, list) or len(versions) < 2:
@@ -1350,6 +1633,34 @@ def validate_agent_task_template(root: Path) -> list[Finding]:
     return findings
 
 
+def validate_bug_report_template(root: Path) -> list[Finding]:
+    rel = ".github/ISSUE_TEMPLATE/bug_report.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "bug report issue template missing")]
+    text = path.read_text(encoding="utf-8")
+    headings = PR_HEADING_RE.findall(text)
+    findings: list[Finding] = []
+    for required in ISSUE_BUG_REPORT_HEADINGS:
+        if required not in headings:
+            findings.append(Finding(rel, f"missing required heading: {required}"))
+    return findings
+
+
+def validate_feature_request_template(root: Path) -> list[Finding]:
+    rel = ".github/ISSUE_TEMPLATE/feature_request.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "feature request issue template missing")]
+    text = path.read_text(encoding="utf-8")
+    headings = PR_HEADING_RE.findall(text)
+    findings: list[Finding] = []
+    for required in ISSUE_FEATURE_REQUEST_HEADINGS:
+        if required not in headings:
+            findings.append(Finding(rel, f"missing required heading: {required}"))
+    return findings
+
+
 VALIDATORS: dict[str, ValidatorFn] = {
     "schemas": validate_schemas_meta,
     "inventory": validate_packaging_inventory,
@@ -1362,6 +1673,8 @@ VALIDATORS: dict[str, ValidatorFn] = {
     "github-agents": validate_github_agents,
     "issue-templates": validate_issue_templates,
     "agent-task": validate_agent_task_template,
+    "bug-template": validate_bug_report_template,
+    "feature-template": validate_feature_request_template,
     "pr-template": validate_pr_template,
     "dependabot": validate_dependabot,
     "markdownlint": validate_markdownlint,

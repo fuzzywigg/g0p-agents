@@ -60,7 +60,7 @@ def _copy_schemas(tmp_path: Path) -> None:
 
 def _inventory_payload(**overrides: object) -> dict:
     payload = {
-        "version": 4,
+        "version": vm.INVENTORY_VERSION,
         "documented_agents": list(vm.DOCUMENTED_AGENTS),
         "expected_recipe_names": sorted(vm.EXPECTED_RECIPE_NAMES),
         "expected_recipe_files": list(vm.EXPECTED_RECIPE_FILES),
@@ -91,6 +91,19 @@ def _inventory_payload(**overrides: object) -> dict:
         "security_required_phrases": list(vm.SECURITY_REQUIRED_PHRASES),
         "contributing_required_phrases": list(vm.CONTRIBUTING_REQUIRED_PHRASES),
         "issue_agent_task_headings": list(vm.ISSUE_AGENT_TASK_HEADINGS),
+        "issue_bug_report_headings": list(vm.ISSUE_BUG_REPORT_HEADINGS),
+        "issue_feature_request_headings": list(vm.ISSUE_FEATURE_REQUEST_HEADINGS),
+        "required_archive_docs": list(vm.REQUIRED_ARCHIVE_DOCS),
+        "known_yaml_configs": list(vm.KNOWN_YAML_CONFIG_RELS),
+        "cursor_environment_name": vm.CURSOR_ENVIRONMENT_NAME,
+        "dependabot_schedule_interval": vm.DEPENDABOT_SCHEDULE_INTERVAL,
+        "ci_permissions_contents": vm.CI_PERMISSIONS_CONTENTS,
+        "ci_artifact_name_prefix": vm.CI_ARTIFACT_NAME_PREFIX,
+        "ci_pull_request_branch": vm.CI_PULL_REQUEST_BRANCH,
+        "pyproject_requires_python": vm.PYPROJECT_REQUIRES_PYTHON,
+        "markdownlint_default": vm.MARKDOWNLINT_DEFAULT,
+        "scratchpad_required_phrases": list(vm.SCRATCHPAD_REQUIRED_PHRASES),
+        "validator_names": sorted(vm.VALIDATORS),
         "min_coverage_fail_under": vm.MIN_COVERAGE_FAIL_UNDER,
         "min_validator_count": vm.MIN_VALIDATOR_COUNT,
         "required_paths": ["README.md"],
@@ -642,6 +655,8 @@ def test_validators_registry_covers_all_checks() -> None:
         "github-agents",
         "issue-templates",
         "agent-task",
+        "bug-template",
+        "feature-template",
         "pr-template",
         "dependabot",
         "markdownlint",
@@ -1130,25 +1145,41 @@ def _ci_yaml_with_matrix(versions: list[str], *, markers: list[str] | None = Non
         "pip check",
         "ruff check scripts tests",
         "python scripts/validate_manifests.py --list-validators",
+        "Smoke each validator subset --only schemas",
         "python scripts/validate_manifests.py",
-        "python -m pytest --cov=scripts",
-        "actions/upload-artifact@v4",
+        "python -m pytest --cov=scripts --junitxml=pytest-junit.xml",
+        "echo uses actions/upload-artifact@v4 name=manifest-validate-pyX",
     ]
     version_lines = "\n".join(f'          - "{v}"' for v in versions)
     step_lines = "\n".join(f"      - run: {marker}" for marker in step_markers)
+    job_stub = "\n".join(
+        [
+            "    runs-on: ubuntu-latest",
+            "    permissions:",
+            "      contents: read",
+        ]
+    )
     return "\n".join(
         [
             "name: CI",
             "on:",
             "  push: {}",
+            "  pull_request:",
+            '    branches: ["alpha"]',
             "concurrency:",
             "  group: ci-test",
+            "  cancel-in-progress: true",
             "jobs:",
-            "  markdown-lint: {}",
-            "  link-check: {}",
-            "  actionlint: {}",
+            "  markdown-lint:",
+            job_stub,
+            "  link-check:",
+            job_stub,
+            "  actionlint:",
+            job_stub,
             "  manifest-validate:",
+            job_stub,
             "    strategy:",
+            "      fail-fast: false",
             "      matrix:",
             "        python-version:",
             version_lines,
@@ -1157,6 +1188,7 @@ def _ci_yaml_with_matrix(versions: list[str], *, markers: list[str] | None = Non
             "",
         ]
     )
+
 
 
 def test_ci_workflow_matrix_too_small(tmp_path: Path) -> None:
@@ -1246,7 +1278,7 @@ def test_schemas_meta_rejects_wrong_draft_and_non_mapping(tmp_path: Path) -> Non
     assert any("$id must be" in f.message for f in findings)
 
 
-def test_packaging_inventory_v4_lock_fields(tmp_path: Path) -> None:
+def test_packaging_inventory_v5_lock_fields(tmp_path: Path) -> None:
     _copy_schemas(tmp_path)
     _write(tmp_path / "README.md", "# hi\n")
 
@@ -1315,6 +1347,38 @@ def test_packaging_inventory_v4_lock_fields(tmp_path: Path) -> None:
             "issue_agent_task_headings",
             list(vm.ISSUE_AGENT_TASK_HEADINGS)[:-1] + ["Invented"],
         ),
+        (
+            "issue_bug_report_headings",
+            list(vm.ISSUE_BUG_REPORT_HEADINGS)[:-1] + ["Invented"],
+        ),
+        (
+            "issue_feature_request_headings",
+            list(vm.ISSUE_FEATURE_REQUEST_HEADINGS)[:-1] + ["Invented"],
+        ),
+        (
+            "required_archive_docs",
+            list(vm.REQUIRED_ARCHIVE_DOCS)[:-1] + ["invented.md"],
+        ),
+        (
+            "known_yaml_configs",
+            list(vm.KNOWN_YAML_CONFIG_RELS)[:-1] + ["invented.yml"],
+        ),
+        ("cursor_environment_name", "wrong-name"),
+        ("dependabot_schedule_interval", "daily"),
+        ("ci_permissions_contents", "write"),
+        ("ci_artifact_name_prefix", "wrong-prefix"),
+        ("ci_pull_request_branch", "main"),
+        ("pyproject_requires_python", ">=3.12"),
+        ("markdownlint_default", False),
+        (
+            "scratchpad_required_phrases",
+            list(vm.SCRATCHPAD_REQUIRED_PHRASES)[:-1] + ["invented"],
+        ),
+        (
+            "validator_names",
+            list(sorted(vm.VALIDATORS))[:-1] + ["invented"],
+        ),
+        ("version", 6),
         ("min_coverage_fail_under", 90),
         ("min_validator_count", 999),
     ]
@@ -1464,10 +1528,12 @@ def test_dependabot_updates_must_be_list(tmp_path: Path) -> None:
 
 
 def test_ci_workflow_missing_on_trigger(tmp_path: Path) -> None:
-    _write(
-        tmp_path / ".github" / "workflows" / "ci.yml",
-        _ci_yaml_with_matrix(list(vm.REQUIRED_PYTHON_VERSIONS)).replace("on:\n  push: {}\n", ""),
+    yaml_text = _ci_yaml_with_matrix(list(vm.REQUIRED_PYTHON_VERSIONS))
+    yaml_text = yaml_text.replace(
+        "on:\n  push: {}\n  pull_request:\n    branches: [\"alpha\"]\n",
+        "",
     )
+    _write(tmp_path / ".github" / "workflows" / "ci.yml", yaml_text)
     findings = vm.validate_ci_workflow(tmp_path)
     assert any("on: trigger" in f.message for f in findings)
 
@@ -1784,3 +1850,240 @@ def test_issue_template_missing_frontmatter_continue(tmp_path: Path) -> None:
         _write(tmp_path / rel, "# no frontmatter\n")
     findings = vm.validate_issue_templates(tmp_path)
     assert any("frontmatter" in f.message for f in findings)
+
+
+def test_packaging_inventory_internal_consistency(tmp_path: Path) -> None:
+    _copy_schemas(tmp_path)
+    _write(tmp_path / "README.md", "# hi\n")
+    # Schema-valid bindings that disagree with names/files sets via lock constants
+    # are caught by field locks first. Force consistency helper by monkeypatching
+    # constants after writing a payload that matches constants but with swapped maps.
+    inventory = _inventory_payload()
+    # Mutate after schema validation path: write consistent locks then patch file
+    # to break only consistency (bindings keys ok vs names, but values wrong set)
+    # Easiest: call helper directly.
+    broken = dict(inventory)
+    broken["recipe_bindings"] = {
+        **broken["recipe_bindings"],
+        "quantum_algorithm_design_workflow": "agentic_flows/blockchain_contract_design.yaml",
+        "blockchain_contract_design_workflow": "agentic_flows/quantum_algorithm_design.yaml",
+    }
+    # values set still equals files set — swap keeps set equality.
+    # Break values set instead:
+    broken["recipe_bindings"] = {
+        name: "agentic_flows/quantum_algorithm_design.yaml"
+        for name in broken["expected_recipe_names"]
+    }
+    findings = vm._inventory_lock_consistency(
+        broken, schema_path="schemas/packaging-inventory.json"
+    )
+    assert any("recipe_bindings values inconsistent" in f.message for f in findings)
+
+    broken_keys = dict(inventory)
+    broken_keys["recipe_bindings"] = {
+        "invented_a": "agentic_flows/quantum_algorithm_design.yaml",
+        "invented_b": "agentic_flows/blockchain_contract_design.yaml",
+        "invented_c": "agentic_flows/edge_security_implementation.yaml",
+        "invented_d": "agentic_flows/quantum_nft_mint_orchestration.yaml",
+    }
+    findings = vm._inventory_lock_consistency(
+        broken_keys, schema_path="schemas/packaging-inventory.json"
+    )
+    assert any("recipe_bindings keys inconsistent" in f.message for f in findings)
+
+    broken_primary = dict(inventory)
+    broken_primary["recipe_primary_agents"] = {
+        "invented_a": "QuantumArchitectAgent",
+        "invented_b": "BlockchainArchitectAgent",
+        "invented_c": "EdgeSecurityAgent",
+        "invented_d": "OrchestrationAgent",
+    }
+    findings = vm._inventory_lock_consistency(
+        broken_primary, schema_path="schemas/packaging-inventory.json"
+    )
+    assert any("recipe_primary_agents keys inconsistent" in f.message for f in findings)
+
+    bad_agents = dict(inventory)
+    bad_agents["recipe_primary_agents"] = {
+        name: "InventedGhostAgent" for name in inventory["expected_recipe_names"]
+    }
+    findings = vm._inventory_lock_consistency(
+        bad_agents, schema_path="schemas/packaging-inventory.json"
+    )
+    assert any("subset of documented_agents" in f.message for f in findings)
+
+    bad_orch = dict(inventory)
+    bad_orch["orchestration_recipe_name"] = "not_in_names"
+    findings = vm._inventory_lock_consistency(
+        bad_orch, schema_path="schemas/packaging-inventory.json"
+    )
+    assert any("orchestration_recipe_name must be one of" in f.message for f in findings)
+
+    bad_docs = dict(inventory)
+    bad_docs["required_archive_docs"] = list(inventory["required_archive_docs"]) + [
+        "not-scanned.md"
+    ]
+    findings = vm._inventory_lock_consistency(
+        bad_docs, schema_path="schemas/packaging-inventory.json"
+    )
+    assert any("subset of agent_token_scan_docs" in f.message for f in findings)
+
+    dup_names = dict(inventory)
+    dup_names["validator_names"] = ["ci", "ci"]
+    findings = vm._inventory_lock_consistency(
+        dup_names, schema_path="schemas/packaging-inventory.json"
+    )
+    assert any("validator_names must be unique" in f.message for f in findings)
+
+    short_names = dict(inventory)
+    short_names["validator_names"] = ["ci"]
+    short_names["min_validator_count"] = 5
+    findings = vm._inventory_lock_consistency(
+        short_names, schema_path="schemas/packaging-inventory.json"
+    )
+    assert any("validator_names length below" in f.message for f in findings)
+
+
+def test_bug_and_feature_template_validators(tmp_path: Path) -> None:
+    assert any("missing" in f.message for f in vm.validate_bug_report_template(tmp_path))
+    assert any(
+        "missing" in f.message for f in vm.validate_feature_request_template(tmp_path)
+    )
+    _write(tmp_path / ".github" / "ISSUE_TEMPLATE" / "bug_report.md", "# Bug\n")
+    findings = vm.validate_bug_report_template(tmp_path)
+    assert any("missing required heading" in f.message for f in findings)
+    _write(tmp_path / ".github" / "ISSUE_TEMPLATE" / "feature_request.md", "# Feat\n")
+    findings = vm.validate_feature_request_template(tmp_path)
+    assert any("missing required heading" in f.message for f in findings)
+    assert vm.validate_bug_report_template(REPO_ROOT) == []
+    assert vm.validate_feature_request_template(REPO_ROOT) == []
+
+
+def test_environment_name_lock(tmp_path: Path) -> None:
+    _copy_schemas(tmp_path)
+    env = {"name": "wrong", "install": "true"}
+    _write(tmp_path / ".cursor" / "environment.json", json.dumps(env))
+    findings = vm.validate_cursor_environment(tmp_path)
+    assert any("environment name must be" in f.message for f in findings)
+
+
+def test_dependabot_schedule_and_directory_locks(tmp_path: Path) -> None:
+    _copy_schemas(tmp_path)
+    _write(
+        tmp_path / ".github" / "dependabot.yml",
+        "\n".join(
+            [
+                "version: 2",
+                "updates:",
+                '  - package-ecosystem: "github-actions"',
+                '    directory: "/apps"',
+                "    schedule:",
+                '      interval: "daily"',
+                '  - package-ecosystem: "pip"',
+                '    directory: "/"',
+                "    schedule:",
+                '      interval: "weekly"',
+                "",
+            ]
+        ),
+    )
+    findings = vm.validate_dependabot(tmp_path)
+    assert any("directory must be" in f.message for f in findings)
+    assert any("schedule.interval must be" in f.message for f in findings)
+
+
+def test_markdownlint_default_lock(tmp_path: Path) -> None:
+    _copy_schemas(tmp_path)
+    _write(tmp_path / ".markdownlint.yaml", "default: false\n")
+    findings = vm.validate_markdownlint(tmp_path)
+    assert any("markdownlint default must be" in f.message for f in findings)
+
+
+def test_scratchpad_required_phrases(tmp_path: Path) -> None:
+    _write(
+        tmp_path / "agentic_flows" / "scratchpad.txt",
+        "scratchpad notes\n- [ ] task\n",
+    )
+    findings = vm.validate_scratchpad(tmp_path)
+    assert any("required phrase" in f.message for f in findings)
+
+
+def test_pyproject_requires_python_lock(tmp_path: Path) -> None:
+    _write(
+        tmp_path / "pyproject.toml",
+        "\n".join(
+            [
+                "[project]",
+                'name = "x"',
+                'requires-python = ">=3.10"',
+                "[tool.pytest.ini_options]",
+                'testpaths = ["tests"]',
+                "[tool.ruff]",
+                'target-version = "py311"',
+                "[tool.coverage.report]",
+                "fail_under = 98",
+                "",
+            ]
+        ),
+    )
+    findings = vm.validate_pyproject(tmp_path)
+    assert any("requires-python must be" in f.message for f in findings)
+
+
+def test_ci_workflow_v5_deepeners(tmp_path: Path) -> None:
+    yaml_text = _ci_yaml_with_matrix(list(vm.REQUIRED_PYTHON_VERSIONS))
+    # Orphan job
+    yaml_text = yaml_text + "  invented-job:\n    runs-on: ubuntu-latest\n"
+    _write(tmp_path / ".github" / "workflows" / "ci.yml", yaml_text)
+    findings = vm.validate_ci_workflow(tmp_path)
+    assert any("unexpected/orphan CI job" in f.message for f in findings)
+
+    yaml_text = _ci_yaml_with_matrix(list(vm.REQUIRED_PYTHON_VERSIONS))
+    yaml_text = yaml_text.replace("cancel-in-progress: true", "cancel-in-progress: false")
+    _write(tmp_path / ".github" / "workflows" / "ci.yml", yaml_text)
+    findings = vm.validate_ci_workflow(tmp_path)
+    assert any("cancel-in-progress must be true" in f.message for f in findings)
+
+    yaml_text = _ci_yaml_with_matrix(list(vm.REQUIRED_PYTHON_VERSIONS))
+    yaml_text = yaml_text.replace("fail-fast: false", "fail-fast: true")
+    _write(tmp_path / ".github" / "workflows" / "ci.yml", yaml_text)
+    findings = vm.validate_ci_workflow(tmp_path)
+    assert any("fail-fast must be false" in f.message for f in findings)
+
+    yaml_text = _ci_yaml_with_matrix(list(vm.REQUIRED_PYTHON_VERSIONS))
+    yaml_text = yaml_text.replace("contents: read", "contents: write")
+    _write(tmp_path / ".github" / "workflows" / "ci.yml", yaml_text)
+    findings = vm.validate_ci_workflow(tmp_path)
+    assert any("permissions.contents must be" in f.message for f in findings)
+
+    yaml_text = _ci_yaml_with_matrix(list(vm.REQUIRED_PYTHON_VERSIONS))
+    yaml_text = yaml_text.replace('branches: ["alpha"]', 'branches: ["main"]')
+    _write(tmp_path / ".github" / "workflows" / "ci.yml", yaml_text)
+    findings = vm.validate_ci_workflow(tmp_path)
+    assert any("pull_request.branches must include" in f.message for f in findings)
+
+    yaml_text = _ci_yaml_with_matrix(
+        list(vm.REQUIRED_PYTHON_VERSIONS),
+        markers=[
+            "pip check",
+            "ruff",
+            "validate_manifests.py",
+            "pytest",
+            "--cov",
+            "--list-validators",
+            "Smoke each",
+            "--only",
+            "junitxml",
+            "actions/upload-artifact@v4",
+        ],
+    )
+    _write(tmp_path / ".github" / "workflows" / "ci.yml", yaml_text)
+    findings = vm.validate_ci_workflow(tmp_path)
+    assert any("artifact name must include" in f.message for f in findings)
+
+
+def test_live_v5_validators() -> None:
+    assert vm.validate_bug_report_template(REPO_ROOT) == []
+    assert vm.validate_feature_request_template(REPO_ROOT) == []
+    assert vm.INVENTORY_VERSION == 5
+    assert len(vm.VALIDATORS) == 27
