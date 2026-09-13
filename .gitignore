@@ -1,0 +1,13 @@
+# Local env / secrets (docs archive; keep empty of credentials)
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Editor / OS noise
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*~

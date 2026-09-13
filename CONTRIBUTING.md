@@ -17,15 +17,16 @@ This repo is part of the FUZZYWIGG multi-agent ecosystem. Contributions come fro
 
 | Branch | Purpose |
 | --- | --- |
-| `main` | Protected. Merges require PR + review. Never push directly. |
+| `alpha` | Default / protected. Merges require PR + review. Never push directly. |
 | `copilot/<task>` | Copilot agent work — CI fixes, single-file edits |
 | `geryon/<task>` | Geryon agent work — multi-file scaffolding, deep code changes |
 | `claude/<task>` | claude-cowork strategic work — docs, Notion-linked content |
+| `cursor/<task>` | Cursor cloud-agent work — thin docs/CI/hygiene |
 
 ## PR Requirements
 
-1. Branch off from `main` using the naming convention above
-2. Reference the issue number in the PR title: `Fix #12: Add LICENSE file`
+1. Branch off from `alpha` using the naming convention above
+2. Reference the issue number in the PR title when one exists: `Fix #12: Add LICENSE file`
 3. Fill in the PR template completely
 4. All CI checks must pass before merge
 5. One approval required (Andrew or designated reviewer)
