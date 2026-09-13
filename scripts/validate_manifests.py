@@ -46,6 +46,8 @@ Checks structural correctness of:
 - SECURITY.md Supported Versions / Reporting / Standards domain locks
 - IMPLEMENTATION-GUIDE Quick Start / EXECUTION-SUMMARY specialist table /
   hydration LIST B HITL question locks (Dec 2025 archive snapshot slice)
+- postmortem.md intro / Decision field / Next Steps surface locks
+- agentic_flows/scratchpad.txt intro / format-legend / task-meta locks
 - pyproject project name + version/license/description/readme +
   ruff line-length/src/lint select locks
 - coverage show_missing/skip_empty/source + exact fail_under +
@@ -156,7 +158,7 @@ REQUIRED_ARCHIVE_DOCS = (
     "README.md",
 )
 
-INVENTORY_VERSION = 19
+INVENTORY_VERSION = 20
 CURSOR_ENVIRONMENT_NAME = "g0p-agents"
 DEPENDABOT_SCHEDULE_INTERVAL = "weekly"
 DEPENDABOT_DIRECTORIES: frozenset[str] = frozenset({"/"})
@@ -364,6 +366,24 @@ POSTMORTEM_NEXT_STEPS_REQUIRED_PHRASES: tuple[str, ...] = (
     "browser-claude or claude-cowork creates GitHub issues",
     "claude-cowork creates/updates Notion page under Active Sprint Work",
     "geryon scaffolds agentic_flows/ once B1 is answered",
+)
+SCRATCHPAD_INTRO_REQUIRED_PHRASES: tuple[str, ...] = (
+    "Agent Coordination Scratchpad",
+    "Updated by each agent after completing their task",
+    "mark them complete",
+)
+SCRATCHPAD_FORMAT_REQUIRED_PHRASES: tuple[str, ...] = (
+    "[x] = DONE",
+    "[ ] = PENDING",
+    "[~] = IN_PROGRESS",
+    "[!] = BLOCKED/ESCALATED",
+)
+SCRATCHPAD_TASK_META_REQUIRED_PHRASES: tuple[str, ...] = (
+    "## Task: Repo Hydration",
+    "Status:",
+    "Created:",
+    "Owner:",
+    "Current blocker:",
 )
 LICENSE_REQUIRED_PHRASES: tuple[str, ...] = (
     "MIT License",
@@ -692,7 +712,7 @@ SCRATCHPAD_STATUS_MARKERS: tuple[str, ...] = (
 SPECIALIST_AGENTS: tuple[str, ...] = DOCUMENTED_AGENTS[:-1]
 
 MIN_COVERAGE_FAIL_UNDER = 99
-MIN_VALIDATOR_COUNT = 70
+MIN_VALIDATOR_COUNT = 73
 
 
 @dataclass(frozen=True)
@@ -1410,6 +1430,28 @@ def validate_packaging_inventory(root: Path) -> list[Finding]:
     ):
         findings.append(
             _lock_mismatch(schema_path, "postmortem_next_steps_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("scratchpad_intro_required_phrases", ()))
+        != SCRATCHPAD_INTRO_REQUIRED_PHRASES
+    ):
+        findings.append(_lock_mismatch(schema_path, "scratchpad_intro_required_phrases"))
+
+    if (
+        tuple(inventory.get("scratchpad_format_required_phrases", ()))
+        != SCRATCHPAD_FORMAT_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "scratchpad_format_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("scratchpad_task_meta_required_phrases", ()))
+        != SCRATCHPAD_TASK_META_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "scratchpad_task_meta_required_phrases")
         )
 
     expected_validator_names = tuple(sorted(VALIDATORS))
@@ -2354,6 +2396,97 @@ def _inventory_lock_consistency(
                     schema_path,
                     "postmortem_next_steps_required_phrases must include "
                     "LIST B and geryon scaffold",
+                )
+            )
+
+    intro_sp = list(inventory.get("scratchpad_intro_required_phrases", ()))
+    if len(intro_sp) != len(set(intro_sp)):
+        findings.append(
+            Finding(schema_path, "scratchpad_intro_required_phrases must be unique")
+        )
+    if not intro_sp:
+        findings.append(
+            Finding(schema_path, "scratchpad_intro_required_phrases must not be empty")
+        )
+    for phrase in intro_sp:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "scratchpad_intro_required_phrases entries must be non-empty strings",
+                )
+            )
+            break
+    else:
+        if intro_sp and not any(
+            "Updated by each agent" in phrase for phrase in intro_sp
+        ):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "scratchpad_intro_required_phrases must require agent updates",
+                )
+            )
+
+    format_sp = list(inventory.get("scratchpad_format_required_phrases", ()))
+    if len(format_sp) != len(set(format_sp)):
+        findings.append(
+            Finding(schema_path, "scratchpad_format_required_phrases must be unique")
+        )
+    if not format_sp:
+        findings.append(
+            Finding(schema_path, "scratchpad_format_required_phrases must not be empty")
+        )
+    for phrase in format_sp:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "scratchpad_format_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_format = {"[x] = DONE", "[ ] = PENDING", "[~] = IN_PROGRESS"}
+        if format_sp and not required_format <= set(format_sp):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "scratchpad_format_required_phrases must include DONE/PENDING/"
+                    "IN_PROGRESS legend lines",
+                )
+            )
+
+    task_meta = list(inventory.get("scratchpad_task_meta_required_phrases", ()))
+    if len(task_meta) != len(set(task_meta)):
+        findings.append(
+            Finding(schema_path, "scratchpad_task_meta_required_phrases must be unique")
+        )
+    if not task_meta:
+        findings.append(
+            Finding(
+                schema_path, "scratchpad_task_meta_required_phrases must not be empty"
+            )
+        )
+    for phrase in task_meta:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "scratchpad_task_meta_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_meta = {"Status:", "Created:", "Owner:", "Current blocker:"}
+        if task_meta and not required_meta <= set(task_meta):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "scratchpad_task_meta_required_phrases must include Status/"
+                    "Created/Owner/Current blocker",
                 )
             )
 
@@ -4107,6 +4240,55 @@ def validate_postmortem_next_steps(root: Path) -> list[Finding]:
     return findings
 
 
+def validate_scratchpad_intro(root: Path) -> list[Finding]:
+    rel = "agentic_flows/scratchpad.txt"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "scratchpad coordination file missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    for phrase in SCRATCHPAD_INTRO_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(rel, f"missing locked scratchpad-intro phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_scratchpad_format(root: Path) -> list[Finding]:
+    rel = "agentic_flows/scratchpad.txt"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "scratchpad coordination file missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "Format:" not in text:
+        findings.append(Finding(rel, "missing Format legend section"))
+    for phrase in SCRATCHPAD_FORMAT_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(rel, f"missing locked scratchpad-format phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_scratchpad_task_meta(root: Path) -> list[Finding]:
+    rel = "agentic_flows/scratchpad.txt"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "scratchpad coordination file missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## Task: Repo Hydration" not in text:
+        findings.append(Finding(rel, "missing Task: Repo Hydration section"))
+    for phrase in SCRATCHPAD_TASK_META_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(rel, f"missing locked scratchpad-task-meta phrase: {phrase}")
+            )
+    return findings
+
+
 def validate_gitignore_packaging(root: Path) -> list[Finding]:
     rel = ".gitignore"
     path = root / rel
@@ -5050,6 +5232,9 @@ VALIDATORS: dict[str, ValidatorFn] = {
     "security": validate_security_packaging,
     "contributing": validate_contributing_packaging,
     "scratchpad": validate_scratchpad,
+    "scratchpad-intro": validate_scratchpad_intro,
+    "scratchpad-format": validate_scratchpad_format,
+    "scratchpad-task-meta": validate_scratchpad_task_meta,
     "pyproject": validate_pyproject,
     "yaml-configs": validate_yaml_configs,
     "ci": validate_ci_workflow,

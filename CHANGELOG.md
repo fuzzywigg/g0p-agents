@@ -10,6 +10,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Scratchpad coordination **v20** deepeners (post-#41): `scratchpad-intro`,
+  `scratchpad-format`, `scratchpad-task-meta` validators; scratchpad.txt intro/
+  update mandate locks + Format legend locks + Task Repo Hydration meta locks;
+  consistency deepeners for `scratchpad_intro_required_phrases` /
+  `scratchpad_format_required_phrases` / `scratchpad_task_meta_required_phrases`
+  (73 total; historic four only — scratchpad coordination slice, not postmortem,
+  archive snapshot, security policy, routing/identity, or Dependabot)
+
 - Postmortem decision-log **v19** deepeners (post-#38): `postmortem-intro`,
   `postmortem-fields`, `postmortem-next-steps` validators; postmortem.md intro/
   mandate locks + Decision entry field locks + Next Steps surface locks;

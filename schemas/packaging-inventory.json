@@ -1,5 +1,5 @@
 {
-  "version": 19,
+  "version": 20,
   "documented_agents": [
     "QuantumArchitectAgent",
     "BlockchainArchitectAgent",
@@ -252,11 +252,11 @@
   "hydration_required_sections": [
     "## PHASE 1: FINDINGS REPORT",
     "## PHASE 2: QUESTIONS",
-    "### LIST B — Requires Andrew (HITL)",
+    "### LIST B \u2014 Requires Andrew (HITL)",
     "## PHASE 3: RESOLVED (LIST A)",
     "## PHASE 4: ISSUES GENERATED",
     "## PHASE 5: Roadmap",
-    "## LIST B — Deferred to Andrew"
+    "## LIST B \u2014 Deferred to Andrew"
   ],
   "execution_summary_required_phrases": [
     "EXECUTION SUMMARY",
@@ -334,6 +334,9 @@
     "routing-rationales",
     "schemas",
     "scratchpad",
+    "scratchpad-format",
+    "scratchpad-intro",
+    "scratchpad-task-meta",
     "security",
     "security-reporting",
     "security-standards",
@@ -342,7 +345,7 @@
     "yaml-configs"
   ],
   "min_coverage_fail_under": 99,
-  "min_validator_count": 70,
+  "min_validator_count": 73,
   "required_paths": [
     "README.md",
     "LICENSE",
@@ -463,7 +466,7 @@
     "Notion Master Index sync",
     "postmortem.md incident review"
   ],
-  "ci_workflow_name": "CI — Lint, Links & Manifests",
+  "ci_workflow_name": "CI \u2014 Lint, Links & Manifests",
   "ci_required_text_markers": [
     "download-actionlint.bash",
     "actionlint",
@@ -591,7 +594,7 @@
   ],
   "routing_matrix_rationale_phrases": [
     "Single-repo, syntax-level work",
-    "Deep coding, long-running, 60–90 min",
+    "Deep coding, long-running, 60\u201390 min",
     "Cross-system state, Notion truth",
     "UI-only settings",
     "Test automation",
@@ -661,7 +664,7 @@
     "YAML recipes, Docker Compose"
   ],
   "hydration_list_b_required_phrases": [
-    "### LIST B — Requires Andrew (HITL)",
+    "### LIST B \u2014 Requires Andrew (HITL)",
     "Is g0p-agents meant to be activated into a runnable codebase",
     "What is PikoClaw exactly",
     "Should actual Solidity, Python (Cirq), and React Native code be implemented",
@@ -686,9 +689,27 @@
     "**Next Steps**:"
   ],
   "postmortem_next_steps_required_phrases": [
-    "Andrew answers LIST B (B1–B5) in docs/agent-hydration.md",
+    "Andrew answers LIST B (B1\u2013B5) in docs/agent-hydration.md",
     "browser-claude or claude-cowork creates GitHub issues",
     "claude-cowork creates/updates Notion page under Active Sprint Work",
     "geryon scaffolds agentic_flows/ once B1 is answered"
+  ],
+  "scratchpad_intro_required_phrases": [
+    "Agent Coordination Scratchpad",
+    "Updated by each agent after completing their task",
+    "mark them complete"
+  ],
+  "scratchpad_format_required_phrases": [
+    "[x] = DONE",
+    "[ ] = PENDING",
+    "[~] = IN_PROGRESS",
+    "[!] = BLOCKED/ESCALATED"
+  ],
+  "scratchpad_task_meta_required_phrases": [
+    "## Task: Repo Hydration",
+    "Status:",
+    "Created:",
+    "Owner:",
+    "Current blocker:"
   ]
 }
