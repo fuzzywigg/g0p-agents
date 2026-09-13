@@ -1,5 +1,29 @@
 {
-  "version": 1,
+  "version": 2,
+  "documented_agents": [
+    "QuantumArchitectAgent",
+    "BlockchainArchitectAgent",
+    "EdgeSecurityAgent",
+    "OrchestrationAgent"
+  ],
+  "expected_recipe_names": [
+    "quantum_algorithm_design_workflow",
+    "blockchain_contract_design_workflow",
+    "edge_security_implementation_workflow",
+    "quantum_nft_mint_full_orchestration"
+  ],
+  "expected_recipe_files": [
+    "agentic_flows/quantum_algorithm_design.yaml",
+    "agentic_flows/blockchain_contract_design.yaml",
+    "agentic_flows/edge_security_implementation.yaml",
+    "agentic_flows/quantum_nft_mint_orchestration.yaml"
+  ],
+  "required_ci_jobs": [
+    "markdown-lint",
+    "link-check",
+    "actionlint",
+    "manifest-validate"
+  ],
   "required_paths": [
     "README.md",
     "LICENSE",
@@ -30,6 +54,7 @@
     "schemas/github-custom-agent.schema.json",
     "schemas/github-issue-template.schema.json",
     "schemas/dependabot-v2.schema.json",
+    "schemas/markdownlint.schema.json",
     "schemas/packaging-inventory.schema.json",
     "schemas/packaging-inventory.json",
     "scripts/validate_manifests.py",

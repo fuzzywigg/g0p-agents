@@ -4,13 +4,17 @@
 Checks structural correctness of:
 - Goose recipe YAML fenced in GOOSE-RECIPES.md (and any agentic_flows/*.yaml)
 - Locked recipe inventory (names + declared file paths; no invented workflows)
+- Recipe name ↔ declared file bindings
 - Documented specialist agents only (no invented agents)
 - .cursor/environment.json (+ install path refs)
-- .github/agents/*.agent.md frontmatter
-- .github/ISSUE_TEMPLATE/*.md frontmatter
+- .github/agents/*.agent.md frontmatter + non-empty body
+- .github/ISSUE_TEMPLATE/*.md frontmatter + non-empty body
 - .github/dependabot.yml
-- CI workflow job presence
-- Packaging inventory + schema meta-validation
+- .markdownlint.yaml
+- agentic_flows/scratchpad.txt coordination markers
+- pyproject.toml validation tooling keys
+- CI workflow job + step presence (incl. actionlint / ruff / coverage)
+- Packaging inventory lock + schema meta-validation (no orphan schemas)
 - Parseability of known YAML config files
 
 Does not invent agents or scaffold new specialist definitions.
@@ -22,6 +26,7 @@ import argparse
 import json
 import re
 import sys
+import tomllib
 from collections.abc import Callable, Iterable, Sequence
 from dataclasses import asdict, dataclass
 from pathlib import Path
@@ -58,6 +63,13 @@ EXPECTED_RECIPE_FILES: tuple[str, ...] = (
     "agentic_flows/quantum_nft_mint_orchestration.yaml",
 )
 
+EXPECTED_RECIPE_BINDINGS: dict[str, str] = {
+    "quantum_algorithm_design_workflow": "agentic_flows/quantum_algorithm_design.yaml",
+    "blockchain_contract_design_workflow": "agentic_flows/blockchain_contract_design.yaml",
+    "edge_security_implementation_workflow": "agentic_flows/edge_security_implementation.yaml",
+    "quantum_nft_mint_full_orchestration": "agentic_flows/quantum_nft_mint_orchestration.yaml",
+}
+
 RECIPE_PRIMARY_AGENT: dict[str, str] = {
     "quantum_algorithm_design_workflow": "QuantumArchitectAgent",
     "blockchain_contract_design_workflow": "BlockchainArchitectAgent",
@@ -74,6 +86,7 @@ GOOSE_RUN_PATH_RE = re.compile(
     r"goose\s+run\s+(\./agentic_flows/[A-Za-z0-9_\-]+\.ya?ml)"
 )
 INSTALL_TEST_F_RE = re.compile(r"test\s+-f\s+(\S+)")
+CHECKBOX_RE = re.compile(r"^[\t ]*- \[[ x~!]\]", re.MULTILINE)
 
 KNOWN_YAML_CONFIGS = (
     Path(".github/workflows/ci.yml"),
@@ -89,7 +102,16 @@ REQUIRED_ARCHIVE_DOCS = (
     "README.md",
 )
 
-REQUIRED_CI_JOBS = frozenset({"markdown-lint", "link-check", "manifest-validate"})
+REQUIRED_CI_JOBS = frozenset(
+    {"markdown-lint", "link-check", "actionlint", "manifest-validate"}
+)
+
+REQUIRED_MANIFEST_STEP_MARKERS = (
+    "validate_manifests.py",
+    "pytest",
+    "ruff",
+    "--cov",
+)
 
 SCHEMA_FILES = (
     "goose-recipe.schema.json",
@@ -97,8 +119,11 @@ SCHEMA_FILES = (
     "github-custom-agent.schema.json",
     "github-issue-template.schema.json",
     "dependabot-v2.schema.json",
+    "markdownlint.schema.json",
     "packaging-inventory.schema.json",
 )
+
+MIN_COVERAGE_FAIL_UNDER = 85
 
 
 @dataclass(frozen=True)
@@ -172,6 +197,17 @@ def extract_yaml_frontmatter(text: str) -> tuple[str | None, list[Finding]]:
     return "".join(body), []
 
 
+def extract_frontmatter_body(text: str) -> str:
+    """Return markdown body after YAML frontmatter, or empty string if none."""
+    if not text.startswith("---\n") and not text.startswith("---\r\n"):
+        return text
+    lines = text.splitlines(keepends=True)
+    for index, line in enumerate(lines[1:], start=1):
+        if line.strip("\r\n") == "---":
+            return "".join(lines[index + 1 :])
+    return ""
+
+
 def documented_recipe_file_paths(markdown: str) -> list[str]:
     """Collect `./agentic_flows/*.yaml` paths declared beside recipes in GOOSE-RECIPES.md."""
     paths: list[str] = []
@@ -194,11 +230,18 @@ def validate_schemas_meta(root: Path) -> list[Finding]:
     schemas_dir = root / "schemas"
     if not schemas_dir.is_dir():
         return [Finding("schemas", "schemas directory missing")]
+
+    on_disk = {path.name for path in schemas_dir.glob("*.schema.json")}
+    expected = set(SCHEMA_FILES)
+    for orphan in sorted(on_disk - expected):
+        findings.append(Finding(f"schemas/{orphan}", "unexpected/orphan schema file"))
+    for missing in sorted(expected - on_disk):
+        findings.append(Finding(f"schemas/{missing}", "required schema file missing"))
+
     for name in SCHEMA_FILES:
         rel = f"schemas/{name}"
         path = root / rel
         if not path.is_file():
-            findings.append(Finding(rel, "required schema file missing"))
             continue
         try:
             schema = json.loads(path.read_text(encoding="utf-8"))
@@ -236,6 +279,42 @@ def validate_packaging_inventory(root: Path) -> list[Finding]:
     for rel in inventory["required_paths"]:
         if not (root / rel).exists():
             findings.append(Finding(rel, "required packaging path missing"))
+
+    agents = tuple(inventory["documented_agents"])
+    if agents != DOCUMENTED_AGENTS:
+        findings.append(
+            Finding(
+                schema_path,
+                "documented_agents do not match locked DOCUMENTED_AGENTS constant",
+            )
+        )
+
+    names = frozenset(inventory["expected_recipe_names"])
+    if names != EXPECTED_RECIPE_NAMES:
+        findings.append(
+            Finding(
+                schema_path,
+                "expected_recipe_names do not match locked EXPECTED_RECIPE_NAMES",
+            )
+        )
+
+    files = tuple(inventory["expected_recipe_files"])
+    if files != EXPECTED_RECIPE_FILES:
+        findings.append(
+            Finding(
+                schema_path,
+                "expected_recipe_files do not match locked EXPECTED_RECIPE_FILES",
+            )
+        )
+
+    jobs = frozenset(inventory["required_ci_jobs"])
+    if jobs != REQUIRED_CI_JOBS:
+        findings.append(
+            Finding(
+                schema_path,
+                "required_ci_jobs do not match locked REQUIRED_CI_JOBS constant",
+            )
+        )
     return findings
 
 
@@ -322,6 +401,17 @@ def validate_goose_recipes(root: Path) -> list[Finding]:
                 "documented **File** paths do not match locked recipe file inventory",
             )
         )
+
+    if len(parsed_names) == len(declared) == 4:
+        for name, file_path in zip(parsed_names, declared, strict=True):
+            expected_file = EXPECTED_RECIPE_BINDINGS.get(name)
+            if expected_file and file_path != expected_file:
+                findings.append(
+                    Finding(
+                        "GOOSE-RECIPES.md",
+                        f"recipe {name} must bind to {expected_file}, found {file_path}",
+                    )
+                )
 
     run_paths = [p.lstrip("./") for p in GOOSE_RUN_PATH_RE.findall(markdown)]
     for run_path in run_paths:
@@ -425,6 +515,9 @@ def validate_github_agents(root: Path) -> list[Finding]:
             findings.append(Finding(rel, "frontmatter must be a mapping"))
             continue
         findings.extend(validate_against_schema(data, schema, path=rel))
+        body = extract_frontmatter_body(text).strip()
+        if not body:
+            findings.append(Finding(rel, "agent markdown body after frontmatter is empty"))
     return findings
 
 
@@ -454,6 +547,9 @@ def validate_issue_templates(root: Path) -> list[Finding]:
             findings.append(Finding(rel, "frontmatter must be a mapping"))
             continue
         findings.extend(validate_against_schema(data, schema, path=rel))
+        body = extract_frontmatter_body(text).strip()
+        if not body:
+            findings.append(Finding(rel, "issue template body after frontmatter is empty"))
     return findings
 
 
@@ -467,9 +563,103 @@ def validate_dependabot(root: Path) -> list[Finding]:
         return parse_findings
     if data is None:
         return [Finding(rel, "Dependabot config is empty")]
-    return validate_against_schema(
+    findings = validate_against_schema(
         data, load_schema("dependabot-v2.schema.json"), path=rel
     )
+    if findings:
+        return findings
+    if not isinstance(data, dict):
+        return [Finding(rel, "Dependabot root must be a mapping")]
+    updates = data.get("updates")
+    if not isinstance(updates, list):
+        return findings
+    ecosystems = {
+        item.get("package-ecosystem")
+        for item in updates
+        if isinstance(item, dict)
+    }
+    for required in ("github-actions", "pip"):
+        if required not in ecosystems:
+            findings.append(
+                Finding(rel, f"missing required package-ecosystem: {required}")
+            )
+    return findings
+
+
+def validate_markdownlint(root: Path) -> list[Finding]:
+    rel = ".markdownlint.yaml"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "required YAML config missing")]
+    data, parse_findings = parse_yaml_text(path.read_text(encoding="utf-8"), path=rel)
+    if parse_findings:
+        return parse_findings
+    if data is None:
+        return [Finding(rel, "markdownlint config is empty")]
+    return validate_against_schema(
+        data, load_schema("markdownlint.schema.json"), path=rel
+    )
+
+
+def validate_scratchpad(root: Path) -> list[Finding]:
+    rel = "agentic_flows/scratchpad.txt"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "scratchpad coordination file missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if not text.strip():
+        findings.append(Finding(rel, "scratchpad is empty"))
+        return findings
+    if "scratchpad" not in text.lower():
+        findings.append(Finding(rel, "scratchpad missing identifying header text"))
+    if not CHECKBOX_RE.search(text):
+        findings.append(Finding(rel, "scratchpad missing coordination checkbox markers"))
+    return findings
+
+
+def validate_pyproject(root: Path) -> list[Finding]:
+    rel = "pyproject.toml"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "pyproject.toml missing")]
+    try:
+        data = tomllib.loads(path.read_text(encoding="utf-8"))
+    except tomllib.TOMLDecodeError as exc:
+        return [Finding(rel, f"TOML parse error: {exc}")]
+
+    findings: list[Finding] = []
+    tool = data.get("tool")
+    if not isinstance(tool, dict):
+        return [Finding(rel, "pyproject.toml missing [tool] table")]
+
+    pytest_opts = tool.get("pytest", {})
+    if not isinstance(pytest_opts, dict) or "ini_options" not in pytest_opts:
+        findings.append(Finding(rel, "missing [tool.pytest.ini_options]"))
+
+    ruff = tool.get("ruff")
+    if not isinstance(ruff, dict):
+        findings.append(Finding(rel, "missing [tool.ruff]"))
+
+    coverage = tool.get("coverage")
+    if not isinstance(coverage, dict):
+        findings.append(Finding(rel, "missing [tool.coverage]"))
+        return findings
+
+    report = coverage.get("report")
+    if not isinstance(report, dict) or "fail_under" not in report:
+        findings.append(Finding(rel, "missing [tool.coverage.report].fail_under"))
+        return findings
+
+    fail_under = report.get("fail_under")
+    if not isinstance(fail_under, (int, float)) or fail_under < MIN_COVERAGE_FAIL_UNDER:
+        findings.append(
+            Finding(
+                rel,
+                f"coverage fail_under must be >= {MIN_COVERAGE_FAIL_UNDER}, found {fail_under!r}",
+            )
+        )
+    return findings
 
 
 def validate_yaml_configs(root: Path) -> list[Finding]:
@@ -511,12 +701,29 @@ def validate_ci_workflow(root: Path) -> list[Finding]:
     if isinstance(manifest, dict):
         steps = manifest.get("steps")
         step_blob = json.dumps(steps) if steps is not None else ""
-        if "validate_manifests.py" not in step_blob:
+        for marker in REQUIRED_MANIFEST_STEP_MARKERS:
+            if marker not in step_blob:
+                findings.append(
+                    Finding(
+                        rel,
+                        f"manifest-validate job must include step marker: {marker}",
+                    )
+                )
+        strategy = manifest.get("strategy")
+        if not isinstance(strategy, dict) or "matrix" not in strategy:
             findings.append(
-                Finding(rel, "manifest-validate job must run scripts/validate_manifests.py")
+                Finding(rel, "manifest-validate job must define a Python version matrix")
             )
-        if "pytest" not in step_blob:
-            findings.append(Finding(rel, "manifest-validate job must run pytest"))
+        else:
+            matrix = strategy.get("matrix")
+            versions = matrix.get("python-version") if isinstance(matrix, dict) else None
+            if not isinstance(versions, list) or len(versions) < 2:
+                findings.append(
+                    Finding(
+                        rel,
+                        "manifest-validate matrix.python-version must list at least 2 versions",
+                    )
+                )
     return findings
 
 
@@ -581,6 +788,9 @@ VALIDATORS: dict[str, ValidatorFn] = {
     "github-agents": validate_github_agents,
     "issue-templates": validate_issue_templates,
     "dependabot": validate_dependabot,
+    "markdownlint": validate_markdownlint,
+    "scratchpad": validate_scratchpad,
+    "pyproject": validate_pyproject,
     "yaml-configs": validate_yaml_configs,
     "ci": validate_ci_workflow,
     "prompts": validate_documented_agent_prompts,

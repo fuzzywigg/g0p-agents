@@ -21,7 +21,20 @@
         "properties": {
           "package-ecosystem": {
             "type": "string",
-            "minLength": 1
+            "enum": [
+              "github-actions",
+              "pip",
+              "npm",
+              "docker",
+              "gomod",
+              "maven",
+              "gradle",
+              "nuget",
+              "composer",
+              "cargo",
+              "bundler",
+              "terraform"
+            ]
           },
           "directory": {
             "type": "string",
@@ -34,7 +47,7 @@
             "properties": {
               "interval": {
                 "type": "string",
-                "minLength": 1
+                "enum": ["daily", "weekly", "monthly"]
               }
             }
           }

@@ -2,14 +2,21 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/fuzzywigg/g0p-agents/schemas/packaging-inventory.schema.json",
   "title": "Archive packaging inventory",
-  "description": "Required relative paths that must exist in this docs-only packaging archive.",
+  "description": "Locked packaging paths and historic agent/recipe inventory for this docs-only archive.",
   "type": "object",
   "additionalProperties": false,
-  "required": ["version", "required_paths"],
+  "required": [
+    "version",
+    "required_paths",
+    "documented_agents",
+    "expected_recipe_names",
+    "expected_recipe_files",
+    "required_ci_jobs"
+  ],
   "properties": {
     "version": {
       "type": "integer",
-      "minimum": 1
+      "minimum": 2
     },
     "required_paths": {
       "type": "array",
@@ -19,6 +26,46 @@
         "type": "string",
         "minLength": 1,
         "pattern": "^[^\\\\]+$"
+      }
+    },
+    "documented_agents": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^[A-Z][A-Za-z0-9]*Agent$"
+      }
+    },
+    "expected_recipe_names": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9_]*$"
+      }
+    },
+    "expected_recipe_files": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^agentic_flows/[a-z0-9_]+\\.ya?ml$"
+      }
+    },
+    "required_ci_jobs": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "pattern": "^[a-z][a-z0-9-]*$"
       }
     }
   }

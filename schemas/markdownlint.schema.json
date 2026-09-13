@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/fuzzywigg/g0p-agents/schemas/markdownlint.schema.json",
+  "title": "markdownlint config",
+  "description": "Structural schema for .markdownlint.yaml in this docs archive.",
+  "type": "object",
+  "additionalProperties": true,
+  "required": ["default"],
+  "properties": {
+    "default": {
+      "type": "boolean"
+    },
+    "MD013": {
+      "type": ["object", "boolean"]
+    },
+    "MD024": {
+      "type": ["object", "boolean"]
+    },
+    "MD025": {
+      "type": ["boolean", "object"]
+    },
+    "MD033": {
+      "type": ["boolean", "object"]
+    }
+  }
+}
