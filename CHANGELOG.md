@@ -10,6 +10,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Postmortem decision-log **v19** deepeners (post-#38): `postmortem-intro`,
+  `postmortem-fields`, `postmortem-next-steps` validators; postmortem.md intro/
+  mandate locks + Decision entry field locks + Next Steps surface locks;
+  consistency deepeners for `postmortem_intro_required_phrases` /
+  `postmortem_field_required_phrases` / `postmortem_next_steps_required_phrases`
+  (70 total; historic four only — postmortem slice, not packaging-inventory meta,
+  routing/identity, security policy, archive snapshot, or Dependabot)
+
 - Archive snapshot **v18** deepeners (post-#36): `implementation-quickstart`,
   `execution-specialists`, `hydration-list-b` validators; IMPLEMENTATION-GUIDE
   Quick Start surface locks + EXECUTION-SUMMARY four-specialist table locks +
