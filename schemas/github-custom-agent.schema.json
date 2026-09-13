@@ -4,7 +4,7 @@
   "title": "GitHub custom agent frontmatter",
   "description": "Required YAML frontmatter fields for .github/agents/*.agent.md files.",
   "type": "object",
-  "additionalProperties": true,
+  "additionalProperties": false,
   "required": ["name", "description"],
   "properties": {
     "name": {

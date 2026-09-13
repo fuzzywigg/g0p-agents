@@ -7,6 +7,12 @@ Checks structural correctness of:
 - Historic Goose settings / extension locks (no drift from archive recipes)
 - Recipe name ↔ declared file bindings; orphan on-disk recipe refusal
 - Documented specialist agents only (no invented agents / *Agent tokens)
+- Prompt fence headers + escalation markers for historic four agents
+- AGENTS-v2.2.md constitution headings for documented agents only
+- CLAUDE.md routing surfaces (packaging surfaces; not specialist agents)
+- SECURITY.md / CONTRIBUTING.md packaging honesty locks
+- Agent-task issue template headings
+- Orchestration recipe must reference all documented specialists
 - .cursor/environment.json (+ install path refs)
 - .github/agents/*.agent.md frontmatter + locked file set + non-empty body
 - .github/ISSUE_TEMPLATE/*.md frontmatter + locked file set + non-empty body
@@ -172,14 +178,51 @@ SCHEMA_FILES = (
     "packaging-inventory.schema.json",
 )
 
-MIN_COVERAGE_FAIL_UNDER = 97
-MIN_VALIDATOR_COUNT = 20
+ORCHESTRATION_RECIPE_NAME = "quantum_nft_mint_full_orchestration"
+
+ROUTING_SURFACES: tuple[str, ...] = (
+    "copilot",
+    "geryon",
+    "claude-cowork",
+    "browser-claude",
+    "playwright",
+    "human",
+)
+
+CONSTITUTION_HEADING_PREFIX = "#### "
+PROMPT_SYSTEM_HEADER_SUFFIX = " System Prompt"
+SPECIALIST_ESCALATION_MARKER = "ESCALATION REQUIRED"
+ORCHESTRATION_ESCALATION_MARKER = "ESCALATION TO HUMAN REQUIRED"
 
 README_REQUIRED_PHRASES = (
     "validate_manifests.py",
     "historic four",
     "schemas/",
 )
+
+SECURITY_REQUIRED_PHRASES = (
+    "Never commit secrets",
+    "Do NOT open a public GitHub issue for security vulnerabilities",
+)
+
+CONTRIBUTING_REQUIRED_PHRASES = (
+    "Do not invent new specialist agents",
+    "validate_manifests.py",
+    "four agents only",
+)
+
+ISSUE_AGENT_TASK_HEADINGS: tuple[str, ...] = (
+    "Problem",
+    "Proposed Solution",
+    "Acceptance Criteria",
+    "Agent Surface Routing",
+    "Execution Notes",
+)
+
+SPECIALIST_AGENTS: tuple[str, ...] = DOCUMENTED_AGENTS[:-1]
+
+MIN_COVERAGE_FAIL_UNDER = 98
+MIN_VALIDATOR_COUNT = 25
 
 
 @dataclass(frozen=True)
@@ -419,6 +462,39 @@ def validate_packaging_inventory(root: Path) -> list[Finding]:
         or settings.get("extension_name") != HISTORIC_EXTENSION_NAME
     ):
         findings.append(_lock_mismatch(schema_path, "historic_goose_settings"))
+
+    if inventory.get("orchestration_recipe_name") != ORCHESTRATION_RECIPE_NAME:
+        findings.append(_lock_mismatch(schema_path, "orchestration_recipe_name"))
+
+    if tuple(inventory.get("routing_surfaces", ())) != ROUTING_SURFACES:
+        findings.append(_lock_mismatch(schema_path, "routing_surfaces"))
+
+    if inventory.get("constitution_heading_prefix") != CONSTITUTION_HEADING_PREFIX:
+        findings.append(_lock_mismatch(schema_path, "constitution_heading_prefix"))
+
+    if inventory.get("prompt_system_header_suffix") != PROMPT_SYSTEM_HEADER_SUFFIX:
+        findings.append(_lock_mismatch(schema_path, "prompt_system_header_suffix"))
+
+    if inventory.get("specialist_escalation_marker") != SPECIALIST_ESCALATION_MARKER:
+        findings.append(_lock_mismatch(schema_path, "specialist_escalation_marker"))
+
+    if inventory.get("orchestration_escalation_marker") != ORCHESTRATION_ESCALATION_MARKER:
+        findings.append(_lock_mismatch(schema_path, "orchestration_escalation_marker"))
+
+    if tuple(inventory.get("agent_token_scan_docs", ())) != AGENT_TOKEN_SCAN_DOCS:
+        findings.append(_lock_mismatch(schema_path, "agent_token_scan_docs"))
+
+    if tuple(inventory.get("readme_required_phrases", ())) != README_REQUIRED_PHRASES:
+        findings.append(_lock_mismatch(schema_path, "readme_required_phrases"))
+
+    if tuple(inventory.get("security_required_phrases", ())) != SECURITY_REQUIRED_PHRASES:
+        findings.append(_lock_mismatch(schema_path, "security_required_phrases"))
+
+    if tuple(inventory.get("contributing_required_phrases", ())) != CONTRIBUTING_REQUIRED_PHRASES:
+        findings.append(_lock_mismatch(schema_path, "contributing_required_phrases"))
+
+    if tuple(inventory.get("issue_agent_task_headings", ())) != ISSUE_AGENT_TASK_HEADINGS:
+        findings.append(_lock_mismatch(schema_path, "issue_agent_task_headings"))
 
     if inventory["min_coverage_fail_under"] != MIN_COVERAGE_FAIL_UNDER:
         findings.append(_lock_mismatch(schema_path, "min_coverage_fail_under"))
@@ -668,6 +744,15 @@ def validate_recipe_agent_bindings(root: Path) -> list[Finding]:
             findings.append(
                 Finding(path, f"primary agent missing from recipe text: {primary}")
             )
+        if name == ORCHESTRATION_RECIPE_NAME:
+            missing_all = [agent for agent in DOCUMENTED_AGENTS if agent not in found]
+            for agent in missing_all:
+                findings.append(
+                    Finding(
+                        path,
+                        f"orchestration recipe missing documented agent: {agent}",
+                    )
+                )
     return findings
 
 
@@ -1108,6 +1193,50 @@ def validate_documented_agent_prompts(root: Path) -> list[Finding]:
                 ),
             )
         )
+    else:
+        for agent, fence in zip(DOCUMENTED_AGENTS, fences, strict=True):
+            expected_header = f"# {agent}{PROMPT_SYSTEM_HEADER_SUFFIX}"
+            first_line = next(
+                (line.strip() for line in fence.splitlines() if line.strip()),
+                "",
+            )
+            if first_line != expected_header:
+                findings.append(
+                    Finding(
+                        "AGENT-PROMPTS.md",
+                        (
+                            f"prompt fence for {agent} must start with "
+                            f"{expected_header!r}, found {first_line!r}"
+                        ),
+                    )
+                )
+            if agent in SPECIALIST_AGENTS:
+                if SPECIALIST_ESCALATION_MARKER not in fence:
+                    findings.append(
+                        Finding(
+                            "AGENT-PROMPTS.md",
+                            f"{agent} prompt missing {SPECIALIST_ESCALATION_MARKER!r}",
+                        )
+                    )
+                from_line = f"From Agent: {agent}"
+                if from_line not in fence:
+                    findings.append(
+                        Finding(
+                            "AGENT-PROMPTS.md",
+                            f"{agent} prompt missing escalation identity {from_line!r}",
+                        )
+                    )
+            elif agent == "OrchestrationAgent":
+                if ORCHESTRATION_ESCALATION_MARKER not in fence:
+                    findings.append(
+                        Finding(
+                            "AGENT-PROMPTS.md",
+                            (
+                                f"{agent} prompt missing "
+                                f"{ORCHESTRATION_ESCALATION_MARKER!r}"
+                            ),
+                        )
+                    )
     return findings
 
 
@@ -1127,21 +1256,120 @@ def validate_cross_doc_agents(root: Path) -> list[Finding]:
     return findings
 
 
+
+def validate_constitution_agent_headings(root: Path) -> list[Finding]:
+    """Require AGENTS-v2.2.md section headings for each documented specialist."""
+    rel = "AGENTS-v2.2.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "required documentation file is missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    for agent in DOCUMENTED_AGENTS:
+        marker = f"{CONSTITUTION_HEADING_PREFIX}{agent}:"
+        if marker not in text:
+            findings.append(
+                Finding(rel, f"missing constitution heading for documented agent: {agent}")
+            )
+    invented = sorted(agent_tokens(text) - set(DOCUMENTED_AGENTS))
+    if invented:
+        findings.append(
+            Finding(rel, f"invented or unknown agent token(s): {', '.join(invented)}")
+        )
+    return findings
+
+
+def validate_routing_surfaces(root: Path) -> list[Finding]:
+    """Lock CLAUDE.md packaging surfaces (not specialist agents)."""
+    rel = "CLAUDE.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "required documentation file is missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## Agent Routing Matrix" not in text:
+        findings.append(Finding(rel, "missing Agent Routing Matrix section"))
+    for surface in ROUTING_SURFACES:
+        if surface not in text:
+            findings.append(Finding(rel, f"missing locked routing surface: {surface}"))
+    for agent in DOCUMENTED_AGENTS:
+        if agent not in text:
+            findings.append(
+                Finding(rel, f"documented agent missing from routing/doc identity: {agent}")
+            )
+    return findings
+
+
+def validate_security_packaging(root: Path) -> list[Finding]:
+    rel = "SECURITY.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "SECURITY.md missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    for phrase in SECURITY_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(Finding(rel, f"SECURITY.md missing packaging phrase: {phrase}"))
+    invented = sorted(agent_tokens(text) - set(DOCUMENTED_AGENTS))
+    if invented:
+        findings.append(
+            Finding(rel, f"invented or unknown agent token(s): {', '.join(invented)}")
+        )
+    return findings
+
+
+def validate_contributing_packaging(root: Path) -> list[Finding]:
+    rel = "CONTRIBUTING.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "CONTRIBUTING.md missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    for phrase in CONTRIBUTING_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(rel, f"CONTRIBUTING.md missing packaging phrase: {phrase}")
+            )
+    for surface in ("copilot", "geryon", "cursor"):
+        if surface not in text:
+            findings.append(Finding(rel, f"CONTRIBUTING.md missing branch surface: {surface}"))
+    return findings
+
+
+def validate_agent_task_template(root: Path) -> list[Finding]:
+    rel = ".github/ISSUE_TEMPLATE/agent_task.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "agent task issue template missing")]
+    text = path.read_text(encoding="utf-8")
+    headings = PR_HEADING_RE.findall(text)
+    findings: list[Finding] = []
+    for required in ISSUE_AGENT_TASK_HEADINGS:
+        if required not in headings:
+            findings.append(Finding(rel, f"missing required heading: {required}"))
+    return findings
+
+
 VALIDATORS: dict[str, ValidatorFn] = {
     "schemas": validate_schemas_meta,
     "inventory": validate_packaging_inventory,
     "goose": validate_goose_recipes,
     "recipe-agents": validate_recipe_agent_bindings,
     "agent-tokens": validate_archive_agent_tokens,
+    "constitution": validate_constitution_agent_headings,
+    "routing": validate_routing_surfaces,
     "environment": validate_cursor_environment,
     "github-agents": validate_github_agents,
     "issue-templates": validate_issue_templates,
+    "agent-task": validate_agent_task_template,
     "pr-template": validate_pr_template,
     "dependabot": validate_dependabot,
     "markdownlint": validate_markdownlint,
     "requirements-dev": validate_requirements_dev,
     "license": validate_license,
     "readme": validate_readme_packaging,
+    "security": validate_security_packaging,
+    "contributing": validate_contributing_packaging,
     "scratchpad": validate_scratchpad,
     "pyproject": validate_pyproject,
     "yaml-configs": validate_yaml_configs,

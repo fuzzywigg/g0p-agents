@@ -60,12 +60,13 @@ def _copy_schemas(tmp_path: Path) -> None:
 
 def _inventory_payload(**overrides: object) -> dict:
     payload = {
-        "version": 3,
+        "version": 4,
         "documented_agents": list(vm.DOCUMENTED_AGENTS),
         "expected_recipe_names": sorted(vm.EXPECTED_RECIPE_NAMES),
         "expected_recipe_files": list(vm.EXPECTED_RECIPE_FILES),
         "recipe_bindings": dict(vm.EXPECTED_RECIPE_BINDINGS),
         "recipe_primary_agents": dict(vm.RECIPE_PRIMARY_AGENT),
+        "orchestration_recipe_name": vm.ORCHESTRATION_RECIPE_NAME,
         "required_ci_jobs": sorted(vm.REQUIRED_CI_JOBS),
         "required_python_versions": list(vm.REQUIRED_PYTHON_VERSIONS),
         "required_manifest_step_markers": list(vm.REQUIRED_MANIFEST_STEP_MARKERS),
@@ -80,6 +81,16 @@ def _inventory_payload(**overrides: object) -> dict:
             "extension_type": vm.HISTORIC_EXTENSION_TYPE,
             "extension_name": vm.HISTORIC_EXTENSION_NAME,
         },
+        "routing_surfaces": list(vm.ROUTING_SURFACES),
+        "constitution_heading_prefix": vm.CONSTITUTION_HEADING_PREFIX,
+        "prompt_system_header_suffix": vm.PROMPT_SYSTEM_HEADER_SUFFIX,
+        "specialist_escalation_marker": vm.SPECIALIST_ESCALATION_MARKER,
+        "orchestration_escalation_marker": vm.ORCHESTRATION_ESCALATION_MARKER,
+        "agent_token_scan_docs": list(vm.AGENT_TOKEN_SCAN_DOCS),
+        "readme_required_phrases": list(vm.README_REQUIRED_PHRASES),
+        "security_required_phrases": list(vm.SECURITY_REQUIRED_PHRASES),
+        "contributing_required_phrases": list(vm.CONTRIBUTING_REQUIRED_PHRASES),
+        "issue_agent_task_headings": list(vm.ISSUE_AGENT_TASK_HEADINGS),
         "min_coverage_fail_under": vm.MIN_COVERAGE_FAIL_UNDER,
         "min_validator_count": vm.MIN_VALIDATOR_COUNT,
         "required_paths": ["README.md"],
@@ -625,15 +636,20 @@ def test_validators_registry_covers_all_checks() -> None:
         "goose",
         "recipe-agents",
         "agent-tokens",
+        "constitution",
+        "routing",
         "environment",
         "github-agents",
         "issue-templates",
+        "agent-task",
         "pr-template",
         "dependabot",
         "markdownlint",
         "requirements-dev",
         "license",
         "readme",
+        "security",
+        "contributing",
         "scratchpad",
         "pyproject",
         "yaml-configs",
@@ -642,7 +658,7 @@ def test_validators_registry_covers_all_checks() -> None:
         "cross-docs",
     }
     assert set(vm.VALIDATORS) == expected
-    assert len(vm.VALIDATORS) >= vm.MIN_VALIDATOR_COUNT
+    assert len(vm.VALIDATORS) == vm.MIN_VALIDATOR_COUNT
 
 
 def test_frontmatter_crlf_opening() -> None:
@@ -1194,8 +1210,13 @@ def _four_locked_recipe_doc(
     for name, primary in vm.RECIPE_PRIMARY_AGENT.items():
         recipe = json.loads(json.dumps(LOCKED_RECIPE))
         recipe["name"] = name
-        recipe["recipe"]["instructions"] = f"You are {primary}."
-        recipe["recipe"]["prompt"] = f"STEP for {primary}"
+        if name == vm.ORCHESTRATION_RECIPE_NAME:
+            agents_blob = " ".join(vm.DOCUMENTED_AGENTS)
+            recipe["recipe"]["instructions"] = f"You are {primary}. Coordinate {agents_blob}."
+            recipe["recipe"]["prompt"] = f"STEP for {agents_blob}"
+        else:
+            recipe["recipe"]["instructions"] = f"You are {primary}."
+            recipe["recipe"]["prompt"] = f"STEP for {primary}"
         if settings_override is not None:
             recipe["recipe"]["settings"].update(settings_override)
         if drop_extension:
@@ -1225,7 +1246,7 @@ def test_schemas_meta_rejects_wrong_draft_and_non_mapping(tmp_path: Path) -> Non
     assert any("$id must be" in f.message for f in findings)
 
 
-def test_packaging_inventory_v3_lock_fields(tmp_path: Path) -> None:
+def test_packaging_inventory_v4_lock_fields(tmp_path: Path) -> None:
     _copy_schemas(tmp_path)
     _write(tmp_path / "README.md", "# hi\n")
 
@@ -1236,6 +1257,7 @@ def test_packaging_inventory_v3_lock_fields(tmp_path: Path) -> None:
     cases = [
         ("recipe_bindings", bad_bindings),
         ("recipe_primary_agents", bad_primaries),
+        ("orchestration_recipe_name", "invented_orchestration"),
         ("required_python_versions", ["3.11", "3.12"]),
         (
             "required_manifest_step_markers",
@@ -1262,11 +1284,36 @@ def test_packaging_inventory_v3_lock_fields(tmp_path: Path) -> None:
         (
             "historic_goose_settings",
             {
-                "goose_provider": "openai",
+                "goose_provider": vm.HISTORIC_GOOSE_PROVIDER,
                 "goose_model": vm.HISTORIC_GOOSE_MODEL,
                 "extension_type": vm.HISTORIC_EXTENSION_TYPE,
-                "extension_name": vm.HISTORIC_EXTENSION_NAME,
+                "extension_name": "wrong-extension",
             },
+        ),
+        ("routing_surfaces", list(vm.ROUTING_SURFACES)[:-1] + ["invented"]),
+        ("constitution_heading_prefix", "### "),
+        ("prompt_system_header_suffix", " Prompt"),
+        ("specialist_escalation_marker", "ESCALATE NOW"),
+        ("orchestration_escalation_marker", "ASK HUMAN"),
+        (
+            "agent_token_scan_docs",
+            list(vm.AGENT_TOKEN_SCAN_DOCS)[:-1] + ["invented.md"],
+        ),
+        (
+            "readme_required_phrases",
+            list(vm.README_REQUIRED_PHRASES)[:-1] + ["invented"],
+        ),
+        (
+            "security_required_phrases",
+            list(vm.SECURITY_REQUIRED_PHRASES)[:-1] + ["invented"],
+        ),
+        (
+            "contributing_required_phrases",
+            list(vm.CONTRIBUTING_REQUIRED_PHRASES)[:-1] + ["invented"],
+        ),
+        (
+            "issue_agent_task_headings",
+            list(vm.ISSUE_AGENT_TASK_HEADINGS)[:-1] + ["Invented"],
         ),
         ("min_coverage_fail_under", 90),
         ("min_validator_count", 999),
@@ -1380,6 +1427,11 @@ def test_live_new_validators() -> None:
     assert vm.validate_requirements_dev(REPO_ROOT) == []
     assert vm.validate_license(REPO_ROOT) == []
     assert vm.validate_readme_packaging(REPO_ROOT) == []
+    assert vm.validate_constitution_agent_headings(REPO_ROOT) == []
+    assert vm.validate_routing_surfaces(REPO_ROOT) == []
+    assert vm.validate_security_packaging(REPO_ROOT) == []
+    assert vm.validate_contributing_packaging(REPO_ROOT) == []
+    assert vm.validate_agent_task_template(REPO_ROOT) == []
 
 
 def test_environment_non_mapping_root(tmp_path: Path) -> None:
@@ -1479,3 +1531,256 @@ def test_pyproject_missing_coverage_table(tmp_path: Path) -> None:
     )
     findings = vm.validate_pyproject(tmp_path)
     assert any("missing [tool.coverage]" in f.message for f in findings)
+
+
+def test_goose_schema_rejects_non_historic_provider_model() -> None:
+    schema = vm.load_schema("goose-recipe.schema.json")
+    bad = json.loads(json.dumps(MINIMAL_RECIPE))
+    bad["recipe"]["settings"]["goose_provider"] = "openai"
+    findings = vm.validate_against_schema(bad, schema, path="fixture")
+    assert findings
+    bad = json.loads(json.dumps(MINIMAL_RECIPE))
+    bad["recipe"]["settings"]["goose_model"] = "gpt-4"
+    findings = vm.validate_against_schema(bad, schema, path="fixture")
+    assert findings
+    bad = json.loads(json.dumps(MINIMAL_RECIPE))
+    bad["recipe"]["settings"]["extra"] = True
+    findings = vm.validate_against_schema(bad, schema, path="fixture")
+    assert findings
+
+
+def test_github_agent_schema_rejects_unknown_keys() -> None:
+    schema = vm.load_schema("github-custom-agent.schema.json")
+    findings = vm.validate_against_schema(
+        {"name": "X", "description": "Y", "tools": []},
+        schema,
+        path="fixture",
+    )
+    assert findings
+
+
+def test_prompt_fence_header_and_escalation_locks(tmp_path: Path) -> None:
+    fences = []
+    for agent in vm.DOCUMENTED_AGENTS:
+        body = f"# Wrong Header\n\n{agent}\n"
+        if agent in vm.SPECIALIST_AGENTS:
+            body = (
+                f"# {agent}{vm.PROMPT_SYSTEM_HEADER_SUFFIX}\n\n"
+                f"{agent} body without escalation\n"
+            )
+        else:
+            body = (
+                f"# {agent}{vm.PROMPT_SYSTEM_HEADER_SUFFIX}\n\n"
+                f"{agent} body without human escalation\n"
+            )
+        fences.append(f"```markdown\n{body}```")
+    headings = "\n\n".join(
+        f"## {i}. {agent} Prompt Template\n\n{fence}"
+        for i, (agent, fence) in enumerate(zip(vm.DOCUMENTED_AGENTS, fences, strict=True), 1)
+    )
+    _write(tmp_path / "AGENT-PROMPTS.md", headings)
+    findings = vm.validate_documented_agent_prompts(tmp_path)
+    assert any("ESCALATION" in f.message for f in findings)
+
+    # Wrong header
+    fences = []
+    for agent in vm.DOCUMENTED_AGENTS:
+        esc = (
+            f"{vm.SPECIALIST_ESCALATION_MARKER}\nFrom Agent: {agent}\n"
+            if agent in vm.SPECIALIST_AGENTS
+            else f"{vm.ORCHESTRATION_ESCALATION_MARKER}\n"
+        )
+        body = f"# NotTheAgent System Prompt\n\n{esc}\n"
+        fences.append(f"```markdown\n{body}```")
+    headings = "\n\n".join(
+        f"## {i}. {agent} Prompt Template\n\n{fence}"
+        for i, (agent, fence) in enumerate(zip(vm.DOCUMENTED_AGENTS, fences, strict=True), 1)
+    )
+    _write(tmp_path / "AGENT-PROMPTS.md", headings)
+    findings = vm.validate_documented_agent_prompts(tmp_path)
+    assert any("must start with" in f.message for f in findings)
+
+
+def test_orchestration_recipe_requires_all_agents(tmp_path: Path) -> None:
+    recipes = []
+    for name, primary in vm.RECIPE_PRIMARY_AGENT.items():
+        blob = f"You are {primary} only."
+        recipes.append(
+            {
+                "name": name,
+                "recipe": {
+                    **MINIMAL_RECIPE["recipe"],
+                    "instructions": blob,
+                    "prompt": blob,
+                    "title": primary,
+                },
+            }
+        )
+    parts = []
+    for index, (recipe, file_path) in enumerate(
+        zip(recipes, vm.EXPECTED_RECIPE_FILES, strict=True), start=1
+    ):
+        parts.append(
+            f"## Recipe {index}\n\n**File**: `./{file_path}`\n\n"
+            f"```yaml\n{yaml.safe_dump(recipe, sort_keys=False)}```\n"
+        )
+    _write(tmp_path / "GOOSE-RECIPES.md", "\n".join(parts))
+    findings = vm.validate_recipe_agent_bindings(tmp_path)
+    assert any("orchestration recipe missing documented agent" in f.message for f in findings)
+
+
+def test_constitution_routing_security_contributing_agent_task(tmp_path: Path) -> None:
+    assert any(
+        "missing" in f.message for f in vm.validate_constitution_agent_headings(tmp_path)
+    )
+    _write(tmp_path / "AGENTS-v2.2.md", "# no agents\nFakeAgent here\n")
+    findings = vm.validate_constitution_agent_headings(tmp_path)
+    assert any("missing constitution heading" in f.message for f in findings)
+    assert any("invented or unknown agent" in f.message for f in findings)
+
+    assert any("missing" in f.message for f in vm.validate_routing_surfaces(tmp_path))
+    _write(tmp_path / "CLAUDE.md", "# no matrix\n")
+    findings = vm.validate_routing_surfaces(tmp_path)
+    assert any("Routing Matrix" in f.message for f in findings)
+
+    assert any("missing" in f.message for f in vm.validate_security_packaging(tmp_path))
+    _write(tmp_path / "SECURITY.md", "# hi\nFakeAgent\n")
+    findings = vm.validate_security_packaging(tmp_path)
+    assert any("packaging phrase" in f.message for f in findings)
+    assert any("invented or unknown agent" in f.message for f in findings)
+
+    assert any("missing" in f.message for f in vm.validate_contributing_packaging(tmp_path))
+    _write(tmp_path / "CONTRIBUTING.md", "# hi\n")
+    findings = vm.validate_contributing_packaging(tmp_path)
+    assert any("packaging phrase" in f.message for f in findings)
+
+    assert any("missing" in f.message for f in vm.validate_agent_task_template(tmp_path))
+    _write(tmp_path / ".github" / "ISSUE_TEMPLATE" / "agent_task.md", "# Task\n")
+    findings = vm.validate_agent_task_template(tmp_path)
+    assert any("missing required heading" in f.message for f in findings)
+
+
+def test_inventory_schema_rejects_v3_payload() -> None:
+    schema = vm.load_schema("packaging-inventory.schema.json")
+    payload = _inventory_payload()
+    payload["version"] = 3
+    # Drop v4-required fields to mimic old inventory
+    for key in (
+        "orchestration_recipe_name",
+        "routing_surfaces",
+        "constitution_heading_prefix",
+        "prompt_system_header_suffix",
+        "specialist_escalation_marker",
+        "orchestration_escalation_marker",
+        "agent_token_scan_docs",
+        "readme_required_phrases",
+        "security_required_phrases",
+        "contributing_required_phrases",
+        "issue_agent_task_headings",
+    ):
+        payload.pop(key, None)
+    findings = vm.validate_against_schema(
+        payload, schema, path="schemas/packaging-inventory.json"
+    )
+    assert findings
+
+
+def test_historic_settings_non_mapping_and_non_dict_extensions() -> None:
+    assert vm._validate_historic_recipe_settings({"recipe": "scalar"}, path="x") == []
+    findings = vm._validate_historic_recipe_settings(
+        {
+            "recipe": {
+                "settings": {
+                    "goose_provider": "openai",
+                    "goose_model": "gpt-4",
+                },
+                "extensions": [
+                    "not-a-mapping",
+                    {"type": "stdio", "name": "other"},
+                ],
+            }
+        },
+        path="x",
+    )
+    assert any("goose_provider" in f.message for f in findings)
+    assert any("goose_model" in f.message for f in findings)
+    assert any("extension" in f.message for f in findings)
+
+
+def test_github_and_issue_frontmatter_non_mapping(tmp_path: Path) -> None:
+    _copy_schemas(tmp_path)
+    _write(
+        tmp_path / ".github" / "agents" / "my-agent.agent.md",
+        "---\n- list\n---\n\nBody\n",
+    )
+    findings = vm.validate_github_agents(tmp_path)
+    assert any("frontmatter must be a mapping" in f.message for f in findings)
+
+    for rel in vm.ISSUE_TEMPLATE_FILES:
+        _write(tmp_path / rel, "---\n- list\n---\n\nBody\n")
+    findings = vm.validate_issue_templates(tmp_path)
+    assert any("frontmatter must be a mapping" in f.message for f in findings)
+
+
+def test_prompt_specialist_missing_from_agent_identity(tmp_path: Path) -> None:
+    fences = []
+    for agent in vm.DOCUMENTED_AGENTS:
+        if agent in vm.SPECIALIST_AGENTS:
+            body = (
+                f"# {agent}{vm.PROMPT_SYSTEM_HEADER_SUFFIX}\n\n"
+                f"{vm.SPECIALIST_ESCALATION_MARKER}\n"
+                "From Agent: SomeoneElse\n"
+            )
+        else:
+            body = (
+                f"# {agent}{vm.PROMPT_SYSTEM_HEADER_SUFFIX}\n\n"
+                f"{vm.ORCHESTRATION_ESCALATION_MARKER}\n"
+            )
+        fences.append(f"```markdown\n{body}```")
+    headings = "\n\n".join(
+        f"## {i}. {agent} Prompt Template\n\n{fence}"
+        for i, (agent, fence) in enumerate(
+            zip(vm.DOCUMENTED_AGENTS, fences, strict=True), start=1
+        )
+    )
+    _write(tmp_path / "AGENT-PROMPTS.md", headings)
+    findings = vm.validate_documented_agent_prompts(tmp_path)
+    assert any("escalation identity" in f.message for f in findings)
+
+
+def test_prompt_orchestration_missing_human_escalation(tmp_path: Path) -> None:
+    fences = []
+    for agent in vm.DOCUMENTED_AGENTS:
+        if agent in vm.SPECIALIST_AGENTS:
+            body = (
+                f"# {agent}{vm.PROMPT_SYSTEM_HEADER_SUFFIX}\n\n"
+                f"{vm.SPECIALIST_ESCALATION_MARKER}\n"
+                f"From Agent: {agent}\n"
+            )
+        else:
+            body = f"# {agent}{vm.PROMPT_SYSTEM_HEADER_SUFFIX}\n\nno human marker\n"
+        fences.append(f"```markdown\n{body}```")
+    headings = "\n\n".join(
+        f"## {i}. {agent} Prompt Template\n\n{fence}"
+        for i, (agent, fence) in enumerate(
+            zip(vm.DOCUMENTED_AGENTS, fences, strict=True), start=1
+        )
+    )
+    _write(tmp_path / "AGENT-PROMPTS.md", headings)
+    findings = vm.validate_documented_agent_prompts(tmp_path)
+    assert any(vm.ORCHESTRATION_ESCALATION_MARKER in f.message for f in findings)
+
+
+def test_github_agent_missing_frontmatter_continue(tmp_path: Path) -> None:
+    _copy_schemas(tmp_path)
+    _write(tmp_path / ".github" / "agents" / "my-agent.agent.md", "# no frontmatter\n")
+    findings = vm.validate_github_agents(tmp_path)
+    assert any("frontmatter" in f.message for f in findings)
+
+
+def test_issue_template_missing_frontmatter_continue(tmp_path: Path) -> None:
+    _copy_schemas(tmp_path)
+    for rel in vm.ISSUE_TEMPLATE_FILES:
+        _write(tmp_path / rel, "# no frontmatter\n")
+    findings = vm.validate_issue_templates(tmp_path)
+    assert any("frontmatter" in f.message for f in findings)

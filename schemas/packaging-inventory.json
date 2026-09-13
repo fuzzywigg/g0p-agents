@@ -1,5 +1,5 @@
 {
-  "version": 3,
+  "version": 4,
   "documented_agents": [
     "QuantumArchitectAgent",
     "BlockchainArchitectAgent",
@@ -30,6 +30,7 @@
     "edge_security_implementation_workflow": "EdgeSecurityAgent",
     "quantum_nft_mint_full_orchestration": "OrchestrationAgent"
   },
+  "orchestration_recipe_name": "quantum_nft_mint_full_orchestration",
   "required_ci_jobs": [
     "markdown-lint",
     "link-check",
@@ -87,8 +88,55 @@
     "extension_type": "builtin",
     "extension_name": "developer"
   },
-  "min_coverage_fail_under": 97,
-  "min_validator_count": 20,
+  "routing_surfaces": [
+    "copilot",
+    "geryon",
+    "claude-cowork",
+    "browser-claude",
+    "playwright",
+    "human"
+  ],
+  "constitution_heading_prefix": "#### ",
+  "prompt_system_header_suffix": " System Prompt",
+  "specialist_escalation_marker": "ESCALATION REQUIRED",
+  "orchestration_escalation_marker": "ESCALATION TO HUMAN REQUIRED",
+  "agent_token_scan_docs": [
+    "AGENT-PROMPTS.md",
+    "AGENTS-v2.2.md",
+    "CLAUDE.md",
+    "GOOSE-RECIPES.md",
+    "README.md",
+    "IMPLEMENTATION-GUIDE.md",
+    "EXECUTION-SUMMARY.md",
+    "CONTRIBUTING.md",
+    "SECURITY.md",
+    "CHANGELOG.md",
+    "postmortem.md",
+    "docs/agent-hydration.md"
+  ],
+  "readme_required_phrases": [
+    "validate_manifests.py",
+    "historic four",
+    "schemas/"
+  ],
+  "security_required_phrases": [
+    "Never commit secrets",
+    "Do NOT open a public GitHub issue for security vulnerabilities"
+  ],
+  "contributing_required_phrases": [
+    "Do not invent new specialist agents",
+    "validate_manifests.py",
+    "four agents only"
+  ],
+  "issue_agent_task_headings": [
+    "Problem",
+    "Proposed Solution",
+    "Acceptance Criteria",
+    "Agent Surface Routing",
+    "Execution Notes"
+  ],
+  "min_coverage_fail_under": 98,
+  "min_validator_count": 25,
   "required_paths": [
     "README.md",
     "LICENSE",

@@ -10,6 +10,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Packaging inventory **v4** locks: routing surfaces, constitution headings,
+  prompt system-header / escalation markers, security + contributing phrases,
+  agent-task issue headings, orchestration recipe name, agent-token scan doc set
+- New validators: `constitution`, `routing`, `security`, `contributing`,
+  `agent-task` (25 total; still only the historic four specialists)
+- Prompt deepeners: ordered `# {Agent} System Prompt` fences + specialist /
+  orchestration escalation identity locks
+- Goose schema: `goose_provider` / `goose_model` const-locked to historic values;
+  GitHub custom-agent frontmatter `additionalProperties: false`
+- Coverage gate raised to **98%** (no workflow file edits this wave)
+
 - Packaging inventory **v3** locks: recipe bindings, primary agents, schema file
   set, CI Python matrix, manifest step markers, dev packages, GitHub agent /
   issue-template file sets, PR template headings, historic Goose settings,
