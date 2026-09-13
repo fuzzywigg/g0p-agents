@@ -175,8 +175,8 @@ CI_FAIL_FAST = False
 CI_WORKFLOW_NAME = "CI — Lint, Links & Manifests"
 CI_REQUIRED_ACTIONS: tuple[str, ...] = (
     "actions/checkout@v7",
-    "actions/setup-python@v5",
-    "actions/upload-artifact@v4",
+    "actions/setup-python@v7",
+    "actions/upload-artifact@v7",
     "DavidAnson/markdownlint-cli2-action@v24",
     "lycheeverse/lychee-action@v2",
 )

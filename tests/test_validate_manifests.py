@@ -1370,7 +1370,7 @@ def _ci_yaml_with_matrix(versions: list[str], *, markers: list[str] | None = Non
             "    steps:",
             step_lines,
             "      - if: always()",
-            "        uses: actions/upload-artifact@v4",
+            "        uses: actions/upload-artifact@v7",
             "        with:",
             "          name: manifest-validate-pyX",
             "",
@@ -1906,8 +1906,8 @@ def test_ci_upload_artifact_non_dict_step(tmp_path: Path) -> None:
     yaml_text = _ci_yaml_with_matrix(list(vm.REQUIRED_PYTHON_VERSIONS))
     # Inject a non-mapping step before upload-artifact so the loop continues.
     yaml_text = yaml_text.replace(
-        "      - uses: actions/upload-artifact@v4",
-        "      - not-a-mapping\n      - uses: actions/upload-artifact@v4",
+        "      - uses: actions/upload-artifact@v7",
+        "      - not-a-mapping\n      - uses: actions/upload-artifact@v7",
     )
     _write(tmp_path / ".github" / "workflows" / "ci.yml", yaml_text)
     findings = vm.validate_ci_workflow(tmp_path)
@@ -3688,7 +3688,7 @@ def test_v9_issue_names_readme_badges_quarterly_edge_cases(tmp_path: Path) -> No
                 "steps": [
                     "not-a-dict",
                     {
-                        "uses": "actions/upload-artifact@v4",
+                        "uses": "actions/upload-artifact@v7",
                         "if": "always()",
                         "with": {"name": "manifest-validate-pyX"},
                     },
@@ -3770,7 +3770,7 @@ def test_v10_link_check_ci_job_names_github_agent_desc_edge_cases(
                 "    name: Wrong Manifest",
                 "    runs-on: ubuntu-latest",
                 "    steps:",
-                "      - uses: actions/setup-python@v5",
+                "      - uses: actions/setup-python@v7",
                 "        with:",
                 "          python-version: '3.12'",
                 "          cache-dependency-path: wrong.txt",
@@ -4115,7 +4115,7 @@ def test_v10_link_check_ci_job_names_github_agent_desc_edge_cases(
                         "runs-on": "ubuntu-latest",
                         "steps": [
                             "not-a-mapping-step",
-                            {"uses": "actions/setup-python@v5"},
+                            {"uses": "actions/setup-python@v7"},
                         ],
                     },
                 },
@@ -4254,7 +4254,7 @@ def test_v11_ci_runs_on_artifacts_actionlint_shell_edge_cases(tmp_path: Path) ->
                 "  manifest-validate:",
                 "    runs-on: windows-latest",
                 "    steps:",
-                "      - uses: actions/upload-artifact@v4",
+                "      - uses: actions/upload-artifact@v7",
                 "        with:",
                 "          name: manifest-validate-pyX",
                 "          if-no-files-found: error",
@@ -4355,7 +4355,7 @@ def test_v11_ci_runs_on_artifacts_actionlint_shell_edge_cases(tmp_path: Path) ->
                 f"    runs-on: {vm.CI_RUNS_ON}",
                 "    steps:",
                 "      - not-a-mapping-step",
-                "      - uses: actions/upload-artifact@v4",
+                "      - uses: actions/upload-artifact@v7",
                 "        with: not-a-mapping",
                 "",
             ]
@@ -4388,7 +4388,7 @@ def test_v11_ci_runs_on_artifacts_actionlint_shell_edge_cases(tmp_path: Path) ->
                 "  manifest-validate:",
                 f"    runs-on: {vm.CI_RUNS_ON}",
                 "    steps:",
-                "      - uses: actions/upload-artifact@v4",
+                "      - uses: actions/upload-artifact@v7",
                 "        with:",
                 "          name: manifest-validate-pyX",
                 f"          if-no-files-found: {vm.CI_ARTIFACT_IF_NO_FILES_FOUND}",
@@ -4428,7 +4428,7 @@ def test_v11_ci_runs_on_artifacts_actionlint_shell_edge_cases(tmp_path: Path) ->
                 "  manifest-validate:",
                 "    runs-on: ubuntu-latest",
                 "    steps:",
-                "      - uses: actions/upload-artifact@v4",
+                "      - uses: actions/upload-artifact@v7",
                 "        with:",
                 f"          if-no-files-found: {vm.CI_ARTIFACT_IF_NO_FILES_FOUND}",
                 "          path:",
@@ -4448,7 +4448,7 @@ def test_v11_ci_runs_on_artifacts_actionlint_shell_edge_cases(tmp_path: Path) ->
                 "  manifest-validate:",
                 "    runs-on: ubuntu-latest",
                 "    steps:",
-                "      - uses: actions/upload-artifact@v4",
+                "      - uses: actions/upload-artifact@v7",
                 "        with:",
                 f"          if-no-files-found: {vm.CI_ARTIFACT_IF_NO_FILES_FOUND}",
                 "          path: 42",
@@ -4768,7 +4768,7 @@ def test_v12_ci_setup_python_ruff_license_mit_edge_cases(tmp_path: Path) -> None
                 "    runs-on: ubuntu-latest",
                 "    steps:",
                 "      - not-a-mapping",
-                "      - uses: actions/setup-python@v5",
+                "      - uses: actions/setup-python@v7",
                 "        with: not-a-mapping",
                 "      - run: echo no ruff",
                 "",
@@ -4789,7 +4789,7 @@ def test_v12_ci_setup_python_ruff_license_mit_edge_cases(tmp_path: Path) -> None
                 "  manifest-validate:",
                 "    runs-on: ubuntu-latest",
                 "    steps:",
-                "      - uses: actions/setup-python@v5",
+                "      - uses: actions/setup-python@v7",
                 "        with:",
                 "          cache: npm",
                 "          cache-dependency-path: wrong.txt",
@@ -4832,7 +4832,7 @@ def test_v12_ci_setup_python_ruff_license_mit_edge_cases(tmp_path: Path) -> None
                 "  manifest-validate:",
                 "    runs-on: ubuntu-latest",
                 "    steps:",
-                "      - uses: actions/setup-python@v5",
+                "      - uses: actions/setup-python@v7",
                 "        with:",
                 f"          cache: {vm.CI_SETUP_PYTHON_CACHE}",
                 f"          cache-dependency-path: {vm.CI_CACHE_DEPENDENCY_PATH}",
