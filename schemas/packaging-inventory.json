@@ -1,5 +1,5 @@
 {
-  "version": 24,
+  "version": 25,
   "documented_agents": [
     "QuantumArchitectAgent",
     "BlockchainArchitectAgent",
@@ -252,11 +252,11 @@
   "hydration_required_sections": [
     "## PHASE 1: FINDINGS REPORT",
     "## PHASE 2: QUESTIONS",
-    "### LIST B \u2014 Requires Andrew (HITL)",
+    "### LIST B — Requires Andrew (HITL)",
     "## PHASE 3: RESOLVED (LIST A)",
     "## PHASE 4: ISSUES GENERATED",
     "## PHASE 5: Roadmap",
-    "## LIST B \u2014 Deferred to Andrew"
+    "## LIST B — Deferred to Andrew"
   ],
   "execution_summary_required_phrases": [
     "EXECUTION SUMMARY",
@@ -305,6 +305,9 @@
     "github-agents",
     "gitignore",
     "goose",
+    "goose-howto",
+    "goose-naming",
+    "goose-state-machine",
     "hydration",
     "hydration-list-b",
     "implementation-guide",
@@ -357,7 +360,7 @@
     "yaml-configs"
   ],
   "min_coverage_fail_under": 99,
-  "min_validator_count": 85,
+  "min_validator_count": 88,
   "required_paths": [
     "README.md",
     "LICENSE",
@@ -478,7 +481,7 @@
     "Notion Master Index sync",
     "postmortem.md incident review"
   ],
-  "ci_workflow_name": "CI \u2014 Lint, Links & Manifests",
+  "ci_workflow_name": "CI — Lint, Links & Manifests",
   "ci_required_text_markers": [
     "download-actionlint.bash",
     "actionlint",
@@ -606,7 +609,7 @@
   ],
   "routing_matrix_rationale_phrases": [
     "Single-repo, syntax-level work",
-    "Deep coding, long-running, 60\u201390 min",
+    "Deep coding, long-running, 60–90 min",
     "Cross-system state, Notion truth",
     "UI-only settings",
     "Test automation",
@@ -676,7 +679,7 @@
     "YAML recipes, Docker Compose"
   ],
   "hydration_list_b_required_phrases": [
-    "### LIST B \u2014 Requires Andrew (HITL)",
+    "### LIST B — Requires Andrew (HITL)",
     "Is g0p-agents meant to be activated into a runnable codebase",
     "What is PikoClaw exactly",
     "Should actual Solidity, Python (Cirq), and React Native code be implemented",
@@ -701,7 +704,7 @@
     "**Next Steps**:"
   ],
   "postmortem_next_steps_required_phrases": [
-    "Andrew answers LIST B (B1\u2013B5) in docs/agent-hydration.md",
+    "Andrew answers LIST B (B1–B5) in docs/agent-hydration.md",
     "browser-claude or claude-cowork creates GitHub issues",
     "claude-cowork creates/updates Notion page under Active Sprint Work",
     "geryon scaffolds agentic_flows/ once B1 is answered"
@@ -813,5 +816,32 @@
     ".cursor/environment.json",
     "## Manifest validation",
     "## License"
+  ],
+  "goose_howto_required_phrases": [
+    "## How to Use These Recipes",
+    "### Step 1: Individual Recipe (Single Agent)",
+    "goose run ./agentic_flows/quantum_algorithm_design.yaml",
+    "goose run ./agentic_flows/blockchain_contract_design.yaml",
+    "goose run ./agentic_flows/edge_security_implementation.yaml",
+    "### Step 2: Master Recipe (All Agents)",
+    "goose run ./agentic_flows/quantum_nft_mint_orchestration.yaml",
+    "Log everything in postmortem.md"
+  ],
+  "goose_state_machine_required_phrases": [
+    "## Scratchpad State Machine",
+    "./agentic_flows/scratchpad.txt",
+    "checkbox progress",
+    "Status: IN_PROGRESS",
+    "Current Owner: EdgeSecurityAgent",
+    "source of truth"
+  ],
+  "goose_naming_required_phrases": [
+    "## Recipe Naming Convention",
+    "[domain]_[action]_[target].yaml",
+    "quantum_algorithm_design.yaml",
+    "## Adding New Recipes",
+    "Create new YAML file",
+    "Follow the structure",
+    "Update AGENTS.md"
   ]
 }
