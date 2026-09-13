@@ -205,7 +205,7 @@
     "security",
     "yaml-configs"
   ],
-  "min_coverage_fail_under": 98,
+  "min_coverage_fail_under": 99,
   "min_validator_count": 27,
   "required_paths": [
     "README.md",
@@ -242,5 +242,32 @@
     "schemas/packaging-inventory.json",
     "scripts/validate_manifests.py",
     "tests/test_validate_manifests.py"
+  ],
+  "specialist_agents": [
+    "QuantumArchitectAgent",
+    "BlockchainArchitectAgent",
+    "EdgeSecurityAgent"
+  ],
+  "schema_draft_uri": "https://json-schema.org/draft/2020-12/schema",
+  "schema_id_prefix": "https://github.com/fuzzywigg/g0p-agents/schemas/",
+  "claude_required_sections": [
+    "## Repo Identity",
+    "## Agent Routing Matrix",
+    "## State Residency Rules",
+    "## Key Files",
+    "## Negative Constraints (no agent may autonomously)",
+    "## Escalation Format",
+    "## Quarterly Review Triggers"
+  ],
+  "contributing_branch_surfaces": [
+    "copilot",
+    "geryon",
+    "cursor"
+  ],
+  "scratchpad_status_markers": [
+    "DONE",
+    "PENDING",
+    "IN_PROGRESS",
+    "BLOCKED"
   ]
 }

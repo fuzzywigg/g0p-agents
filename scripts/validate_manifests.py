@@ -256,9 +256,28 @@ ISSUE_FEATURE_REQUEST_HEADINGS: tuple[str, ...] = (
     "Agent Surface Routing",
 )
 
+CLAUDE_REQUIRED_SECTIONS: tuple[str, ...] = (
+    "## Repo Identity",
+    "## Agent Routing Matrix",
+    "## State Residency Rules",
+    "## Key Files",
+    "## Negative Constraints (no agent may autonomously)",
+    "## Escalation Format",
+    "## Quarterly Review Triggers",
+)
+
+CONTRIBUTING_BRANCH_SURFACES: tuple[str, ...] = ("copilot", "geryon", "cursor")
+
+SCRATCHPAD_STATUS_MARKERS: tuple[str, ...] = (
+    "DONE",
+    "PENDING",
+    "IN_PROGRESS",
+    "BLOCKED",
+)
+
 SPECIALIST_AGENTS: tuple[str, ...] = DOCUMENTED_AGENTS[:-1]
 
-MIN_COVERAGE_FAIL_UNDER = 98
+MIN_COVERAGE_FAIL_UNDER = 99
 MIN_VALIDATOR_COUNT = 27
 
 
@@ -574,6 +593,27 @@ def validate_packaging_inventory(root: Path) -> list[Finding]:
 
     if tuple(inventory.get("scratchpad_required_phrases", ())) != SCRATCHPAD_REQUIRED_PHRASES:
         findings.append(_lock_mismatch(schema_path, "scratchpad_required_phrases"))
+
+    if tuple(inventory.get("specialist_agents", ())) != SPECIALIST_AGENTS:
+        findings.append(_lock_mismatch(schema_path, "specialist_agents"))
+
+    if inventory.get("schema_draft_uri") != SCHEMA_DRAFT_URI:
+        findings.append(_lock_mismatch(schema_path, "schema_draft_uri"))
+
+    if inventory.get("schema_id_prefix") != SCHEMA_ID_PREFIX:
+        findings.append(_lock_mismatch(schema_path, "schema_id_prefix"))
+
+    if tuple(inventory.get("claude_required_sections", ())) != CLAUDE_REQUIRED_SECTIONS:
+        findings.append(_lock_mismatch(schema_path, "claude_required_sections"))
+
+    if (
+        tuple(inventory.get("contributing_branch_surfaces", ()))
+        != CONTRIBUTING_BRANCH_SURFACES
+    ):
+        findings.append(_lock_mismatch(schema_path, "contributing_branch_surfaces"))
+
+    if tuple(inventory.get("scratchpad_status_markers", ())) != SCRATCHPAD_STATUS_MARKERS:
+        findings.append(_lock_mismatch(schema_path, "scratchpad_status_markers"))
 
     expected_validator_names = tuple(sorted(VALIDATORS))
     if tuple(inventory.get("validator_names", ())) != expected_validator_names:
@@ -1216,6 +1256,9 @@ def validate_scratchpad(root: Path) -> list[Finding]:
     for phrase in SCRATCHPAD_REQUIRED_PHRASES:
         if phrase not in text:
             findings.append(Finding(rel, f"scratchpad missing required phrase: {phrase}"))
+    for marker in SCRATCHPAD_STATUS_MARKERS:
+        if marker not in text:
+            findings.append(Finding(rel, f"scratchpad missing status marker: {marker}"))
     return findings
 
 
@@ -1570,8 +1613,9 @@ def validate_routing_surfaces(root: Path) -> list[Finding]:
         return [Finding(rel, "required documentation file is missing")]
     text = path.read_text(encoding="utf-8")
     findings: list[Finding] = []
-    if "## Agent Routing Matrix" not in text:
-        findings.append(Finding(rel, "missing Agent Routing Matrix section"))
+    for section in CLAUDE_REQUIRED_SECTIONS:
+        if section not in text:
+            findings.append(Finding(rel, f"missing required CLAUDE.md section: {section}"))
     for surface in ROUTING_SURFACES:
         if surface not in text:
             findings.append(Finding(rel, f"missing locked routing surface: {surface}"))
@@ -1613,7 +1657,7 @@ def validate_contributing_packaging(root: Path) -> list[Finding]:
             findings.append(
                 Finding(rel, f"CONTRIBUTING.md missing packaging phrase: {phrase}")
             )
-    for surface in ("copilot", "geryon", "cursor"):
+    for surface in CONTRIBUTING_BRANCH_SURFACES:
         if surface not in text:
             findings.append(Finding(rel, f"CONTRIBUTING.md missing branch surface: {surface}"))
     return findings

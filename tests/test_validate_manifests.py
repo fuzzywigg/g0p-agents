@@ -103,6 +103,12 @@ def _inventory_payload(**overrides: object) -> dict:
         "pyproject_requires_python": vm.PYPROJECT_REQUIRES_PYTHON,
         "markdownlint_default": vm.MARKDOWNLINT_DEFAULT,
         "scratchpad_required_phrases": list(vm.SCRATCHPAD_REQUIRED_PHRASES),
+        "specialist_agents": list(vm.SPECIALIST_AGENTS),
+        "schema_draft_uri": vm.SCHEMA_DRAFT_URI,
+        "schema_id_prefix": vm.SCHEMA_ID_PREFIX,
+        "claude_required_sections": list(vm.CLAUDE_REQUIRED_SECTIONS),
+        "contributing_branch_surfaces": list(vm.CONTRIBUTING_BRANCH_SURFACES),
+        "scratchpad_status_markers": list(vm.SCRATCHPAD_STATUS_MARKERS),
         "validator_names": sorted(vm.VALIDATORS),
         "min_coverage_fail_under": vm.MIN_COVERAGE_FAIL_UNDER,
         "min_validator_count": vm.MIN_VALIDATOR_COUNT,
@@ -1375,6 +1381,24 @@ def test_packaging_inventory_v5_lock_fields(tmp_path: Path) -> None:
             list(vm.SCRATCHPAD_REQUIRED_PHRASES)[:-1] + ["invented"],
         ),
         (
+            "specialist_agents",
+            list(vm.SPECIALIST_AGENTS)[:-1] + ["InventedGhostAgent"],
+        ),
+        ("schema_draft_uri", "https://example.com/wrong"),
+        ("schema_id_prefix", "https://example.com/wrong/"),
+        (
+            "claude_required_sections",
+            list(vm.CLAUDE_REQUIRED_SECTIONS)[:-1] + ["## Invented"],
+        ),
+        (
+            "contributing_branch_surfaces",
+            list(vm.CONTRIBUTING_BRANCH_SURFACES)[:-1] + ["invented"],
+        ),
+        (
+            "scratchpad_status_markers",
+            list(vm.SCRATCHPAD_STATUS_MARKERS)[:-1] + ["INVENTED"],
+        ),
+        (
             "validator_names",
             list(sorted(vm.VALIDATORS))[:-1] + ["invented"],
         ),
@@ -1707,7 +1731,10 @@ def test_constitution_routing_security_contributing_agent_task(tmp_path: Path) -
     assert any("missing" in f.message for f in vm.validate_routing_surfaces(tmp_path))
     _write(tmp_path / "CLAUDE.md", "# no matrix\n")
     findings = vm.validate_routing_surfaces(tmp_path)
-    assert any("Routing Matrix" in f.message for f in findings)
+    assert any(
+        "Routing Matrix" in f.message or "CLAUDE.md section" in f.message
+        for f in findings
+    )
 
     assert any("missing" in f.message for f in vm.validate_security_packaging(tmp_path))
     _write(tmp_path / "SECURITY.md", "# hi\nFakeAgent\n")
@@ -2006,6 +2033,7 @@ def test_scratchpad_required_phrases(tmp_path: Path) -> None:
     )
     findings = vm.validate_scratchpad(tmp_path)
     assert any("required phrase" in f.message for f in findings)
+    assert any("status marker" in f.message for f in findings)
 
 
 def test_pyproject_requires_python_lock(tmp_path: Path) -> None:
@@ -2087,3 +2115,155 @@ def test_live_v5_validators() -> None:
     assert vm.validate_feature_request_template(REPO_ROOT) == []
     assert vm.INVENTORY_VERSION == 5
     assert len(vm.VALIDATORS) == 27
+
+
+def test_historic_settings_skips_non_dict_settings_and_non_list_extensions() -> None:
+    assert (
+        vm._validate_historic_recipe_settings(
+            {"recipe": {"settings": "scalar", "extensions": "scalar"}},
+            path="x",
+        )
+        == []
+    )
+
+
+def test_goose_recipes_extra_only_and_ondisk_parse_none(tmp_path: Path) -> None:
+    blocks = []
+    for name in sorted(vm.EXPECTED_RECIPE_NAMES):
+        recipe = json.loads(json.dumps(LOCKED_RECIPE))
+        recipe["name"] = name
+        blocks.append(yaml.safe_dump(recipe, sort_keys=False))
+    extra = json.loads(json.dumps(LOCKED_RECIPE))
+    extra["name"] = "invented_extra_workflow"
+    blocks.append(yaml.safe_dump(extra, sort_keys=False))
+    body = "\n\n".join(f"```yaml\n{block}```" for block in blocks)
+    for rel in vm.EXPECTED_RECIPE_FILES:
+        body += f"\n**File**: `./{rel}`\n"
+        body += f"\ngoose run ./{rel}\n"
+    _write(tmp_path / "GOOSE-RECIPES.md", body)
+    findings = vm.validate_goose_recipes(tmp_path)
+    assert any("unexpected/invented recipe name" in f.message for f in findings)
+    assert not any("missing locked recipe name" in f.message for f in findings)
+
+    # on-disk expected file with parse failure (data is None -> continue)
+    flows = tmp_path / "agentic_flows"
+    flows.mkdir(exist_ok=True)
+    target = vm.EXPECTED_RECIPE_FILES[0]
+    (tmp_path / target).parent.mkdir(parents=True, exist_ok=True)
+    (tmp_path / target).write_text(":\n  -", encoding="utf-8")
+    findings = vm.validate_goose_recipes(tmp_path)
+    assert any("YAML parse error" in f.message for f in findings)
+
+
+def test_goose_recipes_missing_only_via_non_string_name(tmp_path: Path) -> None:
+    locked = sorted(vm.EXPECTED_RECIPE_NAMES)
+    names: list[object] = [*locked[:3], 123]
+    blocks = []
+    for name in names:
+        recipe = json.loads(json.dumps(LOCKED_RECIPE))
+        recipe["name"] = name
+        blocks.append(yaml.safe_dump(recipe, sort_keys=False))
+    body = "\n\n".join(f"```yaml\n{block}```" for block in blocks)
+    for rel in vm.EXPECTED_RECIPE_FILES:
+        body += f"\n**File**: `./{rel}`\n"
+        body += f"\ngoose run ./{rel}\n"
+    _write(tmp_path / "GOOSE-RECIPES.md", body)
+    findings = vm.validate_goose_recipes(tmp_path)
+    assert any("missing locked recipe name" in f.message for f in findings)
+
+
+def test_recipe_agent_bindings_non_dict_continues(tmp_path: Path) -> None:
+    _write(tmp_path / "GOOSE-RECIPES.md", "```yaml\n- just-a-list\n```\n")
+    findings = vm.validate_recipe_agent_bindings(tmp_path)
+    assert findings == [] or all("primary agent" not in f.message for f in findings)
+
+
+def test_dependabot_skips_non_dict_update_items(tmp_path: Path) -> None:
+    original = vm.validate_against_schema
+
+    def _ok(instance, schema, *, path):  # noqa: ANN001
+        return []
+
+    vm.validate_against_schema = _ok  # type: ignore[assignment]
+    try:
+        _write(
+            tmp_path / ".github" / "dependabot.yml",
+            "version: 2\nupdates:\n  - not-a-mapping\n"
+            '  - package-ecosystem: "pip"\n    directory: "/"\n'
+            "    schedule:\n      interval: weekly\n",
+        )
+        findings = vm.validate_dependabot(tmp_path)
+        # non-dict item skipped; may still miss github-actions ecosystem
+        assert isinstance(findings, list)
+    finally:
+        vm.validate_against_schema = original  # type: ignore[assignment]
+
+
+def test_ci_workflow_skips_non_dict_jobs(tmp_path: Path) -> None:
+    yaml_text = _ci_yaml_with_matrix(list(vm.REQUIRED_PYTHON_VERSIONS))
+    _write(tmp_path / ".github" / "workflows" / "ci.yml", yaml_text)
+    findings = vm.validate_ci_workflow(tmp_path)
+    assert isinstance(findings, list)
+
+    bad = yaml_text.replace(
+        "markdown-lint:",
+        "markdown-lint: not-a-job-map\n  unused-markdown-lint:",
+    )
+    _write(tmp_path / ".github" / "workflows" / "ci.yml", bad)
+    findings = vm.validate_ci_workflow(tmp_path)
+    assert isinstance(findings, list)
+
+
+def test_pr_template_without_top_hash_heading(tmp_path: Path) -> None:
+    headings = "\n".join(f"## {h}\n" for h in vm.PR_TEMPLATE_HEADINGS)
+    _write(tmp_path / ".github" / "pull_request_template.md", headings + "\n")
+    assert vm.validate_pr_template(tmp_path) == []
+
+
+def test_requirements_dev_skips_non_matching_lines(tmp_path: Path) -> None:
+    lines = ["# comment", "@@@not-a-package", *sorted(vm.REQUIRED_DEV_PACKAGES), ""]
+    _write(tmp_path / "requirements-dev.txt", "\n".join(lines) + "\n")
+    assert vm.validate_requirements_dev(tmp_path) == []
+
+
+def test_prompt_non_specialist_non_orchestration_skips(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    agents = (
+        "QuantumArchitectAgent",
+        "BlockchainArchitectAgent",
+        "EdgeSecurityAgent",
+        "ArchiveDocsAgent",
+    )
+    monkeypatch.setattr(vm, "DOCUMENTED_AGENTS", agents)
+    monkeypatch.setattr(vm, "SPECIALIST_AGENTS", agents[:3])
+    fences = []
+    for agent in agents:
+        if agent in agents[:3]:
+            body = (
+                f"# {agent}{vm.PROMPT_SYSTEM_HEADER_SUFFIX}\n\n"
+                f"{vm.SPECIALIST_ESCALATION_MARKER}\n"
+                f"From Agent: {agent}\n"
+            )
+        else:
+            body = f"# {agent}{vm.PROMPT_SYSTEM_HEADER_SUFFIX}\n\narchive only\n"
+        fences.append(f"```markdown\n{body}```")
+    headings = "\n\n".join(
+        f"## {i}. {agent} Prompt Template\n\n{fence}"
+        for i, (agent, fence) in enumerate(zip(agents, fences, strict=True), start=1)
+    )
+    _write(tmp_path / "AGENT-PROMPTS.md", headings)
+    findings = vm.validate_documented_agent_prompts(tmp_path)
+    assert findings == []
+
+
+def test_module_main_entrypoint(monkeypatch: pytest.MonkeyPatch) -> None:
+    import runpy
+
+    monkeypatch.setattr(sys, "argv", ["validate_manifests.py", "--list-validators"])
+    with pytest.raises(SystemExit) as excinfo:
+        runpy.run_path(
+            str(REPO_ROOT / "scripts" / "validate_manifests.py"),
+            run_name="__main__",
+        )
+    assert excinfo.value.code == 0

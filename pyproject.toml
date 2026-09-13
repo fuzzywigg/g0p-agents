@@ -26,4 +26,4 @@ source = ["scripts"]
 [tool.coverage.report]
 show_missing = true
 skip_empty = true
-fail_under = 98
+fail_under = 99
