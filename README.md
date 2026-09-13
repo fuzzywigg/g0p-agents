@@ -26,8 +26,13 @@ This repository contains the "Quantum-Blockchain" agentic protocols v2.2 (Dec 20
 * **GOOSE-RECIPES.md**: YAML-based orchestration logic (Goose Framework).
 * **IMPLEMENTATION-GUIDE.md**: Step-by-step setup for a quantum-dev environment.
 * **AGENTS-v2.2.md**: Historic snapshot of the agent constitution.
+* **CLAUDE.md** / **CONTRIBUTING.md** / **SECURITY.md**: Repo routing, contribution, and reporting policy.
 
 > **Note**: This is an archived reference implementation, not a live hive. For current operational standards, see the main `agents-standard` repository.
+
+## Cloud agents
+
+Docs-only bootstrap lives in [`.cursor/environment.json`](.cursor/environment.json) (`install` verifies key archive files; no `start` services).
 
 ## License
 

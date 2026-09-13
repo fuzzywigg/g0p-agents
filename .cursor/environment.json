@@ -1,0 +1,4 @@
+{
+  "name": "g0p-agents",
+  "install": "test -f README.md && test -f LICENSE && test -f AGENTS-v2.2.md && test -f AGENT-PROMPTS.md && test -f .github/workflows/ci.yml"
+}

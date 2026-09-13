@@ -10,6 +10,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- `.cursor/environment.json` — minimal Cloud Agent install check (docs archive; no runtime services)
+- `.gitignore` — exclude local env/secret and editor noise
 - `LICENSE` — MIT License (copyright 2026 Andrew Pappas / smtp.eth)
 - `CLAUDE.md` — agent routing matrix and repo-specific instructions
 - `CONTRIBUTING.md` — contribution guidelines for ecosystem agents and humans
@@ -21,6 +23,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - `agentic_flows/scratchpad.txt` — agent coordination state machine
 - `postmortem.md` — incident and decision log (initialized)
 - `.github/workflows/ci.yml` — markdown lint and link check CI pipeline
+
+### Changed
+
+- CI `pull_request` trigger targets `alpha` (default branch), not `main`
+- `CONTRIBUTING.md` branch strategy aligned with live default branch `alpha`
 
 ---
 
