@@ -10,6 +10,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Packaging inventory **v13** deepeners (post-#30): `ci-pip-install`, `ci-pip-check`,
+  `ci-pytest` validators; CI `python -m pip install -r requirements-dev.txt` +
+  `python -m pip check` command locks; pytest cov/junitxml required marker locks;
+  coverage `fail_under` exact equality lock (99); consistency deepeners for
+  `ci_pip_install_command` / `ci_pip_check_command` /
+  `ci_pytest_required_markers` (52 total; historic four only)
+
 - Packaging inventory **v12** deepeners (post-#29): `ci-setup-python`, `ci-ruff`,
   `license-mit` validators; CI setup-python `cache: pip` +
   `cache-dependency-path` structured locks; `ruff check scripts tests` CI
