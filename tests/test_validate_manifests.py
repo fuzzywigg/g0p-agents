@@ -28390,7 +28390,7 @@ def test_hydration_security_handoff_leftover_live_green() -> None:
     # Adjacent tip through #208 / #202 / #200 / #195 / #188 / #187 remain green
     assert vm.validate_prompt_usage(REPO_ROOT) == []
     assert vm.validate_goose_recipes(REPO_ROOT) == []
-    assert vm.validate_recipe_agents(REPO_ROOT) == []
+    assert vm.validate_recipe_agent_bindings(REPO_ROOT) == []
     assert vm.validate_recipe_titles(REPO_ROOT) == []
     assert vm.validate_ci_workflow(REPO_ROOT) == []
     assert vm.validate_link_check(REPO_ROOT) == []
