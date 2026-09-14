@@ -14,7 +14,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   through **#209** (hydration/security+handoff leftover after #200) / **#208** /
   **#202** / **#200** / **#195** / **#188** / **#187** / **#186** / **#184** /
   **#181** (EXISTING twenty-two fixtures — `hydration-phase4` + ten `security*`
-  + seven handoff-cluster `constitution-*` + four `scratchpad*` — no invented
+  and seven handoff-cluster `constitution-*` + four `scratchpad*` — no invented
   product / inventory bump): exact missing-file message + Finding.path locks,
   remaining handoff-cluster section-present (multichain / recipe-orchestration /
   scratchpad-state / conflict-matrix), SECURITY section-header drop isolation
