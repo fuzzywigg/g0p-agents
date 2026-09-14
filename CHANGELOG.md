@@ -10,6 +10,26 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Hydration↔security + handoff residual **tests-only** leftover deepeners after tip
+  through **#242** (prompts+agentic_flows leftovers after #236) / **#236** /
+  **#229** / **#224** / **#219** / **#209** / **#208** / **#202** / **#200** /
+  **#195** / **#188** / **#184** / **#181** (EXISTING twenty-two fixtures —
+  `hydration-phase4` + ten `security*` and seven handoff-cluster
+  `constitution-*` + four `scratchpad*` — no invented product / inventory bump):
+  exact section-missing Finding equality across hydration / handoff-cluster /
+  security sections / scratchpad Format+Task, directory-not-file exact Finding
+  equality for all twenty-two, remaining `security-*` + scratchpad
+  intro/format/task-meta locked-phrase message formats, escalation/on-device
+  timing lookalikes (Gas 10M / Crypto `> 500ms` / Circuit `>20%` / Circuit
+  execution `< 500ms`), exact invented-agent Finding + simultaneous four-doc
+  phrase drops, remaining inventory seed keys, CI-mangle cross-isolation vs
+  #236 actionlint/linkcheck fixtures, and tip live-green vs
+  #242/#236/#229/#224 siblings. Historic four only; Packaging inventory
+  unchanged (v52 / 196). Distinct from merged #229 edge suite, merged #209
+  leftover, merged #242 prompts+flows, merged #236 actionlint/linkcheck, closed
+  CONFLICTING #247/#241 (same leftover on stale tips), open #248 actionlint
+  after #242, and not a v53 invent sibling.
+
 - Prompts + agentic_flows residual **tests-only** unsaturated edge deepeners after
   tip through **#236** (actionlint leftover after #229) / **#229** / **#224** /
   **#219** / **#209** / **#208** / **#202** / **#200** / **#195** / **#188**
