@@ -10,6 +10,25 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Prompts + agentic_flows residual **tests-only** leftover deepeners after tip
+  through **#209** (hydration/security+handoff leftover after #200) / **#208** /
+  **#202** / **#200** / **#195** / **#188** (EXISTING nineteen fixtures —
+  twelve list-form sibling `prompt-*` + seven agentic_flows `goose` /
+  `recipe-agents` / `recipe-titles` / `scratchpad*` — no invented v53
+  list-form product / inventory bump): exact Finding.path + missing-file
+  equality (incl. `prompt-usage` asymmetry), directory-not-file for
+  AGENT-PROMPTS + scratchpad, section-present/phrases-absent for all twelve
+  listform siblings + scratchpad format/task-meta, case/BOM/NBSP lookalikes,
+  exact section/special-lock drop messages + simultaneous multi-section drops,
+  scratchpad empty Finding equality, prompts↔flows↔goose cross-isolation,
+  inventory seed mismatches + `run_all --only` subset isolation, concurrent
+  dual-surface races, and tip live-green vs #209/#208/#202/#200 siblings.
+  Historic four only; Packaging inventory unchanged (v52 / 196). Distinct from
+  merged #202 (exact phrase / goose-run / on-disk leftover), #200
+  (listform+flows residual suite), closed CONFLICTING #198/#194/#193/#190,
+  #153/#159/#164 invent-v53, merged #208 (goose-schema), #209
+  (hydration/security+handoff), and not a v53 invent sibling.
+
 - Hydration↔security + memory-slot/agent-handoff residual **tests-only** leftover
   deepeners after tip through **#208** (goose-schema leftover after #200) /
   **#202** / **#200** / **#195** / **#188** / **#187** / **#186** / **#184** /
