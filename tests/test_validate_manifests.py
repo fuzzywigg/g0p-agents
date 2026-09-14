@@ -29033,7 +29033,7 @@ def test_actionlint_linkcheck_after209_cross_isolation_vs_209_siblings(
 
 
 def test_actionlint_linkcheck_after209_leftover_live_green() -> None:
-    """Live seven CI fixtures + inventory stay green on tip after #209 (supersedes #215/#211/#206)."""
+    """Live seven CI fixtures stay green on tip after #209 (supersedes #215/#211/#206)."""
     for name, fn in _actionlint_linkcheck_residual_modules():
         assert fn(REPO_ROOT) == [], name
 
