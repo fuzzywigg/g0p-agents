@@ -10,6 +10,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Goose-recipe residual **tests-only** deepeners after **#144** (EXISTING nine
+  `goose-*` phrase-lock validators only — no invented product / inventory bump):
+  concurrent validate races, empty/whitespace/header-only GOOSE-RECIPES,
+  invalid/invented goose-timeout sibling keys, per-phrase drop matrix, inventory
+  mismatch matrix, and cross-isolation against `goose-howto` /
+  `goose-state-machine` / `goose-naming` / `goose-recipe-headers` /
+  `goose-instruction-agents` / `goose-extensions` / `goose-orchestration` /
+  `goose-conflicts` / `goose-quantum-task`. Historic four only; inventory
+  unchanged (v52 / 196). Distinct from prompts v51/v52, prompt-validator #144,
+  and orchestration-timeout drafts.
+
 - Prompt/validator residual **tests-only** deepeners for post-#141 **v52** modules
   (EXISTING twelve only — no invented product / inventory bump): concurrent
   validate races, empty/whitespace/header-only AGENT-PROMPTS, invalid/invented
