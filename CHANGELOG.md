@@ -10,6 +10,26 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Hydration↔security + handoff residual **tests-only** leftover deepeners after
+  tip through **#289** (CI/markdownlint leftover after #279) / **#279** /
+  **#270** / **#265** / **#264** / **#258** (hydration/security+handoff leftover
+  after #248) / **#253** / **#248** / **#242** / **#236** / **#229** / **#224** /
+  **#219** / **#209** / **#208** / **#202** / **#200** (EXISTING twenty-two
+  fixtures — `hydration-phase4` + ten `security` / `security-*` + seven
+  handoff-cluster `constitution-*` + four `scratchpad*` — no invented product /
+  inventory bump): unsaturated figure-space / NNBSP / Mongolian / Ogham / line
+  separator / paragraph separator lookalikes beyond closed #287
+  soft-hyphen/NBSP/NEL, middle-phrase exact drop matrix (≠ #287 first/last),
+  dual invented-agent exact Finding, `security_required_phrases` +
+  `scratchpad_required_phrases` inventory leftovers excluded from #287 EMPTY_MAP,
+  dict inventory leftovers, mid-BOM lookalikes (leading BOM stays green), multi
+  `security-*` simultaneous phrase drops, isolation vs #289/#279 CI/markdownlint,
+  `run_all --only` subset + concurrent four-doc races + tip live-green. Historic
+  four only; inventory unchanged (v52 / 196). Distinct from closed CONFLICTING
+  #287/#281/#277/#252/#247/#241 (same niche vs stale tips), merged #289/#279
+  (CI/markdownlint), #270 (goose-schema), #265 (Claude/routing), and #258
+  (hydration/security+handoff).
+
 - CI/markdownlint residual **tests-only** leftover deepeners after tip through
   **#279** (CI/markdownlint leftover after #270) / **#270** (goose-schema leftover
   after #265) / **#265** / **#264** / **#258** / **#253** / **#248** / **#242** /
