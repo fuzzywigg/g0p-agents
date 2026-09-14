@@ -167,23 +167,35 @@
     "pr_template_headings",
     "prompt_cannot_delegate_required_phrases",
     "prompt_communication_required_phrases",
+    "prompt_constraints_detail_required_phrases",
     "prompt_constraints_required_phrases",
+    "prompt_context_detail_required_phrases",
     "prompt_context_required_phrases",
     "prompt_decision_authority_required_phrases",
     "prompt_escalation_authority_required_phrases",
+    "prompt_escalation_format_required_phrases",
     "prompt_escalation_identity_required_phrases",
+    "prompt_expertise_detail_required_phrases",
     "prompt_expertise_required_phrases",
+    "prompt_human_fields_required_phrases",
+    "prompt_instantiation_required_phrases",
     "prompt_integration_required_phrases",
+    "prompt_living_docs_required_phrases",
     "prompt_metrics_required_phrases",
     "prompt_monthly_required_phrases",
     "prompt_orchestration_matrix_required_phrases",
     "prompt_principles_required_phrases",
     "prompt_related_docs_required_phrases",
+    "prompt_related_health_required_phrases",
+    "prompt_responsibilities_detail_required_phrases",
     "prompt_responsibilities_required_phrases",
+    "prompt_role_blurbs_required_phrases",
     "prompt_roles_required_phrases",
     "prompt_sections_required_phrases",
     "prompt_system_header_suffix",
+    "prompt_tools_detail_required_phrases",
     "prompt_tools_required_phrases",
+    "prompt_triggers_detail_required_phrases",
     "prompt_triggers_required_phrases",
     "prompt_usage_example_required_phrases",
     "prompt_usage_required_phrases",
@@ -2136,6 +2148,114 @@
       }
     },
     "prompt_escalation_authority_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "prompt_role_blurbs_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "prompt_escalation_format_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "prompt_living_docs_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "prompt_constraints_detail_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "prompt_triggers_detail_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "prompt_human_fields_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "prompt_context_detail_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "prompt_expertise_detail_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "prompt_related_health_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "prompt_tools_detail_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "prompt_responsibilities_detail_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "prompt_instantiation_required_phrases": {
       "type": "array",
       "minItems": 1,
       "uniqueItems": true,

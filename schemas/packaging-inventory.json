@@ -1,5 +1,5 @@
 {
-  "version": 50,
+  "version": 51,
   "documented_agents": [
     "QuantumArchitectAgent",
     "BlockchainArchitectAgent",
@@ -389,22 +389,34 @@
     "prompt-cannot-delegate",
     "prompt-communication",
     "prompt-constraints",
+    "prompt-constraints-detail",
     "prompt-context",
+    "prompt-context-detail",
     "prompt-decision-authority",
     "prompt-escalation-authority",
+    "prompt-escalation-format",
     "prompt-escalation-identity",
     "prompt-expertise",
+    "prompt-expertise-detail",
+    "prompt-human-fields",
+    "prompt-instantiation",
     "prompt-integration",
+    "prompt-living-docs",
     "prompt-metrics",
     "prompt-monthly",
     "prompt-orchestration-matrix",
     "prompt-principles",
     "prompt-related-docs",
+    "prompt-related-health",
     "prompt-responsibilities",
+    "prompt-responsibilities-detail",
+    "prompt-role-blurbs",
     "prompt-roles",
     "prompt-sections",
     "prompt-tools",
+    "prompt-tools-detail",
     "prompt-triggers",
+    "prompt-triggers-detail",
     "prompt-usage",
     "prompt-usage-example",
     "prompts",
@@ -444,7 +456,7 @@
     "yaml-configs"
   ],
   "min_coverage_fail_under": 99,
-  "min_validator_count": 172,
+  "min_validator_count": 184,
   "required_paths": [
     "README.md",
     "LICENSE",
@@ -1284,7 +1296,7 @@
     "markdown lint, link check, actionlint",
     "manifest validate on Python 3.11/3.12/3.13",
     "Andrew or designated reviewer",
-    "Packaging inventory v50",
+    "Packaging inventory v51",
     "refuse invented recipes",
     "orphan on-disk YAML",
     "unknown `*Agent` tokens",
@@ -1711,5 +1723,119 @@
     "Risk exceeds acceptable threshold",
     "Timeline pressure conflicts with quality requirements",
     "Budget constraints conflict with scope"
+  ],
+  "prompt_role_blurbs_required_phrases": [
+    "You design quantum algorithms, optimize quantum circuits, and ensure quantum-safe cryptographic properties for all FUZZYWIGG operations.",
+    "You design multi-chain smart contract architecture, implement quantum-resistant consensus logic, and manage cross-chain state synchronization.",
+    "You implement quantum-safe cryptography on mobile devices, design \"walled garden\" data isolation, and optimize for device constraints.",
+    "You orchestrate the three specialist agents (Quantum, Blockchain, On-Device), resolve conflicts, make final architectural decisions, and keep the team aligned on vision.",
+    "# QuantumArchitectAgent System Prompt",
+    "# BlockchainArchitectAgent System Prompt",
+    "# EdgeSecurityAgent System Prompt",
+    "# OrchestrationAgent System Prompt"
+  ],
+  "prompt_escalation_format_required_phrases": [
+    "## When You Escalate",
+    "Use this format:",
+    "Conflict: [What constraint am I hitting?]",
+    "Recommendation: [How should we resolve this?]",
+    "Timeline: [How long until decision needed?]",
+    "Alternative Path: [If primary path is blocked]"
+  ],
+  "prompt_living_docs_required_phrases": [
+    "# Agent Prompt Templates",
+    "## FUZZYWIGG-AI Quantum-Blockchain System",
+    "Use these prompts when instantiating each specialist agent. Customize with project-specific context.",
+    "New tools become available",
+    "AGENTS.md (the constitution)",
+    "Task.md (current sprint)",
+    "Keep prompts synchronized with AGENTS.md Section 22 (Quantum-Blockchain Integration Standards)."
+  ],
+  "prompt_constraints_detail_required_phrases": [
+    "Never optimize beyond device constraints (memory, runtime)",
+    "Always provide error rate estimates",
+    "Never allow critical vulnerabilities (Slither must pass)",
+    "Always validate multi-chain state consistency",
+    "Always provide gas cost estimates",
+    "Never claim security without passing Apple/Google security review",
+    "Always validate data isolation (no leaks to system logs)"
+  ],
+  "prompt_triggers_detail_required_phrases": [
+    "Quantum advantage deadline < 6 months and algorithm not quantum-safe",
+    "Conflict with BlockchainArchitectAgent on performance requirements",
+    "Multi-chain sync time > 10 minutes",
+    "Conflict with EdgeSecurityAgent on API design",
+    "Apple/Google security guidelines violation detected",
+    "Battery drain > 2% per transaction",
+    "Conflict with QuantumArchitectAgent on circuit complexity",
+    "Conflict with BlockchainArchitectAgent on API design"
+  ],
+  "prompt_human_fields_required_phrases": [
+    "Situation: [What decision needs human input?]",
+    "Agent Input: [What did specialist agents recommend?]",
+    "Conflict: [What is the core disagreement?]",
+    "Risk Assessment: [What could go wrong with each option?]",
+    "Recommendation: [What do you think is best, with caveats?]"
+  ],
+  "prompt_context_detail_required_phrases": [
+    "Deadline for quantum-safe validation: [INSERT DATE]",
+    "Secondary chains: [INSERT IF APPLICABLE]",
+    "Token standards: ERC-20 (if applicable), ERC-721 (NFT)",
+    "Target OS versions: Android 12+, iOS 16+",
+    "Data sensitivity: [HEALTH DATA / FINANCIAL DATA / USER PII]",
+    "HIPAA compliance required: [YES / NO]",
+    "GDPR compliance required: [YES / NO]",
+    "Deployment target: [ALPHA / BETA / PRODUCTION]",
+    "Key Constraint: Health data privacy (HIPAA if applicable)"
+  ],
+  "prompt_expertise_detail_required_phrases": [
+    "Circuit optimization (gate reduction, error mitigation)",
+    "Google Cirq (circuit construction, simulation)",
+    "Post-quantum cryptography validation",
+    "Consensus mechanisms (PoW, PoS, hybrid)",
+    "Multi-chain bridges (Connext, LayerZero, IBC)",
+    "On-device cryptography (post-quantum)",
+    "Health data privacy (HIPAA applicability)",
+    "Gas optimization (Solidity)"
+  ],
+  "prompt_related_health_required_phrases": [
+    "See AGENTS.md Section 5.3 (Knowledge & Health Agents)",
+    "See AGENTS.md Section 5.3.1 (Health Data Privacy Roadmap)",
+    "See AGENTS.md Section 22.3 (Multi-Chain State Consistency)",
+    "See AGENTS.md Section 12.4.1 (Risk Tolerance Review)"
+  ],
+  "prompt_tools_detail_required_phrases": [
+    "IBM Quantum Experience (real hardware validation)",
+    "Python 3.11+ (primary language)",
+    "Solidity (smart contract language)",
+    "Etherscan (contract verification)",
+    "Graph Protocol (data indexing)",
+    "Web3.py (blockchain interaction)",
+    "Xcode (iOS development)",
+    "React Native + Expo (cross-platform prototyping)",
+    "Hardware wallet SDKs (Ledger, MetaMask)",
+    "libsodium (cryptography library)",
+    "postmortem.md (incident tracking)",
+    "AGENTS.md (truth source for constraints)"
+  ],
+  "prompt_responsibilities_detail_required_phrases": [
+    "Optimize Cirq circuits for target hardware",
+    "Simulate quantum timelines and collective consciousness models (your \"Mickey 18\" concept)",
+    "Provide hardware requirement estimates",
+    "Implement quantum-resistant consensus logic",
+    "Define cross-chain state synchronization protocols",
+    "Audit contracts for quantum vulnerabilities",
+    "Design data isolation (\"walled garden\") architecture",
+    "Manage secure key lifecycle (storage, rotation, deletion)",
+    "Validate health data privacy architecture (HIPAA, GDPR)",
+    "Escalate unsolvable conflicts to human"
+  ],
+  "prompt_instantiation_required_phrases": [
+    "**Provide the agent with access to**:",
+    "Current scratchpad.txt (state machine)",
+    "**Run the agent** on a specific recipe/task",
+    "System Prompt: [Copy QuantumArchitectAgent Prompt Template]",
+    "Reads ./agentic_flows/scratchpad.txt (finds pending quantum mint task)",
+    "Updates scratchpad with gate count, depth, error rate"
   ]
 }
