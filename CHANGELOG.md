@@ -10,8 +10,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
-- Goose-recipe schema leftover **tests-only** deepeners after tip through **#279**
-  (CI/markdownlint leftover after #270) / **#270** (goose-schema leftover after #265) /
+- Goose-recipe schema leftover **tests-only** deepeners after tip through **#289**
+  (CI/markdownlint leftover after #279) / **#279** (CI/markdownlint leftover after #270) / **#270** (goose-schema leftover after #265) /
   **#265** (Claude/routing leftover after #264) / **#264** / **#258** / **#253** /
   **#248** / **#242** / **#236** / **#229** / **#224** / **#219** / **#209** / **#208** /
   **#202** / **#200** / **#195** / **#188** / **#187** / **#186** / **#184**
@@ -43,9 +43,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `recipe_titles` / `agentic_flows_allowed_files` inventory leftovers, CI
   `--list-validators` / `--only` goose-trio + invent-refuse + required manifest
   step-marker smoke + #279 CI/markdownlint sibling greens, concurrent races, tip
-  isolation against #279 CI/markdownlint and #270/#265/#264/#258/#253/#248/#242/
+  isolation against #289/#279 CI/markdownlint and #270/#265/#264/#258/#253/#248/#242/
   #236/#229/#224/#219 siblings. Historic four only; Packaging inventory unchanged
-  (v52 / 196 validators). Distinct from merged #279 (CI/markdownlint leftover),
+  (v52 / 196 validators). Distinct from merged #289 (CI/markdownlint leftover after #279),
+  merged #279 (CI/markdownlint leftover after #270),
   merged #270 (prior goose-schema leftover after #265), merged #265
   (Claude/routing leftover), closed CONFLICTING
   #285/#273/#268/#263/#262/#261/#259/#255/#254/#249/#246/#245/#239/#234/#228/#216/#212
@@ -56,6 +57,28 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   leftover), #202/#200 (listform+flows), #184 (tip type matrix), #172 (residual
   suite), #147 (nine goose-* phrase locks), and not a v53 invent sibling or
   Dependabot bump.
+
+- CI/markdownlint residual **tests-only** leftover deepeners after tip through
+  **#279** (CI/markdownlint leftover after #270) / **#270** (goose-schema leftover
+  after #265) / **#265** / **#264** / **#258** / **#253** / **#248** / **#242** /
+  **#236** / **#229** / **#224** / **#219** / **#209** / **#208** / **#202** /
+  **#200** / **#195** / **#188** (EXISTING six fixtures — `markdownlint` /
+  `ci-setup-python` / `ci-ruff` / `ci-pip-install` / `ci-pip-check` / `ci-pytest`
+  — no invented product / workflow / inventory bump): tip-after-#279 HEAVY
+  deepeners beyond thin #279 after-#270 set — figure-space / NNBSP / Mongolian
+  lookalikes, exact dual md+ruff Findings, schema MD013.line_length const mangle,
+  setup-python cache-dependency-path drop exact, MD024 null + MD013.tables
+  string / code_blocks int leftovers, ruff + pip-install + pytest triple exact,
+  pytest last-marker drop + reorder green, inventory pytest-marker
+  type/uniqueness/--cov leftovers, simultaneous default+MD025+MD033 exact drops,
+  isolation vs #279 CI/markdownlint / #270 goose / #265 Claude / #264/#258/#253/
+  #248 siblings, `--only` subset vs siblings, quad-surface concurrent races,
+  live-green. Historic four only; inventory unchanged (v52 / 196). Distinct from
+  merged #279 (thin CI/markdownlint after #270), #270 (goose-schema leftover),
+  #265 (Claude/routing), #264/#258/#253/#248 siblings, closed CONFLICTING
+  #286/#276/#275/#267/#257/#250/#240/#237/#233/#220/#214/#210/#204/#201/#196
+  (same leftover vs stale tips), and historic v12/v13 setup-python/ruff/pip/
+  pytest edges.
 
 - CI/markdownlint residual **tests-only** leftover deepeners after tip through
   **#270** (goose-schema leftover after #265) / **#265** (Claude/routing leftover
