@@ -10,6 +10,27 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Goose-recipe schema + `GOOSE-RECIPES.md` residual **tests-only** leftover
+  deepeners after tip through **#253** (prompts+flows leftover after #248) /
+  **#248** / **#242** / **#236** / **#229** / **#224** / **#219** (EXISTING
+  three fixtures — `goose` / `recipe-agents` / `recipe-titles` +
+  `schemas/goose-recipe.schema.json` — no invented v53 product / inventory
+  bump; prefer goose-schema niche, not open #258 hydration or closed
+  #257/#256 CI niches): reject matrix (hyphen/CR/ZWSP/NBSP/BOM/soft-hyphen/
+  fullwidth/timeout-bound/settings-extra/uniqueItems-exact-dup/required-key
+  drops), ACCEPT (title-max-256/name-max-128/omit-timeout/mixed transports/
+  timeout 1..86400), fence/File/run leftovers (`.yml`-File/info-string/
+  indented closer/YAML-case/nodot goose run), on-disk allow-list + historic
+  provider/model/version, title found-None / non-string / prompt-only primary,
+  inventory bool/float leftovers + `run_all --only` isolation, CI goose-trio
+  smoke, concurrent races, tip isolation vs #253 prompts+flows and open #258
+  hydration/security+handoff. Historic four only; Packaging inventory
+  unchanged (v52 / 196); no schema / validators / Dependabot bumps. Distinct
+  from merged #253 (prompts+flows), #248 (actionlint/linkcheck), #242/#224
+  (prompts+flows), #219 (prior goose-schema leftover), open #258
+  (hydration/security+handoff), and closed CONFLICTING
+  #254/#255/#249/#246/#245/#239/#234/#257/#256 tip refills.
+
 - Prompts listform + agentic_flows residual **tests-only** leftover deepeners
   after tip through **#248** (actionlint/linkcheck leftover after #242) /
   **#242** / **#236** / **#229** / **#224** / **#219** / **#209** / **#208** /
