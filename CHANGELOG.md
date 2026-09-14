@@ -11,6 +11,30 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 
 - Actionlint/workflow + link-check residual **tests-only** leftover deepeners
+  after tip through **#236** (actionlint/linkcheck leftovers after #229) /
+  **#229** / **#224** / **#219** / **#209** / **#208** / **#202** / **#200** /
+  **#195** / **#188** (EXISTING seven CI fixtures — `ci` / `ci-actions` /
+  `link-check` / `actionlint-shell` / `ci-job-names` / `ci-runs-on` /
+  `ci-artifacts` — no invented product / inventory bump; prefer
+  actionlint+linkcheck niche, not markdownlint/#240): exact Finding equality
+  for missing/dir-not-file `ci.yml`, missing `on:` / PR null|true / branches
+  scalar / orphan job / empty jobs map, cancel|fail-fast|lychee-fail string
+  identity edges, case/BOM/NBSP shell + id-hyphen + group-prefix + Warn
+  lookalikes, all-four-jobs `contents: write` + contents-None, empty
+  workflow/job names + empty path string, python-version reorder +
+  upload-artifact `Always()` lookalike, globs/cache lookalikes via
+  `link-check` fixture only, drop-job + self-hosted `runs-on`, artifact path
+  int-sequence unexpected, per-pin/per-marker exact drops, non-dict step
+  skip-green, dual-surface simultaneous fails, concurrent dual-mangle races,
+  inventory leftover types + `run_all --only` isolation, tip isolation vs
+  #236/#229/#224/#219/#240 siblings. Historic four only; inventory unchanged
+  (v52 / 196). Distinct from merged #236 (after229 leftover suite), #229
+  (hydration/handoff edges), #224 (prompts+flows), #219 (goose-schema),
+  #209, #195/#188/#186 (prior actionlint leftovers), open #240
+  (CI/markdownlint niche), closed CONFLICTING #232/#226/#218/#215/#211/#206
+  (same leftover vs stale tips), and historic v10/v11 edges.
+
+- Actionlint/workflow + link-check residual **tests-only** leftover deepeners
   after tip through **#229** (hydration/security+handoff edges after #224) /
   **#224** / **#219** / **#209** / **#208** / **#202** / **#200** / **#195** /
   **#188** (EXISTING seven CI fixtures — `ci` / `ci-actions` / `link-check` /
