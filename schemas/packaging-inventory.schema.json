@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/fuzzywigg/g0p-agents/schemas/packaging-inventory.schema.json",
   "title": "Archive packaging inventory",
-  "description": "Locked packaging paths and historic agent/recipe inventory for this docs-only archive (v33).",
+  "description": "Locked packaging paths and historic agent/recipe inventory for this docs-only archive (v34).",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -162,6 +162,9 @@
     "goose_state_machine_required_phrases",
     "goose_naming_required_phrases",
     "goose_extensions_required_phrases",
+    "dependabot_ecosystems_required_phrases",
+    "dependabot_groups_required_phrases",
+    "dependabot_schedule_required_phrases",
     "goose_instruction_agents_required_phrases",
     "goose_recipe_headers_required_phrases",
     "prompt_roles_required_phrases",
@@ -189,7 +192,7 @@
   "properties": {
     "version": {
       "type": "integer",
-      "minimum": 32
+      "minimum": 33
     },
     "required_paths": {
       "type": "array",
@@ -1536,6 +1539,33 @@
       }
     },
     "goose_extensions_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "dependabot_ecosystems_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "dependabot_groups_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "dependabot_schedule_required_phrases": {
       "type": "array",
       "minItems": 1,
       "uniqueItems": true,

@@ -1,5 +1,5 @@
 {
-  "version": 33,
+  "version": 34,
   "documented_agents": [
     "QuantumArchitectAgent",
     "BlockchainArchitectAgent",
@@ -304,6 +304,9 @@
     "contributing-who",
     "cross-docs",
     "dependabot",
+    "dependabot-ecosystems",
+    "dependabot-groups",
+    "dependabot-schedule",
     "environment",
     "escalation-format",
     "escalation-usage",
@@ -384,7 +387,7 @@
     "yaml-configs"
   ],
   "min_coverage_fail_under": 99,
-  "min_validator_count": 112,
+  "min_validator_count": 115,
   "required_paths": [
     "README.md",
     "LICENSE",
@@ -1080,5 +1083,21 @@
     "name: developer",
     "timeout: 300",
     "timeout: 600"
+  ],
+  "dependabot_ecosystems_required_phrases": [
+    "version: 2",
+    "package-ecosystem: \"github-actions\"",
+    "package-ecosystem: \"pip\"",
+    "directory: \"/\""
+  ],
+  "dependabot_groups_required_phrases": [
+    "github_actions:",
+    "python_dev:",
+    "patterns:",
+    "- \"*\""
+  ],
+  "dependabot_schedule_required_phrases": [
+    "schedule:",
+    "interval: \"weekly\""
   ]
 }

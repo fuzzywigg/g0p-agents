@@ -10,6 +10,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Dependabot **v34** deepeners (post-#80): `dependabot-ecosystems`,
+  `dependabot-groups`, `dependabot-schedule` validators; `.github/dependabot.yml`
+  version/ecosystem/directory locks, github_actions/python_dev group + patterns `*`
+  locks, and schedule/weekly interval locks; existing `dependabot` validator also
+  locks group patterns to `*`; consistency deepeners for
+  `dependabot_ecosystems_required_phrases` /
+  `dependabot_groups_required_phrases` /
+  `dependabot_schedule_required_phrases` (115 total; historic four only —
+  Dependabot slice, not goose recipes, changelog, hydration, constitution,
+  security policy, contributing, execution-summary, implementation guide, agent
+  prompts, README honesty, PR-template, issue-template, scratchpad, postmortem,
+  archive snapshot, or routing/identity)
+
 - Goose recipes **v33** deepeners (post-#78): `goose-recipe-headers`,
   `goose-instruction-agents`, `goose-extensions` validators; GOOSE-RECIPES.md
   Recipe 1–4 heading / File-path locks, historic four instruction-agent identity

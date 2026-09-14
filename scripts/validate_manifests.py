@@ -19,6 +19,7 @@ Checks structural correctness of:
 - .github/ISSUE_TEMPLATE/*.md frontmatter + locked file set + non-empty body
 - .github/pull_request_template.md required headings
 - .github/dependabot.yml (ecosystem set + weekly schedule; no version bumps)
+- Dependabot ecosystems / groups / schedule phrase locks (v34)
 - .markdownlint.yaml (default + MD013 line_length locks)
 - requirements-dev.txt required validation packages
 - LICENSE MIT + copyright holder; README packaging / honesty phrases
@@ -165,12 +166,29 @@ REQUIRED_ARCHIVE_DOCS = (
     "README.md",
 )
 
-INVENTORY_VERSION = 33
+INVENTORY_VERSION = 34
 CURSOR_ENVIRONMENT_NAME = "g0p-agents"
 DEPENDABOT_SCHEDULE_INTERVAL = "weekly"
 DEPENDABOT_DIRECTORIES: frozenset[str] = frozenset({"/"})
 DEPENDABOT_ECOSYSTEMS: frozenset[str] = frozenset({"github-actions", "pip"})
 DEPENDABOT_GROUP_NAMES: frozenset[str] = frozenset({"github_actions", "python_dev"})
+DEPENDABOT_GROUP_PATTERNS: frozenset[str] = frozenset({"*"})
+DEPENDABOT_ECOSYSTEMS_REQUIRED_PHRASES: tuple[str, ...] = (
+    "version: 2",
+    'package-ecosystem: "github-actions"',
+    'package-ecosystem: "pip"',
+    'directory: "/"',
+)
+DEPENDABOT_GROUPS_REQUIRED_PHRASES: tuple[str, ...] = (
+    "github_actions:",
+    "python_dev:",
+    "patterns:",
+    '- "*"',
+)
+DEPENDABOT_SCHEDULE_REQUIRED_PHRASES: tuple[str, ...] = (
+    "schedule:",
+    'interval: "weekly"',
+)
 CI_PERMISSIONS_CONTENTS = "read"
 CI_ARTIFACT_NAME_PREFIX = "manifest-validate-py"
 CI_PULL_REQUEST_BRANCH = "alpha"
@@ -1052,7 +1070,7 @@ SCRATCHPAD_STATUS_MARKERS: tuple[str, ...] = (
 SPECIALIST_AGENTS: tuple[str, ...] = DOCUMENTED_AGENTS[:-1]
 
 MIN_COVERAGE_FAIL_UNDER = 99
-MIN_VALIDATOR_COUNT = 112
+MIN_VALIDATOR_COUNT = 115
 
 
 @dataclass(frozen=True)
@@ -1987,6 +2005,30 @@ def validate_packaging_inventory(root: Path) -> list[Finding]:
     ):
         findings.append(
             _lock_mismatch(schema_path, "goose_extensions_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("dependabot_ecosystems_required_phrases", ()))
+        != DEPENDABOT_ECOSYSTEMS_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "dependabot_ecosystems_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("dependabot_groups_required_phrases", ()))
+        != DEPENDABOT_GROUPS_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "dependabot_groups_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("dependabot_schedule_required_phrases", ()))
+        != DEPENDABOT_SCHEDULE_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "dependabot_schedule_required_phrases")
         )
 
     if (
@@ -4499,6 +4541,117 @@ def _inventory_lock_consistency(
                 )
             )
 
+    dep_eco = list(inventory.get("dependabot_ecosystems_required_phrases", ()))
+    if len(dep_eco) != len(set(dep_eco)):
+        findings.append(
+            Finding(
+                schema_path, "dependabot_ecosystems_required_phrases must be unique"
+            )
+        )
+    if not dep_eco:
+        findings.append(
+            Finding(
+                schema_path,
+                "dependabot_ecosystems_required_phrases must not be empty",
+            )
+        )
+    for phrase in dep_eco:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "dependabot_ecosystems_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_eco = {
+            "version: 2",
+            'package-ecosystem: "github-actions"',
+            'package-ecosystem: "pip"',
+        }
+        if dep_eco and not required_eco <= set(dep_eco):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "dependabot_ecosystems_required_phrases must include version 2/"
+                    "github-actions/pip",
+                )
+            )
+
+    dep_groups = list(inventory.get("dependabot_groups_required_phrases", ()))
+    if len(dep_groups) != len(set(dep_groups)):
+        findings.append(
+            Finding(schema_path, "dependabot_groups_required_phrases must be unique")
+        )
+    if not dep_groups:
+        findings.append(
+            Finding(
+                schema_path, "dependabot_groups_required_phrases must not be empty"
+            )
+        )
+    for phrase in dep_groups:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "dependabot_groups_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_groups = {
+            "github_actions:",
+            "python_dev:",
+            '- "*"',
+        }
+        if dep_groups and not required_groups <= set(dep_groups):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "dependabot_groups_required_phrases must include "
+                    "github_actions/python_dev/patterns *",
+                )
+            )
+
+    dep_sched = list(inventory.get("dependabot_schedule_required_phrases", ()))
+    if len(dep_sched) != len(set(dep_sched)):
+        findings.append(
+            Finding(
+                schema_path, "dependabot_schedule_required_phrases must be unique"
+            )
+        )
+    if not dep_sched:
+        findings.append(
+            Finding(
+                schema_path, "dependabot_schedule_required_phrases must not be empty"
+            )
+        )
+    for phrase in dep_sched:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "dependabot_schedule_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_sched = {
+            "schedule:",
+            'interval: "weekly"',
+        }
+        if dep_sched and not required_sched <= set(dep_sched):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "dependabot_schedule_required_phrases must include "
+                    "schedule/weekly interval",
+                )
+            )
 
     return findings
 
@@ -5463,6 +5616,42 @@ def validate_dependabot(root: Path) -> list[Finding]:
         findings.append(
             Finding(rel, f"missing required Dependabot group: {group_name}")
         )
+    for item in updates:
+        if not isinstance(item, dict):
+            continue
+        groups = item.get("groups")
+        if not isinstance(groups, dict):
+            continue
+        for group_name, group_body in groups.items():
+            if not isinstance(group_body, dict):
+                findings.append(
+                    Finding(
+                        rel,
+                        f"Dependabot group {group_name!r} must be a mapping",
+                    )
+                )
+                continue
+            patterns = group_body.get("patterns")
+            if not isinstance(patterns, list) or not patterns:
+                findings.append(
+                    Finding(
+                        rel,
+                        f"Dependabot group {group_name!r} must declare patterns",
+                    )
+                )
+                continue
+            pattern_set = {str(p) for p in patterns}
+            if pattern_set != DEPENDABOT_GROUP_PATTERNS:
+                findings.append(
+                    Finding(
+                        rel,
+                        (
+                            f"Dependabot group {group_name!r} patterns must equal "
+                            f"{sorted(DEPENDABOT_GROUP_PATTERNS)}, "
+                            f"found {sorted(pattern_set)}"
+                        ),
+                    )
+                )
     return findings
 
 
@@ -6592,6 +6781,57 @@ def validate_goose_extensions(root: Path) -> list[Finding]:
         if phrase not in body:
             findings.append(
                 Finding(rel, f"missing locked goose-extensions phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_dependabot_ecosystems(root: Path) -> list[Finding]:
+    rel = ".github/dependabot.yml"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "dependabot.yml missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "version: 2" not in body:
+        findings.append(Finding(rel, "missing Dependabot version: 2"))
+    for phrase in DEPENDABOT_ECOSYSTEMS_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked dependabot-ecosystems phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_dependabot_groups(root: Path) -> list[Finding]:
+    rel = ".github/dependabot.yml"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "dependabot.yml missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "github_actions:" not in body:
+        findings.append(Finding(rel, "missing github_actions group"))
+    for phrase in DEPENDABOT_GROUPS_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked dependabot-groups phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_dependabot_schedule(root: Path) -> list[Finding]:
+    rel = ".github/dependabot.yml"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "dependabot.yml missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if 'interval: "weekly"' not in body:
+        findings.append(Finding(rel, "missing weekly schedule interval"))
+    for phrase in DEPENDABOT_SCHEDULE_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked dependabot-schedule phrase: {phrase}")
             )
     return findings
 
@@ -7932,6 +8172,9 @@ VALIDATORS: dict[str, ValidatorFn] = {
     "pr-acceptance": validate_pr_acceptance,
     "pr-notes": validate_pr_notes,
     "dependabot": validate_dependabot,
+    "dependabot-ecosystems": validate_dependabot_ecosystems,
+    "dependabot-groups": validate_dependabot_groups,
+    "dependabot-schedule": validate_dependabot_schedule,
     "markdownlint": validate_markdownlint,
     "requirements-dev": validate_requirements_dev,
     "license": validate_license,
