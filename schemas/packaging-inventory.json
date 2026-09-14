@@ -1,5 +1,5 @@
 {
-  "version": 49,
+  "version": 50,
   "documented_agents": [
     "QuantumArchitectAgent",
     "BlockchainArchitectAgent",
@@ -386,6 +386,7 @@
     "pr-routing",
     "pr-summary",
     "pr-template",
+    "prompt-cannot-delegate",
     "prompt-communication",
     "prompt-constraints",
     "prompt-context",
@@ -393,11 +394,13 @@
     "prompt-escalation-authority",
     "prompt-escalation-identity",
     "prompt-expertise",
+    "prompt-integration",
     "prompt-metrics",
     "prompt-monthly",
     "prompt-orchestration-matrix",
     "prompt-principles",
     "prompt-related-docs",
+    "prompt-responsibilities",
     "prompt-roles",
     "prompt-sections",
     "prompt-tools",
@@ -441,7 +444,7 @@
     "yaml-configs"
   ],
   "min_coverage_fail_under": 99,
-  "min_validator_count": 169,
+  "min_validator_count": 172,
   "required_paths": [
     "README.md",
     "LICENSE",
@@ -1281,7 +1284,7 @@
     "markdown lint, link check, actionlint",
     "manifest validate on Python 3.11/3.12/3.13",
     "Andrew or designated reviewer",
-    "Packaging inventory v49",
+    "Packaging inventory v50",
     "refuse invented recipes",
     "orphan on-disk YAML",
     "unknown `*Agent` tokens",
@@ -1684,5 +1687,36 @@
     "Risk exceeds acceptable threshold",
     "Timeline pressure conflicts with quality requirements",
     "Budget constraints conflict with scope"
+  ],
+  "prompt_responsibilities_required_phrases": [
+    "## Core Responsibilities",
+    "Design quantum algorithms for cryptographic operations",
+    "Optimize Cirq circuits for target hardware",
+    "Design multi-chain smart contract architecture",
+    "Implement quantum-resistant consensus logic",
+    "Implement quantum-safe cryptography on Android/iOS",
+    "Design data isolation (\"walled garden\") architecture",
+    "Collect outputs from all three specialist agents",
+    "Log all decisions in postmortem.md",
+    "Update AGENTS.md risk tolerance (quarterly)"
+  ],
+  "prompt_cannot_delegate_required_phrases": [
+    "## Key Responsibilities You CANNOT Delegate",
+    "Final go/no-go decisions",
+    "Risk acceptance (acknowledging consequences)",
+    "Human escalation (when agents can't decide)",
+    "Vision articulation (Mickey 18 → technical architecture)",
+    "Stakeholder communication"
+  ],
+  "prompt_integration_required_phrases": [
+    "## Integration with AGENTS.md",
+    "These prompts are **living documents**. Update them whenever:",
+    "AGENTS.md constraints change",
+    "A new escalation pattern emerges",
+    "Risk tolerance thresholds change (quarterly)",
+    "New tools become available",
+    "## When You Escalate to Human",
+    "🚨 ESCALATION TO HUMAN REQUIRED",
+    "Human approval required before proceeding."
   ]
 }
