@@ -10,6 +10,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Claude/routing governance residual **tests-only** deepeners after tip through
+  **#187** (docs-cross) / **#186** / **#184** (EXISTING twelve CLAUDE.md
+  fixtures — `claude` / `claude-metadata` / `routing` / `routing-matrix` /
+  `routing-rationales` / `repo-identity` / `state-residency` / `key-files` /
+  `escalation-format` / `escalation-usage` / `quarterly-review` /
+  `negative-constraints` — historic v14–v16 edges only; no invented product /
+  inventory bump): key-files↔archive-doc isolation, CLAUDE↔constitution↔
+  prompts escalation isolation, section-present / phrases-absent tip matrix,
+  concurrent `CLAUDE.md` races, invalid/invented tip sibling keys, and tip
+  isolation against #187/#186/#184 siblings. Historic four only; inventory
+  unchanged (v52 / 196). Distinct from merged #187 (docs-cross), #186
+  (actionlint/link-check), #184 (hydration↔security + goose-schema), and
+  open CONFLICTING #188 actionlint leftover refill / #189 hydration leftover
+  refill.
+
 - Docs-cross tip residual **tests-only** deepeners after tip through **#186**
   (actionlint/workflow + link-check) / **#184** / **#181** / **#178** /
   **#176** / **#174** / **#166** / **#147** (EXISTING contributing /
