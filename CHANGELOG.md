@@ -10,6 +10,36 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Claude/routing governance residual **tests-only** leftover deepeners after tip
+  through **#289** (CI/markdownlint leftover after #279) / **#279** / **#270**
+  (goose-schema leftover after #265) / **#265** (Claude/routing leftover after
+  #264) / **#264** / **#258** / **#253** / **#248** (EXISTING twelve CLAUDE.md
+  fixtures — `claude` / `claude-metadata` / `routing` / `routing-matrix` /
+  `routing-rationales` / `repo-identity` / `state-residency` / `key-files` /
+  `escalation-format` / `escalation-usage` / `quarterly-review` /
+  `negative-constraints` — historic v14–v16 + merged **#265** residual;
+  tip-relaunch of closed CONFLICTING **#293** / **#282** / **#271** / **#278**;
+  no invented product / inventory bump): CI `--list-validators` / `--only`
+  twelve + required manifest step-marker smoke, exact packaging / escalation /
+  metadata / routing-surfaces / negative-constraints Finding equality,
+  long-vs-short Negative Constraints header divergence, multi-invent +
+  per-documented-agent drop matrix, BOM + ZWNJ / word-joiner / Mongolian /
+  RLM / casefold lookalikes + symlink follow/dangling leftovers,
+  matrix/rationale length-mismatch + `claude_required_sections` /
+  `escalation_format_phrases` inventory seed/type leftovers, matrix surface vs
+  rationale column-header vs metadata isolation, concurrent CLAUDE.md races,
+  tip isolation against #289/#279/#270/#265/#264/#258 siblings, and
+  tip-after-#289 deepeners (figure-space / NNBSP / Mongolian header lookalikes
+  mirroring #289 CI/md theme onto CLAUDE.md, LS / PS / object-replacement
+  lookalikes, simultaneous packaging+routing+negative triple exact drops,
+  quarterly + state-residency exact Finding isolation, `--only` twelve vs #289
+  CI/markdownlint residual + invent-key refuse, NEL / ZWNBSP / ideographic +
+  symlink-to-directory, sections/escalation empty-list schema non-empty).
+  Historic four only; Packaging inventory unchanged (v52 / 196). Distinct from
+  merged #289 (CI/markdownlint leftover), #279, #270 (goose-schema), #265
+  (prior Claude/routing), #264/#258/#253/#248 siblings, and closed CONFLICTING
+  #293/#282/#271/#278/#260/#192 (same niche on stale tips).
+
 - CI/markdownlint residual **tests-only** leftover deepeners after tip through
   **#279** (CI/markdownlint leftover after #270) / **#270** (goose-schema leftover
   after #265) / **#265** / **#264** / **#258** / **#253** / **#248** / **#242** /
