@@ -10,6 +10,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Contributing residual **tests-only** deepeners after **#156** tip / post-#172
+  (EXISTING ten `contributing` / `contributing-*` phrase-lock validators —
+  no invented product / inventory bump): concurrent validate races,
+  empty/whitespace/header-only CONTRIBUTING.md, invalid/invented
+  contributing-timeout sibling keys, per-phrase drop matrix, inventory
+  mismatch matrix (base `contributing_required_phrases` lock-mismatch-only),
+  and cross-isolation against `contributing` / `contributing-who` /
+  `contributing-branches` / `contributing-pr` / `contributing-issues` /
+  `contributing-local` / `contributing-governance` / `contributing-metadata` /
+  `contributing-surfaces` / `contributing-ci-honesty`. Historic four only;
+  inventory unchanged (v52 / 196). Distinct from merged constitution #156,
+  hydration #161, execution #166, goose-schema+security #172, and closed
+  CONFLICTING #157/#158/#169 leftovers.
+
 - Goose-recipe schema + security residual **tests-only** deepeners after #166
   tip (EXISTING `goose` / `recipe-agents` / `recipe-titles` +
   `goose-recipe.schema.json` edges, and ten `security` / `security-*`
