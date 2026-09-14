@@ -66,6 +66,7 @@ Checks structural correctness of:
 - AGENT-PROMPTS.md expertise / principles / metrics leftover locks
 - AGENT-PROMPTS.md tools / communication / escalation-identity leftover locks
 - AGENT-PROMPTS.md orchestration-matrix / monthly / usage-example leftover locks
+- AGENT-PROMPTS.md responsibilities / decision-authority / integration leftover locks
   PHASE 4 issues / LIST B deferred leftover locks
 - postmortem.md intro / Decision field / Next Steps surface locks
 - agentic_flows/scratchpad.txt intro / format-legend / task-meta locks
@@ -182,7 +183,7 @@ REQUIRED_ARCHIVE_DOCS = (
     "README.md",
 )
 
-INVENTORY_VERSION = 48
+INVENTORY_VERSION = 49
 CURSOR_ENVIRONMENT_NAME = "g0p-agents"
 DEPENDABOT_SCHEDULE_INTERVAL = "weekly"
 DEPENDABOT_DIRECTORIES: frozenset[str] = frozenset({"/"})
@@ -835,7 +836,7 @@ CONTRIBUTING_CI_HONESTY_REQUIRED_PHRASES: tuple[str, ...] = (
     "markdown lint, link check, actionlint",
     "manifest validate on Python 3.11/3.12/3.13",
     "Andrew or designated reviewer",
-    "Packaging inventory v48",
+    "Packaging inventory v49",
     "refuse invented recipes",
     "orphan on-disk YAML",
     "unknown `*Agent` tokens",
@@ -1013,6 +1014,40 @@ PROMPT_USAGE_EXAMPLE_REQUIRED_PHRASES: tuple[str, ...] = (
     "Validates using CRYSTALS-Kyber (NIST post-quantum standard)",
     "Either approves (moves to BlockchainArchitectAgent) or escalates",
     "Output: Updated scratchpad + Cirq circuit file",
+)
+
+
+PROMPT_RESPONSIBILITIES_REQUIRED_PHRASES: tuple[str, ...] = (
+    "## Core Responsibilities",
+    "Design quantum algorithms for cryptographic operations",
+    "Design multi-chain smart contract architecture",
+    "Implement quantum-safe cryptography on Android/iOS",
+    "Collect outputs from all three specialist agents",
+    "Log all decisions in postmortem.md",
+    "Update AGENTS.md risk tolerance (quarterly)",
+)
+
+PROMPT_DECISION_AUTHORITY_REQUIRED_PHRASES: tuple[str, ...] = (
+    "## Your Decision Authority",
+    "You make final calls on:",
+    "Trade-offs between security, performance, and usability",
+    "Prioritization (what gets built first)",
+    "Risk acceptance (can we deploy with this vulnerability?)",
+    "Timeline adjustments (can we ship on schedule?)",
+    "Your role is NOT to code. Your role is to COORDINATE.",
+)
+
+PROMPT_INTEGRATION_REQUIRED_PHRASES: tuple[str, ...] = (
+    "## Integration with AGENTS.md",
+    "These prompts are **living documents**",
+    "AGENTS.md constraints change",
+    "A new escalation pattern emerges",
+    "Risk tolerance thresholds change (quarterly)",
+    "## When You Escalate to Human",
+    "🚨 ESCALATION TO HUMAN REQUIRED",
+    "Human approval required before proceeding.",
+    "Remember: You are not smarter than the three specialists. Your job is to "
+    "listen, understand, mediate, and make calls when consensus is impossible.",
 )
 
 LICENSE_REQUIRED_PHRASES: tuple[str, ...] = (
@@ -1616,7 +1651,7 @@ SCRATCHPAD_STATUS_MARKERS: tuple[str, ...] = (
 SPECIALIST_AGENTS: tuple[str, ...] = DOCUMENTED_AGENTS[:-1]
 
 MIN_COVERAGE_FAIL_UNDER = 99
-MIN_VALIDATOR_COUNT = 166
+MIN_VALIDATOR_COUNT = 169
 
 
 @dataclass(frozen=True)
@@ -2690,6 +2725,32 @@ def validate_packaging_inventory(root: Path) -> list[Finding]:
     ):
         findings.append(
             _lock_mismatch(schema_path, "prompt_usage_example_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("prompt_responsibilities_required_phrases", ()))
+        != PROMPT_RESPONSIBILITIES_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "prompt_responsibilities_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("prompt_decision_authority_required_phrases", ()))
+        != PROMPT_DECISION_AUTHORITY_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(
+                schema_path, "prompt_decision_authority_required_phrases"
+            )
+        )
+
+    if (
+        tuple(inventory.get("prompt_integration_required_phrases", ()))
+        != PROMPT_INTEGRATION_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "prompt_integration_required_phrases")
         )
 
 
@@ -4761,6 +4822,135 @@ def _inventory_lock_consistency(
                 )
             )
 
+    prompt_responsibilities = list(
+        inventory.get("prompt_responsibilities_required_phrases", ())
+    )
+    if len(prompt_responsibilities) != len(set(prompt_responsibilities)):
+        findings.append(
+            Finding(
+                schema_path,
+                "prompt_responsibilities_required_phrases must be unique",
+            )
+        )
+    if not prompt_responsibilities:
+        findings.append(
+            Finding(
+                schema_path,
+                "prompt_responsibilities_required_phrases must not be empty",
+            )
+        )
+    for phrase in prompt_responsibilities:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_responsibilities_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_prompt_responsibilities = {
+            "## Core Responsibilities",
+            "Design quantum algorithms for cryptographic operations",
+            "Collect outputs from all three specialist agents",
+            "Update AGENTS.md risk tolerance (quarterly)",
+        }
+        if prompt_responsibilities and not required_prompt_responsibilities <= set(
+            prompt_responsibilities
+        ):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_responsibilities_required_phrases must include "
+                    "Core Responsibilities/quantum/collect/risk tolerance",
+                )
+            )
+
+    prompt_decision_authority = list(
+        inventory.get("prompt_decision_authority_required_phrases", ())
+    )
+    if len(prompt_decision_authority) != len(set(prompt_decision_authority)):
+        findings.append(
+            Finding(
+                schema_path,
+                "prompt_decision_authority_required_phrases must be unique",
+            )
+        )
+    if not prompt_decision_authority:
+        findings.append(
+            Finding(
+                schema_path,
+                "prompt_decision_authority_required_phrases must not be empty",
+            )
+        )
+    for phrase in prompt_decision_authority:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_decision_authority_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_prompt_decision_authority = {
+            "## Your Decision Authority",
+            "You make final calls on:",
+            "Trade-offs between security, performance, and usability",
+            "Your role is NOT to code. Your role is to COORDINATE.",
+        }
+        if prompt_decision_authority and not required_prompt_decision_authority <= set(
+            prompt_decision_authority
+        ):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_decision_authority_required_phrases must include "
+                    "Decision Authority/final calls/Trade-offs/COORDINATE",
+                )
+            )
+
+    prompt_integration = list(inventory.get("prompt_integration_required_phrases", ()))
+    if len(prompt_integration) != len(set(prompt_integration)):
+        findings.append(
+            Finding(schema_path, "prompt_integration_required_phrases must be unique")
+        )
+    if not prompt_integration:
+        findings.append(
+            Finding(
+                schema_path, "prompt_integration_required_phrases must not be empty"
+            )
+        )
+    for phrase in prompt_integration:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_integration_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_prompt_integration = {
+            "## Integration with AGENTS.md",
+            "These prompts are **living documents**",
+            "## When You Escalate to Human",
+            "🚨 ESCALATION TO HUMAN REQUIRED",
+        }
+        if prompt_integration and not required_prompt_integration <= set(
+            prompt_integration
+        ):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_integration_required_phrases must include "
+                    "Integration/living documents/Escalate to Human/HUMAN REQUIRED",
+                )
+            )
+
     intro = list(inventory.get("postmortem_intro_required_phrases", ()))
     if len(intro) != len(set(intro)):
         findings.append(
@@ -6604,7 +6794,7 @@ def _inventory_lock_consistency(
     else:
         required_ci_honesty = {
             "markdown lint, link check, actionlint",
-            "Packaging inventory v48",
+            "Packaging inventory v49",
             "refuse invented recipes",
         }
         if ci_honesty and not required_ci_honesty <= set(ci_honesty):
@@ -6612,7 +6802,7 @@ def _inventory_lock_consistency(
                 Finding(
                     schema_path,
                     "contributing_ci_honesty_required_phrases must include "
-                    "CI checks/Packaging inventory v48/refuse invented recipes",
+                    "CI checks/Packaging inventory v49/refuse invented recipes",
                 )
             )
 
@@ -8999,6 +9189,64 @@ def validate_prompt_usage_example(root: Path) -> list[Finding]:
     return findings
 
 
+def validate_prompt_responsibilities(root: Path) -> list[Finding]:
+    rel = "AGENT-PROMPTS.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "prompts missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## Core Responsibilities" not in body:
+        findings.append(Finding(rel, "missing Core Responsibilities section"))
+    for phrase in PROMPT_RESPONSIBILITIES_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(
+                    rel, f"missing locked prompt-responsibilities phrase: {phrase}"
+                )
+            )
+    return findings
+
+
+def validate_prompt_decision_authority(root: Path) -> list[Finding]:
+    rel = "AGENT-PROMPTS.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "prompts missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## Your Decision Authority" not in body:
+        findings.append(Finding(rel, "missing Your Decision Authority section"))
+    for phrase in PROMPT_DECISION_AUTHORITY_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(
+                    rel,
+                    f"missing locked prompt-decision-authority phrase: {phrase}",
+                )
+            )
+    return findings
+
+
+def validate_prompt_integration(root: Path) -> list[Finding]:
+    rel = "AGENT-PROMPTS.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "prompts missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## Integration with AGENTS.md" not in body:
+        findings.append(Finding(rel, "missing Integration with AGENTS.md section"))
+    if "## When You Escalate to Human" not in body:
+        findings.append(Finding(rel, "missing When You Escalate to Human section"))
+    for phrase in PROMPT_INTEGRATION_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked prompt-integration phrase: {phrase}")
+            )
+    return findings
+
+
 def validate_changelog_initial(root: Path) -> list[Finding]:
     rel = "CHANGELOG.md"
     path = root / rel
@@ -10128,8 +10376,8 @@ def validate_contributing_ci_honesty(root: Path) -> list[Finding]:
         return [Finding(rel, "CONTRIBUTING.md missing")]
     text = path.read_text(encoding="utf-8")
     findings: list[Finding] = []
-    if "Packaging inventory v48" not in text:
-        findings.append(Finding(rel, "missing Packaging inventory v48 honesty lock"))
+    if "Packaging inventory v49" not in text:
+        findings.append(Finding(rel, "missing Packaging inventory v49 honesty lock"))
     for phrase in CONTRIBUTING_CI_HONESTY_REQUIRED_PHRASES:
         if phrase not in text:
             findings.append(
@@ -12061,6 +12309,9 @@ VALIDATORS: dict[str, ValidatorFn] = {
     "prompt-orchestration-matrix": validate_prompt_orchestration_matrix,
     "prompt-monthly": validate_prompt_monthly,
     "prompt-usage-example": validate_prompt_usage_example,
+    "prompt-responsibilities": validate_prompt_responsibilities,
+    "prompt-decision-authority": validate_prompt_decision_authority,
+    "prompt-integration": validate_prompt_integration,
     "hydration-phase2": validate_hydration_phase2,
     "hydration-phase5": validate_hydration_phase5,
     "link-check": validate_link_check,

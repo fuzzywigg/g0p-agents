@@ -10,6 +10,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Prompts residual **v49** deepeners / **v48 leftovers continued** (post-#120 prompts orchestration/monthly/usage-example v48):
+  `prompt-responsibilities`, `prompt-decision-authority`, `prompt-integration` validators; AGENT-PROMPTS.md
+  Core Responsibilities / Decision Authority / Integration+human-escalation leftovers; consistency deepeners
+  for matching `*_required_phrases` inventory keys
+  (Packaging inventory 169 total; historic four only — prompts responsibilities/decision/integration
+  leftovers slice, not constitution/changelog v45, hydration, README, implementation-guide,
+  security, contributing, goose recipes, postmortem, or Dependabot)
+
 - Prompts residual **v48** deepeners / **v47 leftovers continued** (post-#119 prompts tools/communication/escalation-identity v47):
   `prompt-orchestration-matrix`, `prompt-monthly`, `prompt-usage-example` validators; AGENT-PROMPTS.md
   Escalation Authority / Conflict Resolution Matrix / Monthly Checklist / usage-example leftovers
