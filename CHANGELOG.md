@@ -25,9 +25,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   install/check, pytest markers, empty/scalar steps), inventory
   path/schema/yaml drops + leftover types, `--only` isolation, concurrent
   races, exact Finding equality + case/BOM/NBSP lookalikes, pytest
-  per-marker drop + ruff/pip lookalike commands, nested MD013/MD024 key drops
-  + simultaneous multi-lock drop, dual-surface concurrent races, and tip
-  isolation against #236/#229/#224/#219/#209/#208/#202/#200 siblings. Historic
+  per-marker drop + ruff/pip lookalike commands, nested MD013/MD024 key
+  drops + simultaneous multi-lock drop, dual-surface concurrent races, and
+  tip isolation against #236/#229/#224/#219/#209/#208/#202/#200 siblings.
+  Historic
   four only; inventory unchanged (v52 / 196). Distinct from merged #236
   (actionlint/linkcheck leftover), #229 (hydration/security+handoff edges),
   #224 (prompts+flows leftover), #219 (goose-schema), #209 leftover suite,
