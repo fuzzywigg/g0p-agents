@@ -10,6 +10,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Hydration↔security cross + goose-schema tip residual **tests-only** deepeners after
+  tip through **#176** / **#174** / post-#172 (EXISTING `hydration-phase4` + ten
+  `security` / `security-*` + `goose` / `recipe-agents` / `recipe-titles` /
+  `goose-recipe.schema.json` edges — no invented product / inventory bump):
+  hydration↔security cross-doc isolation (`Add SECURITY.md` lock), goose-schema tip
+  JSON Schema type/missing matrix beyond #172, goose↔security doc mangling isolation,
+  concurrent paired-doc races, invalid/invented tip sibling keys, and tip isolation
+  against #176 changelog / #174 contributing / open #178 implementation siblings.
+  Historic four only; inventory unchanged (v52 / 196). Distinct from merged #176
+  (changelog), #174 (contributing), #172 (goose-schema+security residual suite),
+  #166 (execution↔goose cross), #161 (hydration residual suite), open #178
+  (implementation), and closed CONFLICTING #173/#177 memory-slot tip refills.
+
 - Changelog residual **tests-only** deepeners after tip through **#174** / post-#172
   (EXISTING seven `changelog` / `changelog-*` phrase-lock validators — constitution's
   historic Keep-a-Changelog lock sibling from #116; no invented product / inventory bump):
