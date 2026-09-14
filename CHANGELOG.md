@@ -10,6 +10,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Prompts + agentic_flows residual **tests-only** leftover deepeners after tip
+  through **#208** (goose-schema leftover after #200) / **#202** / **#200** /
+  **#195** (EXISTING nineteen fixtures — twelve list-form sibling `prompt-*` +
+  seven agentic_flows `goose` / `recipe-agents` / `recipe-titles` /
+  `scratchpad*` — no invented v53 product / inventory bump): listform
+  **section-level** exact message locks beyond #202 phrase leftovers,
+  scratchpad exact required-phrase + Format/Task section locks beyond #202
+  structural, goose fence-count / File-count / docs must-bind exact leftovers,
+  on-disk historic version/provider/model/extension exact leftovers (tmp only),
+  recipe-titles missing/invented name leftovers, inventory type leftovers
+  (None/int/dict) beyond trunc/reverse, prompts↔flows cross-isolation,
+  concurrent dual-surface races, CI pytest workflow marker lock, and tip
+  isolation against #208/#202/#200 siblings. Historic four only; inventory
+  unchanged (v52 / 196). Distinct from merged #208 (goose-schema leftovers),
+  #202 (phrase/structural/goose-run leftover), #200 (listform invent/empty/
+  per-phrase), open CI/markdownlint and hydration/security siblings, and not
+  a v53 invent sibling.
+
 - Goose-recipe schema leftover **tests-only** deepeners after tip through **#202**
   (prompts+agentic_flows leftover after #200) / **#200** / **#195** / **#188** /
   **#187** / **#186** / **#184** (goose-schema tip) / **#172** (goose-schema
