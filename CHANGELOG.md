@@ -10,6 +10,32 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Prompts listform + agentic_flows residual **tests-only** leftover deepeners after
+  tip through **#270** (goose-schema leftover after #265) / **#265** (Claude/routing
+  leftover after #264) / **#264** / **#258** / **#253** (prompts+flows after #248) /
+  **#248** / **#242** / **#236** / **#229** / **#224** / **#219** / **#209** /
+  **#208** / **#202** / **#200** (EXISTING nineteen fixtures — twelve list-form
+  sibling `prompt-*` + seven agentic_flows `goose` / `recipe-agents` /
+  `recipe-titles` / `scratchpad*` — no invented v53 list-form product / inventory
+  bump; not markdownlint niche): exact fence-count leftovers for found 0 and found
+  5 beyond #253 found-1, historic version/provider/model exact Findings plus
+  documented `recipe YAML must be a mapping` fences, word-joiner / NEL /
+  vertical-tab lookalikes beyond #253 fullwidth/tab, per-module last-phrase exact
+  drop matrix for all twelve listform and scratchpad* (≠ #253 first-phrase),
+  empty/whitespace scratchpad exact Finding plus empty AGENT-PROMPTS section-lock
+  shapes across all twelve, orchestration missing BlockchainArchitectAgent /
+  OrchestrationAgent exact (≠ #253 Quantum/Edge), CI `--list-validators` /
+  `--only` nineteen + required Manifest Validate step-marker smoke, inventory
+  empty-list leftovers beyond #253 bool/float and #242 int/null, cross isolation
+  vs #270/#265/#264/#258/#253/#248 siblings with concurrent races and tip
+  live-green. Historic four only; Packaging inventory unchanged (v52 / 196); no
+  schema / validators / Dependabot bumps. Distinct from merged #270 (goose-schema
+  niche), #265 (Claude/routing niche), #264 (goose-schema niche), #258
+  (hydration/security+handoff), #253 (fence/File-bind/first-phrase/fullwidth),
+  #242 (ZWSP/on-disk/checkbox/inventory-types), #236/#229/#224/#219 siblings, open
+  #279 (CI/markdownlint niche), and closed CONFLICTING #272/#269 (same leftover
+  vs pre-#270 / pre-#265 tips) / #251/#243/#238/#235/#230/#221/#223 tip refills.
+
 - Goose-recipe schema leftover **tests-only** deepeners after tip through **#265**
   (Claude/routing leftover after #264) / **#264** (goose-schema leftover after #258)
   / **#258** (hydration/security+handoff leftover after #248) / **#253** / **#248** /
