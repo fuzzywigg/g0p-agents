@@ -188,11 +188,14 @@
     "scratchpad_required_phrases",
     "scratchpad_status_markers",
     "scratchpad_task_meta_required_phrases",
+    "security_compliance_detail_required_phrases",
     "security_fips_required_phrases",
     "security_header_required_phrases",
     "security_known_non_issues_required_phrases",
+    "security_reporting_channel_required_phrases",
     "security_reporting_required_phrases",
     "security_required_phrases",
+    "security_scope_required_phrases",
     "security_standards_required_phrases",
     "security_supported_required_phrases",
     "specialist_agents",
@@ -204,7 +207,7 @@
   "properties": {
     "version": {
       "type": "integer",
-      "minimum": 32
+      "minimum": 39
     },
     "required_paths": {
       "type": "array",
@@ -1686,6 +1689,33 @@
       }
     },
     "contributing_ci_honesty_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "security_scope_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "security_reporting_channel_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "security_compliance_detail_required_phrases": {
       "type": "array",
       "minItems": 1,
       "uniqueItems": true,

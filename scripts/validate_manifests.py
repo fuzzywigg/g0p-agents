@@ -53,6 +53,7 @@ Checks structural correctness of:
 - CLAUDE.md escalation usage intro + fenced placeholder field locks
 - SECURITY.md Supported Versions / Reporting / Standards domain locks
 - SECURITY.md header / FIPS standards-row / Known Non-Issues rename locks
+- SECURITY.md scope / reporting-channel / compliance-detail leftover locks
 - AGENTS-v2.2.md §22.1 crypto / §22.4.1 handoff / §22.4.2 escalation-matrix locks
 - AGENTS-v2.2.md §22.2 on-device / §22.3 multichain / §22.4.3 escalation-format locks
 - IMPLEMENTATION-GUIDE Quick Start / EXECUTION-SUMMARY specialist table /
@@ -171,7 +172,7 @@ REQUIRED_ARCHIVE_DOCS = (
     "README.md",
 )
 
-INVENTORY_VERSION = 38
+INVENTORY_VERSION = 39
 CURSOR_ENVIRONMENT_NAME = "g0p-agents"
 DEPENDABOT_SCHEDULE_INTERVAL = "weekly"
 DEPENDABOT_DIRECTORIES: frozenset[str] = frozenset({"/"})
@@ -349,6 +350,28 @@ SECURITY_KNOWN_NON_ISSUES_REQUIRED_PHRASES: tuple[str, ...] = (
     "ML-DSA (FIPS 204)",
     "pre-finalization names",
     "The underlying algorithms are correct",
+)
+SECURITY_SCOPE_REQUIRED_PHRASES: tuple[str, ...] = (
+    "## Supported Versions",
+    "Security policy applies to:",
+    "potential injection risks if values are interpolated without sanitization",
+    "potential prompt injection surface",
+    "Python quantum circuits",
+    "React Native mobile code (when scaffolded)",
+)
+SECURITY_REPORTING_CHANNEL_REQUIRED_PHRASES: tuple[str, ...] = (
+    "## Reporting a Vulnerability",
+    "Andrew Pappas — contact via smtp.eth ENS or GitHub @fuzzywigg",
+    "Expected response:",
+    "smtp.eth ENS",
+    "GitHub @fuzzywigg",
+)
+SECURITY_COMPLIANCE_DETAIL_REQUIRED_PHRASES: tuple[str, ...] = (
+    "When code is scaffolded into this repo, it must comply with:",
+    "| Domain | Standard |",
+    "in RAM, logs, or code",
+    "AGENTS-v2.2.md references",
+    "updated in a future issue",
 )
 CHANGELOG_FORMAT_REQUIRED_PHRASES: tuple[str, ...] = (
     "# Changelog",
@@ -593,7 +616,7 @@ CONTRIBUTING_CI_HONESTY_REQUIRED_PHRASES: tuple[str, ...] = (
     "markdown lint, link check, actionlint",
     "manifest validate on Python 3.11/3.12/3.13",
     "Andrew or designated reviewer",
-    "Packaging inventory v38",
+    "Packaging inventory v39",
     "refuse invented recipes",
     "orphan on-disk YAML",
     "unknown `*Agent` tokens",
@@ -1212,7 +1235,7 @@ SCRATCHPAD_STATUS_MARKERS: tuple[str, ...] = (
 SPECIALIST_AGENTS: tuple[str, ...] = DOCUMENTED_AGENTS[:-1]
 
 MIN_COVERAGE_FAIL_UNDER = 99
-MIN_VALIDATOR_COUNT = 127
+MIN_VALIDATOR_COUNT = 130
 
 
 @dataclass(frozen=True)
@@ -1908,6 +1931,30 @@ def validate_packaging_inventory(root: Path) -> list[Finding]:
     ):
         findings.append(
             _lock_mismatch(schema_path, "security_known_non_issues_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("security_scope_required_phrases", ()))
+        != SECURITY_SCOPE_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "security_scope_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("security_reporting_channel_required_phrases", ()))
+        != SECURITY_REPORTING_CHANNEL_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "security_reporting_channel_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("security_compliance_detail_required_phrases", ()))
+        != SECURITY_COMPLIANCE_DETAIL_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "security_compliance_detail_required_phrases")
         )
 
     if (
@@ -4655,7 +4702,7 @@ def _inventory_lock_consistency(
     else:
         required_ci_honesty = {
             "markdown lint, link check, actionlint",
-            "Packaging inventory v38",
+            "Packaging inventory v39",
             "refuse invented recipes",
         }
         if ci_honesty and not required_ci_honesty <= set(ci_honesty):
@@ -4663,7 +4710,123 @@ def _inventory_lock_consistency(
                 Finding(
                     schema_path,
                     "contributing_ci_honesty_required_phrases must include "
-                    "CI checks/Packaging inventory v38/refuse invented recipes",
+                    "CI checks/Packaging inventory v39/refuse invented recipes",
+                )
+            )
+
+    scope = list(inventory.get("security_scope_required_phrases", ()))
+    if len(scope) != len(set(scope)):
+        findings.append(
+            Finding(schema_path, "security_scope_required_phrases must be unique")
+        )
+    if not scope:
+        findings.append(
+            Finding(schema_path, "security_scope_required_phrases must not be empty")
+        )
+    for phrase in scope:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "security_scope_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_scope = {
+            "## Supported Versions",
+            "Security policy applies to:",
+            "potential prompt injection surface",
+        }
+        if scope and not required_scope <= set(scope):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "security_scope_required_phrases must include Supported "
+                    "Versions/applies-to/prompt-injection leftovers",
+                )
+            )
+
+    reporting_channel = list(
+        inventory.get("security_reporting_channel_required_phrases", ())
+    )
+    if len(reporting_channel) != len(set(reporting_channel)):
+        findings.append(
+            Finding(
+                schema_path,
+                "security_reporting_channel_required_phrases must be unique",
+            )
+        )
+    if not reporting_channel:
+        findings.append(
+            Finding(
+                schema_path,
+                "security_reporting_channel_required_phrases must not be empty",
+            )
+        )
+    for phrase in reporting_channel:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "security_reporting_channel_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_channel = {
+            "## Reporting a Vulnerability",
+            "Expected response:",
+            "GitHub @fuzzywigg",
+        }
+        if reporting_channel and not required_channel <= set(reporting_channel):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "security_reporting_channel_required_phrases must include "
+                    "Reporting heading/Expected response/@fuzzywigg",
+                )
+            )
+
+    compliance = list(inventory.get("security_compliance_detail_required_phrases", ()))
+    if len(compliance) != len(set(compliance)):
+        findings.append(
+            Finding(
+                schema_path,
+                "security_compliance_detail_required_phrases must be unique",
+            )
+        )
+    if not compliance:
+        findings.append(
+            Finding(
+                schema_path,
+                "security_compliance_detail_required_phrases must not be empty",
+            )
+        )
+    for phrase in compliance:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "security_compliance_detail_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_compliance = {
+            "When code is scaffolded into this repo, it must comply with:",
+            "in RAM, logs, or code",
+            "updated in a future issue",
+        }
+        if compliance and not required_compliance <= set(compliance):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "security_compliance_detail_required_phrases must include "
+                    "scaffold-comply/RAM-logs/future-issue leftovers",
                 )
             )
 
@@ -6070,6 +6233,61 @@ def validate_security_known_non_issues(root: Path) -> list[Finding]:
     return findings
 
 
+def validate_security_scope(root: Path) -> list[Finding]:
+    rel = "SECURITY.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "SECURITY.md missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## Supported Versions" not in text:
+        findings.append(Finding(rel, "missing Supported Versions section"))
+    for phrase in SECURITY_SCOPE_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(rel, f"missing locked security-scope phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_security_reporting_channel(root: Path) -> list[Finding]:
+    rel = "SECURITY.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "SECURITY.md missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## Reporting a Vulnerability" not in text:
+        findings.append(Finding(rel, "missing Reporting a Vulnerability section"))
+    for phrase in SECURITY_REPORTING_CHANNEL_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(
+                    rel, f"missing locked security-reporting-channel phrase: {phrase}"
+                )
+            )
+    return findings
+
+
+def validate_security_compliance_detail(root: Path) -> list[Finding]:
+    rel = "SECURITY.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "SECURITY.md missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "When code is scaffolded into this repo, it must comply with:" not in text:
+        findings.append(Finding(rel, "missing security compliance scaffold preamble"))
+    for phrase in SECURITY_COMPLIANCE_DETAIL_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(
+                    rel, f"missing locked security-compliance-detail phrase: {phrase}"
+                )
+            )
+    return findings
+
+
 def validate_constitution_crypto(root: Path) -> list[Finding]:
     rel = "AGENTS-v2.2.md"
     path = root / rel
@@ -7330,8 +7548,8 @@ def validate_contributing_ci_honesty(root: Path) -> list[Finding]:
         return [Finding(rel, "CONTRIBUTING.md missing")]
     text = path.read_text(encoding="utf-8")
     findings: list[Finding] = []
-    if "Packaging inventory v38" not in text:
-        findings.append(Finding(rel, "missing Packaging inventory v38 honesty lock"))
+    if "Packaging inventory v39" not in text:
+        findings.append(Finding(rel, "missing Packaging inventory v39 honesty lock"))
     for phrase in CONTRIBUTING_CI_HONESTY_REQUIRED_PHRASES:
         if phrase not in text:
             findings.append(
@@ -9115,6 +9333,9 @@ VALIDATORS: dict[str, ValidatorFn] = {
     "security-header": validate_security_header,
     "security-fips": validate_security_fips,
     "security-known-non-issues": validate_security_known_non_issues,
+    "security-scope": validate_security_scope,
+    "security-reporting-channel": validate_security_reporting_channel,
+    "security-compliance-detail": validate_security_compliance_detail,
     "implementation-quickstart": validate_implementation_quickstart,
     "execution-specialists": validate_execution_specialists,
     "hydration-list-b": validate_hydration_list_b,

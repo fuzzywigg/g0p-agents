@@ -10,6 +10,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Security policy **v39** deepeners (post-#92 contributing v38): `security-scope`,
+  `security-reporting-channel`, `security-compliance-detail` validators; SECURITY.md
+  Supported Versions scope/injection leftovers, Reporting channel/contact leftovers,
+  and Standards preamble / Keys RAM / future-rename leftovers; consistency deepeners
+  for `security_scope_required_phrases` / `security_reporting_channel_required_phrases` /
+  `security_compliance_detail_required_phrases`
+  (Packaging inventory 130 total; historic four only — security leftovers slice,
+  not contributing v38, constitution, goose recipes, execution-summary,
+  implementation-guide, agent prompts, changelog, or Dependabot)
+
 - Contributing guide **v38** deepeners (post-#90; #89 conflict closed): `contributing-metadata`,
   `contributing-surfaces`, `contributing-ci-honesty` validators; CONTRIBUTING.md title /
   Status / Edit-policy locks, agent-surface duty list / branch-purpose leftovers, and PR
