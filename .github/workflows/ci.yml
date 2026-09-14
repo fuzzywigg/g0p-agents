@@ -88,9 +88,9 @@ jobs:
           import validate_manifests as vm
 
           inv = json.loads(Path("schemas/packaging-inventory.json").read_text())
-          assert inv["version"] == vm.INVENTORY_VERSION == 36
+          assert inv["version"] == vm.INVENTORY_VERSION == 37
           assert sorted(vm.VALIDATORS) == inv["validator_names"]
-          assert len(vm.VALIDATORS) >= inv["min_validator_count"] >= 121
+          assert len(vm.VALIDATORS) >= inv["min_validator_count"] >= 124
           print(f"inventory v{inv['version']}; validators={len(vm.VALIDATORS)}")
           PY
       - name: Validate documented manifests (JSON report)

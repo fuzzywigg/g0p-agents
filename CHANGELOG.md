@@ -10,6 +10,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Constitution leftovers **v37** deepeners (post-#88): `constitution-on-device`,
+  `constitution-multichain`, `constitution-escalation-format` validators;
+  AGENTS-v2.2.md §22.2 Cirq/Qualtran/performance locks, §22.3 State Commitment /
+  Failure Recovery / rollback locks, and §22.4.3 Escalation Format banner /
+  field / awaiting-approval locks; consistency deepeners for
+  `constitution_on_device_required_phrases` /
+  `constitution_multichain_required_phrases` /
+  `constitution_escalation_format_required_phrases`
+  (124 total; historic four only — constitution leftovers slice, not goose
+  recipes v36, execution-summary v35, agent prompts, hydration/
+  implementation-guide, Dependabot, changelog, security, contributing,
+  README honesty, PR-template, issue-template, scratchpad, postmortem, or
+  routing/identity)
+
 - Goose recipes **v36** deepeners (post-#84): `goose-orchestration`,
   `goose-conflicts`, `goose-quantum-task` validators; GOOSE-RECIPES.md
   Master Orchestration Task STEP locks, Conflict Type PERFORMANCE/SECURITY/

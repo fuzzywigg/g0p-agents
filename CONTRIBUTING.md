@@ -44,7 +44,7 @@ python -m pytest --cov=scripts --cov-report=term-missing
 
 Do not invent new specialist agents in PRs; CI locks the documented set in
 `AGENT-PROMPTS.md` / `GOOSE-RECIPES.md` / `AGENTS-v2.2.md` (four agents only).
-Packaging inventory v36 + `scripts/validate_manifests.py` refuse invented recipes,
+Packaging inventory v37 + `scripts/validate_manifests.py` refuse invented recipes,
 orphan on-disk YAML, and unknown `*Agent` tokens.
 
 ## Issue Reporting

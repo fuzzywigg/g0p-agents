@@ -1,5 +1,5 @@
 {
-  "version": 36,
+  "version": 37,
   "documented_agents": [
     "QuantumArchitectAgent",
     "BlockchainArchitectAgent",
@@ -293,8 +293,11 @@
     "claude-metadata",
     "constitution",
     "constitution-crypto",
+    "constitution-escalation-format",
     "constitution-escalation-matrix",
     "constitution-handoff",
+    "constitution-multichain",
+    "constitution-on-device",
     "contributing",
     "contributing-branches",
     "contributing-governance",
@@ -393,7 +396,7 @@
     "yaml-configs"
   ],
   "min_coverage_fail_under": 99,
-  "min_validator_count": 121,
+  "min_validator_count": 124,
   "required_paths": [
     "README.md",
     "LICENSE",
@@ -1183,5 +1186,32 @@
     "STEP 4: Estimate constraints",
     "STEP 5: Update scratchpad",
     "Create Python file: ./quantum_circuits/[circuit_name].py"
+  ],
+  "constitution_on_device_required_phrases": [
+    "### 22.2 On-Device Quantum Logic Execution",
+    "MUST use Cirq circuits compiled for mobile constraints",
+    "MUST have deterministic fallback to classical simulation (Qualtran)",
+    "MUST NOT block UI thread",
+    "Circuit execution: < 500ms",
+    "Memory footprint: < 2MB",
+    "Cirq-sim (classical validation)"
+  ],
+  "constitution_multichain_required_phrases": [
+    "### 22.3 Multi-Chain State Consistency",
+    "State Commitment Protocol",
+    "Operation state committed to blockchain (hash)",
+    "Result cryptographically signed (post-quantum signature)",
+    "Failure Recovery",
+    "Maximum pending duration: 24 hours",
+    "Rollback MUST be executable by user without third-party approval"
+  ],
+  "constitution_escalation_format_required_phrases": [
+    "#### 22.4.3 Escalation Format (All Agents)",
+    "🚨 ESCALATION REQUIRED",
+    "From Agent: [Agent Name]",
+    "Mode: [Transformative/Operational]",
+    "Conflict: [What constraint am I hitting?]",
+    "Recommendation: [How should we resolve this?]",
+    "Awaiting approval before proceeding."
   ]
 }
