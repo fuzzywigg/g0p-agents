@@ -10,6 +10,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Agentic_flows residual **tests-only** leftover deepeners after tip through
+  **#188** (actionlint leftover) / **#187** (docs-cross) / **#186** / **#184**
+  / **#181** / **#178** / **#176** / **#174** / post-#172 (EXISTING seven
+  fixtures — `goose` / `recipe-agents` / `recipe-titles` / `scratchpad` /
+  `scratchpad-intro` / `scratchpad-format` / `scratchpad-task-meta` — no
+  invented flow product / inventory bump): undeclared `goose run` path edge,
+  on-disk locked recipe happy path + schema/binding edges (no repo YAML
+  product), scratchpad checkbox / status-marker / missing-file exact messages,
+  `GOOSE_DOCS` packaging phrase drop + allow-list/scratchpad inventory
+  mismatch matrix, GOOSE↔scratchpad↔invented-file cross-isolation, concurrent
+  dual-surface races, invalid/invented tip sibling keys, and tip isolation
+  against open #194 listform+flows / #188/#187/#186/#184/#181 siblings.
+  Historic four only; inventory unchanged (v52 / 196). Distinct from open
+  #194 (prompts listform + agentic_flows mixed), closed CONFLICTING
+  #193/#190 (stale tip), merged #188 (actionlint leftover), #187 (docs-cross),
+  #181 (memory-handoff), #147 (goose-recipe phrases), and #172/#184
+  (goose-schema).
+
 - Actionlint/workflow + link-check residual **tests-only** leftover deepeners
   after tip through **#187** (docs-cross) / **#186** (actionlint/workflow +
   link-check) / **#184** / **#181** / **#178** / **#176** / **#174**
