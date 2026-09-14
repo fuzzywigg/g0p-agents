@@ -10,6 +10,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Orchestration-timeouts **tests-only** HEAVY edges (EXISTING modules only — no
+  invented goose-timeouts/deadlines products; inventory still **v52 / 196**):
+  nested specialist `timeout: 300` / master `timeout: 600` on `goose-extensions`,
+  `goose-orchestration`, constitution scratchpad deadline inheritance,
+  conflict-matrix Deployment Timeline, recipe-orchestration, goose-recipe.schema
+  zero/underflow timeout rejects, and CI `cancel-in-progress` concurrent-abort
+  races. Distinct from open prompt-v52 residual edges and merged memory-slot
+  #134; historic four only.
+
 - Prompts residual **v52 HEAVY** deepeners / **v51 leftovers continued** (post-#134 tip; distinct from closed CONFLICTING #133/#135):
   `prompt-metrics-detail`, `prompt-orch-metrics-detail`, `prompt-communication-detail`,
   `prompt-principles-detail`, `prompt-responsibilities-residual`, `prompt-expertise-residual`,

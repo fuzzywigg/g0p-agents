@@ -16931,3 +16931,540 @@ def test_memory_slot_live_validators_green() -> None:
     assert "Never delete entries" in (
         REPO_ROOT / "agentic_flows" / "scratchpad.txt"
     ).read_text(encoding="utf-8")
+
+
+# ---------------------------------------------------------------------------
+# Orchestration-timeouts HEAVY edges (EXISTING modules only; no new validators)
+# Slice: goose-extensions timeouts + goose-orchestration + scratchpad deadlines
+# + conflict Deployment Timeline + recipe-orchestration + schema zero-timeout
+# + CI concurrent-abort cancel-in-progress.
+# Distinct from open prompt-v52-residual-edges (#144) and merged memory-slot (#134).
+# ---------------------------------------------------------------------------
+
+_ORCH_TIMEOUT_EDGE_VALIDATORS = (
+    ("goose-extensions", vm.validate_goose_extensions),
+    ("goose-orchestration", vm.validate_goose_orchestration),
+    ("constitution-scratchpad-state", vm.validate_constitution_scratchpad_state),
+    ("constitution-conflict-matrix", vm.validate_constitution_conflict_matrix),
+    ("constitution-recipe-orchestration", vm.validate_constitution_recipe_orchestration),
+    ("ci", vm.validate_ci_workflow),
+)
+
+_ORCH_TIMEOUT_PHRASE_SETS = (
+    (
+        vm.validate_goose_extensions,
+        "GOOSE-RECIPES.md",
+        vm.GOOSE_EXTENSIONS_REQUIRED_PHRASES,
+        "goose_extensions_required_phrases",
+        "builtin/developer/timeout 600",
+    ),
+    (
+        vm.validate_goose_orchestration,
+        "GOOSE-RECIPES.md",
+        vm.GOOSE_ORCHESTRATION_REQUIRED_PHRASES,
+        "goose_orchestration_required_phrases",
+        "Master Orchestration",
+    ),
+    (
+        vm.validate_constitution_scratchpad_state,
+        "AGENTS-v2.2.md",
+        vm.CONSTITUTION_SCRATCHPAD_STATE_REQUIRED_PHRASES,
+        "constitution_scratchpad_state_required_phrases",
+        "22.6",
+    ),
+    (
+        vm.validate_constitution_conflict_matrix,
+        "AGENTS-v2.2.md",
+        vm.CONSTITUTION_CONFLICT_MATRIX_REQUIRED_PHRASES,
+        "constitution_conflict_matrix_required_phrases",
+        "22.7",
+    ),
+    (
+        vm.validate_constitution_recipe_orchestration,
+        "AGENTS-v2.2.md",
+        vm.CONSTITUTION_RECIPE_ORCHESTRATION_REQUIRED_PHRASES,
+        "constitution_recipe_orchestration_required_phrases",
+        "22.5",
+    ),
+)
+
+
+def test_orch_timeout_modules_are_existing_only() -> None:
+    """Slice targets existing validators — no invented timeout/deadline products."""
+    for invented in (
+        "goose-timeouts",
+        "goose-deadlines",
+        "constitution-deadlines",
+        "implementation-timeouts",
+        "orchestration-timeouts",
+        "memory-slot",
+    ):
+        assert invented not in vm.VALIDATORS
+    for name, _fn in _ORCH_TIMEOUT_EDGE_VALIDATORS:
+        assert name in vm.VALIDATORS
+    assert "timeout: 300" in vm.GOOSE_EXTENSIONS_REQUIRED_PHRASES
+    assert "timeout: 600" in vm.GOOSE_EXTENSIONS_REQUIRED_PHRASES
+    assert (
+        "Deadline must be set before work begins"
+        in vm.CONSTITUTION_SCRATCHPAD_STATE_REQUIRED_PHRASES
+    )
+    assert (
+        "If deadline passes without completion → escalate to user"
+        in vm.CONSTITUTION_SCRATCHPAD_STATE_REQUIRED_PHRASES
+    )
+    assert "**Deployment Timeline**" in vm.CONSTITUTION_CONFLICT_MATRIX_REQUIRED_PHRASES
+    assert vm.CI_CANCEL_IN_PROGRESS is True
+    assert vm.INVENTORY_VERSION == 52
+    assert len(vm.VALIDATORS) == 196
+    assert vm.MIN_VALIDATOR_COUNT == 196
+
+
+def test_live_orch_timeout_edge_modules() -> None:
+    """Live repo stays green for the existing orchestration-timeout cluster."""
+    for name, fn in _ORCH_TIMEOUT_EDGE_VALIDATORS:
+        assert fn(REPO_ROOT) == []
+        assert vm.VALIDATORS[name](REPO_ROOT) == []
+    inventory = json.loads(
+        (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
+    )
+    assert inventory["version"] == 52
+    assert inventory["min_validator_count"] == 196
+    assert inventory["goose_extensions_required_phrases"] == list(
+        vm.GOOSE_EXTENSIONS_REQUIRED_PHRASES
+    )
+    assert inventory["goose_orchestration_required_phrases"] == list(
+        vm.GOOSE_ORCHESTRATION_REQUIRED_PHRASES
+    )
+    assert inventory["constitution_scratchpad_state_required_phrases"] == list(
+        vm.CONSTITUTION_SCRATCHPAD_STATE_REQUIRED_PHRASES
+    )
+    assert inventory["constitution_conflict_matrix_required_phrases"] == list(
+        vm.CONSTITUTION_CONFLICT_MATRIX_REQUIRED_PHRASES
+    )
+    assert inventory["constitution_recipe_orchestration_required_phrases"] == list(
+        vm.CONSTITUTION_RECIPE_ORCHESTRATION_REQUIRED_PHRASES
+    )
+    assert inventory["ci_cancel_in_progress"] is True
+    goose_body = (REPO_ROOT / "GOOSE-RECIPES.md").read_text(encoding="utf-8")
+    assert "timeout: 300" in goose_body
+    assert "timeout: 600" in goose_body
+    assert "Long timeout for multi-step orchestration" in goose_body
+    # nested master 600 nests specialist 300 in the same doc
+    assert goose_body.index("timeout: 300") < goose_body.index("timeout: 600")
+
+
+def test_orch_timeout_empty_payload_edges(tmp_path: Path) -> None:
+    """Empty / whitespace / header-only payloads fail timeout-cluster validators."""
+    for _name, fn in _ORCH_TIMEOUT_EDGE_VALIDATORS:
+        if _name == "ci":
+            continue
+        findings = fn(tmp_path)
+        assert findings
+        assert any("missing" in f.message for f in findings)
+
+    _write(tmp_path / "GOOSE-RECIPES.md", "")
+    _write(tmp_path / "AGENTS-v2.2.md", "")
+    assert any("missing" in f.message for f in vm.validate_goose_extensions(tmp_path))
+    assert any(
+        "missing" in f.message for f in vm.validate_goose_orchestration(tmp_path)
+    )
+    assert any(
+        "missing" in f.message
+        for f in vm.validate_constitution_scratchpad_state(tmp_path)
+    )
+
+    _write(tmp_path / "GOOSE-RECIPES.md", "   \n\t\n  \n")
+    _write(tmp_path / "AGENTS-v2.2.md", "   \n\t\n  \n")
+    findings = vm.validate_goose_extensions(tmp_path)
+    assert any("timeout: 300" in f.message for f in findings)
+    assert any("timeout: 600" in f.message for f in findings)
+
+    # header-only extensions (builtin present, timeouts absent)
+    _write(tmp_path / "GOOSE-RECIPES.md", "type: builtin\nname: developer\n")
+    findings = vm.validate_goose_extensions(tmp_path)
+    assert not any("missing builtin extension type" in f.message for f in findings)
+    assert any("timeout: 300" in f.message for f in findings)
+    assert any("timeout: 600" in f.message for f in findings)
+
+    # deadline section header only — payloads absent
+    _write(tmp_path / "AGENTS-v2.2.md", "### 22.6 Scratchpad State Machine\n")
+    findings = vm.validate_constitution_scratchpad_state(tmp_path)
+    assert any(
+        "Deadline must be set before work begins" in f.message for f in findings
+    )
+    assert any(
+        "If deadline passes without completion → escalate to user" in f.message
+        for f in findings
+    )
+
+    for key in (
+        "goose_extensions_required_phrases",
+        "goose_orchestration_required_phrases",
+        "constitution_scratchpad_state_required_phrases",
+        "constitution_conflict_matrix_required_phrases",
+        "constitution_recipe_orchestration_required_phrases",
+    ):
+        payload = _inventory_payload()
+        payload[key] = []
+        findings = vm._inventory_lock_consistency(
+            payload, schema_path="schemas/packaging-inventory.json"
+        )
+        assert any(f"{key} must not be empty" in f.message for f in findings), key
+
+
+def test_orch_timeout_nested_cancel_and_deadline_inheritance(tmp_path: Path) -> None:
+    """Nested 300/600 drops + deadline inheritance drops report; restore recovers."""
+    full_goose = "\n".join(
+        [
+            *vm.GOOSE_EXTENSIONS_REQUIRED_PHRASES,
+            *vm.GOOSE_ORCHESTRATION_REQUIRED_PHRASES,
+            "",
+        ]
+    )
+    _write(tmp_path / "GOOSE-RECIPES.md", full_goose)
+    assert vm.validate_goose_extensions(tmp_path) == []
+    assert vm.validate_goose_orchestration(tmp_path) == []
+
+    # drop specialist timeout: 300 — nested cancel of inner timeout
+    without_300 = [
+        p for p in vm.GOOSE_EXTENSIONS_REQUIRED_PHRASES if p != "timeout: 300"
+    ]
+    _write(
+        tmp_path / "GOOSE-RECIPES.md",
+        "\n".join([*without_300, *vm.GOOSE_ORCHESTRATION_REQUIRED_PHRASES, ""]),
+    )
+    findings = vm.validate_goose_extensions(tmp_path)
+    assert any("timeout: 300" in f.message for f in findings)
+    assert vm.validate_goose_orchestration(tmp_path) == []
+
+    # drop master timeout: 600 — nested cancel of outer/long timeout
+    without_600 = [
+        p for p in vm.GOOSE_EXTENSIONS_REQUIRED_PHRASES if p != "timeout: 600"
+    ]
+    _write(
+        tmp_path / "GOOSE-RECIPES.md",
+        "\n".join([*without_600, *vm.GOOSE_ORCHESTRATION_REQUIRED_PHRASES, ""]),
+    )
+    findings = vm.validate_goose_extensions(tmp_path)
+    assert any("timeout: 600" in f.message for f in findings)
+    inv_findings = vm._inventory_lock_consistency(
+        _inventory_payload(goose_extensions_required_phrases=without_600),
+        schema_path="schemas/packaging-inventory.json",
+    )
+    assert any(
+        "goose_extensions_required_phrases must include" in f.message
+        for f in inv_findings
+    )
+    assert any("timeout 600" in f.message for f in inv_findings)
+
+    # deadline inheritance: drop both deadline phrases independently
+    full_agents = "\n".join(
+        [
+            *vm.CONSTITUTION_SCRATCHPAD_STATE_REQUIRED_PHRASES,
+            *vm.CONSTITUTION_CONFLICT_MATRIX_REQUIRED_PHRASES,
+            *vm.CONSTITUTION_RECIPE_ORCHESTRATION_REQUIRED_PHRASES,
+            "",
+        ]
+    )
+    _write(tmp_path / "AGENTS-v2.2.md", full_agents)
+    assert vm.validate_constitution_scratchpad_state(tmp_path) == []
+    assert vm.validate_constitution_conflict_matrix(tmp_path) == []
+    assert vm.validate_constitution_recipe_orchestration(tmp_path) == []
+
+    without_set = [
+        p
+        for p in vm.CONSTITUTION_SCRATCHPAD_STATE_REQUIRED_PHRASES
+        if p != "Deadline must be set before work begins"
+    ]
+    _write(
+        tmp_path / "AGENTS-v2.2.md",
+        "\n".join(
+            [
+                *without_set,
+                *vm.CONSTITUTION_CONFLICT_MATRIX_REQUIRED_PHRASES,
+                *vm.CONSTITUTION_RECIPE_ORCHESTRATION_REQUIRED_PHRASES,
+                "",
+            ]
+        ),
+    )
+    findings = vm.validate_constitution_scratchpad_state(tmp_path)
+    assert any("Deadline must be set before work begins" in f.message for f in findings)
+
+    without_pass = [
+        p
+        for p in vm.CONSTITUTION_SCRATCHPAD_STATE_REQUIRED_PHRASES
+        if p != "If deadline passes without completion → escalate to user"
+    ]
+    _write(
+        tmp_path / "AGENTS-v2.2.md",
+        "\n".join(
+            [
+                *without_pass,
+                *vm.CONSTITUTION_CONFLICT_MATRIX_REQUIRED_PHRASES,
+                *vm.CONSTITUTION_RECIPE_ORCHESTRATION_REQUIRED_PHRASES,
+                "",
+            ]
+        ),
+    )
+    findings = vm.validate_constitution_scratchpad_state(tmp_path)
+    assert any(
+        "If deadline passes without completion → escalate to user" in f.message
+        for f in findings
+    )
+
+    # Deployment Timeline (Quality vs. Deadline row lock companion)
+    without_timeline = [
+        p
+        for p in vm.CONSTITUTION_CONFLICT_MATRIX_REQUIRED_PHRASES
+        if p != "**Deployment Timeline**"
+    ]
+    _write(
+        tmp_path / "AGENTS-v2.2.md",
+        "\n".join(
+            [
+                *vm.CONSTITUTION_SCRATCHPAD_STATE_REQUIRED_PHRASES,
+                *without_timeline,
+                *vm.CONSTITUTION_RECIPE_ORCHESTRATION_REQUIRED_PHRASES,
+                "",
+            ]
+        ),
+    )
+    findings = vm.validate_constitution_conflict_matrix(tmp_path)
+    assert any("**Deployment Timeline**" in f.message for f in findings)
+
+    # restore green
+    _write(tmp_path / "GOOSE-RECIPES.md", full_goose)
+    _write(tmp_path / "AGENTS-v2.2.md", full_agents)
+    assert vm.validate_goose_extensions(tmp_path) == []
+    assert vm.validate_goose_orchestration(tmp_path) == []
+    assert vm.validate_constitution_scratchpad_state(tmp_path) == []
+    assert vm.validate_constitution_conflict_matrix(tmp_path) == []
+    assert vm.validate_constitution_recipe_orchestration(tmp_path) == []
+
+
+def test_orch_timeout_zero_and_schema_underflow_edges() -> None:
+    """goose-recipe.schema rejects zero/negative/non-int timeout; bounds hold."""
+    schema = vm.load_schema("goose-recipe.schema.json")
+    for bad_timeout in (0, -1, 1.5, "30", 86401):
+        payload = json.loads(json.dumps(MINIMAL_RECIPE))
+        payload["recipe"]["extensions"][0]["timeout"] = bad_timeout
+        findings = vm.validate_against_schema(payload, schema, path="fixture")
+        assert findings, bad_timeout
+        assert any("timeout" in f.message for f in findings), bad_timeout
+
+    for ok_timeout in (1, 300, 600, 86400):
+        payload = json.loads(json.dumps(MINIMAL_RECIPE))
+        payload["recipe"]["extensions"][0]["timeout"] = ok_timeout
+        assert (
+            vm.validate_against_schema(payload, schema, path="fixture") == []
+        ), ok_timeout
+
+    # timeout optional at schema level (missing OK); phrase locks still require
+    # timeout: 300/600 in GOOSE-RECIPES.md via goose-extensions.
+    missing = json.loads(json.dumps(MINIMAL_RECIPE))
+    del missing["recipe"]["extensions"][0]["timeout"]
+    assert vm.validate_against_schema(missing, schema, path="fixture") == []
+
+
+def test_orch_timeout_ci_concurrent_abort_edges(tmp_path: Path) -> None:
+    """CI cancel-in-progress concurrent-abort lock: false/missing rejected; races OK."""
+    yaml_ok = _ci_yaml_with_matrix(list(vm.REQUIRED_PYTHON_VERSIONS))
+    assert "cancel-in-progress: true" in yaml_ok
+
+    yaml_false = yaml_ok.replace(
+        "cancel-in-progress: true", "cancel-in-progress: false"
+    )
+    _write(tmp_path / ".github" / "workflows" / "ci.yml", yaml_false)
+    findings = vm.validate_ci_workflow(tmp_path)
+    assert any("cancel-in-progress must be True" in f.message for f in findings)
+
+    # drop cancel-in-progress key entirely
+    yaml_missing = yaml_ok.replace("  cancel-in-progress: true\n", "")
+    _write(tmp_path / ".github" / "workflows" / "ci.yml", yaml_missing)
+    findings = vm.validate_ci_workflow(tmp_path)
+    assert any("cancel-in-progress" in f.message for f in findings)
+
+    # inventory ci_cancel_in_progress mismatch (field lock in packaging inventory)
+    _copy_schemas(tmp_path)
+    for rel in _inventory_payload()["required_paths"]:
+        target = tmp_path / rel
+        target.parent.mkdir(parents=True, exist_ok=True)
+        if not target.exists():
+            target.write_text("ok\n", encoding="utf-8")
+    bad_inv = _inventory_payload(ci_cancel_in_progress=False)
+    (tmp_path / "schemas" / "packaging-inventory.json").write_text(
+        json.dumps(bad_inv), encoding="utf-8"
+    )
+    findings = vm.validate_packaging_inventory(tmp_path)
+    assert any("ci_cancel_in_progress" in f.message for f in findings)
+
+    # concurrent readers/writers on live cancel lock + temp abort flip
+    live_ci = REPO_ROOT / ".github" / "workflows" / "ci.yml"
+    abort_root = tmp_path / "abort_race"
+    abort_ci = abort_root / ".github" / "workflows" / "ci.yml"
+    _write(abort_ci, yaml_false)
+
+    def _live_ok() -> bool:
+        return vm.validate_ci_workflow(REPO_ROOT) == []
+
+    def _abort_finds() -> bool:
+        return any(
+            "cancel-in-progress must be True" in f.message
+            for f in vm.validate_ci_workflow(abort_root)
+        )
+
+    with ThreadPoolExecutor(max_workers=12) as pool:
+        futs = [
+            pool.submit(_live_ok if i % 2 == 0 else _abort_finds) for i in range(24)
+        ]
+        assert all(fut.result() for fut in as_completed(futs))
+
+    assert live_ci.is_file()
+    assert vm.CI_CANCEL_IN_PROGRESS is True
+    assert vm.validate_ci_workflow(REPO_ROOT) == []
+
+
+def test_orch_timeout_per_phrase_missing_matrix(tmp_path: Path) -> None:
+    """Each locked timeout-cluster phrase omission independently yields a finding."""
+    for fn, _doc, phrases, _key, _token in _ORCH_TIMEOUT_PHRASE_SETS:
+        for idx, dropped in enumerate(phrases):
+            kept = [p for i, p in enumerate(phrases) if i != idx]
+            if fn is vm.validate_goose_extensions and "type: builtin" not in kept:
+                # builtin type has a dedicated early finding; still require phrase miss
+                body = "\n".join(kept) + "\n"
+            else:
+                body = "\n".join(kept) + "\n"
+            if fn in (
+                vm.validate_goose_extensions,
+                vm.validate_goose_orchestration,
+            ):
+                _write(tmp_path / "GOOSE-RECIPES.md", body)
+            else:
+                _write(tmp_path / "AGENTS-v2.2.md", body)
+            findings = fn(tmp_path)
+            assert findings, (fn.__name__, dropped)
+            assert any(dropped in f.message for f in findings), (
+                fn.__name__,
+                dropped,
+                [f.message for f in findings[:8]],
+            )
+
+
+def test_orch_timeout_cross_validator_isolation(tmp_path: Path) -> None:
+    """Each timeout-cluster doc validator only greens on its own phrase set."""
+    for target_fn, _doc, target_phrases, _key, _token in _ORCH_TIMEOUT_PHRASE_SETS:
+        goose_fns = {
+            vm.validate_goose_extensions,
+            vm.validate_goose_orchestration,
+        }
+        agents_fns = {
+            vm.validate_constitution_scratchpad_state,
+            vm.validate_constitution_conflict_matrix,
+            vm.validate_constitution_recipe_orchestration,
+        }
+        if target_fn in goose_fns:
+            _write(tmp_path / "GOOSE-RECIPES.md", "\n".join([*target_phrases, ""]))
+            _write(tmp_path / "AGENTS-v2.2.md", "")
+        else:
+            _write(tmp_path / "GOOSE-RECIPES.md", "")
+            _write(tmp_path / "AGENTS-v2.2.md", "\n".join([*target_phrases, ""]))
+        for other_fn, _d, _p, _k, _t in _ORCH_TIMEOUT_PHRASE_SETS:
+            findings = other_fn(tmp_path)
+            same_doc = (target_fn in goose_fns and other_fn in goose_fns) or (
+                target_fn in agents_fns and other_fn in agents_fns
+            )
+            if other_fn is target_fn:
+                assert findings == [], other_fn.__name__
+            elif same_doc:
+                assert findings, other_fn.__name__
+                assert any("missing" in f.message for f in findings)
+            else:
+                assert findings, other_fn.__name__
+
+
+def test_orch_timeout_inventory_consistency_and_mismatch_matrix(
+    tmp_path: Path,
+) -> None:
+    """Empty/dup/blank/seed + packaging mismatch for timeout-cluster inventory keys."""
+    keys = [
+        (
+            "goose_extensions_required_phrases",
+            vm.GOOSE_EXTENSIONS_REQUIRED_PHRASES,
+            "builtin/developer/timeout 600",
+        ),
+        (
+            "goose_orchestration_required_phrases",
+            vm.GOOSE_ORCHESTRATION_REQUIRED_PHRASES,
+            "Master Orchestration",
+        ),
+        (
+            "constitution_scratchpad_state_required_phrases",
+            vm.CONSTITUTION_SCRATCHPAD_STATE_REQUIRED_PHRASES,
+            "22.6",
+        ),
+        (
+            "constitution_conflict_matrix_required_phrases",
+            vm.CONSTITUTION_CONFLICT_MATRIX_REQUIRED_PHRASES,
+            "22.7",
+        ),
+        (
+            "constitution_recipe_orchestration_required_phrases",
+            vm.CONSTITUTION_RECIPE_ORCHESTRATION_REQUIRED_PHRASES,
+            "22.5",
+        ),
+    ]
+
+    _copy_schemas(tmp_path)
+    for rel in _inventory_payload()["required_paths"]:
+        target = tmp_path / rel
+        target.parent.mkdir(parents=True, exist_ok=True)
+        if not target.exists():
+            target.write_text("ok\n", encoding="utf-8")
+
+    for key, phrases, include_token in keys:
+        payload = _inventory_payload()
+        payload[key] = []
+        findings = vm._inventory_lock_consistency(
+            payload, schema_path="schemas/packaging-inventory.json"
+        )
+        assert any(f"{key} must not be empty" in f.message for f in findings)
+
+        payload = _inventory_payload()
+        payload[key] = [phrases[0], phrases[0], *phrases[1:]]
+        findings = vm._inventory_lock_consistency(
+            payload, schema_path="schemas/packaging-inventory.json"
+        )
+        assert any(f"{key} must be unique" in f.message for f in findings)
+
+        payload = _inventory_payload()
+        payload[key] = ["ok", "  "]
+        findings = vm._inventory_lock_consistency(
+            payload, schema_path="schemas/packaging-inventory.json"
+        )
+        assert any(
+            f"{key} entries must be non-empty strings" in f.message for f in findings
+        )
+
+        payload = _inventory_payload()
+        payload[key] = [phrases[0]]
+        findings = vm._inventory_lock_consistency(
+            payload, schema_path="schemas/packaging-inventory.json"
+        )
+        assert any(f"{key} must include" in f.message for f in findings)
+        assert any(
+            include_token.split("/")[0] in f.message or include_token in f.message
+            for f in findings
+        )
+
+        bad = _inventory_payload(**{key: list(phrases)[:-1] + [f"invented-{key}"]})
+        (tmp_path / "schemas" / "packaging-inventory.json").write_text(
+            json.dumps(bad), encoding="utf-8"
+        )
+        findings = vm.validate_packaging_inventory(tmp_path)
+        assert any(key in f.message for f in findings)
+
+    (tmp_path / "schemas" / "packaging-inventory.json").write_text(
+        json.dumps(_inventory_payload()), encoding="utf-8"
+    )
+    assert vm.INVENTORY_VERSION == 52
+    assert len(vm.VALIDATORS) == 196
