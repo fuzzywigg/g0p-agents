@@ -10,6 +10,22 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Hydration↔security + memory-slot/agent-handoff residual **tests-only** leftover
+  deepeners after tip through **#208** (goose-schema leftover after #200) /
+  **#202** / **#200** / **#195** / **#188** / **#187** / **#186** / **#184** /
+  **#181** (EXISTING twenty-two fixtures — `hydration-phase4` + ten
+  `security` / `security-*` + four `scratchpad*` + seven handoff-cluster
+  `constitution-*` — no invented memory-slot / handoff-timeout /
+  hydration-security-cross product / inventory bump): four-doc isolation,
+  section-present/phrases-absent, missing vs directory-not-file, case/BOM
+  lookalikes, invented-agent isolation, inventory leftover types,
+  `run_all --only` subset, concurrent four-doc races, and tip isolation
+  against #208/#202/#200/#195/#188 siblings. Historic four only; inventory
+  unchanged (v52 / 196). Distinct from merged #208 (goose-schema leftover),
+  #202/#200 (listform+flows), #184 (hydration↔security + goose-schema),
+  #181 (memory-handoff residual), closed #207/#205/#189/#191/#183/#179, and
+  #187 (docs-cross tip).
+
 - Goose-recipe schema leftover **tests-only** deepeners after tip through **#202**
   (prompts+agentic_flows leftover after #200) / **#200** / **#195** / **#188** /
   **#187** / **#186** / **#184** (goose-schema tip) / **#172** (goose-schema
