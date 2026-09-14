@@ -10,6 +10,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Memory-slot / agent-handoff residual **tests-only** deepeners after **#174** tip
+  (EXISTING eleven coordination modules — four `scratchpad*` + seven handoff-
+  cluster `constitution-*` — no invented memory-slot / handoff-timeout product /
+  inventory bump): concurrent dual-doc races, empty/whitespace/header-only
+  AGENTS + scratchpad, invalid/invented memory-slot+handoff+goose/security keys,
+  per-phrase drop matrix, inventory mismatch matrix, failed rollback / reverse-
+  arrow edges, slot-overflow allow-list rejection, and cross-isolation.
+  Historic four only; inventory unchanged (v52 / 196). Tip refill of closed
+  CONFLICTING #173 after tip advanced through #166/#172/#174. Distinct from open
+  #176 (changelog), merged #174 (contributing), #172 (goose-schema+security),
+  #166 (execution), #161 (hydration), #156 (fourteen constitution residuals),
+  #134 (memory-slot basics), and closed CONFLICTING #136 (agent-handoff).
+
 - Contributing residual **tests-only** deepeners after **#156** tip / post-#172
   (EXISTING ten `contributing` / `contributing-*` phrase-lock validators —
   no invented product / inventory bump): concurrent validate races,
