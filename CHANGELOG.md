@@ -10,6 +10,22 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Docs-cross tip residual **tests-only** deepeners after tip through **#186**
+  (actionlint/workflow + link-check) / **#184** / **#181** / **#178** /
+  **#176** / **#174** / **#166** / **#147** (EXISTING contributing /
+  changelog / implementation / memory-handoff / execution / goose fixtures
+  residual-burned but not tip-burned — no invented product / inventory bump):
+  contributing↔goose cross-doc isolation, changelog↔impl/exec/goose/
+  contributing cross, implementation↔goose/scratchpad cross,
+  memory-handoff↔goose scratchpad-state cross, section-present /
+  phrases-absent tip matrix, concurrent multi-doc races, invalid/invented
+  tip sibling keys, and tip isolation against #186/#184/#181 siblings.
+  Historic four only; inventory unchanged (v52 / 196). Distinct from merged
+  #186 (actionlint/link-check), #184 (hydration↔security + goose-schema),
+  #181 (memory-handoff residual), #178 (implementation residual), #176
+  (changelog residual), #174 (contributing residual), #166 (execution↔goose),
+  and #147 (goose-recipe residual).
+
 - Actionlint/workflow + link-check residual **tests-only** deepeners after tip
   through **#184** (hydration↔security + goose-schema) / **#181** / **#178** /
   **#176** / **#174** / post-#172 (EXISTING seven CI fixtures —
