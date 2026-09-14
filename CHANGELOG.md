@@ -10,6 +10,32 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Goose-recipe schema leftover **tests-only** deepeners after tip through **#229**
+  (hydration/security+handoff edges after #224) / **#224** (prompts+flows after
+  #219) / **#219** (goose-schema leftover after #209) / **#209** / **#208** /
+  **#202** / **#200** / **#195** / **#188** / **#187** / **#186** / **#184**
+  (goose-schema tip) / **#172** (goose-schema residual suite) (EXISTING three
+  fixtures — `goose` / `recipe-agents` / `recipe-titles` plus
+  `schemas/goose-recipe.schema.json` + `GOOSE-RECIPES.md` — no invented product
+  / inventory bump): unsaturated reject leftovers beyond #219 (`name` plus/at,
+  `title` float, `provider` object, extension name bool / type list / `STDIO`,
+  `recipe` list, timeout empty list), invent-key KeyError / `run_all --only`
+  ValueError, ACCEPT leftovers (title max 256, omit timeout, mixed transports +
+  additionalProperties, uniqueItems distinct timeouts), **File** count /
+  `.yml`-**File** / fence info-string / indented-closer leftovers, non-yaml
+  agentic_flows allow-list + multi-binding historic provider leftovers,
+  non-string title exact message + `recipe: not-a-map` agent skip, inventory
+  `recipe_titles` / `agentic_flows_allowed_files` leftovers, CI
+  `--list-validators` / `--only` goose-trio + required manifest step-marker
+  smoke, concurrent races, and tip isolation against
+  #229/#224/#219/#209/#208/#202 siblings. Historic four only; Packaging
+  inventory unchanged (v52 / 196 validators). Distinct from merged #219 (prior
+  goose-schema leftover), closed CONFLICTING #234/#216/#212 (same leftover on
+  pre-#229/#219/#209 tips), #229 (hydration/security+handoff), #224
+  (prompts+flows), #202/#200 (listform+flows), #184 (tip type matrix), #172
+  (residual suite), #147 (nine goose-* phrase locks), and not a v53 invent
+  sibling or Dependabot bump.
+
 - Hydration↔security + handoff unsaturated **tests-only** edge deepeners after tip
   through **#224** (prompts+agentic_flows leftover after #219) / **#219** /
   **#209** / **#208** / **#202** / **#200** / **#195** / **#188** / **#187** /
