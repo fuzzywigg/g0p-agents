@@ -26,6 +26,7 @@ Checks structural correctness of:
 - CHANGELOG.md Keep a Changelog format / Unreleased / 0.1.0 release locks
 - GOOSE-RECIPES.md recipe headers / instruction-agent / extension locks
 - AGENT-PROMPTS.md constraints / escalation-triggers / related-docs locks
+- EXECUTION-SUMMARY.md IDE setup / innovations / next-48-hours locks
 - agentic_flows/scratchpad.txt coordination markers (+ allowed file set)
 - pyproject.toml validation tooling keys (+ coverage / requires-python / ruff)
 - CI workflow job/step/matrix/concurrency/permissions/artifact-if presence
@@ -166,7 +167,7 @@ REQUIRED_ARCHIVE_DOCS = (
     "README.md",
 )
 
-INVENTORY_VERSION = 34
+INVENTORY_VERSION = 35
 CURSOR_ENVIRONMENT_NAME = "g0p-agents"
 DEPENDABOT_SCHEDULE_INTERVAL = "weekly"
 DEPENDABOT_DIRECTORIES: frozenset[str] = frozenset({"/"})
@@ -1071,6 +1072,40 @@ EXECUTION_WORKFLOW_REQUIRED_PHRASES: tuple[str, ...] = (
     "Agents Disagree → OrchestrationAgent Reviews",
 )
 
+EXECUTION_IDE_REQUIRED_PHRASES: tuple[str, ...] = (
+    "## IDE & Software Setup",
+    "**Required** (Days 1-2):",
+    "Python 3.11+ (WSL2)",
+    "Node.js 20.x LTS (WSL2)",
+    "Docker Desktop (WSL2 backend)",
+    "VS Code + extensions",
+    "**Libraries** (install via setup script):",
+    "Cirq + Qualtran",
+    "**Total Setup Time**: ~1 hour (mostly downloads)",
+)
+EXECUTION_INNOVATIONS_REQUIRED_PHRASES: tuple[str, ...] = (
+    "## What Makes This Different",
+    "### Traditional Approach",
+    "### Your Agentic Approach",
+    "## Key Innovations in Your System",
+    "**Quantum-Blockchain Bridge**: First formal protocol for integrating "
+    "quantum algorithms into blockchain",
+    "**Recipe-Based Orchestration**: Goose recipes enable reproducible workflows",
+    "**Scratchpad State Machine**: Checkbox-based coordination (simple but effective)",
+    "**Quarterly Risk Tolerance Review**: Formal process for increasing confidence over time",
+    "**postmortem.md Incident Log**: Every decision and failure documented",
+)
+EXECUTION_NEXT48_REQUIRED_PHRASES: tuple[str, ...] = (
+    "## Success Indicators",
+    "## Common Pitfalls (Avoid These)",
+    "## Next 48 Hours",
+    "### Today (2025-12-13)",
+    "### Tomorrow (2025-12-14)",
+    "### Day After (2025-12-15)",
+    "Instantiate first agent (QuantumArchitectAgent)",
+    "Create first Goose recipe (copy from templates)",
+)
+
 CONTRIBUTING_BRANCH_SURFACES: tuple[str, ...] = ("copilot", "geryon", "cursor")
 
 SCRATCHPAD_STATUS_MARKERS: tuple[str, ...] = (
@@ -1083,7 +1118,7 @@ SCRATCHPAD_STATUS_MARKERS: tuple[str, ...] = (
 SPECIALIST_AGENTS: tuple[str, ...] = DOCUMENTED_AGENTS[:-1]
 
 MIN_COVERAGE_FAIL_UNDER = 99
-MIN_VALIDATOR_COUNT = 115
+MIN_VALIDATOR_COUNT = 118
 
 
 @dataclass(frozen=True)
@@ -2106,6 +2141,28 @@ def validate_packaging_inventory(root: Path) -> list[Finding]:
     ):
         findings.append(
             _lock_mismatch(schema_path, "execution_workflow_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("execution_ide_required_phrases", ()))
+        != EXECUTION_IDE_REQUIRED_PHRASES
+    ):
+        findings.append(_lock_mismatch(schema_path, "execution_ide_required_phrases"))
+
+    if (
+        tuple(inventory.get("execution_innovations_required_phrases", ()))
+        != EXECUTION_INNOVATIONS_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "execution_innovations_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("execution_next48_required_phrases", ()))
+        != EXECUTION_NEXT48_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "execution_next48_required_phrases")
         )
 
     if (
@@ -4096,6 +4153,115 @@ def _inventory_lock_consistency(
                     schema_path,
                     "execution_workflow_required_phrases must include Workflow "
                     "Overview/Single Agent/Escalation",
+                )
+            )
+
+    ide = list(inventory.get("execution_ide_required_phrases", ()))
+    if len(ide) != len(set(ide)):
+        findings.append(
+            Finding(schema_path, "execution_ide_required_phrases must be unique")
+        )
+    if not ide:
+        findings.append(
+            Finding(schema_path, "execution_ide_required_phrases must not be empty")
+        )
+    for phrase in ide:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "execution_ide_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_ide = {
+            "## IDE & Software Setup",
+            "Python 3.11+ (WSL2)",
+            "**Total Setup Time**: ~1 hour (mostly downloads)",
+        }
+        if ide and not required_ide <= set(ide):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "execution_ide_required_phrases must include IDE Setup/"
+                    "Python 3.11+/Total Setup Time",
+                )
+            )
+
+    innovations = list(inventory.get("execution_innovations_required_phrases", ()))
+    if len(innovations) != len(set(innovations)):
+        findings.append(
+            Finding(
+                schema_path, "execution_innovations_required_phrases must be unique"
+            )
+        )
+    if not innovations:
+        findings.append(
+            Finding(
+                schema_path,
+                "execution_innovations_required_phrases must not be empty",
+            )
+        )
+    for phrase in innovations:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "execution_innovations_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_innovations = {
+            "## What Makes This Different",
+            "## Key Innovations in Your System",
+            "**Recipe-Based Orchestration**: Goose recipes enable reproducible workflows",
+        }
+        if innovations and not required_innovations <= set(innovations):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "execution_innovations_required_phrases must include What Makes "
+                    "This Different/Key Innovations/Recipe-Based Orchestration",
+                )
+            )
+
+    next48 = list(inventory.get("execution_next48_required_phrases", ()))
+    if len(next48) != len(set(next48)):
+        findings.append(
+            Finding(schema_path, "execution_next48_required_phrases must be unique")
+        )
+    if not next48:
+        findings.append(
+            Finding(
+                schema_path, "execution_next48_required_phrases must not be empty"
+            )
+        )
+    for phrase in next48:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "execution_next48_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_next48 = {
+            "## Next 48 Hours",
+            "### Today (2025-12-13)",
+            "Instantiate first agent (QuantumArchitectAgent)",
+        }
+        if next48 and not required_next48 <= set(next48):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "execution_next48_required_phrases must include Next 48 Hours/"
+                    "Today/QuantumArchitectAgent instantiate",
                 )
             )
 
@@ -6973,6 +7139,57 @@ def validate_execution_workflow(root: Path) -> list[Finding]:
     return findings
 
 
+def validate_execution_ide(root: Path) -> list[Finding]:
+    rel = "EXECUTION-SUMMARY.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "EXECUTION-SUMMARY.md missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## IDE & Software Setup" not in text:
+        findings.append(Finding(rel, "missing IDE & Software Setup section"))
+    for phrase in EXECUTION_IDE_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(rel, f"missing locked execution-ide phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_execution_innovations(root: Path) -> list[Finding]:
+    rel = "EXECUTION-SUMMARY.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "EXECUTION-SUMMARY.md missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## Key Innovations in Your System" not in text:
+        findings.append(Finding(rel, "missing Key Innovations section"))
+    for phrase in EXECUTION_INNOVATIONS_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(rel, f"missing locked execution-innovations phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_execution_next48(root: Path) -> list[Finding]:
+    rel = "EXECUTION-SUMMARY.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "EXECUTION-SUMMARY.md missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## Next 48 Hours" not in text:
+        findings.append(Finding(rel, "missing Next 48 Hours section"))
+    for phrase in EXECUTION_NEXT48_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(rel, f"missing locked execution-next48 phrase: {phrase}")
+            )
+    return findings
+
+
 def validate_agent_task_template(root: Path) -> list[Finding]:
     rel = ".github/ISSUE_TEMPLATE/agent_task.md"
     path = root / rel
@@ -8168,6 +8385,9 @@ VALIDATORS: dict[str, ValidatorFn] = {
     "execution-timeline": validate_execution_timeline,
     "execution-technologies": validate_execution_technologies,
     "execution-workflow": validate_execution_workflow,
+    "execution-ide": validate_execution_ide,
+    "execution-innovations": validate_execution_innovations,
+    "execution-next48": validate_execution_next48,
     "security": validate_security_packaging,
     "contributing": validate_contributing_packaging,
     "contributing-who": validate_contributing_who,
