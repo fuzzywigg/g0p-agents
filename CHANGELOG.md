@@ -10,6 +10,37 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Claude/routing governance residual **tests-only** leftover deepeners after tip
+  through **#279** (CI/markdownlint leftover after #270) / **#270** (goose-schema
+  leftover after #265) / **#265** (Claude/routing leftover after #264) / **#264** /
+  **#258** / **#253** / **#248** / **#242** / **#236** / **#229** / **#224** /
+  **#219** / **#209** / **#208** / **#202** / **#200** / **#195** / **#188** /
+  **#187** (docs-cross tip) (EXISTING twelve CLAUDE.md fixtures — `claude` /
+  `claude-metadata` / `routing` / `routing-matrix` / `routing-rationales` /
+  `repo-identity` / `state-residency` / `key-files` / `escalation-format` /
+  `escalation-usage` / `quarterly-review` / `negative-constraints` — historic
+  v14–v16 + merged **#265** residual; tip-relaunch of closed CONFLICTING
+  **#282** / **#271** / **#278**; no invented product / inventory bump): CI
+  `--list-validators` / `--only` twelve + required manifest step-marker smoke,
+  exact packaging / escalation-format / metadata / routing-surfaces /
+  negative-constraints Finding equality, long-vs-short Negative Constraints
+  header divergence, multi-invent + per-documented-agent drop matrix, BOM +
+  ZWNJ / word-joiner / Mongolian-vowel-separator / RLM / casefold lookalikes +
+  symlink follow/dangling leftovers, matrix/rationale length-mismatch +
+  `claude_required_sections` / `escalation_format_phrases` inventory seed/type
+  leftovers, matrix surface vs rationale column-header vs metadata isolation,
+  concurrent CLAUDE.md races, tip isolation against #279/#270/#265/#264/#258
+  siblings, and tip-after-#279 deepeners (NEL / ZWNBSP / ideographic-space
+  lookalikes, symlink-to-directory missing, sections/escalation empty-list
+  schema non-empty leftovers, `--only` subset vs #279 CI/markdownlint + #270
+  goose-schema). Historic four
+  only; Packaging inventory unchanged (v52 / 196). Distinct from merged #279
+  (CI/markdownlint leftover), #270 (goose-schema leftover), #265 (prior
+  Claude/routing leftover), #264 (goose-schema), #258
+  (hydration/security+handoff), #253 (prompts+flows), #248
+  (actionlint/linkcheck), #187 (docs-cross), and closed CONFLICTING
+  #282/#271/#278/#260/#192 (same niche on stale tips).
+
 - CI/markdownlint residual **tests-only** leftover deepeners after tip through
   **#270** (goose-schema leftover after #265) / **#265** (Claude/routing leftover
   after #264) / **#264** / **#258** / **#253** / **#248** / **#242** / **#236** /
