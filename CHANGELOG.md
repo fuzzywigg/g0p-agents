@@ -10,6 +10,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Prompts residual **v47** deepeners / **v43 leftovers continued** (post-#117 prompts expertise/principles/metrics v46):
+  `prompt-tools`, `prompt-communication`, `prompt-escalation-identity` validators; AGENT-PROMPTS.md
+  Your Tools / Communication Style / escalation-identity leftovers; consistency deepeners
+  for matching `*_required_phrases` inventory keys
+  (Packaging inventory 163 total; historic four only — prompts tools/communication/escalation
+  leftovers slice, not constitution/changelog v45, hydration, README, implementation-guide,
+  security, contributing, goose recipes, or Dependabot)
+
 - Prompts residual **v46** deepeners / **v43 leftovers** (post-#116 constitution+changelog v45):
   `prompt-expertise`, `prompt-principles`, `prompt-metrics` validators; AGENT-PROMPTS.md
   Expertise / Decision Making Principles / Success Metrics leftovers; consistency deepeners
