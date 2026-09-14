@@ -1,5 +1,5 @@
 {
-  "version": 28,
+  "version": 29,
   "documented_agents": [
     "QuantumArchitectAgent",
     "BlockchainArchitectAgent",
@@ -291,6 +291,9 @@
     "constitution",
     "contributing",
     "contributing-branches",
+    "contributing-governance",
+    "contributing-issues",
+    "contributing-local",
     "contributing-pr",
     "contributing-who",
     "cross-docs",
@@ -369,7 +372,7 @@
     "yaml-configs"
   ],
   "min_coverage_fail_under": 99,
-  "min_validator_count": 97,
+  "min_validator_count": 100,
   "required_paths": [
     "README.md",
     "LICENSE",
@@ -944,5 +947,31 @@
     "### Step 2: Multi-Agent Workflow",
     "### Step 3: Escalation (If Conflict)",
     "Agents Disagree \u2192 OrchestrationAgent Reviews"
+  ],
+  "contributing_local_required_phrases": [
+    "## Local validation (docs packaging)",
+    "requirements-dev.txt",
+    "ruff check scripts tests",
+    "validate_manifests.py --list-validators",
+    "pytest --cov=scripts",
+    "Packaging inventory",
+    "refuse invented recipes"
+  ],
+  "contributing_issues_required_phrases": [
+    "## Issue Reporting",
+    "Use the appropriate issue template",
+    "**Bug**",
+    "**Feature**",
+    "**Agent Task**",
+    "metadata header defined in CLAUDE.md"
+  ],
+  "contributing_governance_required_phrases": [
+    "## Governance",
+    "Structural changes",
+    "directory reorganization",
+    "agent routing changes",
+    "license changes",
+    "require Andrew approval before merging",
+    "agent routing matrix and negative constraints"
   ]
 }
