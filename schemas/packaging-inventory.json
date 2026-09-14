@@ -1,5 +1,5 @@
 {
-  "version": 47,
+  "version": 48,
   "documented_agents": [
     "QuantumArchitectAgent",
     "BlockchainArchitectAgent",
@@ -252,11 +252,11 @@
   "hydration_required_sections": [
     "## PHASE 1: FINDINGS REPORT",
     "## PHASE 2: QUESTIONS",
-    "### LIST B \u2014 Requires Andrew (HITL)",
+    "### LIST B — Requires Andrew (HITL)",
     "## PHASE 3: RESOLVED (LIST A)",
     "## PHASE 4: ISSUES GENERATED",
     "## PHASE 5: Roadmap",
-    "## LIST B \u2014 Deferred to Andrew"
+    "## LIST B — Deferred to Andrew"
   ],
   "execution_summary_required_phrases": [
     "EXECUTION SUMMARY",
@@ -391,6 +391,8 @@
     "prompt-escalation-identity",
     "prompt-expertise",
     "prompt-metrics",
+    "prompt-monthly",
+    "prompt-orchestration-matrix",
     "prompt-principles",
     "prompt-related-docs",
     "prompt-roles",
@@ -398,6 +400,7 @@
     "prompt-tools",
     "prompt-triggers",
     "prompt-usage",
+    "prompt-usage-example",
     "prompts",
     "pyproject",
     "quarterly-review",
@@ -435,7 +438,7 @@
     "yaml-configs"
   ],
   "min_coverage_fail_under": 99,
-  "min_validator_count": 163,
+  "min_validator_count": 166,
   "required_paths": [
     "README.md",
     "LICENSE",
@@ -556,7 +559,7 @@
     "Notion Master Index sync",
     "postmortem.md incident review"
   ],
-  "ci_workflow_name": "CI \u2014 Lint, Links & Manifests",
+  "ci_workflow_name": "CI — Lint, Links & Manifests",
   "ci_required_text_markers": [
     "download-actionlint.bash",
     "actionlint",
@@ -684,7 +687,7 @@
   ],
   "routing_matrix_rationale_phrases": [
     "Single-repo, syntax-level work",
-    "Deep coding, long-running, 60\u201390 min",
+    "Deep coding, long-running, 60–90 min",
     "Cross-system state, Notion truth",
     "UI-only settings",
     "Test automation",
@@ -754,7 +757,7 @@
     "YAML recipes, Docker Compose"
   ],
   "hydration_list_b_required_phrases": [
-    "### LIST B \u2014 Requires Andrew (HITL)",
+    "### LIST B — Requires Andrew (HITL)",
     "Is g0p-agents meant to be activated into a runnable codebase",
     "What is PikoClaw exactly",
     "Should actual Solidity, Python (Cirq), and React Native code be implemented",
@@ -779,7 +782,7 @@
     "**Next Steps**:"
   ],
   "postmortem_next_steps_required_phrases": [
-    "Andrew answers LIST B (B1\u2013B5) in docs/agent-hydration.md",
+    "Andrew answers LIST B (B1–B5) in docs/agent-hydration.md",
     "browser-claude or claude-cowork creates GitHub issues",
     "claude-cowork creates/updates Notion page under Active Sprint Work",
     "geryon scaffolds agentic_flows/ once B1 is answered"
@@ -1009,14 +1012,14 @@
     "### Step 1: Single Agent Task",
     "### Step 2: Multi-Agent Workflow",
     "### Step 3: Escalation (If Conflict)",
-    "Agents Disagree \u2192 OrchestrationAgent Reviews"
+    "Agents Disagree → OrchestrationAgent Reviews"
   ],
   "contributing_issues_required_phrases": [
     "## Issue Reporting",
     "Use the appropriate issue template",
-    "**Bug** \u2014 something broken",
-    "**Feature** \u2014 new capability needed",
-    "**Agent Task** \u2014 structured work",
+    "**Bug** — something broken",
+    "**Feature** — new capability needed",
+    "**Agent Task** — structured work",
     "metadata header defined in CLAUDE.md"
   ],
   "contributing_local_required_phrases": [
@@ -1076,7 +1079,7 @@
     "**Phase 2: Contract Design**",
     "**Phase 3: Implementation**",
     "**Phase 4: Orchestration Decision**",
-    "QuantumArchitectAgent \u2192 BlockchainArchitectAgent",
+    "QuantumArchitectAgent → BlockchainArchitectAgent",
     "Logs decision in postmortem.md"
   ],
   "constitution_escalation_matrix_required_phrases": [
@@ -1105,10 +1108,10 @@
   ],
   "changelog_release_required_phrases": [
     "### Changed",
-    "## [0.1.0] \u2014 2025-12-13",
-    "`AGENTS-v2.2.md` \u2014 agent constitution",
-    "`AGENT-PROMPTS.md` \u2014 specialist agent system prompts (4 agents)",
-    "`GOOSE-RECIPES.md` \u2014 Goose YAML recipe templates"
+    "## [0.1.0] — 2025-12-13",
+    "`AGENTS-v2.2.md` — agent constitution",
+    "`AGENT-PROMPTS.md` — specialist agent system prompts (4 agents)",
+    "`GOOSE-RECIPES.md` — Goose YAML recipe templates"
   ],
   "goose_recipe_headers_required_phrases": [
     "## Recipe 1: Quantum Algorithm Design",
@@ -1210,9 +1213,9 @@
     "Conflict Type 1: PERFORMANCE",
     "Conflict Type 2: SECURITY",
     "Conflict Type 3: TIMELINE",
-    "Decision: \u2705 APPROVED FOR TESTNET DEPLOYMENT",
-    "Decision: \u26a0\ufe0f APPROVED WITH MODIFICATIONS",
-    "Decision: \ud83d\udea8 ESCALATE TO HUMAN",
+    "Decision: ✅ APPROVED FOR TESTNET DEPLOYMENT",
+    "Decision: ⚠️ APPROVED WITH MODIFICATIONS",
+    "Decision: 🚨 ESCALATE TO HUMAN",
     "## Decision: Quantum NFT Mint Deployment"
   ],
   "goose_quantum_task_required_phrases": [
@@ -1246,7 +1249,7 @@
   ],
   "constitution_escalation_format_required_phrases": [
     "#### 22.4.3 Escalation Format (All Agents)",
-    "\ud83d\udea8 ESCALATION REQUIRED",
+    "🚨 ESCALATION REQUIRED",
     "From Agent: [Agent Name]",
     "Mode: [Transformative/Operational]",
     "Conflict: [What constraint am I hitting?]",
@@ -1275,7 +1278,7 @@
     "markdown lint, link check, actionlint",
     "manifest validate on Python 3.11/3.12/3.13",
     "Andrew or designated reviewer",
-    "Packaging inventory v47",
+    "Packaging inventory v48",
     "refuse invented recipes",
     "orphan on-disk YAML",
     "unknown `*Agent` tokens",
@@ -1291,7 +1294,7 @@
   ],
   "security_reporting_channel_required_phrases": [
     "## Reporting a Vulnerability",
-    "Andrew Pappas \u2014 contact via smtp.eth ENS or GitHub @fuzzywigg",
+    "Andrew Pappas — contact via smtp.eth ENS or GitHub @fuzzywigg",
     "Expected response:",
     "smtp.eth ENS",
     "GitHub @fuzzywigg"
@@ -1319,7 +1322,7 @@
     "Only append, never overwrite",
     "Each agent owns its section",
     "Deadline must be set before work begins",
-    "If deadline passes without completion \u2192 escalate to user"
+    "If deadline passes without completion → escalate to user"
   ],
   "constitution_conflict_matrix_required_phrases": [
     "### 22.7 Conflict Resolution Matrix",
@@ -1381,7 +1384,7 @@
     "Markdown only (documentation archive)"
   ],
   "hydration_list_a_required_phrases": [
-    "### LIST A \u2014 Researchable",
+    "### LIST A — Researchable",
     "What is the Goose framework?",
     "What are CRYSTALS-Kyber and CRYSTALS-Dilithium?",
     "What is `liboqs`?",
@@ -1396,7 +1399,7 @@
     "CRYSTALS-Dilithium (now ML-DSA, FIPS 204)",
     "liboqs (Open Quantum Safe)",
     "colloquial portmanteau of \"strategy\" + \"imagery\"",
-    "LIST B items B1\u2013B5 are deferred to Andrew",
+    "LIST B items B1–B5 are deferred to Andrew",
     "No scaffolding issues marked P1 until B1/B2 are answered"
   ],
   "hydration_phase4_required_phrases": [
@@ -1414,7 +1417,7 @@
     "Scaffold mobile/ with React Native QuantumValidator skeleton"
   ],
   "hydration_deferred_required_phrases": [
-    "## LIST B \u2014 Deferred to Andrew",
+    "## LIST B — Deferred to Andrew",
     "Before Phase 3 scaffolding issues should be prioritized",
     "remain a reference archive",
     "What specific PikoClaw features depend on g0p-agents by May 27, 2026?",
@@ -1443,10 +1446,10 @@
     "This archive has no runtime agent code.",
     "Schemas and the packaging inventory live under",
     "does **not** invent specialist agents beyond the historic four",
-    "MIT \u2014 see [LICENSE](LICENSE)."
+    "MIT — see [LICENSE](LICENSE)."
   ],
   "hydration_meta_required_phrases": [
-    "# Agent Hydration Report \u2014 g0p-agents",
+    "# Agent Hydration Report — g0p-agents",
     "Status: ACTIVE | Tier: 1 | Created: 2026-04-13",
     "Owner: copilot (hydration run) | Edit policy: Agent-editable"
   ],
@@ -1478,7 +1481,7 @@
   ],
   "hydration_phase5_required_phrases": [
     "## PHASE 5: Roadmap",
-    "See GitHub Issue: [claude] g0p-agents Roadmap \u2014 Development Timeline & Issue Tracker"
+    "See GitHub Issue: [claude] g0p-agents Roadmap — Development Timeline & Issue Tracker"
   ],
   "constitution_ide_stack_required_phrases": [
     "## 23. Quantum-Blockchain Development IDE Setup",
@@ -1504,7 +1507,7 @@
     "mkdir -p ~/fuzzywigg-ai/quantum_circuits",
     "mkdir -p ~/fuzzywigg-ai/agentic_flows",
     "pip install liboqs",
-    "\u2705 Quantum-Blockchain development environment ready!"
+    "✅ Quantum-Blockchain development environment ready!"
   ],
   "constitution_vscode_required_phrases": [
     "### 23.3 VS Code Extensions (Required)",
@@ -1518,7 +1521,7 @@
     "GitHub.copilot"
   ],
   "constitution_hard_constraints_required_phrases": [
-    "## 24. Hard Constraints \u2014 Quantum-Blockchain Additions",
+    "## 24. Hard Constraints — Quantum-Blockchain Additions",
     "Add to Section 3 (Hard Constraints):",
     "Agents must **NEVER**:",
     "Design quantum algorithms without validating against known quantum-resistant properties",
@@ -1546,17 +1549,17 @@
   "changelog_changed_required_phrases": [
     "### Changed",
     "Inventory schema minimum version is **7**",
-    "CI validator-count gate raised to \u226534",
+    "CI validator-count gate raised to ≥34",
     "coverage gate **99%**",
     "Dependabot now tracks pip (`requirements-dev.txt`)",
     "CI `pull_request` trigger targets `alpha`",
     "`CONTRIBUTING.md` branch strategy aligned with live default branch `alpha`"
   ],
   "changelog_initial_required_phrases": [
-    "## [0.1.0] \u2014 2025-12-13",
-    "`README.md` \u2014 public archive description",
-    "`IMPLEMENTATION-GUIDE.md` \u2014 step-by-step setup guide",
-    "`EXECUTION-SUMMARY.md` \u2014 implementation summary"
+    "## [0.1.0] — 2025-12-13",
+    "`README.md` — public archive description",
+    "`IMPLEMENTATION-GUIDE.md` — step-by-step setup guide",
+    "`EXECUTION-SUMMARY.md` — implementation summary"
   ],
   "prompt_expertise_required_phrases": [
     "## Your Expertise",
@@ -1575,7 +1578,7 @@
     "Prioritize multi-chain resilience",
     "Prioritize user security and privacy",
     "Recommend constraint-based designs (work within device limits)",
-    "Recommend staged rollouts (testnet \u2192 staging \u2192 mainnet)",
+    "Recommend staged rollouts (testnet → staging → mainnet)",
     "Flag performance issues early (don't wait for integration testing)"
   ],
   "prompt_metrics_required_phrases": [
@@ -1612,12 +1615,40 @@
     "Escalate early if uncertain"
   ],
   "prompt_escalation_identity_required_phrases": [
-    "\ud83d\udea8 ESCALATION REQUIRED",
+    "🚨 ESCALATION REQUIRED",
     "From Agent: QuantumArchitectAgent",
     "From Agent: BlockchainArchitectAgent",
     "From Agent: EdgeSecurityAgent",
     "Remember: You are not working alone. BlockchainArchitectAgent and EdgeSecurityAgent depend on your output.",
     "Remember: You bridge QuantumArchitectAgent (algorithms) and EdgeSecurityAgent (mobile implementation). Your architecture must satisfy both.",
     "Remember: You are the last line of defense before user devices. Your implementation determines whether the entire system is actually secure or just theoretically secure."
+  ],
+  "prompt_orchestration_matrix_required_phrases": [
+    "## Your Escalation Authority",
+    "| Conflict Type | How You Resolve It |",
+    "**Algorithm Complexity** (Quantum says \"too complex\", Blockchain says \"necessary\")",
+    "**Gas Cost** (Blockchain says \"over budget\", On-Device says \"can't afford\")",
+    "**Crypto Algorithm** (On-Device says \"RSA too slow\", Quantum says \"must be RSA\")",
+    "**Timeline** (All agents say \"2 weeks\", business needs \"2 days\")",
+    "## Key Responsibilities You CANNOT Delegate",
+    "Final go/no-go decisions"
+  ],
+  "prompt_monthly_required_phrases": [
+    "## Your Monthly Checklist",
+    "Review all recent decisions in postmortem.md",
+    "Check agent success metrics (are they meeting targets?)",
+    "Identify any emerging conflicts (before they escalate)",
+    "Ultimate Goal: Build quantum-safe, multi-chain NFT ecosystem with on-device security",
+    "Risk Tolerance: ALPHA-STAGE (conservative, threshold increases with success)",
+    "Vision articulation (Mickey 18 → technical architecture)"
+  ],
+  "prompt_usage_example_required_phrases": [
+    "Paste into the LLM's system prompt",
+    "Review the proposed factorization circuit for our NFT mint operation",
+    "Designs Cirq circuit for factorization",
+    "Optimizes for mobile constraints (2MB RAM max)",
+    "Validates using CRYSTALS-Kyber (NIST post-quantum standard)",
+    "Either approves (moves to BlockchainArchitectAgent) or escalates",
+    "Output: Updated scratchpad + Cirq circuit file"
   ]
 }
