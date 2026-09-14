@@ -10,6 +10,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Agent hydration **v32** deepeners (post-#75): `hydration-findings`,
+  `hydration-list-a`, `hydration-issues` validators; docs/agent-hydration.md
+  PHASE 1 findings category locks (Identity/Source Architecture/Dependencies/
+  CI/CD/Governance/Git State), LIST A researchable + PHASE 3 resolved locks,
+  and PHASE 4 issues / PHASE 5 roadmap locks; consistency deepeners for
+  `hydration_findings_required_phrases` / `hydration_list_a_required_phrases` /
+  `hydration_issues_required_phrases` (109 total; historic four only — hydration
+  slice, not constitution, security policy, contributing, execution-summary,
+  implementation guide, agent prompts, goose recipes, README honesty,
+  PR-template, issue-template, scratchpad, postmortem, archive snapshot,
+  routing/identity, or Dependabot)
+
 - Constitution **v31** deepeners (post-#69): `constitution-crypto`,
   `constitution-handoff`, `constitution-escalation-matrix` validators;
   AGENTS-v2.2.md §22.1 Quantum-Safe Cryptography (Kyber/Dilithium/SPHINCS+/
