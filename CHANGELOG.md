@@ -10,6 +10,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Hydration↔security + goose-schema leftover residual **tests-only** deepeners
+  after tip through **#186** (actionlint/link-check) / **#184** tip suite /
+  **#181** / **#178** / **#176** / **#174** / post-#172 (EXISTING
+  `hydration-phase4` + ten `security` / `security-*` + `goose` /
+  `recipe-agents` / `recipe-titles` / `goose-recipe.schema.json` edges — no
+  invented product / inventory bump): unsaturated goose-schema type matrix
+  beyond #172/#184 (extension type missing/null/empty, timeout/title/
+  instructions null, empty provider/model/version, top-level array/null,
+  name/title max-boundary green), missing-doc triple isolation, phase4
+  per-phrase drop with security+goose green, SECURITY section-header
+  isolation, triple concurrent races, security inventory mismatch edges,
+  invalid fenced recipe schema isolation, and tip isolation against #186
+  actionlint siblings. Historic four only; inventory unchanged (v52 / 196).
+  Distinct from merged #186 (actionlint/link-check), #184 (hydration↔
+  security + goose-schema tip), #181 (memory-handoff), #178 (implementation),
+  #176 (changelog), #174 (contributing), #172 (goose-schema+security).
+
 - Actionlint/workflow + link-check residual **tests-only** deepeners after tip
   through **#184** (hydration↔security + goose-schema) / **#181** / **#178** /
   **#176** / **#174** / post-#172 (EXISTING seven CI fixtures —
