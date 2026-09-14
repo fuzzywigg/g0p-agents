@@ -10,6 +10,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Hydration report **v30** deepeners (post-#63): `hydration-phase1`,
+  `hydration-list-a`, `hydration-issues` validators; docs/agent-hydration.md
+  PHASE 1 Identity/Source Architecture/Governance/Templates/Security locks,
+  LIST A Researchable (Goose/Kyber/liboqs/stimgery) locks, and PHASE 4 Issues
+  Generated (LICENSE/CI/CONTRIBUTING/SECURITY/templates/agentic_flows) locks;
+  consistency deepeners for `hydration_phase1_required_phrases` /
+  `hydration_list_a_required_phrases` / `hydration_issues_required_phrases`
+  (103 total; historic four only — hydration slice, not contributing,
+  execution-summary, implementation-guide, agent prompts, goose recipes,
+  README honesty, PR-template, issue-template, scratchpad, postmortem,
+  archive snapshot, security policy, routing/identity, or Dependabot)
+
 - Contributing guide **v29** deepeners (post-#61): `contributing-issues`,
   `contributing-local`, `contributing-governance` validators; CONTRIBUTING.md
   Issue Reporting / Bug / Feature / Agent Task locks, Local validation
