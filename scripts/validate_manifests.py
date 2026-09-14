@@ -59,6 +59,8 @@ Checks structural correctness of:
 - AGENTS-v2.2.md §22.2 on-device / §22.3 multichain / §22.4.3 escalation-format locks
 - IMPLEMENTATION-GUIDE Quick Start / EXECUTION-SUMMARY specialist table /
   hydration LIST B HITL question locks (Dec 2025 archive snapshot slice)
+- docs/agent-hydration.md PHASE 1 / LIST A / PHASE 3 resolved /
+  PHASE 4 issues / LIST B deferred leftover locks
 - postmortem.md intro / Decision field / Next Steps surface locks
 - agentic_flows/scratchpad.txt intro / format-legend / task-meta locks
 - GitHub issue template metadata / routing-field / bug-repro locks
@@ -173,7 +175,7 @@ REQUIRED_ARCHIVE_DOCS = (
     "README.md",
 )
 
-INVENTORY_VERSION = 41
+INVENTORY_VERSION = 42
 CURSOR_ENVIRONMENT_NAME = "g0p-agents"
 DEPENDABOT_SCHEDULE_INTERVAL = "weekly"
 DEPENDABOT_DIRECTORIES: frozenset[str] = frozenset({"/"})
@@ -500,6 +502,65 @@ EXECUTION_SPECIALISTS_REQUIRED_PHRASES: tuple[str, ...] = (
     "On-Device Security",
     "YAML recipes, Docker Compose",
 )
+HYDRATION_PHASE1_REQUIRED_PHRASES: tuple[str, ...] = (
+    "### Identity",
+    "### Source Architecture",
+    "### Dependencies",
+    "### Tests",
+    "### CI/CD",
+    "### Documentation",
+    "### Governance",
+    "### Templates",
+    "### Security",
+    "### Error Handling",
+    "### Observability",
+    "### Deployment",
+    "### Git State",
+    "Public archive of Quantum-Blockchain agentic protocols v2.2",
+    "Markdown only (documentation archive)",
+)
+HYDRATION_LIST_A_REQUIRED_PHRASES: tuple[str, ...] = (
+    "### LIST A — Researchable",
+    "What is the Goose framework?",
+    "What are CRYSTALS-Kyber and CRYSTALS-Dilithium?",
+    "What is `liboqs`?",
+    "What is `stimgery`",
+    "Determines if recipe files can be scaffolded correctly",
+    "NIST PQC docs",
+    "Clarify if typo or intentional term",
+)
+HYDRATION_RESOLVED_REQUIRED_PHRASES: tuple[str, ...] = (
+    "Goose is Block's open-source AI agent framework",
+    "CRYSTALS-Kyber (now ML-KEM, FIPS 203)",
+    "CRYSTALS-Dilithium (now ML-DSA, FIPS 204)",
+    "liboqs (Open Quantum Safe)",
+    "colloquial portmanteau of \"strategy\" + \"imagery\"",
+    "LIST B items B1–B5 are deferred to Andrew",
+    "No scaffolding issues marked P1 until B1/B2 are answered",
+)
+HYDRATION_PHASE4_REQUIRED_PHRASES: tuple[str, ...] = (
+    "## PHASE 4: ISSUES GENERATED",
+    "Add LICENSE file",
+    "Create .github/workflows/ CI pipeline (markdown lint + link check)",
+    "Add CONTRIBUTING.md",
+    "Add SECURITY.md",
+    "Create GitHub issue templates (bug, feature, agent-task)",
+    "Create PR template",
+    "Scaffold agentic_flows/ with actual Goose recipe YAML files",
+    "Create agentic_flows/scratchpad.txt and postmortem.md",
+    "Scaffold quantum_circuits/ with sample Cirq implementation",
+    "Scaffold contracts/ with sample Solidity ERC-721 contract",
+    "Scaffold mobile/ with React Native QuantumValidator skeleton",
+)
+HYDRATION_DEFERRED_REQUIRED_PHRASES: tuple[str, ...] = (
+    "## LIST B — Deferred to Andrew",
+    "Before Phase 3 scaffolding issues should be prioritized",
+    "remain a reference archive",
+    "What specific PikoClaw features depend on g0p-agents by May 27, 2026?",
+    "Which of the 4 agents (Quantum/Blockchain/Edge/Orchestration) is highest priority",
+    "should g0p-agents merge into it or stay separate?",
+    "Does a Notion page for g0p-agents exist?",
+)
 HYDRATION_LIST_B_REQUIRED_PHRASES: tuple[str, ...] = (
     "### LIST B — Requires Andrew (HITL)",
     "Is g0p-agents meant to be activated into a runnable codebase",
@@ -644,7 +705,7 @@ CONTRIBUTING_CI_HONESTY_REQUIRED_PHRASES: tuple[str, ...] = (
     "markdown lint, link check, actionlint",
     "manifest validate on Python 3.11/3.12/3.13",
     "Andrew or designated reviewer",
-    "Packaging inventory v41",
+    "Packaging inventory v42",
     "refuse invented recipes",
     "orphan on-disk YAML",
     "unknown `*Agent` tokens",
@@ -1296,7 +1357,7 @@ SCRATCHPAD_STATUS_MARKERS: tuple[str, ...] = (
 SPECIALIST_AGENTS: tuple[str, ...] = DOCUMENTED_AGENTS[:-1]
 
 MIN_COVERAGE_FAIL_UNDER = 99
-MIN_VALIDATOR_COUNT = 136
+MIN_VALIDATOR_COUNT = 141
 
 
 @dataclass(frozen=True)
@@ -2149,6 +2210,46 @@ def validate_packaging_inventory(root: Path) -> list[Finding]:
     ):
         findings.append(
             _lock_mismatch(schema_path, "hydration_list_b_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("hydration_phase1_required_phrases", ()))
+        != HYDRATION_PHASE1_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "hydration_phase1_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("hydration_list_a_required_phrases", ()))
+        != HYDRATION_LIST_A_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "hydration_list_a_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("hydration_resolved_required_phrases", ()))
+        != HYDRATION_RESOLVED_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "hydration_resolved_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("hydration_phase4_required_phrases", ()))
+        != HYDRATION_PHASE4_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "hydration_phase4_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("hydration_deferred_required_phrases", ()))
+        != HYDRATION_DEFERRED_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "hydration_deferred_required_phrases")
         )
 
     if (
@@ -3373,6 +3474,196 @@ def _inventory_lock_consistency(
                 Finding(
                     schema_path,
                     "hydration_list_b_required_phrases must mention PikoClaw",
+                )
+            )
+
+    phase1 = list(inventory.get("hydration_phase1_required_phrases", ()))
+    if len(phase1) != len(set(phase1)):
+        findings.append(
+            Finding(schema_path, "hydration_phase1_required_phrases must be unique")
+        )
+    if not phase1:
+        findings.append(
+            Finding(
+                schema_path, "hydration_phase1_required_phrases must not be empty"
+            )
+        )
+    for phrase in phase1:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "hydration_phase1_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_phase1 = {
+            "### Identity",
+            "### Source Architecture",
+            "### CI/CD",
+            "### Git State",
+            "Public archive of Quantum-Blockchain agentic protocols v2.2",
+        }
+        if phase1 and not required_phase1 <= set(phase1):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "hydration_phase1_required_phrases must include Identity/"
+                    "Source Architecture/CI/CD/Git State/purpose",
+                )
+            )
+
+    list_a = list(inventory.get("hydration_list_a_required_phrases", ()))
+    if len(list_a) != len(set(list_a)):
+        findings.append(
+            Finding(schema_path, "hydration_list_a_required_phrases must be unique")
+        )
+    if not list_a:
+        findings.append(
+            Finding(
+                schema_path, "hydration_list_a_required_phrases must not be empty"
+            )
+        )
+    for phrase in list_a:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "hydration_list_a_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_list_a = {
+            "### LIST A — Researchable",
+            "What is the Goose framework?",
+            "What are CRYSTALS-Kyber and CRYSTALS-Dilithium?",
+            "What is `stimgery`",
+        }
+        if list_a and not required_list_a <= set(list_a):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "hydration_list_a_required_phrases must include LIST A/"
+                    "Goose/Kyber/stimgery",
+                )
+            )
+
+    resolved = list(inventory.get("hydration_resolved_required_phrases", ()))
+    if len(resolved) != len(set(resolved)):
+        findings.append(
+            Finding(
+                schema_path, "hydration_resolved_required_phrases must be unique"
+            )
+        )
+    if not resolved:
+        findings.append(
+            Finding(
+                schema_path, "hydration_resolved_required_phrases must not be empty"
+            )
+        )
+    for phrase in resolved:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "hydration_resolved_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_resolved = {
+            "Goose is Block's open-source AI agent framework",
+            "CRYSTALS-Kyber (now ML-KEM, FIPS 203)",
+            "liboqs (Open Quantum Safe)",
+            "LIST B items B1–B5 are deferred to Andrew",
+        }
+        if resolved and not required_resolved <= set(resolved):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "hydration_resolved_required_phrases must include Goose/"
+                    "Kyber/liboqs/LIST B deferred",
+                )
+            )
+
+    phase4 = list(inventory.get("hydration_phase4_required_phrases", ()))
+    if len(phase4) != len(set(phase4)):
+        findings.append(
+            Finding(schema_path, "hydration_phase4_required_phrases must be unique")
+        )
+    if not phase4:
+        findings.append(
+            Finding(
+                schema_path, "hydration_phase4_required_phrases must not be empty"
+            )
+        )
+    for phrase in phase4:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "hydration_phase4_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_phase4 = {
+            "## PHASE 4: ISSUES GENERATED",
+            "Add LICENSE file",
+            "Scaffold agentic_flows/ with actual Goose recipe YAML files",
+            "Scaffold mobile/ with React Native QuantumValidator skeleton",
+        }
+        if phase4 and not required_phase4 <= set(phase4):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "hydration_phase4_required_phrases must include PHASE 4/"
+                    "LICENSE/agentic_flows/mobile",
+                )
+            )
+
+    deferred = list(inventory.get("hydration_deferred_required_phrases", ()))
+    if len(deferred) != len(set(deferred)):
+        findings.append(
+            Finding(
+                schema_path, "hydration_deferred_required_phrases must be unique"
+            )
+        )
+    if not deferred:
+        findings.append(
+            Finding(
+                schema_path, "hydration_deferred_required_phrases must not be empty"
+            )
+        )
+    for phrase in deferred:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "hydration_deferred_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_deferred = {
+            "## LIST B — Deferred to Andrew",
+            "remain a reference archive",
+            "What specific PikoClaw features depend on g0p-agents by May 27, 2026?",
+            "Does a Notion page for g0p-agents exist?",
+        }
+        if deferred and not required_deferred <= set(deferred):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "hydration_deferred_required_phrases must include Deferred/"
+                    "archive/PikoClaw/Notion",
                 )
             )
 
@@ -4935,7 +5226,7 @@ def _inventory_lock_consistency(
     else:
         required_ci_honesty = {
             "markdown lint, link check, actionlint",
-            "Packaging inventory v41",
+            "Packaging inventory v42",
             "refuse invented recipes",
         }
         if ci_honesty and not required_ci_honesty <= set(ci_honesty):
@@ -4943,7 +5234,7 @@ def _inventory_lock_consistency(
                 Finding(
                     schema_path,
                     "contributing_ci_honesty_required_phrases must include "
-                    "CI checks/Packaging inventory v41/refuse invented recipes",
+                    "CI checks/Packaging inventory v42/refuse invented recipes",
                 )
             )
 
@@ -6909,6 +7200,92 @@ def validate_execution_specialists(root: Path) -> list[Finding]:
     return findings
 
 
+
+def validate_hydration_phase1(root: Path) -> list[Finding]:
+    rel = "docs/agent-hydration.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "hydration report missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## PHASE 1: FINDINGS REPORT" not in text:
+        findings.append(Finding(rel, "missing PHASE 1 findings report"))
+    for phrase in HYDRATION_PHASE1_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(rel, f"missing locked hydration-phase1 phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_hydration_list_a(root: Path) -> list[Finding]:
+    rel = "docs/agent-hydration.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "hydration report missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "### LIST A — Researchable" not in text:
+        findings.append(Finding(rel, "missing LIST A researchable section"))
+    for phrase in HYDRATION_LIST_A_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(rel, f"missing locked hydration-list-a phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_hydration_resolved(root: Path) -> list[Finding]:
+    rel = "docs/agent-hydration.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "hydration report missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## PHASE 3: RESOLVED (LIST A)" not in text:
+        findings.append(Finding(rel, "missing PHASE 3 resolved LIST A section"))
+    for phrase in HYDRATION_RESOLVED_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(rel, f"missing locked hydration-resolved phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_hydration_phase4(root: Path) -> list[Finding]:
+    rel = "docs/agent-hydration.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "hydration report missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## PHASE 4: ISSUES GENERATED" not in text:
+        findings.append(Finding(rel, "missing PHASE 4 issues generated section"))
+    for phrase in HYDRATION_PHASE4_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(rel, f"missing locked hydration-phase4 phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_hydration_deferred(root: Path) -> list[Finding]:
+    rel = "docs/agent-hydration.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "hydration report missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## LIST B — Deferred to Andrew" not in text:
+        findings.append(Finding(rel, "missing LIST B Deferred to Andrew section"))
+    for phrase in HYDRATION_DEFERRED_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(rel, f"missing locked hydration-deferred phrase: {phrase}")
+            )
+    return findings
+
+
 def validate_hydration_list_b(root: Path) -> list[Finding]:
     rel = "docs/agent-hydration.md"
     path = root / rel
@@ -7970,8 +8347,8 @@ def validate_contributing_ci_honesty(root: Path) -> list[Finding]:
         return [Finding(rel, "CONTRIBUTING.md missing")]
     text = path.read_text(encoding="utf-8")
     findings: list[Finding] = []
-    if "Packaging inventory v41" not in text:
-        findings.append(Finding(rel, "missing Packaging inventory v41 honesty lock"))
+    if "Packaging inventory v42" not in text:
+        findings.append(Finding(rel, "missing Packaging inventory v42 honesty lock"))
     for phrase in CONTRIBUTING_CI_HONESTY_REQUIRED_PHRASES:
         if phrase not in text:
             findings.append(
@@ -9818,6 +10195,11 @@ VALIDATORS: dict[str, ValidatorFn] = {
     "implementation-quickstart": validate_implementation_quickstart,
     "execution-specialists": validate_execution_specialists,
     "hydration-list-b": validate_hydration_list_b,
+    "hydration-phase1": validate_hydration_phase1,
+    "hydration-list-a": validate_hydration_list_a,
+    "hydration-resolved": validate_hydration_resolved,
+    "hydration-phase4": validate_hydration_phase4,
+    "hydration-deferred": validate_hydration_deferred,
     "link-check": validate_link_check,
     "prompts": validate_documented_agent_prompts,
     "cross-docs": validate_cross_doc_agents,
