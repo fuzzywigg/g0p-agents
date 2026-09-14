@@ -10,6 +10,26 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Prompts + agentic_flows residual **tests-only** leftover deepeners after tip
+  through **#200** (prompts listform + agentic_flows leftover after #195) /
+  **#195** / **#188** / **#187** / **#186** (EXISTING nineteen fixtures —
+  twelve list-form sibling `prompt-*` + seven agentic_flows `goose` /
+  `recipe-agents` / `recipe-titles` / `scratchpad*` — no invented v53
+  list-form product / inventory bump): exact missing-file / locked-phrase
+  message locks (incl. `prompt-usage` `AGENT-PROMPTS.md missing` asymmetry),
+  multi-phrase simultaneous listform drops, undeclared + missing `goose run`
+  path edges, on-disk locked recipe happy path + schema/must-live-at binding
+  edges (tmp only; no repo YAML product), scratchpad checkbox / status-marker
+  / identifying-header exact messages, `GOOSE_DOCS` packaging phrase drop +
+  recipe/allow-list inventory mismatch matrix, prompts↔flows↔GOOSE_DOCS
+  cross-isolation, concurrent dual-surface races, and tip isolation against
+  #200/#195/#188 siblings. Historic four only; inventory unchanged
+  (v52 / 196). Distinct from merged #200 (prior mixed listform+flows suite),
+  closed CONFLICTING #198 (flows-only unsaturated edges tip-burned here),
+  #194/#193/#190/#153/#159/#164, merged #195/#188 (actionlint leftovers),
+  #187 (docs-cross), #151 (prompt-pre-v52), #144 (v52 prompt residuals),
+  #181 (memory-handoff), and #147 (goose-recipe).
+
 - Prompts list-form + agentic_flows residual **tests-only** deepeners after tip
   through **#195** (actionlint leftover after #188) / **#188** / **#187** /
   **#186** / **#184** / **#181** (EXISTING nineteen fixtures — twelve
