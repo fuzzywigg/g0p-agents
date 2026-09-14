@@ -10,6 +10,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Hydration report **v42** deepeners (post-#101 implementation-guide v41): `hydration-phase1`,
+  `hydration-list-a`, `hydration-resolved` validators; docs/agent-hydration.md PHASE 1
+  findings category leftovers, LIST A researchable Goose/Kyber/liboqs/stimgery leftovers,
+  and PHASE 3 resolved LIST A / deferred-LIST-B leftovers; consistency deepeners for
+  `hydration_phase1_required_phrases` / `hydration_list_a_required_phrases` /
+  `hydration_resolved_required_phrases`
+  (Packaging inventory 139 total; historic four only — hydration leftovers slice,
+  not implementation-guide v41, changelog v41, constitution v40, security v39,
+  contributing v38, goose recipes, execution-summary, agent prompts, or Dependabot)
+
 - Implementation guide **v41** deepeners (post-#96 constitution v40): `implementation-issues`,
   `implementation-faq`, `implementation-support` validators; IMPLEMENTATION-GUIDE.md
   Common Issues 1–5 / Qualtran / rollups / classical-fallback / scratchpad append-only
