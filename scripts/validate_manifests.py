@@ -64,6 +64,7 @@ Checks structural correctness of:
   §24 hard-constraints / §25 risk-tolerance leftover locks
 - CHANGELOG.md preamble / Changed / 0.1.0 initial leftover locks
 - AGENT-PROMPTS.md expertise / principles / metrics leftover locks
+- AGENT-PROMPTS.md tools / communication / escalation-identity leftover locks
   PHASE 4 issues / LIST B deferred leftover locks
 - postmortem.md intro / Decision field / Next Steps surface locks
 - agentic_flows/scratchpad.txt intro / format-legend / task-meta locks
@@ -180,7 +181,7 @@ REQUIRED_ARCHIVE_DOCS = (
     "README.md",
 )
 
-INVENTORY_VERSION = 46
+INVENTORY_VERSION = 47
 CURSOR_ENVIRONMENT_NAME = "g0p-agents"
 DEPENDABOT_SCHEDULE_INTERVAL = "weekly"
 DEPENDABOT_DIRECTORIES: frozenset[str] = frozenset({"/"})
@@ -833,7 +834,7 @@ CONTRIBUTING_CI_HONESTY_REQUIRED_PHRASES: tuple[str, ...] = (
     "markdown lint, link check, actionlint",
     "manifest validate on Python 3.11/3.12/3.13",
     "Andrew or designated reviewer",
-    "Packaging inventory v46",
+    "Packaging inventory v47",
     "refuse invented recipes",
     "orphan on-disk YAML",
     "unknown `*Agent` tokens",
@@ -941,6 +942,45 @@ PROMPT_METRICS_REQUIRED_PHRASES: tuple[str, ...] = (
     "Data isolation 100% (no log leaks)",
     "Zero critical security incidents",
     "Quarterly risk tolerance review completed",
+)
+
+PROMPT_TOOLS_REQUIRED_PHRASES: tuple[str, ...] = (
+    "## Your Tools",
+    "Jupyter Lab (interactive development)",
+    "Cirq (circuit construction)",
+    "Hardhat (local blockchain, contract testing)",
+    "Slither (security analysis)",
+    "Android Studio (Android development)",
+    "liboqs (post-quantum crypto on device)",
+    "YAML recipes (./agentic_flows/*.yaml)",
+    "Scratchpad state machine (./agentic_flows/scratchpad.txt)",
+)
+
+PROMPT_COMMUNICATION_REQUIRED_PHRASES: tuple[str, ...] = (
+    "## Your Communication Style",
+    "Be technical and precise",
+    "Explain decisions via circuit diagrams and complexity analysis",
+    "Be clear and structured",
+    'Risk-aware ("this could fail if...")',
+    "Be pragmatic and performance-aware",
+    'Conservative on capabilities ("device X can\'t handle that")',
+    "Be decisive but transparent",
+    "Escalate early if uncertain",
+)
+
+PROMPT_ESCALATION_IDENTITY_REQUIRED_PHRASES: tuple[str, ...] = (
+    "🚨 ESCALATION REQUIRED",
+    "From Agent: QuantumArchitectAgent",
+    "From Agent: BlockchainArchitectAgent",
+    "From Agent: EdgeSecurityAgent",
+    "Remember: You are not working alone. BlockchainArchitectAgent and "
+    "EdgeSecurityAgent depend on your output.",
+    "Remember: You bridge QuantumArchitectAgent (algorithms) and "
+    "EdgeSecurityAgent (mobile implementation). Your architecture must "
+    "satisfy both.",
+    "Remember: You are the last line of defense before user devices. Your "
+    "implementation determines whether the entire system is actually secure "
+    "or just theoretically secure.",
 )
 
 LICENSE_REQUIRED_PHRASES: tuple[str, ...] = (
@@ -1544,7 +1584,7 @@ SCRATCHPAD_STATUS_MARKERS: tuple[str, ...] = (
 SPECIALIST_AGENTS: tuple[str, ...] = DOCUMENTED_AGENTS[:-1]
 
 MIN_COVERAGE_FAIL_UNDER = 99
-MIN_VALIDATOR_COUNT = 160
+MIN_VALIDATOR_COUNT = 163
 
 
 @dataclass(frozen=True)
@@ -2566,6 +2606,32 @@ def validate_packaging_inventory(root: Path) -> list[Finding]:
     ):
         findings.append(
             _lock_mismatch(schema_path, "prompt_metrics_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("prompt_tools_required_phrases", ()))
+        != PROMPT_TOOLS_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "prompt_tools_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("prompt_communication_required_phrases", ()))
+        != PROMPT_COMMUNICATION_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "prompt_communication_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("prompt_escalation_identity_required_phrases", ()))
+        != PROMPT_ESCALATION_IDENTITY_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(
+                schema_path, "prompt_escalation_identity_required_phrases"
+            )
         )
 
 
@@ -4386,6 +4452,130 @@ def _inventory_lock_consistency(
                     schema_path,
                     "prompt_metrics_required_phrases must include "
                     "Metrics/circuit depth/Slither/Snapdragon",
+                )
+            )
+
+    prompt_tools = list(inventory.get("prompt_tools_required_phrases", ()))
+    if len(prompt_tools) != len(set(prompt_tools)):
+        findings.append(
+            Finding(schema_path, "prompt_tools_required_phrases must be unique")
+        )
+    if not prompt_tools:
+        findings.append(
+            Finding(schema_path, "prompt_tools_required_phrases must not be empty")
+        )
+    for phrase in prompt_tools:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_tools_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_prompt_tools = {
+            "## Your Tools",
+            "Jupyter Lab (interactive development)",
+            "Hardhat (local blockchain, contract testing)",
+            "liboqs (post-quantum crypto on device)",
+        }
+        if prompt_tools and not required_prompt_tools <= set(prompt_tools):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_tools_required_phrases must include "
+                    "Tools/Jupyter/Hardhat/liboqs",
+                )
+            )
+
+    prompt_communication = list(
+        inventory.get("prompt_communication_required_phrases", ())
+    )
+    if len(prompt_communication) != len(set(prompt_communication)):
+        findings.append(
+            Finding(
+                schema_path, "prompt_communication_required_phrases must be unique"
+            )
+        )
+    if not prompt_communication:
+        findings.append(
+            Finding(
+                schema_path,
+                "prompt_communication_required_phrases must not be empty",
+            )
+        )
+    for phrase in prompt_communication:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_communication_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_prompt_communication = {
+            "## Your Communication Style",
+            "Be technical and precise",
+            "Be pragmatic and performance-aware",
+            "Be decisive but transparent",
+        }
+        if prompt_communication and not required_prompt_communication <= set(
+            prompt_communication
+        ):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_communication_required_phrases must include "
+                    "Style/technical/pragmatic/decisive",
+                )
+            )
+
+    prompt_escalation_identity = list(
+        inventory.get("prompt_escalation_identity_required_phrases", ())
+    )
+    if len(prompt_escalation_identity) != len(set(prompt_escalation_identity)):
+        findings.append(
+            Finding(
+                schema_path,
+                "prompt_escalation_identity_required_phrases must be unique",
+            )
+        )
+    if not prompt_escalation_identity:
+        findings.append(
+            Finding(
+                schema_path,
+                "prompt_escalation_identity_required_phrases must not be empty",
+            )
+        )
+    for phrase in prompt_escalation_identity:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_escalation_identity_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_prompt_escalation_identity = {
+            "🚨 ESCALATION REQUIRED",
+            "From Agent: QuantumArchitectAgent",
+            "From Agent: BlockchainArchitectAgent",
+            "From Agent: EdgeSecurityAgent",
+        }
+        if prompt_escalation_identity and not required_prompt_escalation_identity <= set(
+            prompt_escalation_identity
+        ):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_escalation_identity_required_phrases must include "
+                    "ESCALATION REQUIRED/From Agent specialists",
                 )
             )
 
@@ -6232,7 +6422,7 @@ def _inventory_lock_consistency(
     else:
         required_ci_honesty = {
             "markdown lint, link check, actionlint",
-            "Packaging inventory v46",
+            "Packaging inventory v47",
             "refuse invented recipes",
         }
         if ci_honesty and not required_ci_honesty <= set(ci_honesty):
@@ -6240,7 +6430,7 @@ def _inventory_lock_consistency(
                 Finding(
                     schema_path,
                     "contributing_ci_honesty_required_phrases must include "
-                    "CI checks/Packaging inventory v46/refuse invented recipes",
+                    "CI checks/Packaging inventory v47/refuse invented recipes",
                 )
             )
 
@@ -8511,6 +8701,62 @@ def validate_prompt_metrics(root: Path) -> list[Finding]:
     return findings
 
 
+def validate_prompt_tools(root: Path) -> list[Finding]:
+    rel = "AGENT-PROMPTS.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "prompts missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## Your Tools" not in body:
+        findings.append(Finding(rel, "missing Your Tools section"))
+    for phrase in PROMPT_TOOLS_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked prompt-tools phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_prompt_communication(root: Path) -> list[Finding]:
+    rel = "AGENT-PROMPTS.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "prompts missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## Your Communication Style" not in body:
+        findings.append(Finding(rel, "missing Your Communication Style section"))
+    for phrase in PROMPT_COMMUNICATION_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(
+                    rel, f"missing locked prompt-communication phrase: {phrase}"
+                )
+            )
+    return findings
+
+
+def validate_prompt_escalation_identity(root: Path) -> list[Finding]:
+    rel = "AGENT-PROMPTS.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "prompts missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "🚨 ESCALATION REQUIRED" not in body:
+        findings.append(Finding(rel, "missing ESCALATION REQUIRED identity banner"))
+    for phrase in PROMPT_ESCALATION_IDENTITY_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(
+                    rel,
+                    f"missing locked prompt-escalation-identity phrase: {phrase}",
+                )
+            )
+    return findings
+
+
 def validate_changelog_initial(root: Path) -> list[Finding]:
     rel = "CHANGELOG.md"
     path = root / rel
@@ -9640,8 +9886,8 @@ def validate_contributing_ci_honesty(root: Path) -> list[Finding]:
         return [Finding(rel, "CONTRIBUTING.md missing")]
     text = path.read_text(encoding="utf-8")
     findings: list[Finding] = []
-    if "Packaging inventory v46" not in text:
-        findings.append(Finding(rel, "missing Packaging inventory v46 honesty lock"))
+    if "Packaging inventory v47" not in text:
+        findings.append(Finding(rel, "missing Packaging inventory v47 honesty lock"))
     for phrase in CONTRIBUTING_CI_HONESTY_REQUIRED_PHRASES:
         if phrase not in text:
             findings.append(
@@ -11567,6 +11813,9 @@ VALIDATORS: dict[str, ValidatorFn] = {
     "prompt-expertise": validate_prompt_expertise,
     "prompt-principles": validate_prompt_principles,
     "prompt-metrics": validate_prompt_metrics,
+    "prompt-tools": validate_prompt_tools,
+    "prompt-communication": validate_prompt_communication,
+    "prompt-escalation-identity": validate_prompt_escalation_identity,
     "hydration-phase2": validate_hydration_phase2,
     "hydration-phase5": validate_hydration_phase5,
     "link-check": validate_link_check,
