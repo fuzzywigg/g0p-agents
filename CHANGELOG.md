@@ -24,12 +24,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   split, ZWSP / fullwidth / soft-hyphen lookalikes beyond #248 BOM/NBSP/case,
   lychee fail:false|null + args list|null, config case/null + cache-path null
   via `link-check`, runs-on case/null/list-mixed + all-four `Ubuntu-latest`,
-  job name null|int, path mapping|bool + upload `with: {}` + if-null, upload-if
-  absent + artifact-prefix + matrix-no-py + step-marker drop, drop markdown-lint
-  + dual drop link+actionlint + rename orphan, actionlint `steps: true` + id-int
-  + shell `sh`, ci-actions upload pin drop + jobs null, dual-surface +
-  concurrent races, inventory null/bool leftovers + `run_all --only`, tip
-  isolation vs #264/#258/#253/#248/#242/#236 siblings. Historic four only;
+  job name null|int, path mapping|bool and upload `with: {}` / if-null,
+  upload-if absent and artifact-prefix / matrix-no-py / step-marker drop, drop
+  markdown-lint and dual-drop link+actionlint / rename orphan, actionlint
+  `steps: true` and id-int / shell `sh`, ci-actions upload pin drop and jobs
+  null, dual-surface and concurrent races, inventory null/bool leftovers and
+  `run_all --only`, tip isolation vs #264/#258/#253/#248/#242/#236 siblings.
+  Historic four only;
   inventory unchanged (v52 / 196). Distinct from merged #248 (after236 leftover
   suite), #264 (goose-schema), #258 (hydration/security+handoff), #253
   (prompts+flows), #242/#236/#229/#195/#188/#186 (prior leftovers), closed
