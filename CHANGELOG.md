@@ -10,6 +10,34 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Goose-recipe schema leftover **tests-only** deepeners after tip through **#258**
+  (hydration/security+handoff leftover after #248) / **#253** (prompts+flows
+  after #248) / **#248** / **#242** / **#236** / **#229** / **#224** / **#219**
+  (goose-schema leftover after #209) / **#209** / **#208** / **#202** / **#200**
+  / **#195** / **#188** / **#187** / **#186** / **#184** (goose-schema tip) /
+  **#172** (goose-schema residual suite) (EXISTING three fixtures — `goose` /
+  `recipe-agents` / `recipe-titles` plus `schemas/goose-recipe.schema.json` +
+  `GOOSE-RECIPES.md` — no invented product / inventory bump): unsaturated reject
+  leftovers beyond #219 (`name` plus/at, `title` float, `provider` object,
+  extension name bool / type list / `STDIO`, `recipe` list, timeout empty list),
+  invent-key KeyError / `run_all --only` ValueError, ACCEPT leftovers (title max
+  256, omit timeout, mixed transports + additionalProperties, uniqueItems
+  distinct timeouts), **File** count / `.yml`-**File** / fence info-string /
+  indented-closer leftovers, non-yaml agentic_flows allow-list + multi-binding
+  historic provider leftovers, non-string title exact message + `recipe:
+  not-a-map` agent skip, inventory `recipe_titles` /
+  `agentic_flows_allowed_files` leftovers, CI `--list-validators` / `--only`
+  goose-trio + required manifest step-marker smoke, concurrent races, and tip
+  isolation against #258/#253/#248/#242/#236/#229/#224/#219 siblings. Historic
+  four only; Packaging inventory unchanged (v52 / 196 validators). Distinct from
+  merged #219 (prior goose-schema leftover), closed CONFLICTING
+  #261/#254/#249/#245/#239/#234/#228/#216/#212 (same leftover on stale tips),
+  #258 (hydration/security+handoff), #253 (prompts+flows), #248
+  (actionlint/linkcheck), #242 (prompts+flows), #236 (actionlint/linkcheck),
+  #229 (hydration/security+handoff), #224 (prompts+flows), #202/#200
+  (listform+flows), #184 (tip type matrix), #172 (residual suite), #147 (nine
+  goose-* phrase locks), and not a v53 invent sibling or Dependabot bump.
+
 - Hydration↔security + handoff residual **tests-only** leftover deepeners after
   tip through **#248** (actionlint/linkcheck leftovers after #242) / **#242** /
   **#236** / **#229** / **#224** / **#219** / **#209** / **#208** / **#202** /
