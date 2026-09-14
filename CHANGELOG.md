@@ -20,7 +20,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   not security v39, contributing v38, constitution, goose recipes, execution-summary,
   implementation-guide, agent prompts, changelog, or Dependabot)
 
-
 - Security policy **v39** deepeners (post-#92 contributing v38): `security-scope`,
   `security-reporting-channel`, `security-compliance-detail` validators; SECURITY.md
   Supported Versions scope/injection leftovers, Reporting channel/contact leftovers,
