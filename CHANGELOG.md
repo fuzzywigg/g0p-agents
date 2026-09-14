@@ -10,6 +10,28 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Hydration↔security + handoff residual **tests-only** leftover deepeners after
+  tip through **#248** (actionlint/linkcheck leftovers after #242) / **#242** /
+  **#236** / **#229** / **#224** / **#219** / **#209** / **#208** / **#202** /
+  **#200** / **#195** / **#188** / **#184** / **#181** (EXISTING twenty-two
+  fixtures — `hydration-phase4` + ten `security*` and seven handoff-cluster
+  `constitution-*` + four `scratchpad*` — no invented product / inventory bump):
+  exact section-missing Finding equality across hydration / handoff-cluster /
+  security sections / scratchpad Format+Task, directory-not-file exact Finding
+  equality for all twenty-two, remaining `security-*` + scratchpad
+  intro/format/task-meta locked-phrase message formats, escalation/on-device
+  timing lookalikes (Gas 10M / Crypto `> 500ms` / Circuit `>20%` / Circuit
+  execution `< 500ms`) plus after248 ZWSP/tab/CRLF/fullwidth leftovers,
+  exact invented-agent Finding + simultaneous four-doc phrase drops, remaining
+  inventory seed keys + leftover bool/float types, CI-mangle cross-isolation vs
+  #248 actionlint/linkcheck fixtures, concurrent four-doc races, and tip
+  live-green vs #248/#242/#236/#229 siblings. Historic four only; Packaging
+  inventory unchanged (v52 / 196). Distinct from merged #229 edge suite, merged
+  #209 leftover, merged #248 actionlint/linkcheck, merged #242 prompts+flows,
+  closed CONFLICTING #252/#247/#241 (same leftover on stale tips), merged
+  #253 (prompts+flows), open #254/#255 (goose-schema niches), and not a
+  v53 invent sibling.
+
 - Prompts listform + agentic_flows residual **tests-only** leftover deepeners
   after tip through **#248** (actionlint/linkcheck leftover after #242) /
   **#242** / **#236** / **#229** / **#224** / **#219** / **#209** / **#208** /
