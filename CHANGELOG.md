@@ -10,9 +10,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Prompts residual **v53 HEAVY** deepeners / **v52 list-form leftovers** (post-#156 tip;
+  redirect after closed CONFLICTING #153/#159):
+  `prompt-matrix-rows`, `prompt-monthly-checkboxes`, `prompt-usage-numbered`,
+  `prompt-example-steps`, `prompt-living-bullets`, `prompt-quantum-resp-numbered`,
+  `prompt-bc-resp-numbered`, `prompt-edge-resp-numbered`, `prompt-orch-resp-numbered`,
+  `prompt-user-input`, `prompt-cannot-delegate-numbered`, `prompt-decision-bullets`
+  validators; AGENT-PROMPTS.md leftover locks across full matrix rows / checkbox forms /
+  numbered usage+example steps / living-doc bullets / numbered responsibilities /
+  User Input / numbered cannot-delegate / decision-authority bullets; consistency deepeners
+  for matching `*_required_phrases` inventory keys
+  (Packaging inventory 208 total; historic four only — prompts v53 residual lock slice
+  list-form, not v52 #141 phrase residuals, not #144/#147/#151/#156 tests-only residual
+  edges, not closed #150 constitution invent / #152 orch-timeout-detail invent, not
+  memory-slot #134, or Dependabot)
+
 - Constitution residual **tests-only** deepeners after **#151** (EXISTING fourteen
-  `constitution-*` phrase-lock validators only — no invented product / inventory
-  bump): concurrent validate races, empty/whitespace/header-only AGENTS-v2.2,
+  `constitution-*` phrase-lock validators only — no invented product):
+  concurrent validate races, empty/whitespace/header-only AGENTS-v2.2,
   invalid/invented constitution-timeout + closed-#150 sibling keys, per-phrase
   drop matrix, inventory mismatch matrix, and cross-isolation against
   `constitution-crypto` / `constitution-handoff` / `constitution-escalation-matrix`
@@ -21,20 +36,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `constitution-scratchpad-state` / `constitution-conflict-matrix` /
   `constitution-ide-stack` / `constitution-install-script` /
   `constitution-vscode` / `constitution-hard-constraints` /
-  `constitution-risk-tolerance`. Historic four only; inventory unchanged
-  (v52 / 196). Distinct from merged #147 (nine goose-recipe residuals), merged
-  #151 (thirty-three prompt-pre-v52 residuals), and closed CONFLICTING #150
-  constitution invent.
+  `constitution-risk-tolerance`. Historic four only; landed at inventory v52 / 196 in
+  #156; tip inventory gate superseded by v53 list-form residual above. Distinct from
+  merged #147/#151 and closed CONFLICTING #150 constitution invent.
 
 - Prompt-pre-v52 residual **tests-only** deepeners after #144/#147 tip (EXISTING
   thirty-three pre-v52 `prompt-*` fixtures only, including
-  `prompt-orchestration-matrix` — no invented product / inventory bump):
+  `prompt-orchestration-matrix` — no invented timeout product):
   concurrent validate races, empty/whitespace/header-only AGENT-PROMPTS,
-  invalid/invented timeout+v53 keys, per-phrase drop matrix, inventory mismatch
-  matrix, and cross-isolation. Historic four only; inventory unchanged
-  (v52 / 196). Distinct from merged #144 (twelve v52 prompt residuals), merged
-  #147 (nine goose-recipe residuals), and closed CONFLICTING #143/#145/#146
-  timeout PRs.
+  invalid/invented timeout sibling keys, per-phrase drop matrix, inventory mismatch
+  matrix, and cross-isolation. Historic four only; landed at inventory v52 / 196 in
+  #151; tip inventory gate superseded by v53 list-form residual above. Distinct from
+  merged #144 (twelve v52 prompt residuals), merged #147 (nine goose-recipe residuals),
+  and closed CONFLICTING #143/#145/#146/#152/#153 timeout/list-form PRs.
 
 - Goose-recipe residual **tests-only** deepeners after **#144** (EXISTING nine
   `goose-*` phrase-lock validators only — no invented product / inventory bump):
