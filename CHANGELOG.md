@@ -10,6 +10,29 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Hydration↔security + handoff residual **tests-only** leftover deepeners after tip
+  through **#236** (actionlint/linkcheck leftovers after #229) / **#229** /
+  **#224** / **#219** / **#209** / **#208** / **#202** / **#200** / **#195** /
+  **#188** / **#184** / **#181** (EXISTING twenty-two fixtures —
+  `hydration-phase4` + ten `security*` and seven handoff-cluster
+  `constitution-*` + four `scratchpad*` — no invented product / inventory bump):
+  exact section-missing Finding equality across hydration / handoff-cluster /
+  security sections / scratchpad Format+Task, directory-not-file exact Finding
+  equality for all twenty-two, remaining `security-*` + scratchpad
+  intro/format/task-meta locked-phrase message formats, escalation/on-device
+  timing lookalikes (Gas 10M / Crypto `> 500ms` / Circuit `>20%` / Circuit
+  execution `< 500ms`), exact invented-agent Finding + simultaneous four-doc
+  phrase drops, remaining inventory seed keys (escalation-matrix / recipe /
+  scratchpad-state / conflict / security-fips / known-non-issues / compliance /
+  scratchpad*), CI-mangle cross-isolation vs #236 actionlint/linkcheck fixtures, and tip live-green vs #236/#229/#224/#219 siblings. Historic
+  four only; Packaging inventory unchanged (v52 / 196). Distinct from merged
+  #229 edge suite (exact missing-file / remaining section-present /
+  security-header-drop / arrow-NBSP-Memory-secrets / packaging phrase formats /
+  scratchpad structural), merged #209 leftover (four-doc isolation / case-BOM /
+  inventory-types / concurrent races), merged #236 actionlint/linkcheck, closed
+  CONFLICTING #241 (same leftover on pre-#236 tip), open #240 CI/markdownlint,
+  and not a v53 invent sibling.
+
 - Actionlint/workflow + link-check residual **tests-only** leftover deepeners
   after tip through **#229** (hydration/security+handoff edges after #224) /
   **#224** / **#219** / **#209** / **#208** / **#202** / **#200** / **#195** /
