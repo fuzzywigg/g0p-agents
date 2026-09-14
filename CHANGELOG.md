@@ -10,6 +10,22 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Hydration↔security cross + goose-schema tip residual **tests-only** deepeners
+  after tip through **#181** (memory-handoff) / **#178** / **#176** / **#174** /
+  post-#172 (EXISTING `hydration-phase4` + ten `security` / `security-*` +
+  `goose` / `recipe-agents` / `recipe-titles` / `goose-recipe.schema.json`
+  edges — no invented product / inventory bump): hydration↔security cross-doc
+  isolation (`Add SECURITY.md` / `Add CONTRIBUTING.md` locks), goose-schema tip
+  JSON Schema type/missing matrix beyond #172, goose↔security doc mangling
+  isolation, concurrent paired-doc races, phase4 inventory mismatch edges,
+  invalid/invented tip sibling keys, and tip isolation against #181
+  memory-handoff / #178 implementation / #176 changelog / #174 contributing
+  siblings. Historic four only; inventory unchanged (v52 / 196). Distinct from
+  merged #181 (memory-handoff), #178 (implementation), #176 (changelog), #174
+  (contributing), #172 (goose-schema+security residual suite), #166
+  (execution↔goose cross), #161 (hydration residual suite), and open
+  CONFLICTING #182 tip refill (not MERGEABLE).
+
 - Memory-slot / agent-handoff residual **tests-only** deepeners after tip through
   **#178** (implementation) / post-#176/#174/#172/#166/#161 (EXISTING eleven
   coordination modules — four `scratchpad*` + seven handoff-cluster
