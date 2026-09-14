@@ -23933,8 +23933,634 @@ def test_actionlint_linkcheck_residual_live_green() -> None:
 
 
 # ---------------------------------------------------------------------------
-# TOKENMAXX HEAVY leftover deepen: actionlint/workflow + link-check after #186
-# Distinct unsaturated residual edges — not a #186 redo / invent-product.
+# TOKENMAXX HEAVY: docs-cross tip residuals after #186
+# contributing/changelog/implementation/memory-handoff/execution/goose fixtures
+# that were residual-burned (#174/#176/#178/#181/#166/#147) but NOT tip-burned
+# by #186 (actionlint/link-check) or #184 (hydration↔security + goose-schema).
+# EXISTING modules only — distinct unsaturated cross locks:
+#   contributing-ci-honesty ↔ goose-* (GOOSE-RECIPES.md)
+#   changelog-changed/initial/release ↔ CONTRIBUTING/IMPLEMENTATION/EXECUTION/GOOSE
+#   implementation-quickstart/support ↔ goose + scratchpad
+#   constitution-scratchpad-state ↔ goose-state-machine (memory-handoff↔goose)
+# Execution↔goose already tip-burned in #166 — reused only as live sibling green.
+# No invented product / inventory bump (still v52 / 196).
+# ---------------------------------------------------------------------------
+
+_DOCS_CROSS_TIP_NAMES: tuple[str, ...] = (
+    "contributing-ci-honesty",
+    "changelog-changed",
+    "changelog-initial",
+    "changelog-release",
+    "implementation-quickstart",
+    "implementation-support",
+    "goose-howto",
+    "goose-state-machine",
+    "constitution-scratchpad-state",
+    "scratchpad",
+    "execution-summary",
+)
+
+
+def _docs_cross_tip_modules() -> list[tuple[str, object]]:
+    """Map the eleven existing docs-cross tip validators (not invent-product)."""
+    return [(name, vm.VALIDATORS[name]) for name in _DOCS_CROSS_TIP_NAMES]
+
+
+def test_docs_cross_tip_modules_existing_only() -> None:
+    """Tip slice reuses live contributing/changelog/impl/memory/goose fixtures."""
+    assert vm.INVENTORY_VERSION == 52
+    assert vm.MIN_VALIDATOR_COUNT == 196
+    assert len(vm.VALIDATORS) == 196
+
+    modules = _docs_cross_tip_modules()
+    assert len(modules) == 11
+    assert [n for n, _ in modules] == list(_DOCS_CROSS_TIP_NAMES)
+
+    # Cross-lock phrases that make this tip distinct from residual suites.
+    assert (
+        "`AGENT-PROMPTS.md` / `GOOSE-RECIPES.md` / `AGENTS-v2.2.md`"
+        in vm.CONTRIBUTING_CI_HONESTY_REQUIRED_PHRASES
+    )
+    assert (
+        "`IMPLEMENTATION-GUIDE.md` — step-by-step setup guide"
+        in vm.CHANGELOG_INITIAL_REQUIRED_PHRASES
+    )
+    assert (
+        "`EXECUTION-SUMMARY.md` — implementation summary"
+        in vm.CHANGELOG_INITIAL_REQUIRED_PHRASES
+    )
+    assert (
+        "`GOOSE-RECIPES.md` — Goose YAML recipe templates"
+        in vm.CHANGELOG_RELEASE_REQUIRED_PHRASES
+    )
+    assert (
+        "`CONTRIBUTING.md` branch strategy aligned with live default branch `alpha`"
+        in vm.CHANGELOG_CHANGED_REQUIRED_PHRASES
+    )
+    assert "GOOSE-RECIPES.md" in vm.IMPLEMENTATION_QUICKSTART_REQUIRED_PHRASES
+    assert "touch agentic_flows/scratchpad.txt" in vm.IMPLEMENTATION_QUICKSTART_REQUIRED_PHRASES
+    assert (
+        "GOOSE-RECIPES.md (Goose recipe templates)"
+        in vm.IMPLEMENTATION_SUPPORT_REQUIRED_PHRASES
+    )
+    assert (
+        "All agent coordination state lives in `./agentic_flows/scratchpad.txt`"
+        in vm.CONSTITUTION_SCRATCHPAD_STATE_REQUIRED_PHRASES
+    )
+    assert "./agentic_flows/scratchpad.txt" in vm.GOOSE_STATE_MACHINE_REQUIRED_PHRASES
+    assert "GOOSE-RECIPES.md" in vm.EXECUTION_SUMMARY_REQUIRED_PHRASES
+
+    for invented in (
+        "docs-cross-timeouts",
+        "docs-cross-tip",
+        "contributing-goose-timeouts",
+        "changelog-docs-timeouts",
+        "implementation-goose-timeouts",
+        "memory-handoff-goose-timeouts",
+        "goose-recipe-v53",
+        "actionlint-timeouts",
+        "link-check-timeouts",
+        "hydration-security-timeouts",
+        "memory-slot",
+        "handoff-timeouts",
+    ):
+        assert invented not in vm.VALIDATORS
+
+    inventory = json.loads(
+        (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
+    )
+    assert inventory["version"] == 52
+    assert inventory["min_validator_count"] == 196
+    assert sorted(vm.VALIDATORS) == inventory["validator_names"]
+
+    # Adjacent tip siblings stay registered but are intentionally excluded
+    assert "link-check" in vm.VALIDATORS
+    assert "actionlint-shell" in vm.VALIDATORS
+    assert "hydration-phase4" in vm.VALIDATORS
+    assert "security" in vm.VALIDATORS
+    assert "goose" in vm.VALIDATORS  # schema trio — tip-burned in #184
+    names = {m[0] for m in modules}
+    assert "link-check" not in names
+    assert "actionlint-shell" not in names
+    assert "hydration-phase4" not in names
+    assert "security" not in names
+    assert "goose" not in names
+
+
+def test_docs_cross_tip_invalid_keys(tmp_path: Path) -> None:
+    """Reject invented docs-cross / tip sibling keys; live names stay selectable."""
+    with pytest.raises(KeyError):
+        _ = vm.VALIDATORS["docs-cross-timeouts"]
+    with pytest.raises(KeyError):
+        _ = vm.VALIDATORS["contributing-goose-timeouts"]
+    with pytest.raises(KeyError):
+        _ = vm.VALIDATORS["goose-recipe-v53"]
+    with pytest.raises(ValueError, match="unknown validator"):
+        vm.run_all_validations(REPO_ROOT, only=["docs-cross-timeouts"])
+    with pytest.raises(ValueError, match="unknown validator"):
+        vm.run_all_validations(REPO_ROOT, only=["changelog-docs-timeouts"])
+    with pytest.raises(ValueError, match="unknown validator"):
+        vm.run_all_validations(REPO_ROOT, only=["memory-handoff-goose-timeouts"])
+
+    findings = vm.run_all_validations(
+        REPO_ROOT,
+        only=list(_DOCS_CROSS_TIP_NAMES),
+    )
+    assert findings == []
+
+    _copy_schemas(tmp_path)
+    for rel in _inventory_payload()["required_paths"]:
+        target = tmp_path / rel
+        target.parent.mkdir(parents=True, exist_ok=True)
+        if not target.exists():
+            target.write_text("ok\n", encoding="utf-8")
+
+    bad = _inventory_payload()
+    bad["invented_docs_cross_tip_residual_map"] = {"slot": "x"}
+    (tmp_path / "schemas" / "packaging-inventory.json").write_text(
+        json.dumps(bad),
+        encoding="utf-8",
+    )
+    assert vm.validate_packaging_inventory(tmp_path)
+
+
+def test_contributing_goose_cross_doc_isolation(tmp_path: Path) -> None:
+    """Distinct leftover: contributing↔goose cross-doc isolation (not #174/#147 redo)."""
+    contrib = (REPO_ROOT / "CONTRIBUTING.md").read_text(encoding="utf-8")
+    goose = (REPO_ROOT / "GOOSE-RECIPES.md").read_text(encoding="utf-8")
+    phrase = "`AGENT-PROMPTS.md` / `GOOSE-RECIPES.md` / `AGENTS-v2.2.md`"
+
+    _write(tmp_path / "CONTRIBUTING.md", contrib)
+    _write(tmp_path / "GOOSE-RECIPES.md", goose)
+    assert vm.validate_contributing_ci_honesty(tmp_path) == []
+    assert vm.validate_goose_howto(tmp_path) == []
+    assert vm.validate_goose_state_machine(tmp_path) == []
+
+    # Drop GOOSE-RECIPES lock from CONTRIBUTING only — ci-honesty fails; goose stays.
+    mangled = contrib.replace(phrase, "ABSENT_GOOSE_DOC_REF")
+    assert phrase not in mangled
+    _write(tmp_path / "CONTRIBUTING.md", mangled)
+    findings = vm.validate_contributing_ci_honesty(tmp_path)
+    assert findings
+    assert any(
+        "GOOSE-RECIPES.md" in f.message or "missing" in f.message for f in findings
+    )
+    assert vm.validate_goose_howto(tmp_path) == []
+    assert vm.validate_goose_orchestration(tmp_path) == []
+
+    # Restore CONTRIBUTING; mangle GOOSE only — goose fails; contributing stays.
+    _write(tmp_path / "CONTRIBUTING.md", contrib)
+    _write(tmp_path / "GOOSE-RECIPES.md", "# Recipe-Based Agent Orchestration\n")
+    assert vm.validate_goose_howto(tmp_path)
+    assert vm.validate_goose_state_machine(tmp_path)
+    assert vm.validate_contributing_ci_honesty(tmp_path) == []
+    assert vm.validate_contributing_packaging(tmp_path) == []
+    assert vm.validate_contributing_ci_honesty(REPO_ROOT) == []
+    assert vm.validate_goose_howto(REPO_ROOT) == []
+
+
+def test_changelog_docs_cross_isolation(tmp_path: Path) -> None:
+    """Distinct leftover: changelog↔impl/exec/goose/contributing cross (not #176 redo)."""
+    changelog = (REPO_ROOT / "CHANGELOG.md").read_text(encoding="utf-8")
+    impl = (REPO_ROOT / "IMPLEMENTATION-GUIDE.md").read_text(encoding="utf-8")
+    execution = (REPO_ROOT / "EXECUTION-SUMMARY.md").read_text(encoding="utf-8")
+    goose = (REPO_ROOT / "GOOSE-RECIPES.md").read_text(encoding="utf-8")
+    contrib = (REPO_ROOT / "CONTRIBUTING.md").read_text(encoding="utf-8")
+
+    _write(tmp_path / "CHANGELOG.md", changelog)
+    _write(tmp_path / "IMPLEMENTATION-GUIDE.md", impl)
+    _write(tmp_path / "EXECUTION-SUMMARY.md", execution)
+    _write(tmp_path / "GOOSE-RECIPES.md", goose)
+    _write(tmp_path / "CONTRIBUTING.md", contrib)
+    assert vm.validate_changelog_initial(tmp_path) == []
+    assert vm.validate_changelog_release(tmp_path) == []
+    assert vm.validate_changelog_changed(tmp_path) == []
+    assert vm.validate_implementation_guide(tmp_path) == []
+    assert vm.validate_execution_summary(tmp_path) == []
+    assert vm.validate_goose_howto(tmp_path) == []
+    assert vm.validate_contributing_packaging(tmp_path) == []
+
+    # Drop IMPLEMENTATION-GUIDE.md lock from CHANGELOG — initial fails; impl stays.
+    phrase_impl = "`IMPLEMENTATION-GUIDE.md` — step-by-step setup guide"
+    mangled = changelog.replace(phrase_impl, "ABSENT_IMPL_DOC_REF")
+    assert phrase_impl not in mangled
+    _write(tmp_path / "CHANGELOG.md", mangled)
+    findings = vm.validate_changelog_initial(tmp_path)
+    assert findings
+    assert any(
+        "IMPLEMENTATION-GUIDE.md" in f.message or "missing" in f.message
+        for f in findings
+    )
+    assert vm.validate_implementation_guide(tmp_path) == []
+    assert vm.validate_implementation_quickstart(tmp_path) == []
+
+    # Drop EXECUTION-SUMMARY.md lock — initial fails; execution stays.
+    phrase_exec = "`EXECUTION-SUMMARY.md` — implementation summary"
+    mangled = changelog.replace(phrase_exec, "ABSENT_EXEC_DOC_REF")
+    _write(tmp_path / "CHANGELOG.md", mangled)
+    findings = vm.validate_changelog_initial(tmp_path)
+    assert findings
+    assert any(
+        "EXECUTION-SUMMARY.md" in f.message or "missing" in f.message for f in findings
+    )
+    assert vm.validate_execution_summary(tmp_path) == []
+
+    # Drop GOOSE-RECIPES.md release lock — release fails; goose stays.
+    phrase_goose = "`GOOSE-RECIPES.md` — Goose YAML recipe templates"
+    mangled = changelog.replace(phrase_goose, "ABSENT_GOOSE_RELEASE_REF")
+    _write(tmp_path / "CHANGELOG.md", mangled)
+    findings = vm.validate_changelog_release(tmp_path)
+    assert findings
+    assert any(
+        "GOOSE-RECIPES.md" in f.message or "missing" in f.message for f in findings
+    )
+    assert vm.validate_goose_howto(tmp_path) == []
+
+    # Drop CONTRIBUTING.md changed lock — changed fails; contributing stays.
+    phrase_contrib = (
+        "`CONTRIBUTING.md` branch strategy aligned with live default branch `alpha`"
+    )
+    mangled = changelog.replace(phrase_contrib, "ABSENT_CONTRIBUTING_REF")
+    _write(tmp_path / "CHANGELOG.md", mangled)
+    findings = vm.validate_changelog_changed(tmp_path)
+    assert findings
+    assert any(
+        "CONTRIBUTING.md" in f.message or "missing" in f.message for f in findings
+    )
+    assert vm.validate_contributing_packaging(tmp_path) == []
+    assert vm.validate_contributing_ci_honesty(tmp_path) == []
+
+    # Restore CHANGELOG; mangle IMPLEMENTATION-GUIDE only — impl fails; changelog stays.
+    _write(tmp_path / "CHANGELOG.md", changelog)
+    _write(tmp_path / "IMPLEMENTATION-GUIDE.md", "# IMPLEMENTATION GUIDE\n")
+    assert vm.validate_implementation_guide(tmp_path)
+    assert vm.validate_implementation_quickstart(tmp_path)
+    assert vm.validate_changelog_initial(tmp_path) == []
+    assert vm.validate_changelog_release(tmp_path) == []
+    assert vm.validate_changelog_changed(tmp_path) == []
+    assert vm.validate_changelog_initial(REPO_ROOT) == []
+
+
+def test_implementation_goose_memory_cross_isolation(tmp_path: Path) -> None:
+    """Distinct leftover: implementation↔goose/scratchpad cross (not #178/#147/#181)."""
+    impl = (REPO_ROOT / "IMPLEMENTATION-GUIDE.md").read_text(encoding="utf-8")
+    goose = (REPO_ROOT / "GOOSE-RECIPES.md").read_text(encoding="utf-8")
+    scratch = (REPO_ROOT / "agentic_flows" / "scratchpad.txt").read_text(
+        encoding="utf-8"
+    )
+
+    _write(tmp_path / "IMPLEMENTATION-GUIDE.md", impl)
+    _write(tmp_path / "GOOSE-RECIPES.md", goose)
+    _write(tmp_path / "agentic_flows" / "scratchpad.txt", scratch)
+    assert vm.validate_implementation_quickstart(tmp_path) == []
+    assert vm.validate_implementation_support(tmp_path) == []
+    assert vm.validate_goose_howto(tmp_path) == []
+    assert vm.validate_scratchpad(tmp_path) == []
+
+    # Drop GOOSE-RECIPES.md from implementation — quickstart/support fail; goose stays.
+    mangled = impl.replace("GOOSE-RECIPES.md", "ABSENT_GOOSE_DOC_REF")
+    assert "GOOSE-RECIPES.md" not in mangled
+    _write(tmp_path / "IMPLEMENTATION-GUIDE.md", mangled)
+    assert vm.validate_implementation_quickstart(tmp_path)
+    assert vm.validate_implementation_support(tmp_path)
+    assert vm.validate_goose_howto(tmp_path) == []
+    assert vm.validate_goose_state_machine(tmp_path) == []
+
+    # Drop scratchpad touch lock — quickstart fails; scratchpad store stays green.
+    mangled_scratch_ref = impl.replace(
+        "touch agentic_flows/scratchpad.txt", "touch ABSENT_SCRATCHPAD.txt"
+    )
+    assert "touch agentic_flows/scratchpad.txt" not in mangled_scratch_ref
+    _write(tmp_path / "IMPLEMENTATION-GUIDE.md", mangled_scratch_ref)
+    findings = vm.validate_implementation_quickstart(tmp_path)
+    assert findings
+    assert any(
+        "scratchpad.txt" in f.message or "missing" in f.message for f in findings
+    )
+    assert vm.validate_scratchpad(tmp_path) == []
+    assert vm.validate_scratchpad_intro(tmp_path) == []
+
+    # Restore impl; mangle goose only — goose fails; implementation stays.
+    _write(tmp_path / "IMPLEMENTATION-GUIDE.md", impl)
+    _write(tmp_path / "GOOSE-RECIPES.md", "# Recipe-Based Agent Orchestration\n")
+    assert vm.validate_goose_howto(tmp_path)
+    assert vm.validate_implementation_quickstart(tmp_path) == []
+    assert vm.validate_implementation_support(tmp_path) == []
+
+    # Restore goose; empty scratchpad — scratchpad fails; implementation stays.
+    _write(tmp_path / "GOOSE-RECIPES.md", goose)
+    _write(tmp_path / "agentic_flows" / "scratchpad.txt", "\n")
+    assert vm.validate_scratchpad(tmp_path)
+    assert vm.validate_implementation_quickstart(tmp_path) == []
+    assert vm.validate_implementation_support(tmp_path) == []
+    assert vm.validate_implementation_quickstart(REPO_ROOT) == []
+    assert vm.validate_scratchpad(REPO_ROOT) == []
+
+
+def test_memory_handoff_goose_scratchpad_cross_isolation(tmp_path: Path) -> None:
+    """Distinct leftover: memory-handoff↔goose scratchpad-state cross (not #181/#147)."""
+    agents = (REPO_ROOT / "AGENTS-v2.2.md").read_text(encoding="utf-8")
+    goose = (REPO_ROOT / "GOOSE-RECIPES.md").read_text(encoding="utf-8")
+    scratch = (REPO_ROOT / "agentic_flows" / "scratchpad.txt").read_text(
+        encoding="utf-8"
+    )
+
+    _write(tmp_path / "AGENTS-v2.2.md", agents)
+    _write(tmp_path / "GOOSE-RECIPES.md", goose)
+    _write(tmp_path / "agentic_flows" / "scratchpad.txt", scratch)
+    assert vm.validate_constitution_scratchpad_state(tmp_path) == []
+    assert vm.validate_goose_state_machine(tmp_path) == []
+    assert vm.validate_scratchpad(tmp_path) == []
+
+    # Drop constitution scratchpad section — constitution fails; goose stays.
+    mangled = agents.replace(
+        "### 22.6 Scratchpad State Machine", "### ABSENT Scratchpad State Machine"
+    )
+    assert "### 22.6 Scratchpad State Machine" not in mangled
+    _write(tmp_path / "AGENTS-v2.2.md", mangled)
+    findings = vm.validate_constitution_scratchpad_state(tmp_path)
+    assert findings
+    assert any(
+        "Scratchpad State Machine" in f.message or "missing" in f.message
+        for f in findings
+    )
+    assert vm.validate_goose_state_machine(tmp_path) == []
+    assert vm.validate_scratchpad(tmp_path) == []
+
+    # Restore agents; drop goose scratchpad section — goose fails; constitution stays.
+    _write(tmp_path / "AGENTS-v2.2.md", agents)
+    mangled_g = goose.replace(
+        "## Scratchpad State Machine", "## ABSENT Scratchpad State Machine"
+    )
+    assert "## Scratchpad State Machine" not in mangled_g
+    _write(tmp_path / "GOOSE-RECIPES.md", mangled_g)
+    findings = vm.validate_goose_state_machine(tmp_path)
+    assert findings
+    assert any(
+        "Scratchpad State Machine" in f.message or "missing" in f.message
+        for f in findings
+    )
+    assert vm.validate_constitution_scratchpad_state(tmp_path) == []
+
+    # Drop shared scratchpad path lock from goose only.
+    mangled_path = goose.replace(
+        "./agentic_flows/scratchpad.txt", "./agentic_flows/ABSENT.txt"
+    )
+    _write(tmp_path / "GOOSE-RECIPES.md", mangled_path)
+    findings = vm.validate_goose_state_machine(tmp_path)
+    assert findings
+    assert any("scratchpad.txt" in f.message or "missing" in f.message for f in findings)
+    assert vm.validate_constitution_scratchpad_state(tmp_path) == []
+    assert vm.validate_scratchpad(tmp_path) == []
+    assert vm.validate_constitution_scratchpad_state(REPO_ROOT) == []
+    assert vm.validate_goose_state_machine(REPO_ROOT) == []
+
+
+def test_docs_cross_tip_section_present_phrases_absent_matrix(tmp_path: Path) -> None:
+    """Tip HEAVY: section header present but locked phrases absent (beyond residual)."""
+    # CHANGELOG Unreleased section present; phrase payloads absent.
+    _write(tmp_path / "CHANGELOG.md", "## [Unreleased]\n")
+    findings = vm.validate_changelog_unreleased(tmp_path)
+    assert not any("missing Unreleased section" in f.message for f in findings)
+    for phrase in vm.CHANGELOG_UNRELEASED_REQUIRED_PHRASES:
+        if phrase == "## [Unreleased]":
+            continue
+        assert any(
+            f"missing locked changelog-unreleased phrase: {phrase}" in f.message
+            for f in findings
+        ), phrase
+
+    # CHANGELOG 0.1.0 release section present; phrase payloads absent.
+    _write(tmp_path / "CHANGELOG.md", "## [0.1.0] — 2025-12-13\n")
+    findings = vm.validate_changelog_release(tmp_path)
+    assert not any("missing 0.1.0 release section" in f.message for f in findings)
+    for phrase in vm.CHANGELOG_RELEASE_REQUIRED_PHRASES:
+        if phrase == "## [0.1.0] — 2025-12-13":
+            continue
+        assert any(
+            f"missing locked changelog-release phrase: {phrase}" in f.message
+            for f in findings
+        ), phrase
+
+    # Implementation Quick Start section present; phrase payloads absent.
+    _write(tmp_path / "IMPLEMENTATION-GUIDE.md", "## Quick Start (30 minutes)\n")
+    findings = vm.validate_implementation_quickstart(tmp_path)
+    assert not any("missing Quick Start section" in f.message for f in findings)
+    for phrase in vm.IMPLEMENTATION_QUICKSTART_REQUIRED_PHRASES:
+        if phrase == "## Quick Start (30 minutes)":
+            continue
+        assert any(
+            f"missing locked implementation-quickstart phrase: {phrase}" in f.message
+            for f in findings
+        ), phrase
+
+    # Goose Scratchpad State Machine section present; phrase payloads absent.
+    _write(tmp_path / "GOOSE-RECIPES.md", "## Scratchpad State Machine\n")
+    findings = vm.validate_goose_state_machine(tmp_path)
+    assert not any(
+        "missing Scratchpad State Machine section" in f.message for f in findings
+    )
+    for phrase in vm.GOOSE_STATE_MACHINE_REQUIRED_PHRASES:
+        if phrase == "## Scratchpad State Machine":
+            continue
+        assert any(
+            f"missing locked goose-state-machine phrase: {phrase}" in f.message
+            for f in findings
+        ), phrase
+
+    # Constitution scratchpad section present; phrase payloads absent.
+    _write(tmp_path / "AGENTS-v2.2.md", "### 22.6 Scratchpad State Machine\n")
+    findings = vm.validate_constitution_scratchpad_state(tmp_path)
+    assert not any(
+        "missing Scratchpad State Machine section" in f.message for f in findings
+    )
+    for phrase in vm.CONSTITUTION_SCRATCHPAD_STATE_REQUIRED_PHRASES:
+        if phrase == "### 22.6 Scratchpad State Machine":
+            continue
+        assert any(
+            f"missing locked constitution-scratchpad-state phrase: {phrase}"
+            in f.message
+            for f in findings
+        ), phrase
+
+    # Contributing Branch Strategy section present; phrase payloads absent.
+    _write(tmp_path / "CONTRIBUTING.md", "## Branch Strategy\n")
+    findings = vm.validate_contributing_branches(tmp_path)
+    assert not any("missing Branch Strategy section" in f.message for f in findings)
+    for phrase in vm.CONTRIBUTING_BRANCH_REQUIRED_PHRASES:
+        if phrase == "## Branch Strategy":
+            continue
+        assert any(
+            f"missing locked contributing-branches phrase: {phrase}" in f.message
+            or phrase in f.message
+            for f in findings
+        ), phrase
+
+    # Execution specialists section present; phrase payloads absent.
+    _write(tmp_path / "EXECUTION-SUMMARY.md", "## Your Four Specialist Agents\n")
+    findings = vm.validate_execution_specialists(tmp_path)
+    assert not any(
+        "missing Your Four Specialist Agents section" in f.message for f in findings
+    )
+    for phrase in vm.EXECUTION_SPECIALISTS_REQUIRED_PHRASES:
+        if phrase == "## Your Four Specialist Agents":
+            continue
+        assert any(
+            f"missing locked execution-specialists phrase: {phrase}" in f.message
+            or phrase in f.message
+            for f in findings
+        ), phrase
+
+
+def test_docs_cross_tip_concurrent_multi_doc_races(tmp_path: Path) -> None:
+    """Concurrent readers/writers across paired docs-cross tip fixtures."""
+    modules = _docs_cross_tip_modules()
+    fns = [fn for _n, fn in modules]
+
+    def _read_live() -> list[vm.Finding]:
+        out: list[vm.Finding] = []
+        for fn in fns:
+            out.extend(fn(REPO_ROOT))
+        return out
+
+    errors: list[BaseException] = []
+    with ThreadPoolExecutor(max_workers=16) as pool:
+        futures = [pool.submit(_read_live) for _ in range(48)]
+        for fut in as_completed(futures):
+            try:
+                assert fut.result() == []
+            except BaseException as exc:  # noqa: BLE001 — collect race failures
+                errors.append(exc)
+    assert errors == []
+
+    # Paired-doc writer/reader race on CONTRIBUTING + GOOSE + CHANGELOG.
+    contrib_path = tmp_path / "CONTRIBUTING.md"
+    goose_path = tmp_path / "GOOSE-RECIPES.md"
+    changelog_path = tmp_path / "CHANGELOG.md"
+    impl_path = tmp_path / "IMPLEMENTATION-GUIDE.md"
+    locked_contrib = (REPO_ROOT / "CONTRIBUTING.md").read_text(encoding="utf-8")
+    locked_goose = (REPO_ROOT / "GOOSE-RECIPES.md").read_text(encoding="utf-8")
+    locked_changelog = (REPO_ROOT / "CHANGELOG.md").read_text(encoding="utf-8")
+    locked_impl = (REPO_ROOT / "IMPLEMENTATION-GUIDE.md").read_text(encoding="utf-8")
+    _write(contrib_path, locked_contrib)
+    _write(goose_path, locked_goose)
+    _write(changelog_path, locked_changelog)
+    _write(impl_path, locked_impl)
+    assert vm.validate_contributing_ci_honesty(tmp_path) == []
+    assert vm.validate_goose_howto(tmp_path) == []
+    assert vm.validate_changelog_initial(tmp_path) == []
+    assert vm.validate_implementation_quickstart(tmp_path) == []
+
+    stop = threading.Event()
+    race_errors: list[BaseException] = []
+
+    def _writer() -> None:
+        flip = False
+        while not stop.is_set():
+            try:
+                if flip:
+                    contrib_path.write_text(locked_contrib, encoding="utf-8")
+                    goose_path.write_text(locked_goose, encoding="utf-8")
+                    changelog_path.write_text(locked_changelog, encoding="utf-8")
+                    impl_path.write_text(locked_impl, encoding="utf-8")
+                else:
+                    contrib_path.write_text("\n", encoding="utf-8")
+                    goose_path.write_text("\n", encoding="utf-8")
+                    changelog_path.write_text("\n", encoding="utf-8")
+                    impl_path.write_text("\n", encoding="utf-8")
+                flip = not flip
+            except BaseException as exc:  # noqa: BLE001
+                race_errors.append(exc)
+                return
+
+    def _reader() -> None:
+        while not stop.is_set():
+            try:
+                vm.validate_contributing_ci_honesty(tmp_path)
+                vm.validate_goose_howto(tmp_path)
+                vm.validate_changelog_initial(tmp_path)
+                vm.validate_implementation_quickstart(tmp_path)
+            except BaseException as exc:  # noqa: BLE001
+                race_errors.append(exc)
+                return
+
+    threads = [
+        threading.Thread(target=_writer),
+        threading.Thread(target=_reader),
+        threading.Thread(target=_reader),
+        threading.Thread(target=_reader),
+    ]
+    for t in threads:
+        t.start()
+    time.sleep(0.35)
+    stop.set()
+    for t in threads:
+        t.join(timeout=2.0)
+    assert race_errors == []
+
+
+def test_docs_cross_tip_isolation_vs_siblings(tmp_path: Path) -> None:
+    """Tip isolation: docs-cross fails locally; #186/#184/#181 siblings stay green."""
+    contrib = (REPO_ROOT / "CONTRIBUTING.md").read_text(encoding="utf-8")
+    phrase = "`AGENT-PROMPTS.md` / `GOOSE-RECIPES.md` / `AGENTS-v2.2.md`"
+    mangled = contrib.replace(phrase, "ABSENT_GOOSE_DOC_REF")
+    _write(tmp_path / "CONTRIBUTING.md", mangled)
+    assert vm.validate_contributing_ci_honesty(tmp_path)
+
+    # Merged tip siblings remain green on live root
+    assert vm.validate_link_check(REPO_ROOT) == []
+    assert vm.validate_actionlint_shell(REPO_ROOT) == []
+    assert vm.validate_ci_actions(REPO_ROOT) == []
+    assert vm.validate_hydration_phase4(REPO_ROOT) == []
+    assert vm.validate_security_packaging(REPO_ROOT) == []
+    assert vm.validate_goose_recipes(REPO_ROOT) == []
+    assert vm.validate_constitution_handoff(REPO_ROOT) == []
+    assert vm.validate_scratchpad(REPO_ROOT) == []
+    assert vm.validate_changelog_unreleased(REPO_ROOT) == []
+    assert vm.validate_implementation_guide(REPO_ROOT) == []
+    assert vm.validate_execution_summary(REPO_ROOT) == []
+
+
+def test_docs_cross_tip_live_green() -> None:
+    """Live docs-cross tip fixtures stay green after #186; inventory unchanged."""
+    for name, fn in _docs_cross_tip_modules():
+        assert fn(REPO_ROOT) == [], name
+
+    assert vm.INVENTORY_VERSION == 52
+    assert vm.MIN_VALIDATOR_COUNT == 196
+    assert len(vm.VALIDATORS) == 196
+
+    contrib = (REPO_ROOT / "CONTRIBUTING.md").read_text(encoding="utf-8")
+    changelog = (REPO_ROOT / "CHANGELOG.md").read_text(encoding="utf-8")
+    impl = (REPO_ROOT / "IMPLEMENTATION-GUIDE.md").read_text(encoding="utf-8")
+    goose = (REPO_ROOT / "GOOSE-RECIPES.md").read_text(encoding="utf-8")
+    agents = (REPO_ROOT / "AGENTS-v2.2.md").read_text(encoding="utf-8")
+
+    assert "`AGENT-PROMPTS.md` / `GOOSE-RECIPES.md` / `AGENTS-v2.2.md`" in contrib
+    assert "`IMPLEMENTATION-GUIDE.md` — step-by-step setup guide" in changelog
+    assert "`EXECUTION-SUMMARY.md` — implementation summary" in changelog
+    assert "`GOOSE-RECIPES.md` — Goose YAML recipe templates" in changelog
+    assert "GOOSE-RECIPES.md" in impl
+    assert "touch agentic_flows/scratchpad.txt" in impl
+    assert "## Scratchpad State Machine" in goose
+    assert "### 22.6 Scratchpad State Machine" in agents
+
+    # Adjacent tip through #186 / #184 / #181 / #178 / #176 / #174 remain green
+    assert vm.validate_link_check(REPO_ROOT) == []
+    assert vm.validate_actionlint_shell(REPO_ROOT) == []
+    assert vm.validate_hydration_phase4(REPO_ROOT) == []
+    assert vm.validate_security_packaging(REPO_ROOT) == []
+    assert vm.validate_goose_recipes(REPO_ROOT) == []
+    assert vm.validate_constitution_handoff(REPO_ROOT) == []
+    assert vm.validate_scratchpad(REPO_ROOT) == []
+    assert vm.validate_contributing_packaging(REPO_ROOT) == []
+    assert vm.validate_changelog_packaging(REPO_ROOT) == []
+    assert vm.validate_implementation_guide(REPO_ROOT) == []
+    assert vm.validate_execution_summary(REPO_ROOT) == []
+
+# ---------------------------------------------------------------------------
+# TOKENMAXX HEAVY leftover deepen: actionlint/workflow + link-check after #187/#186
+# Distinct unsaturated residual edges — not a #186/#187 redo / invent-product.
 # ---------------------------------------------------------------------------
 
 
@@ -24450,7 +25076,7 @@ def test_actionlint_linkcheck_after186_run_only_and_inventory_type_edges(
 def test_actionlint_linkcheck_after186_cross_isolation_vs_186_siblings(
     tmp_path: Path,
 ) -> None:
-    """Tip isolation after #186: local CI fails; live #186/#184/#181 siblings green."""
+    """Tip isolation after #187/#186: local CI fails; live docs-cross + CI siblings green."""
     base = _actionlint_linkcheck_locked_ci_yaml()
 
     # Drop globs lock → link-check fails; actionlint + runs-on stay green
@@ -24487,9 +25113,13 @@ def test_actionlint_linkcheck_after186_cross_isolation_vs_186_siblings(
     assert vm.validate_link_check(tmp_path) == []
     assert vm.validate_actionlint_shell(tmp_path) == []
 
-    # Live tip siblings through #186 / #184 / #181 / #178 remain green
+    # Live tip siblings through #187 / #186 / #184 / #181 / #178 remain green
     for name, fn in _actionlint_linkcheck_residual_modules():
         assert fn(REPO_ROOT) == [], name
+    assert vm.validate_contributing_ci_honesty(REPO_ROOT) == []
+    assert vm.validate_changelog_changed(REPO_ROOT) == []
+    assert vm.validate_implementation_quickstart(REPO_ROOT) == []
+    assert vm.validate_goose_howto(REPO_ROOT) == []
     assert vm.validate_hydration_phase4(REPO_ROOT) == []
     assert vm.validate_security_packaging(REPO_ROOT) == []
     assert vm.validate_goose_recipes(REPO_ROOT) == []
@@ -24502,7 +25132,7 @@ def test_actionlint_linkcheck_after186_cross_isolation_vs_186_siblings(
 
 
 def test_actionlint_linkcheck_after186_leftover_live_green() -> None:
-    """Live seven CI fixtures + inventory stay green on tip after #186."""
+    """Live seven CI fixtures + inventory stay green on tip after #187/#186."""
     for name, fn in _actionlint_linkcheck_residual_modules():
         assert fn(REPO_ROOT) == [], name
 
@@ -24524,8 +25154,12 @@ def test_actionlint_linkcheck_after186_leftover_live_green() -> None:
     for expected in vm.CI_JOB_DISPLAY_NAMES.values():
         assert f"name: {expected}" in body
 
-    # #186 suite helpers remain wired; adjacent tip green
+    # #186 suite helpers remain wired; adjacent tip green (#187 docs-cross included)
     assert len(_actionlint_linkcheck_residual_modules()) == 7
+    assert vm.validate_contributing_ci_honesty(REPO_ROOT) == []
+    assert vm.validate_changelog_changed(REPO_ROOT) == []
+    assert vm.validate_implementation_quickstart(REPO_ROOT) == []
+    assert vm.validate_goose_howto(REPO_ROOT) == []
     assert vm.validate_hydration_phase4(REPO_ROOT) == []
     assert vm.validate_security_packaging(REPO_ROOT) == []
     assert vm.validate_goose_recipes(REPO_ROOT) == []
