@@ -10,6 +10,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Prompts residual **v52 HEAVY** deepeners / **v51 leftovers continued** (post-#134 tip; distinct from closed CONFLICTING #133/#135):
+  `prompt-metrics-detail`, `prompt-orch-metrics-detail`, `prompt-communication-detail`,
+  `prompt-principles-detail`, `prompt-responsibilities-residual`, `prompt-expertise-residual`,
+  `prompt-vision-context`, `prompt-context-residual`, `prompt-monthly-detail`,
+  `prompt-docs-residual`, `prompt-matrix-resolutions`, `prompt-usage-detail`
+  validators; AGENT-PROMPTS.md leftover locks across metrics-detail / orch-metrics /
+  communication-detail / principles-detail / responsibilities-residual / expertise-residual /
+  vision-context / context-residual / monthly-detail / docs-residual / matrix-resolutions /
+  usage-detail; consistency deepeners for matching `*_required_phrases` inventory keys
+  (Packaging inventory 196 total; historic four only — prompts v52 heavy residuals slice,
+  not #128/#131 context/cannot-delegate/escalation-authority/role-blurbs/constraints-detail
+  slices, not memory-slot #134, not constitution/changelog/hydration/README/security/
+  contributing/goose/postmortem, or Dependabot)
+
 - Memory-slot **tests-only** deepeners (EXISTING modules only — no invented product):
   concurrent validate races, empty scratchpad/inventory maps, invalid registry/
   allow-list keys, and full-capacity agentic_flows overflow rejection against
