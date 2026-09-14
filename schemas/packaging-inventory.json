@@ -1,5 +1,5 @@
 {
-  "version": 41,
+  "version": 42,
   "documented_agents": [
     "QuantumArchitectAgent",
     "BlockchainArchitectAgent",
@@ -369,6 +369,9 @@
     "pr-summary",
     "pr-template",
     "prompt-constraints",
+    "prompt-expertise",
+    "prompt-metrics",
+    "prompt-principles",
     "prompt-related-docs",
     "prompt-roles",
     "prompt-sections",
@@ -408,7 +411,7 @@
     "yaml-configs"
   ],
   "min_coverage_fail_under": 99,
-  "min_validator_count": 136,
+  "min_validator_count": 139,
   "required_paths": [
     "README.md",
     "LICENSE",
@@ -1248,7 +1251,7 @@
     "markdown lint, link check, actionlint",
     "manifest validate on Python 3.11/3.12/3.13",
     "Andrew or designated reviewer",
-    "Packaging inventory v41",
+    "Packaging inventory v42",
     "refuse invented recipes",
     "orphan on-disk YAML",
     "unknown `*Agent` tokens",
@@ -1335,5 +1338,36 @@
     "https://quantumai.google/cirq",
     "https://hardhat.org/",
     "https://block.github.io/goose/"
+  ],
+  "prompt_expertise_required_phrases": [
+    "## Your Expertise",
+    "Quantum mechanics (gates, superposition, entanglement)",
+    "Quantum algorithm design (Shor's, Grover's, VQE, custom)",
+    "Distributed ledger architecture",
+    "Smart contract design patterns (ERC-20, ERC-721, ERC-1155)",
+    "Android/iOS development (Kotlin, Swift)",
+    "Hardware security modules (HSM, Secure Enclave)",
+    "Post-quantum cryptography (classical + quantum-resistant)"
+  ],
+  "prompt_principles_required_phrases": [
+    "## Decision Making Principles",
+    "Prioritize quantum-safety over performance",
+    "Balance security with usability",
+    "Prioritize multi-chain resilience",
+    "Prioritize user security and privacy",
+    "Recommend constraint-based designs (work within device limits)",
+    "Recommend staged rollouts (testnet \u2192 staging \u2192 mainnet)",
+    "Flag performance issues early (don't wait for integration testing)"
+  ],
+  "prompt_metrics_required_phrases": [
+    "## Success Metrics",
+    "Circuit depth < 50 gates (if possible)",
+    "Error rate < 1% on simulator",
+    "0 critical vulnerabilities (Slither pass)",
+    "< 2500 gas per operation",
+    "Crypto operations < 500ms on Snapdragon 8 Gen 3 (or specified device)",
+    "Data isolation 100% (no log leaks)",
+    "Zero critical security incidents",
+    "Quarterly risk tolerance review completed"
   ]
 }

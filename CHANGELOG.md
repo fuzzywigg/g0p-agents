@@ -10,6 +10,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Agent prompts **v42** deepeners (post-#101 implementation-guide v41): `prompt-expertise`,
+  `prompt-principles`, `prompt-metrics` validators; AGENT-PROMPTS.md Your Expertise /
+  Decision Making Principles / Success Metrics leftover locks across Quantum /
+  Blockchain / Edge / Orchestration specialists; consistency deepeners for
+  `prompt_expertise_required_phrases` / `prompt_principles_required_phrases` /
+  `prompt_metrics_required_phrases`
+  (Packaging inventory 139 total; historic four only — agent-prompts leftovers
+  slice, not implementation-guide v41, constitution v40, hydration, security,
+  contributing, goose recipes, execution-summary, changelog, or Dependabot)
+
 - Implementation guide **v41** deepeners (post-#96 constitution v40): `implementation-issues`,
   `implementation-faq`, `implementation-support` validators; IMPLEMENTATION-GUIDE.md
   Common Issues 1–5 / Qualtran / rollups / classical-fallback / scratchpad append-only

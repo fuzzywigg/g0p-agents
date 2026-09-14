@@ -38,7 +38,7 @@ Docs-only bootstrap lives in [`.cursor/environment.json`](.cursor/environment.js
 
 This archive has no runtime agent code. CI still enforces structural checks on
 documented packaging (Goose recipes, Cursor env, GitHub agent/issue frontmatter,
-Dependabot, markdownlint, scratchpad, pyproject tooling, inventory v41 locks
+Dependabot, markdownlint, scratchpad, pyproject tooling, inventory v42 locks
 (coverage gate 99%), PR/license/requirements/security/contributing/changelog/
 postmortem/gitignore/hydration/execution-summary/implementation-guide/claude/
 recipe-titles/ci-actions/issue-names/readme-badges/quarterly-review/link-check/
@@ -61,7 +61,8 @@ contributing-metadata/contributing-surfaces/contributing-ci-honesty/
 pr-summary/pr-acceptance/pr-notes/
 readme-honesty/readme-historic/readme-contents/
 goose-howto/goose-state-machine/goose-naming/goose-recipe-headers/goose-instruction-agents/goose-extensions/goose-orchestration/goose-conflicts/goose-quantum-task,
-prompt-roles/prompt-sections/prompt-usage,
+prompt-roles/prompt-sections/prompt-usage/
+prompt-expertise/prompt-principles/prompt-metrics,
 implementation-phases/implementation-tools/implementation-success/
 execution-timeline/execution-technologies/execution-workflow/execution-ide/execution-innovations/execution-next48, constitution
 and routing and negative-constraint surfaces,
