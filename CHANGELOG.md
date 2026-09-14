@@ -10,6 +10,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Contributing **v38** deepeners (post-#90; recovers closed #89 leftovers):
+  `contributing-metadata`, `contributing-surfaces`, `contributing-ci-honesty`
+  validators; CONTRIBUTING.md title/Status/Edit-policy locks, agent-surface
+  duty / branch-purpose leftovers, and PR CI-gate / packaging-inventory honesty
+  leftovers; consistency deepeners for `contributing_metadata_required_phrases` /
+  `contributing_surfaces_required_phrases` /
+  `contributing_ci_honesty_required_phrases` (Packaging inventory 127 total;
+  historic four only — contributing leftovers slice, not constitution v37,
+  goose recipes, execution-summary, security policy, agent prompts, Dependabot,
+  hydration, changelog, README honesty, PR-template, issue-template, scratchpad,
+  postmortem, archive snapshot, or routing/identity)
+
 - Constitution **v37** deepeners (post-#88): `constitution-on-device`,
   `constitution-multichain`, `constitution-escalation-format` validators;
   AGENTS-v2.2.md §22.2 On-Device Quantum Logic Execution locks, §22.3
