@@ -1,5 +1,5 @@
 {
-  "version": 35,
+  "version": 36,
   "documented_agents": [
     "QuantumArchitectAgent",
     "BlockchainArchitectAgent",
@@ -320,10 +320,13 @@
     "github-agents",
     "gitignore",
     "goose",
+    "goose-conflicts",
     "goose-extensions",
     "goose-howto",
     "goose-instruction-agents",
     "goose-naming",
+    "goose-orchestration",
+    "goose-quantum-task",
     "goose-recipe-headers",
     "goose-state-machine",
     "hydration",
@@ -390,7 +393,7 @@
     "yaml-configs"
   ],
   "min_coverage_fail_under": 99,
-  "min_validator_count": 118,
+  "min_validator_count": 121,
   "required_paths": [
     "README.md",
     "LICENSE",
@@ -1148,5 +1151,37 @@
     "### Day After (2025-12-15)",
     "Instantiate first agent (QuantumArchitectAgent)",
     "Create first Goose recipe (copy from templates)"
+  ],
+  "goose_orchestration_required_phrases": [
+    "## Master Orchestration Task: Quantum NFT Mint",
+    "STEP 1: Initialize task in scratchpad",
+    "STEP 2: Run QuantumArchitectAgent recipe",
+    "STEP 3: Run BlockchainArchitectAgent recipe",
+    "STEP 4: Run EdgeSecurityAgent recipe",
+    "STEP 5: Review all three outputs",
+    "STEP 6: Make final decision",
+    "STEP 7: Escalation format (if needed)",
+    "STEP 8: Log decision"
+  ],
+  "goose_conflicts_required_phrases": [
+    "Check for CONFLICTS:",
+    "Conflict Type 1: PERFORMANCE",
+    "Conflict Type 2: SECURITY",
+    "Conflict Type 3: TIMELINE",
+    "Decision: ✅ APPROVED FOR TESTNET DEPLOYMENT",
+    "Decision: ⚠️ APPROVED WITH MODIFICATIONS",
+    "Decision: 🚨 ESCALATE TO HUMAN",
+    "## Decision: Quantum NFT Mint Deployment"
+  ],
+  "goose_quantum_task_required_phrases": [
+    "## Quantum Algorithm Design Task",
+    "STEP 1: Read the requirement",
+    "PENDING_QUANTUM_DESIGN",
+    "STEP 2: Design the circuit",
+    "Use Google Cirq for circuit construction",
+    "STEP 3: Validate quantum-safety",
+    "STEP 4: Estimate constraints",
+    "STEP 5: Update scratchpad",
+    "Create Python file: ./quantum_circuits/[circuit_name].py"
   ]
 }

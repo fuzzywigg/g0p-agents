@@ -82,11 +82,14 @@
     "github_agent_files",
     "github_agent_name",
     "gitignore_required_patterns",
+    "goose_conflicts_required_phrases",
     "goose_docs_required_phrases",
     "goose_extensions_required_phrases",
     "goose_howto_required_phrases",
     "goose_instruction_agents_required_phrases",
     "goose_naming_required_phrases",
+    "goose_orchestration_required_phrases",
+    "goose_quantum_task_required_phrases",
     "goose_recipe_headers_required_phrases",
     "goose_state_machine_required_phrases",
     "historic_goose_settings",
@@ -1596,6 +1599,33 @@
       }
     },
     "execution_next48_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "goose_orchestration_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "goose_conflicts_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "goose_quantum_task_required_phrases": {
       "type": "array",
       "minItems": 1,
       "uniqueItems": true,
