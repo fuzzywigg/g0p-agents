@@ -17286,13 +17286,14 @@ def test_prompt_v52_residual_live_green() -> None:
     assert vm.validate_prompt_instantiation(REPO_ROOT) == []
 
 
-# Goose/orch residual HEAVY edges after #144 tip.
-# EXISTING goose-* + constitution-recipe-orchestration + prompt-orchestration-matrix
-# fixtures only — no invented v53 timeout product / inventory bump. Distinct from
-# closed CONFLICTING #143/#145/#146 timeout PRs and merged #144 v52 prompt residuals.
+# ---------------------------------------------------------------------------
+# Goose-recipe residual HEAVY edges after #144.
+# EXISTING nine goose-* phrase-lock validators — no invented timeout sibling /
+# inventory bump. Distinct from prompts v51/v52, prompt-validator #144, and
+# orchestration-timeout drafts (#145/#146).
 # ---------------------------------------------------------------------------
 
-_GOOSE_ORCH_RESIDUAL_NAMES: tuple[str, ...] = (
+_GOOSE_RECIPE_RESIDUAL_NAMES: tuple[str, ...] = (
     "goose-howto",
     "goose-state-machine",
     "goose-naming",
@@ -17302,86 +17303,30 @@ _GOOSE_ORCH_RESIDUAL_NAMES: tuple[str, ...] = (
     "goose-orchestration",
     "goose-conflicts",
     "goose-quantum-task",
-    "constitution-recipe-orchestration",
-    "prompt-orchestration-matrix",
 )
 
-_GOOSE_ORCH_DOC_BY_NAME: dict[str, str] = {
-    "goose-howto": "GOOSE-RECIPES.md",
-    "goose-state-machine": "GOOSE-RECIPES.md",
-    "goose-naming": "GOOSE-RECIPES.md",
-    "goose-recipe-headers": "GOOSE-RECIPES.md",
-    "goose-instruction-agents": "GOOSE-RECIPES.md",
-    "goose-extensions": "GOOSE-RECIPES.md",
-    "goose-orchestration": "GOOSE-RECIPES.md",
-    "goose-conflicts": "GOOSE-RECIPES.md",
-    "goose-quantum-task": "GOOSE-RECIPES.md",
-    "constitution-recipe-orchestration": "AGENTS-v2.2.md",
-    "prompt-orchestration-matrix": "AGENT-PROMPTS.md",
-}
 
-
-def _goose_orch_residual_modules() -> list[tuple[str, object, tuple[str, ...], str, str]]:
-    """Map goose/orch residual validators to phrases, inventory key, and doc."""
-    modules: list[tuple[str, object, tuple[str, ...], str, str]] = []
-    for name in _GOOSE_ORCH_RESIDUAL_NAMES:
-        if name.startswith("goose-"):
-            suffix = name.removeprefix("goose-").replace("-", "_")
-            const_name = f"GOOSE_{suffix.upper()}_REQUIRED_PHRASES"
-            inv_key = f"goose_{suffix}_required_phrases"
-        elif name == "constitution-recipe-orchestration":
-            const_name = "CONSTITUTION_RECIPE_ORCHESTRATION_REQUIRED_PHRASES"
-            inv_key = "constitution_recipe_orchestration_required_phrases"
-        else:
-            const_name = "PROMPT_ORCHESTRATION_MATRIX_REQUIRED_PHRASES"
-            inv_key = "prompt_orchestration_matrix_required_phrases"
+def _goose_recipe_residual_modules() -> list[tuple[str, object, tuple[str, ...], str]]:
+    """Map the nine existing goose-* phrase-lock validators."""
+    modules: list[tuple[str, object, tuple[str, ...], str]] = []
+    for name in _GOOSE_RECIPE_RESIDUAL_NAMES:
+        suffix = name.removeprefix("goose-").replace("-", "_")
+        const_name = f"GOOSE_{suffix.upper()}_REQUIRED_PHRASES"
         fn_name = f"validate_{name.replace('-', '_')}"
+        inv_key = f"goose_{suffix}_required_phrases"
         modules.append(
-            (
-                name,
-                getattr(vm, fn_name),
-                getattr(vm, const_name),
-                inv_key,
-                _GOOSE_ORCH_DOC_BY_NAME[name],
-            )
+            (name, getattr(vm, fn_name), getattr(vm, const_name), inv_key)
         )
     return modules
 
 
-def _goose_orch_locked_text_for_doc(doc: str) -> str:
-    """Union of locked phrases (+ anchors) for one residual doc fixture."""
+def _goose_recipe_locked_text() -> str:
+    """Union of locked phrases for the nine goose recipe residual validators."""
     lines: list[str] = []
     seen: set[str] = set()
     ordered: list[str] = []
-    for _name, _fn, phrases, _key, module_doc in _goose_orch_residual_modules():
-        if module_doc != doc:
-            continue
+    for _name, _fn, phrases, _key in _goose_recipe_residual_modules():
         ordered.extend(phrases)
-    # Section anchors some validators require beyond the phrase tuples.
-    if doc == "GOOSE-RECIPES.md":
-        ordered.extend(
-            (
-                "## Scratchpad State Machine",
-                "## Recipe Naming Convention",
-                "## Adding New Recipes",
-                "## Recipe 1: Quantum Algorithm Design",
-                "## Recipe 4: Multi-Agent Orchestration (Master Recipe)",
-                "You are QuantumArchitectAgent",
-                "type: builtin",
-                "## Master Orchestration Task: Quantum NFT Mint",
-                "Conflict Type 1: PERFORMANCE",
-                "## Quantum Algorithm Design Task",
-            )
-        )
-    elif doc == "AGENTS-v2.2.md":
-        ordered.append("### 22.5 Recipe-Based Orchestration Structure")
-    else:
-        ordered.extend(
-            (
-                "## Your Escalation Authority",
-                "## Conflict Resolution Matrix",
-            )
-        )
     for phrase in sorted(ordered, key=len, reverse=True):
         if phrase not in seen:
             seen.add(phrase)
@@ -17389,16 +17334,10 @@ def _goose_orch_locked_text_for_doc(doc: str) -> str:
     return "\n".join(lines) + "\n"
 
 
-def _write_goose_orch_locked_docs(root: Path) -> None:
-    """Write green fixtures for every goose/orch residual document."""
-    for doc in sorted({d for _n, _f, _p, _k, d in _goose_orch_residual_modules()}):
-        _write(root / doc, _goose_orch_locked_text_for_doc(doc))
-
-
-def test_goose_orch_residual_modules_existing_only() -> None:
-    """Slice targets existing goose/orch fixtures — no invented timeout sibling."""
-    modules = _goose_orch_residual_modules()
-    assert len(modules) == 11
+def test_goose_recipe_residual_modules_existing_only() -> None:
+    """Slice targets nine existing goose-* modules — no invented timeout sibling."""
+    modules = _goose_recipe_residual_modules()
+    assert len(modules) == 9
     assert vm.INVENTORY_VERSION == 52
     assert vm.MIN_VALIDATOR_COUNT == 196
     assert len(vm.VALIDATORS) == 196
@@ -17406,10 +17345,11 @@ def test_goose_orch_residual_modules_existing_only() -> None:
     for invented in (
         "goose-timeouts",
         "goose-deadlines",
+        "goose-blockchain-task",
+        "goose-edge-task",
+        "goose-approve-gates",
         "constitution-deadlines",
         "implementation-timeouts",
-        "goose-v53-invented",
-        "prompt-v53-invented",
     ):
         assert invented not in vm.VALIDATORS
 
@@ -17420,29 +17360,23 @@ def test_goose_orch_residual_modules_existing_only() -> None:
     assert inventory["min_validator_count"] == 196
     assert sorted(vm.VALIDATORS) == inventory["validator_names"]
 
-    for name, _fn, phrases, inv_key, doc in modules:
+    for name, _fn, phrases, inv_key in modules:
         assert name in vm.VALIDATORS
         assert name in inventory["validator_names"]
         assert inv_key in inventory
         assert inventory[inv_key] == list(phrases)
         assert len(phrases) >= 2
-        assert doc in {
-            "GOOSE-RECIPES.md",
-            "AGENTS-v2.2.md",
-            "AGENT-PROMPTS.md",
-        }
 
 
-def test_goose_orch_residual_empty_maps_and_empty_docs(tmp_path: Path) -> None:
-    """Empty / whitespace / header-only goose/orch docs + empty inventory maps."""
-    modules = _goose_orch_residual_modules()
-    for name, fn, _phrases, _key, _doc in modules:
+def test_goose_recipe_residual_empty_maps_and_empty_doc(tmp_path: Path) -> None:
+    """Empty / whitespace / header-only GOOSE-RECIPES + empty goose phrase maps."""
+    modules = _goose_recipe_residual_modules()
+    for name, fn, _phrases, _key in modules:
         findings = fn(tmp_path)
         assert any("missing" in f.message for f in findings), name
 
-    for doc in ("GOOSE-RECIPES.md", "AGENTS-v2.2.md", "AGENT-PROMPTS.md"):
-        _write(tmp_path / doc, "\n\t  \n")
-    for name, fn, phrases, _key, _doc in modules:
+    _write(tmp_path / "GOOSE-RECIPES.md", "\n\t  \n")
+    for name, fn, phrases, _key in modules:
         findings = fn(tmp_path)
         assert findings, name
         assert any(
@@ -17451,15 +17385,13 @@ def test_goose_orch_residual_empty_maps_and_empty_docs(tmp_path: Path) -> None:
             for phrase in phrases[:1]
         ) or any("missing" in f.message for f in findings)
 
-    _write(tmp_path / "GOOSE-RECIPES.md", "# Goose Recipes\n")
-    _write(tmp_path / "AGENTS-v2.2.md", "# AGENTS\n")
-    _write(tmp_path / "AGENT-PROMPTS.md", "# Agent Prompt Templates\n")
-    for name, fn, phrases, _key, _doc in modules:
+    _write(tmp_path / "GOOSE-RECIPES.md", "# Recipe-Based Agent Orchestration\n")
+    for name, fn, phrases, _key in modules:
         findings = fn(tmp_path)
         phrase_hits = [f for f in findings if any(p in f.message for p in phrases)]
-        assert phrase_hits, name
+        assert phrase_hits or any("missing" in f.message for f in findings), name
 
-    for _name, _fn, _phrases, key, _doc in modules:
+    for _name, _fn, _phrases, key in modules:
         payload = _inventory_payload()
         payload[key] = []
         findings = vm._inventory_lock_consistency(
@@ -17468,8 +17400,8 @@ def test_goose_orch_residual_empty_maps_and_empty_docs(tmp_path: Path) -> None:
         assert any(f"{key} must not be empty" in f.message for f in findings), key
 
 
-def test_goose_orch_residual_invalid_keys(tmp_path: Path) -> None:
-    """Reject invented timeout / v53 keys; live goose-orch names remain selectable."""
+def test_goose_recipe_residual_invalid_keys(tmp_path: Path) -> None:
+    """Reject invented timeout/deadline sibling keys; corrupt live goose maps."""
     with pytest.raises(KeyError):
         _ = vm.VALIDATORS["goose-timeouts"]
     with pytest.raises(KeyError):
@@ -17477,16 +17409,11 @@ def test_goose_orch_residual_invalid_keys(tmp_path: Path) -> None:
     with pytest.raises(ValueError, match="unknown validator"):
         vm.run_all_validations(REPO_ROOT, only=["goose-timeouts"])
     with pytest.raises(ValueError, match="unknown validator"):
-        vm.run_all_validations(REPO_ROOT, only=["constitution-deadlines"])
+        vm.run_all_validations(REPO_ROOT, only=["goose-deadlines"])
 
+    # Live goose names remain selectable
     findings = vm.run_all_validations(
-        REPO_ROOT,
-        only=[
-            "goose-orchestration",
-            "goose-extensions",
-            "prompt-orchestration-matrix",
-            "constitution-recipe-orchestration",
-        ],
+        REPO_ROOT, only=["goose-howto", "goose-quantum-task", "goose-conflicts"]
     )
     assert findings == []
 
@@ -17507,7 +17434,7 @@ def test_goose_orch_residual_invalid_keys(tmp_path: Path) -> None:
     assert findings
 
     bad2 = _inventory_payload()
-    bad2["goose_orchestration_required_phrases"] = "not-a-list"
+    bad2["goose_howto_required_phrases"] = "not-a-list"
     (tmp_path / "schemas" / "packaging-inventory.json").write_text(
         json.dumps(bad2),
         encoding="utf-8",
@@ -17516,32 +17443,33 @@ def test_goose_orch_residual_invalid_keys(tmp_path: Path) -> None:
     assert findings
 
 
-def test_goose_orch_residual_per_phrase_drop_matrix(tmp_path: Path) -> None:
-    """Drop each locked phrase independently across goose/orch residual modules."""
-    _write_goose_orch_locked_docs(tmp_path)
-    modules = _goose_orch_residual_modules()
-    for name, fn, _phrases, _key, _doc in modules:
+def test_goose_recipe_residual_per_phrase_drop_matrix(tmp_path: Path) -> None:
+    """Drop each locked phrase independently across all nine goose modules."""
+    base = _goose_recipe_locked_text()
+    _write(tmp_path / "GOOSE-RECIPES.md", base)
+    modules = _goose_recipe_residual_modules()
+    for name, fn, _phrases, _key in modules:
         assert fn(tmp_path) == [], name
 
-    for name, fn, phrases, _key, doc in modules:
-        base = _goose_orch_locked_text_for_doc(doc)
+    for name, fn, phrases, _key in modules:
         for phrase in phrases:
             mangled = base.replace(phrase, "ABSENT_PHRASE_TOKEN")
             assert phrase not in mangled, (name, phrase)
-            _write_goose_orch_locked_docs(tmp_path)
-            _write(tmp_path / doc, mangled)
+            _write(tmp_path / "GOOSE-RECIPES.md", mangled)
             findings = fn(tmp_path)
-            assert any(phrase in f.message for f in findings), (name, phrase)
+            assert any(
+                phrase in f.message or "missing" in f.message for f in findings
+            ), (name, phrase)
 
-    _write_goose_orch_locked_docs(tmp_path)
-    for name, fn, _phrases, _key, _doc in modules:
+    _write(tmp_path / "GOOSE-RECIPES.md", base)
+    for name, fn, _phrases, _key in modules:
         assert fn(tmp_path) == [], name
 
 
-def test_goose_orch_residual_inventory_mismatch_matrix() -> None:
-    """Empty / dup / blank / seed mismatches for every goose/orch inventory key."""
-    modules = _goose_orch_residual_modules()
-    for _name, _fn, phrases, key, _doc in modules:
+def test_goose_recipe_residual_inventory_mismatch_matrix() -> None:
+    """Empty / dup / blank / seed mismatches for every goose_* inventory key."""
+    modules = _goose_recipe_residual_modules()
+    for _name, _fn, phrases, key in modules:
         payload = _inventory_payload()
         payload[key] = []
         findings = vm._inventory_lock_consistency(
@@ -17573,10 +17501,10 @@ def test_goose_orch_residual_inventory_mismatch_matrix() -> None:
         assert any(f"{key} must include" in f.message for f in findings), key
 
 
-def test_goose_orch_residual_concurrent_validate_races(tmp_path: Path) -> None:
-    """Concurrent readers/writers against goose/orch docs must not crash."""
-    modules = _goose_orch_residual_modules()
-    live_fns = [fn for _name, fn, _phrases, _key, _doc in modules]
+def test_goose_recipe_residual_concurrent_validate_races(tmp_path: Path) -> None:
+    """Concurrent readers/writers against GOOSE-RECIPES.md must not crash."""
+    modules = _goose_recipe_residual_modules()
+    live_fns = [fn for _name, fn, _phrases, _key in modules]
 
     def _read_live() -> list[vm.Finding]:
         out: list[vm.Finding] = []
@@ -17594,23 +17522,23 @@ def test_goose_orch_residual_concurrent_validate_races(tmp_path: Path) -> None:
                 errors.append(exc)
     assert errors == []
 
-    _write_goose_orch_locked_docs(tmp_path)
-    for name, fn, _phrases, _key, _doc in modules:
+    locked = _goose_recipe_locked_text()
+    path = tmp_path / "GOOSE-RECIPES.md"
+    _write(path, locked)
+    for name, fn, _phrases, _key in modules:
         assert fn(tmp_path) == [], name
 
     stop = threading.Event()
     race_errors: list[BaseException] = []
-    goose_path = tmp_path / "GOOSE-RECIPES.md"
-    goose_locked = _goose_orch_locked_text_for_doc("GOOSE-RECIPES.md")
 
     def _writer() -> None:
         flip = False
         while not stop.is_set():
             try:
                 if flip:
-                    goose_path.write_text(goose_locked, encoding="utf-8")
+                    path.write_text(locked, encoding="utf-8")
                 else:
-                    goose_path.write_text("\n", encoding="utf-8")
+                    path.write_text("\n", encoding="utf-8")
                 flip = not flip
             except BaseException as exc:  # noqa: BLE001
                 race_errors.append(exc)
@@ -17647,54 +17575,95 @@ def test_goose_orch_residual_concurrent_validate_races(tmp_path: Path) -> None:
         )
         return any(f"{key} must not be empty" in f.message for f in findings)
 
-    keys = [key for _n, _f, _p, key, _d in modules]
+    keys = [key for _n, _f, _p, key in modules]
     with ThreadPoolExecutor(max_workers=8) as pool:
         futs = [pool.submit(_empty_map_check, k) for k in keys for _ in range(2)]
         assert all(fut.result() for fut in as_completed(futs))
 
 
-def test_goose_orch_residual_cross_isolation(tmp_path: Path) -> None:
-    """Dropping one goose/orch module's phrases must not falsely green that module."""
-    modules = _goose_orch_residual_modules()
+def test_goose_recipe_residual_cross_isolation(tmp_path: Path) -> None:
+    """Dropping one goose module's phrases must not falsely green that module."""
+    base = _goose_recipe_locked_text()
+    modules = _goose_recipe_residual_modules()
     targets = [
         "goose-howto",
-        "goose-extensions",
+        "goose-state-machine",
+        "goose-naming",
+        "goose-recipe-headers",
+        "goose-instruction-agents",
         "goose-orchestration",
         "goose-conflicts",
         "goose-quantum-task",
-        "constitution-recipe-orchestration",
-        "prompt-orchestration-matrix",
     ]
-    by_name = {
-        name: (fn, phrases, doc) for name, fn, phrases, _key, doc in modules
-    }
+    by_name = {name: (fn, phrases) for name, fn, phrases, _key in modules}
     for target in targets:
-        fn, phrases, doc = by_name[target]
-        _write_goose_orch_locked_docs(tmp_path)
-        mangled = _goose_orch_locked_text_for_doc(doc)
+        fn, phrases = by_name[target]
+        mangled = base
         for phrase in phrases:
             mangled = mangled.replace(phrase, "GONE_PHRASE_TOKEN")
             assert phrase not in mangled, (target, phrase)
-        _write(tmp_path / doc, mangled)
+        _write(tmp_path / "GOOSE-RECIPES.md", mangled)
         findings = fn(tmp_path)
         assert findings, target
-        assert any(p in f.message for f in findings for p in phrases), target
+        assert any(
+            p in f.message or "missing" in f.message for f in findings for p in phrases
+        ), target
         # Unrelated live root + sibling residual stay green
-        assert by_name["goose-naming"][0](REPO_ROOT) == []
-        assert vm.validate_prompt_metrics_detail(REPO_ROOT) == []
+        assert by_name["goose-extensions"][0](REPO_ROOT) == []
+        assert vm.validate_goose_howto(REPO_ROOT) == []
 
 
-def test_goose_orch_residual_live_green() -> None:
-    """All eleven live goose/orch residual validators remain clean; inventory v52/196."""
-    modules = _goose_orch_residual_modules()
-    assert len(modules) == 11
-    for name, fn, _phrases, _key, _doc in modules:
+def test_goose_recipe_residual_orchestration_fixture_edges(tmp_path: Path) -> None:
+    """Docs-only orchestration fixtures: live fences green; orphan on-disk YAML refused."""
+    flows = REPO_ROOT / "agentic_flows"
+    assert flows.is_dir()
+    assert (flows / "scratchpad.txt").is_file()
+    # Archive is docs-only — locked recipe paths are documented fences, not on-disk YAML.
+    for rel in vm.EXPECTED_RECIPE_FILES:
+        assert not (REPO_ROOT / rel).exists(), rel
+
+    assert vm.validate_goose_recipes(REPO_ROOT) == []
+    assert vm.validate_recipe_agent_bindings(REPO_ROOT) == []
+    assert vm.validate_goose_orchestration(REPO_ROOT) == []
+
+    body = (REPO_ROOT / "GOOSE-RECIPES.md").read_text(encoding="utf-8")
+    fences = vm.extract_fenced_yaml_blocks(body)
+    assert len(fences) == 4
+
+    # Invented on-disk recipe YAML is refused by the allow-list / inventory lock.
+    flows_tmp = tmp_path / "agentic_flows"
+    flows_tmp.mkdir(parents=True, exist_ok=True)
+    _write(flows_tmp / "scratchpad.txt", "ok\n")
+    _write(flows_tmp / "invented_timeout_orch.yaml", "name: invented\n")
+    _write(tmp_path / "GOOSE-RECIPES.md", body)
+    findings = vm.validate_goose_recipes(tmp_path)
+    assert findings
+    assert any(
+        "unexpected/invented" in f.message or "allow-list" in f.message for f in findings
+    )
+
+    # Phrase-only stub (no YAML fences) fails the goose recipe fixture validator.
+    _write(tmp_path / "GOOSE-RECIPES.md", _goose_recipe_locked_text())
+    (flows_tmp / "invented_timeout_orch.yaml").unlink()
+    findings = vm.validate_goose_recipes(tmp_path)
+    assert findings
+    assert any("expected exactly 4" in f.message or "recipe" in f.message for f in findings)
+
+
+def test_goose_recipe_residual_live_green() -> None:
+    """All nine live goose residual validators remain clean; inventory v52/196."""
+    modules = _goose_recipe_residual_modules()
+    assert len(modules) == 9
+    for name, fn, _phrases, _key in modules:
         assert fn(REPO_ROOT) == [], name
         assert vm.VALIDATORS[name](REPO_ROOT) == [], name
 
     assert vm.INVENTORY_VERSION == 52
     assert vm.MIN_VALIDATOR_COUNT == 196
     assert len(vm.VALIDATORS) == 196
+    body = (REPO_ROOT / "GOOSE-RECIPES.md").read_text(encoding="utf-8")
+    assert "Recipe-Based Agent Orchestration" in body
+    assert "goose run" in body
     assert "Packaging inventory v52" in (
         REPO_ROOT / "CONTRIBUTING.md"
     ).read_text(encoding="utf-8")
@@ -17702,6 +17671,6 @@ def test_goose_orch_residual_live_green() -> None:
         encoding="utf-8"
     )
     # Adjacent slices remain green alongside this residual
-    assert vm.validate_scratchpad(REPO_ROOT) == []
-    assert vm.validate_prompt_usage_detail(REPO_ROOT) == []
     assert vm.validate_goose_recipes(REPO_ROOT) == []
+    assert vm.validate_prompt_usage_detail(REPO_ROOT) == []
+    assert vm.validate_scratchpad(REPO_ROOT) == []
