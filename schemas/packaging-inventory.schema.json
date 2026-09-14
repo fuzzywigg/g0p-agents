@@ -171,15 +171,18 @@
     "prompt_context_required_phrases",
     "prompt_decision_authority_required_phrases",
     "prompt_escalation_authority_required_phrases",
+    "prompt_escalation_format_required_phrases",
     "prompt_escalation_identity_required_phrases",
     "prompt_expertise_required_phrases",
     "prompt_human_escalation_required_phrases",
+    "prompt_living_docs_required_phrases",
     "prompt_metrics_required_phrases",
     "prompt_monthly_required_phrases",
     "prompt_orchestration_matrix_required_phrases",
     "prompt_principles_required_phrases",
     "prompt_related_docs_required_phrases",
     "prompt_responsibilities_required_phrases",
+    "prompt_role_blurbs_required_phrases",
     "prompt_roles_required_phrases",
     "prompt_sections_required_phrases",
     "prompt_system_header_suffix",
@@ -2136,6 +2139,33 @@
       }
     },
     "prompt_human_escalation_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "prompt_role_blurbs_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "prompt_escalation_format_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "prompt_living_docs_required_phrases": {
       "type": "array",
       "minItems": 1,
       "uniqueItems": true,

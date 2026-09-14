@@ -1,5 +1,5 @@
 {
-  "version": 50,
+  "version": 51,
   "documented_agents": [
     "QuantumArchitectAgent",
     "BlockchainArchitectAgent",
@@ -392,15 +392,18 @@
     "prompt-context",
     "prompt-decision-authority",
     "prompt-escalation-authority",
+    "prompt-escalation-format",
     "prompt-escalation-identity",
     "prompt-expertise",
     "prompt-human-escalation",
+    "prompt-living-docs",
     "prompt-metrics",
     "prompt-monthly",
     "prompt-orchestration-matrix",
     "prompt-principles",
     "prompt-related-docs",
     "prompt-responsibilities",
+    "prompt-role-blurbs",
     "prompt-roles",
     "prompt-sections",
     "prompt-tools",
@@ -444,7 +447,7 @@
     "yaml-configs"
   ],
   "min_coverage_fail_under": 99,
-  "min_validator_count": 172,
+  "min_validator_count": 175,
   "required_paths": [
     "README.md",
     "LICENSE",
@@ -1284,7 +1287,7 @@
     "markdown lint, link check, actionlint",
     "manifest validate on Python 3.11/3.12/3.13",
     "Andrew or designated reviewer",
-    "Packaging inventory v50",
+    "Packaging inventory v51",
     "refuse invented recipes",
     "orphan on-disk YAML",
     "unknown `*Agent` tokens",
@@ -1714,5 +1717,35 @@
     "Risk Assessment: [What could go wrong with each option?]",
     "Human approval required before proceeding.",
     "Remember: You are not smarter than the three specialists. Your job is to listen, understand, mediate, and make calls when consensus is impossible."
+  ],
+  "prompt_role_blurbs_required_phrases": [
+    "You design quantum algorithms, optimize quantum circuits, and ensure quantum-safe cryptographic properties for all FUZZYWIGG operations.",
+    "You design multi-chain smart contract architecture, implement quantum-resistant consensus logic, and manage cross-chain state synchronization.",
+    "You implement quantum-safe cryptography on mobile devices, design \"walled garden\" data isolation, and optimize for device constraints.",
+    "You orchestrate the three specialist agents (Quantum, Blockchain, On-Device), resolve conflicts, make final architectural decisions, and keep the team aligned on vision.",
+    "# QuantumArchitectAgent System Prompt",
+    "# BlockchainArchitectAgent System Prompt",
+    "# EdgeSecurityAgent System Prompt",
+    "# OrchestrationAgent System Prompt"
+  ],
+  "prompt_escalation_format_required_phrases": [
+    "## When You Escalate",
+    "Use this format:",
+    "Conflict: [What constraint am I hitting?]",
+    "Recommendation: [How should we resolve this?]",
+    "Timeline: [How long until decision needed?]",
+    "Alternative Path: [If primary path is blocked]"
+  ],
+  "prompt_living_docs_required_phrases": [
+    "# Agent Prompt Templates",
+    "## FUZZYWIGG-AI Quantum-Blockchain System",
+    "Use these prompts when instantiating each specialist agent. Customize with project-specific context.",
+    "These prompts are **living documents**. Update them whenever:",
+    "AGENTS.md constraints change",
+    "A new escalation pattern emerges",
+    "New tools become available",
+    "Paste into the LLM's system prompt",
+    "AGENTS.md (the constitution)",
+    "Task.md (current sprint)"
   ]
 }
