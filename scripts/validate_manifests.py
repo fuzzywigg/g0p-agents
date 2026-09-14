@@ -27,6 +27,8 @@ Checks structural correctness of:
 - LICENSE MIT + copyright holder; README packaging / honesty phrases
 - CHANGELOG / postmortem / .gitignore / CLAUDE negative-constraint locks
 - CHANGELOG.md Keep a Changelog format / Unreleased / 0.1.0 release locks
+- CHANGELOG.md preamble / Changed-section / 0.1.0 initial-archive leftover locks
+- AGENT-PROMPTS.md expertise / decision / escalation-identity leftover locks
 - GOOSE-RECIPES.md recipe headers / instruction-agent / extension locks
 - GOOSE-RECIPES.md master orchestration / conflicts / quantum-task locks
 - AGENT-PROMPTS.md constraints / escalation-triggers / related-docs locks
@@ -175,7 +177,7 @@ REQUIRED_ARCHIVE_DOCS = (
     "README.md",
 )
 
-INVENTORY_VERSION = 42
+INVENTORY_VERSION = 43
 CURSOR_ENVIRONMENT_NAME = "g0p-agents"
 DEPENDABOT_SCHEDULE_INTERVAL = "weekly"
 DEPENDABOT_DIRECTORIES: frozenset[str] = frozenset({"/"})
@@ -396,6 +398,59 @@ CHANGELOG_RELEASE_REQUIRED_PHRASES: tuple[str, ...] = (
     "`AGENTS-v2.2.md` — agent constitution",
     "`AGENT-PROMPTS.md` — specialist agent system prompts (4 agents)",
     "`GOOSE-RECIPES.md` — Goose YAML recipe templates",
+)
+
+CHANGELOG_PREAMBLE_REQUIRED_PHRASES: tuple[str, ...] = (
+    "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).",
+    "https://keepachangelog.com/en/1.0.0/",
+    "---",
+)
+CHANGELOG_CHANGED_REQUIRED_PHRASES: tuple[str, ...] = (
+    "### Changed",
+    "Inventory schema minimum version is **7**",
+    "CI validator-count gate raised to ≥34",
+    "coverage gate **99%**",
+    "Dependabot now tracks pip (`requirements-dev.txt`)",
+    "CI `pull_request` trigger targets `alpha`",
+    "`CONTRIBUTING.md` branch strategy aligned with live default branch `alpha`",
+)
+CHANGELOG_INITIAL_REQUIRED_PHRASES: tuple[str, ...] = (
+    "## [0.1.0] — 2025-12-13",
+    "`README.md` — public archive description",
+    "`IMPLEMENTATION-GUIDE.md` — step-by-step setup guide",
+    "`EXECUTION-SUMMARY.md` — implementation summary",
+)
+PROMPT_EXPERTISE_REQUIRED_PHRASES: tuple[str, ...] = (
+    "## Your Expertise",
+    "Quantum mechanics (gates, superposition, entanglement)",
+    "Google Cirq (circuit construction, simulation)",
+    "Distributed ledger architecture",
+    "Hardhat (local blockchain, contract testing)",
+    "Android/iOS development (Kotlin, Swift)",
+    "liboqs (post-quantum crypto on device)",
+)
+PROMPT_DECISION_REQUIRED_PHRASES: tuple[str, ...] = (
+    "## Decision Making Principles",
+    "## Current Project Context",
+    "Prioritize quantum-safety over performance",
+    "Balance security with usability",
+    "Prioritize user security and privacy",
+    "Circuit depth < 50 gates (if possible)",
+    "0 critical vulnerabilities (Slither pass)",
+)
+PROMPT_ESCALATION_IDENTITY_REQUIRED_PHRASES: tuple[str, ...] = (
+    "🚨 ESCALATION REQUIRED",
+    "From Agent: QuantumArchitectAgent",
+    "From Agent: BlockchainArchitectAgent",
+    "From Agent: EdgeSecurityAgent",
+    "Remember: You are not working alone. BlockchainArchitectAgent and "
+    "EdgeSecurityAgent depend on your output.",
+    "Remember: You bridge QuantumArchitectAgent (algorithms) and "
+    "EdgeSecurityAgent (mobile implementation). Your architecture must "
+    "satisfy both.",
+    "Remember: You are the last line of defense before user devices. Your "
+    "implementation determines whether the entire system is actually secure "
+    "or just theoretically secure.",
 )
 CONSTITUTION_CRYPTO_REQUIRED_PHRASES: tuple[str, ...] = (
     "### 22.1 Quantum-Safe Cryptography Requirements",
@@ -705,7 +760,7 @@ CONTRIBUTING_CI_HONESTY_REQUIRED_PHRASES: tuple[str, ...] = (
     "markdown lint, link check, actionlint",
     "manifest validate on Python 3.11/3.12/3.13",
     "Andrew or designated reviewer",
-    "Packaging inventory v42",
+    "Packaging inventory v43",
     "refuse invented recipes",
     "orphan on-disk YAML",
     "unknown `*Agent` tokens",
@@ -1357,7 +1412,7 @@ SCRATCHPAD_STATUS_MARKERS: tuple[str, ...] = (
 SPECIALIST_AGENTS: tuple[str, ...] = DOCUMENTED_AGENTS[:-1]
 
 MIN_COVERAGE_FAIL_UNDER = 99
-MIN_VALIDATOR_COUNT = 141
+MIN_VALIDATOR_COUNT = 147
 
 
 @dataclass(frozen=True)
@@ -2185,6 +2240,54 @@ def validate_packaging_inventory(root: Path) -> list[Finding]:
     ):
         findings.append(
             _lock_mismatch(schema_path, "changelog_release_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("changelog_preamble_required_phrases", ()))
+        != CHANGELOG_PREAMBLE_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "changelog_preamble_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("changelog_changed_required_phrases", ()))
+        != CHANGELOG_CHANGED_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "changelog_changed_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("changelog_initial_required_phrases", ()))
+        != CHANGELOG_INITIAL_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "changelog_initial_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("prompt_expertise_required_phrases", ()))
+        != PROMPT_EXPERTISE_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "prompt_expertise_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("prompt_decision_required_phrases", ()))
+        != PROMPT_DECISION_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "prompt_decision_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("prompt_escalation_identity_required_phrases", ()))
+        != PROMPT_ESCALATION_IDENTITY_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "prompt_escalation_identity_required_phrases")
         )
 
 
@@ -5226,7 +5329,7 @@ def _inventory_lock_consistency(
     else:
         required_ci_honesty = {
             "markdown lint, link check, actionlint",
-            "Packaging inventory v42",
+            "Packaging inventory v43",
             "refuse invented recipes",
         }
         if ci_honesty and not required_ci_honesty <= set(ci_honesty):
@@ -5234,7 +5337,7 @@ def _inventory_lock_consistency(
                 Finding(
                     schema_path,
                     "contributing_ci_honesty_required_phrases must include "
-                    "CI checks/Packaging inventory v42/refuse invented recipes",
+                    "CI checks/Packaging inventory v43/refuse invented recipes",
                 )
             )
 
@@ -5938,6 +6041,214 @@ def _inventory_lock_consistency(
                 )
             )
 
+    changelog_preamble = list(inventory.get("changelog_preamble_required_phrases", ()))
+    if len(changelog_preamble) != len(set(changelog_preamble)):
+        findings.append(
+            Finding(schema_path, "changelog_preamble_required_phrases must be unique")
+        )
+    if not changelog_preamble:
+        findings.append(
+            Finding(schema_path, "changelog_preamble_required_phrases must not be empty")
+        )
+    for phrase in changelog_preamble:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "changelog_preamble_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_changelog_preamble = {
+            'The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).',
+            'https://keepachangelog.com/en/1.0.0/',
+            '---',
+        }
+        if changelog_preamble and not required_changelog_preamble <= set(changelog_preamble):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "changelog_preamble_required_phrases must include Keep a Changelog "
+                    "URL/separator",
+                )
+            )
+
+    changelog_changed = list(inventory.get("changelog_changed_required_phrases", ()))
+    if len(changelog_changed) != len(set(changelog_changed)):
+        findings.append(
+            Finding(schema_path, "changelog_changed_required_phrases must be unique")
+        )
+    if not changelog_changed:
+        findings.append(
+            Finding(schema_path, "changelog_changed_required_phrases must not be empty")
+        )
+    for phrase in changelog_changed:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "changelog_changed_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_changelog_changed = {
+            '### Changed',
+            'Inventory schema minimum version is **7**',
+            '`CONTRIBUTING.md` branch strategy aligned with live default branch `alpha`',
+        }
+        if changelog_changed and not required_changelog_changed <= set(changelog_changed):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "changelog_changed_required_phrases must include Changed/"
+                    "inventory v7/CONTRIBUTING alpha",
+                )
+            )
+
+    changelog_initial = list(inventory.get("changelog_initial_required_phrases", ()))
+    if len(changelog_initial) != len(set(changelog_initial)):
+        findings.append(
+            Finding(schema_path, "changelog_initial_required_phrases must be unique")
+        )
+    if not changelog_initial:
+        findings.append(
+            Finding(schema_path, "changelog_initial_required_phrases must not be empty")
+        )
+    for phrase in changelog_initial:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "changelog_initial_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_changelog_initial = {
+            '## [0.1.0] — 2025-12-13',
+            '`README.md` — public archive description',
+            '`IMPLEMENTATION-GUIDE.md` — step-by-step setup guide',
+            '`EXECUTION-SUMMARY.md` — implementation summary',
+        }
+        if changelog_initial and not required_changelog_initial <= set(changelog_initial):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "changelog_initial_required_phrases must include README/"
+                    "IMPLEMENTATION-GUIDE/EXECUTION-SUMMARY",
+                )
+            )
+
+    prompt_expertise = list(inventory.get("prompt_expertise_required_phrases", ()))
+    if len(prompt_expertise) != len(set(prompt_expertise)):
+        findings.append(
+            Finding(schema_path, "prompt_expertise_required_phrases must be unique")
+        )
+    if not prompt_expertise:
+        findings.append(
+            Finding(schema_path, "prompt_expertise_required_phrases must not be empty")
+        )
+    for phrase in prompt_expertise:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_expertise_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_prompt_expertise = {
+            '## Your Expertise',
+            'Quantum mechanics (gates, superposition, entanglement)',
+            'liboqs (post-quantum crypto on device)',
+        }
+        if prompt_expertise and not required_prompt_expertise <= set(prompt_expertise):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_expertise_required_phrases must include Expertise/"
+                    "Quantum mechanics/liboqs",
+                )
+            )
+
+    prompt_decision = list(inventory.get("prompt_decision_required_phrases", ()))
+    if len(prompt_decision) != len(set(prompt_decision)):
+        findings.append(
+            Finding(schema_path, "prompt_decision_required_phrases must be unique")
+        )
+    if not prompt_decision:
+        findings.append(
+            Finding(schema_path, "prompt_decision_required_phrases must not be empty")
+        )
+    for phrase in prompt_decision:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_decision_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_prompt_decision = {
+            '## Decision Making Principles',
+            '## Current Project Context',
+            'Prioritize quantum-safety over performance',
+        }
+        if prompt_decision and not required_prompt_decision <= set(prompt_decision):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_decision_required_phrases must include Decision Making/"
+                    "Project Context/quantum-safety",
+                )
+            )
+
+    prompt_escalation_identity = list(
+        inventory.get("prompt_escalation_identity_required_phrases", ())
+    )
+    if len(prompt_escalation_identity) != len(set(prompt_escalation_identity)):
+        findings.append(
+            Finding(schema_path, "prompt_escalation_identity_required_phrases must be unique")
+        )
+    if not prompt_escalation_identity:
+        findings.append(
+            Finding(schema_path, "prompt_escalation_identity_required_phrases must not be empty")
+        )
+    for phrase in prompt_escalation_identity:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_escalation_identity_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_prompt_escalation_identity = {
+            '🚨 ESCALATION REQUIRED',
+            'From Agent: QuantumArchitectAgent',
+            'From Agent: EdgeSecurityAgent',
+        }
+        if prompt_escalation_identity and not (
+            required_prompt_escalation_identity <= set(prompt_escalation_identity)
+        ):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_escalation_identity_required_phrases must include ESCALATION REQUIRED/"
+                    "QuantumArchitect/EdgeSecurity",
+                )
+            )
 
     goose_headers = list(inventory.get("goose_recipe_headers_required_phrases", ()))
     if len(goose_headers) != len(set(goose_headers)):
@@ -7166,6 +7477,112 @@ def validate_changelog_release(root: Path) -> list[Finding]:
     return findings
 
 
+
+def validate_changelog_preamble(root: Path) -> list[Finding]:
+    rel = "CHANGELOG.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "CHANGELOG.md missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "Keep a Changelog" not in body:
+        findings.append(Finding(rel, "missing Keep a Changelog preamble"))
+    for phrase in CHANGELOG_PREAMBLE_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked changelog-preamble phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_changelog_changed(root: Path) -> list[Finding]:
+    rel = "CHANGELOG.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "CHANGELOG.md missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "### Changed" not in body:
+        findings.append(Finding(rel, "missing Changed section"))
+    for phrase in CHANGELOG_CHANGED_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked changelog-changed phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_changelog_initial(root: Path) -> list[Finding]:
+    rel = "CHANGELOG.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "CHANGELOG.md missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## [0.1.0] — 2025-12-13" not in body:
+        findings.append(Finding(rel, "missing 0.1.0 initial release section"))
+    for phrase in CHANGELOG_INITIAL_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked changelog-initial phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_prompt_expertise(root: Path) -> list[Finding]:
+    rel = "AGENT-PROMPTS.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "AGENT-PROMPTS.md missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## Your Expertise" not in body:
+        findings.append(Finding(rel, "missing Your Expertise section"))
+    for phrase in PROMPT_EXPERTISE_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked prompt-expertise phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_prompt_decision(root: Path) -> list[Finding]:
+    rel = "AGENT-PROMPTS.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "AGENT-PROMPTS.md missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## Decision Making Principles" not in body:
+        findings.append(Finding(rel, "missing Decision Making Principles section"))
+    for phrase in PROMPT_DECISION_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked prompt-decision phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_prompt_escalation_identity(root: Path) -> list[Finding]:
+    rel = "AGENT-PROMPTS.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "AGENT-PROMPTS.md missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "🚨 ESCALATION REQUIRED" not in body:
+        findings.append(Finding(rel, "missing ESCALATION REQUIRED identity banner"))
+    for phrase in PROMPT_ESCALATION_IDENTITY_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(
+                    rel,
+                    f"missing locked prompt-escalation-identity phrase: {phrase}",
+                )
+            )
+    return findings
+
+
 def validate_implementation_quickstart(root: Path) -> list[Finding]:
     rel = "IMPLEMENTATION-GUIDE.md"
     path = root / rel
@@ -8347,8 +8764,8 @@ def validate_contributing_ci_honesty(root: Path) -> list[Finding]:
         return [Finding(rel, "CONTRIBUTING.md missing")]
     text = path.read_text(encoding="utf-8")
     findings: list[Finding] = []
-    if "Packaging inventory v42" not in text:
-        findings.append(Finding(rel, "missing Packaging inventory v42 honesty lock"))
+    if "Packaging inventory v43" not in text:
+        findings.append(Finding(rel, "missing Packaging inventory v43 honesty lock"))
     for phrase in CONTRIBUTING_CI_HONESTY_REQUIRED_PHRASES:
         if phrase not in text:
             findings.append(
@@ -10207,6 +10624,12 @@ VALIDATORS: dict[str, ValidatorFn] = {
     "changelog-format": validate_changelog_format,
     "changelog-unreleased": validate_changelog_unreleased,
     "changelog-release": validate_changelog_release,
+    "changelog-preamble": validate_changelog_preamble,
+    "changelog-changed": validate_changelog_changed,
+    "changelog-initial": validate_changelog_initial,
+    "prompt-expertise": validate_prompt_expertise,
+    "prompt-decision": validate_prompt_decision,
+    "prompt-escalation-identity": validate_prompt_escalation_identity,
     "postmortem": validate_postmortem_packaging,
     "postmortem-intro": validate_postmortem_intro,
     "postmortem-fields": validate_postmortem_fields,

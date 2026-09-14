@@ -1,5 +1,5 @@
 {
-  "version": 42,
+  "version": 43,
   "documented_agents": [
     "QuantumArchitectAgent",
     "BlockchainArchitectAgent",
@@ -276,7 +276,10 @@
     "bug-repro",
     "bug-template",
     "changelog",
+    "changelog-changed",
     "changelog-format",
+    "changelog-initial",
+    "changelog-preamble",
     "changelog-release",
     "changelog-unreleased",
     "ci",
@@ -374,6 +377,9 @@
     "pr-summary",
     "pr-template",
     "prompt-constraints",
+    "prompt-decision",
+    "prompt-escalation-identity",
+    "prompt-expertise",
     "prompt-related-docs",
     "prompt-roles",
     "prompt-sections",
@@ -413,7 +419,7 @@
     "yaml-configs"
   ],
   "min_coverage_fail_under": 99,
-  "min_validator_count": 141,
+  "min_validator_count": 147,
   "required_paths": [
     "README.md",
     "LICENSE",
@@ -1253,7 +1259,7 @@
     "markdown lint, link check, actionlint",
     "manifest validate on Python 3.11/3.12/3.13",
     "Andrew or designated reviewer",
-    "Packaging inventory v42",
+    "Packaging inventory v43",
     "refuse invented recipes",
     "orphan on-disk YAML",
     "unknown `*Agent` tokens",
@@ -1399,5 +1405,52 @@
     "Which of the 4 agents (Quantum/Blockchain/Edge/Orchestration) is highest priority",
     "should g0p-agents merge into it or stay separate?",
     "Does a Notion page for g0p-agents exist?"
+  ],
+  "changelog_preamble_required_phrases": [
+    "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).",
+    "https://keepachangelog.com/en/1.0.0/",
+    "---"
+  ],
+  "changelog_changed_required_phrases": [
+    "### Changed",
+    "Inventory schema minimum version is **7**",
+    "CI validator-count gate raised to ≥34",
+    "coverage gate **99%**",
+    "Dependabot now tracks pip (`requirements-dev.txt`)",
+    "CI `pull_request` trigger targets `alpha`",
+    "`CONTRIBUTING.md` branch strategy aligned with live default branch `alpha`"
+  ],
+  "changelog_initial_required_phrases": [
+    "## [0.1.0] — 2025-12-13",
+    "`README.md` — public archive description",
+    "`IMPLEMENTATION-GUIDE.md` — step-by-step setup guide",
+    "`EXECUTION-SUMMARY.md` — implementation summary"
+  ],
+  "prompt_expertise_required_phrases": [
+    "## Your Expertise",
+    "Quantum mechanics (gates, superposition, entanglement)",
+    "Google Cirq (circuit construction, simulation)",
+    "Distributed ledger architecture",
+    "Hardhat (local blockchain, contract testing)",
+    "Android/iOS development (Kotlin, Swift)",
+    "liboqs (post-quantum crypto on device)"
+  ],
+  "prompt_decision_required_phrases": [
+    "## Decision Making Principles",
+    "## Current Project Context",
+    "Prioritize quantum-safety over performance",
+    "Balance security with usability",
+    "Prioritize user security and privacy",
+    "Circuit depth < 50 gates (if possible)",
+    "0 critical vulnerabilities (Slither pass)"
+  ],
+  "prompt_escalation_identity_required_phrases": [
+    "🚨 ESCALATION REQUIRED",
+    "From Agent: QuantumArchitectAgent",
+    "From Agent: BlockchainArchitectAgent",
+    "From Agent: EdgeSecurityAgent",
+    "Remember: You are not working alone. BlockchainArchitectAgent and EdgeSecurityAgent depend on your output.",
+    "Remember: You bridge QuantumArchitectAgent (algorithms) and EdgeSecurityAgent (mobile implementation). Your architecture must satisfy both.",
+    "Remember: You are the last line of defense before user devices. Your implementation determines whether the entire system is actually secure or just theoretically secure."
   ]
 }

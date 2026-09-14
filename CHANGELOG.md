@@ -10,6 +10,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Changelog + prompts **v43** deepeners (post-#106 hydration v42): `changelog-preamble`,
+  `changelog-changed`, `changelog-initial`, `prompt-expertise`, `prompt-decision`,
+  `prompt-escalation-identity` validators; CHANGELOG.md Keep a Changelog URL /
+  separator preamble leftovers, Changed-section inventory/CI/Dependabot/`alpha`
+  leftovers, and 0.1.0 README / IMPLEMENTATION-GUIDE / EXECUTION-SUMMARY
+  initial-archive leftovers; AGENT-PROMPTS.md expertise / decision-making /
+  escalation-identity leftovers; consistency deepeners for
+  `changelog_preamble_required_phrases` / `changelog_changed_required_phrases` /
+  `changelog_initial_required_phrases` / `prompt_expertise_required_phrases` /
+  `prompt_decision_required_phrases` / `prompt_escalation_identity_required_phrases`
+  (Packaging inventory 147 total; historic four only — changelog+prompts leftovers
+  slice, not hydration v42, implementation-guide v41, constitution v40, security
+  v39, contributing v38, goose recipes, execution-summary, or Dependabot)
+
 - Hydration report **v42** deepeners (post-#101 implementation-guide v41): `hydration-phase1`,
   `hydration-list-a`, `hydration-resolved`, `hydration-phase4`, `hydration-deferred`
   validators; docs/agent-hydration.md PHASE 1 findings category leftovers, LIST A

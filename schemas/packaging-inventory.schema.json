@@ -9,7 +9,10 @@
     "agent_token_scan_docs",
     "agentic_flows_allowed_files",
     "bug_repro_required_phrases",
+    "changelog_changed_required_phrases",
     "changelog_format_required_phrases",
+    "changelog_initial_required_phrases",
+    "changelog_preamble_required_phrases",
     "changelog_release_required_phrases",
     "changelog_required_phrases",
     "changelog_unreleased_required_phrases",
@@ -153,6 +156,9 @@
     "pr_summary_required_phrases",
     "pr_template_headings",
     "prompt_constraints_required_phrases",
+    "prompt_decision_required_phrases",
+    "prompt_escalation_identity_required_phrases",
+    "prompt_expertise_required_phrases",
     "prompt_related_docs_required_phrases",
     "prompt_roles_required_phrases",
     "prompt_sections_required_phrases",
@@ -1826,6 +1832,60 @@
       }
     },
     "hydration_deferred_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "changelog_preamble_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "changelog_changed_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "changelog_initial_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "prompt_expertise_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "prompt_decision_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "prompt_escalation_identity_required_phrases": {
       "type": "array",
       "minItems": 1,
       "uniqueItems": true,
