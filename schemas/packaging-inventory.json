@@ -1,5 +1,5 @@
 {
-  "version": 29,
+  "version": 30,
   "documented_agents": [
     "QuantumArchitectAgent",
     "BlockchainArchitectAgent",
@@ -365,14 +365,17 @@
     "scratchpad-intro",
     "scratchpad-task-meta",
     "security",
+    "security-metadata",
+    "security-non-issues",
     "security-reporting",
     "security-standards",
     "security-supported",
+    "security-surfaces",
     "state-residency",
     "yaml-configs"
   ],
   "min_coverage_fail_under": 99,
-  "min_validator_count": 100,
+  "min_validator_count": 103,
   "required_paths": [
     "README.md",
     "LICENSE",
@@ -974,5 +977,35 @@
     "regardless of CI status",
     "See [CLAUDE.md](CLAUDE.md)",
     "agent routing matrix and negative constraints"
+  ],
+  "security_metadata_required_phrases": [
+    "Status: ACTIVE | Tier: 1 | Created: 2026-04-13",
+    "Edit policy: Structural changes require Andrew approval",
+    "## Supported Versions",
+    "## Reporting a Vulnerability",
+    "## Security Standards for This Ecosystem",
+    "## Known Non-Issues"
+  ],
+  "security_non_issues_required_phrases": [
+    "## Known Non-Issues",
+    "CRYSTALS-Kyber",
+    "CRYSTALS-Dilithium",
+    "pre-finalization names",
+    "ML-KEM (FIPS 203)",
+    "ML-DSA (FIPS 204)",
+    "updated in a future issue"
+  ],
+  "security_surfaces_required_phrases": [
+    "potential injection risks",
+    "potential prompt injection surface",
+    "React Native mobile code",
+    "smtp.eth ENS",
+    "@fuzzywigg",
+    "ML-KEM/FIPS 203",
+    "ML-DSA/FIPS 204",
+    "SLH-DSA/FIPS 205",
+    "0 critical vulnerabilities",
+    "Apple/Google security guidelines",
+    "use `.env` files excluded by `.gitignore`"
   ]
 }

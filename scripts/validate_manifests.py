@@ -160,7 +160,7 @@ REQUIRED_ARCHIVE_DOCS = (
     "README.md",
 )
 
-INVENTORY_VERSION = 29
+INVENTORY_VERSION = 30
 CURSOR_ENVIRONMENT_NAME = "g0p-agents"
 DEPENDABOT_SCHEDULE_INTERVAL = "weekly"
 DEPENDABOT_DIRECTORIES: frozenset[str] = frozenset({"/"})
@@ -315,6 +315,37 @@ SECURITY_STANDARDS_REQUIRED_PHRASES: tuple[str, ...] = (
     "Slither audit pass",
     "Never commit secrets",
     "Never expose plaintext keys",
+)
+
+SECURITY_METADATA_REQUIRED_PHRASES: tuple[str, ...] = (
+    "Status: ACTIVE | Tier: 1 | Created: 2026-04-13",
+    "Edit policy: Structural changes require Andrew approval",
+    "## Supported Versions",
+    "## Reporting a Vulnerability",
+    "## Security Standards for This Ecosystem",
+    "## Known Non-Issues",
+)
+SECURITY_NON_ISSUES_REQUIRED_PHRASES: tuple[str, ...] = (
+    "## Known Non-Issues",
+    "CRYSTALS-Kyber",
+    "CRYSTALS-Dilithium",
+    "pre-finalization names",
+    "ML-KEM (FIPS 203)",
+    "ML-DSA (FIPS 204)",
+    "updated in a future issue",
+)
+SECURITY_SURFACES_REQUIRED_PHRASES: tuple[str, ...] = (
+    "potential injection risks",
+    "potential prompt injection surface",
+    "React Native mobile code",
+    "smtp.eth ENS",
+    "@fuzzywigg",
+    "ML-KEM/FIPS 203",
+    "ML-DSA/FIPS 204",
+    "SLH-DSA/FIPS 205",
+    "0 critical vulnerabilities",
+    "Apple/Google security guidelines",
+    "use `.env` files excluded by `.gitignore`",
 )
 IMPLEMENTATION_QUICKSTART_REQUIRED_PHRASES: tuple[str, ...] = (
     "## Quick Start (30 minutes)",
@@ -953,7 +984,7 @@ SCRATCHPAD_STATUS_MARKERS: tuple[str, ...] = (
 SPECIALIST_AGENTS: tuple[str, ...] = DOCUMENTED_AGENTS[:-1]
 
 MIN_COVERAGE_FAIL_UNDER = 99
-MIN_VALIDATOR_COUNT = 100
+MIN_VALIDATOR_COUNT = 103
 
 
 @dataclass(frozen=True)
@@ -1880,6 +1911,30 @@ def validate_packaging_inventory(root: Path) -> list[Finding]:
     ):
         findings.append(
             _lock_mismatch(schema_path, "contributing_governance_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("security_metadata_required_phrases", ()))
+        != SECURITY_METADATA_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "security_metadata_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("security_non_issues_required_phrases", ()))
+        != SECURITY_NON_ISSUES_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "security_non_issues_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("security_surfaces_required_phrases", ()))
+        != SECURITY_SURFACES_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "security_surfaces_required_phrases")
         )
 
     expected_validator_names = tuple(sorted(VALIDATORS))
@@ -3855,6 +3910,117 @@ def _inventory_lock_consistency(
                 )
             )
 
+    metadata = list(inventory.get("security_metadata_required_phrases", ()))
+    if len(metadata) != len(set(metadata)):
+        findings.append(
+            Finding(schema_path, "security_metadata_required_phrases must be unique")
+        )
+    if not metadata:
+        findings.append(
+            Finding(
+                schema_path, "security_metadata_required_phrases must not be empty"
+            )
+        )
+    for phrase in metadata:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "security_metadata_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_metadata = {
+            "Status: ACTIVE | Tier: 1 | Created: 2026-04-13",
+            "## Supported Versions",
+            "## Known Non-Issues",
+        }
+        if metadata and not required_metadata <= set(metadata):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "security_metadata_required_phrases must include Status/"
+                    "Supported Versions/Known Non-Issues",
+                )
+            )
+
+    non_issues = list(inventory.get("security_non_issues_required_phrases", ()))
+    if len(non_issues) != len(set(non_issues)):
+        findings.append(
+            Finding(
+                schema_path, "security_non_issues_required_phrases must be unique"
+            )
+        )
+    if not non_issues:
+        findings.append(
+            Finding(
+                schema_path,
+                "security_non_issues_required_phrases must not be empty",
+            )
+        )
+    for phrase in non_issues:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "security_non_issues_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_non = {
+            "## Known Non-Issues",
+            "CRYSTALS-Kyber",
+            "ML-KEM (FIPS 203)",
+        }
+        if non_issues and not required_non <= set(non_issues):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "security_non_issues_required_phrases must include Known "
+                    "Non-Issues/Kyber/ML-KEM",
+                )
+            )
+
+    surfaces = list(inventory.get("security_surfaces_required_phrases", ()))
+    if len(surfaces) != len(set(surfaces)):
+        findings.append(
+            Finding(schema_path, "security_surfaces_required_phrases must be unique")
+        )
+    if not surfaces:
+        findings.append(
+            Finding(
+                schema_path, "security_surfaces_required_phrases must not be empty"
+            )
+        )
+    for phrase in surfaces:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "security_surfaces_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_surfaces = {
+            "potential injection risks",
+            "smtp.eth ENS",
+            "SLH-DSA/FIPS 205",
+        }
+        if surfaces and not required_surfaces <= set(surfaces):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "security_surfaces_required_phrases must include injection/"
+                    "smtp.eth/SLH-DSA",
+                )
+            )
+
     return findings
 
 
@@ -4526,6 +4692,58 @@ def validate_security_standards(root: Path) -> list[Finding]:
                 Finding(rel, f"missing locked security-standards phrase: {phrase}")
             )
     return findings
+
+
+def validate_security_metadata(root: Path) -> list[Finding]:
+    rel = "SECURITY.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "SECURITY.md missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "# Security Policy" not in text:
+        findings.append(Finding(rel, "missing Security Policy heading"))
+    for phrase in SECURITY_METADATA_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(rel, f"missing locked security-metadata phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_security_non_issues(root: Path) -> list[Finding]:
+    rel = "SECURITY.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "SECURITY.md missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## Known Non-Issues" not in text:
+        findings.append(Finding(rel, "missing Known Non-Issues section"))
+    for phrase in SECURITY_NON_ISSUES_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(rel, f"missing locked security-non-issues phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_security_surfaces(root: Path) -> list[Finding]:
+    rel = "SECURITY.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "SECURITY.md missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## Supported Versions" not in text:
+        findings.append(Finding(rel, "missing Supported Versions section"))
+    for phrase in SECURITY_SURFACES_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(rel, f"missing locked security-surfaces phrase: {phrase}")
+            )
+    return findings
+
 
 
 def validate_implementation_quickstart(root: Path) -> list[Finding]:
@@ -7124,6 +7342,9 @@ VALIDATORS: dict[str, ValidatorFn] = {
     "security-supported": validate_security_supported,
     "security-reporting": validate_security_reporting,
     "security-standards": validate_security_standards,
+    "security-metadata": validate_security_metadata,
+    "security-non-issues": validate_security_non_issues,
+    "security-surfaces": validate_security_surfaces,
     "implementation-quickstart": validate_implementation_quickstart,
     "execution-specialists": validate_execution_specialists,
     "hydration-list-b": validate_hydration_list_b,

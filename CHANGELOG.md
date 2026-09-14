@@ -10,6 +10,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Security policy **v30** deepeners (post-#63): `security-metadata`,
+  `security-non-issues`, `security-surfaces` validators; SECURITY.md Status /
+  Tier / Edit-policy / section-heading locks, Known Non-Issues Kyber/Dilithium /
+  ML-KEM/ML-DSA locks, and injection-surface / contact / FIPS / Apple-Google /
+  `.env` locks; consistency deepeners for `security_metadata_required_phrases` /
+  `security_non_issues_required_phrases` / `security_surfaces_required_phrases`
+  (103 total; historic four only — security policy slice, not contributing,
+  hydration, execution-summary, implementation guide, agent prompts, goose
+  recipes, README honesty, PR-template, issue-template, scratchpad, postmortem,
+  archive snapshot, routing/identity, or Dependabot)
+
 - Contributing guide **v29** deepeners (post-#61): `contributing-issues`,
   `contributing-local`, `contributing-governance` validators; CONTRIBUTING.md
   Issue Reporting / Bug / Feature / Agent Task locks, Local validation

@@ -172,12 +172,15 @@
     "execution_workflow_required_phrases",
     "contributing_governance_required_phrases",
     "contributing_local_required_phrases",
-    "contributing_issues_required_phrases"
+    "contributing_issues_required_phrases",
+    "security_metadata_required_phrases",
+    "security_non_issues_required_phrases",
+    "security_surfaces_required_phrases"
   ],
   "properties": {
     "version": {
       "type": "integer",
-      "minimum": 29
+      "minimum": 30
     },
     "required_paths": {
       "type": "array",
@@ -1416,6 +1419,33 @@
       }
     },
     "contributing_governance_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "security_metadata_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "security_non_issues_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "security_surfaces_required_phrases": {
       "type": "array",
       "minItems": 1,
       "uniqueItems": true,
