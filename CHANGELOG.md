@@ -10,6 +10,35 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Goose-recipe schema leftover **tests-only** deepeners after tip through **#219**
+  (goose-schema leftover after #209) / **#209** / **#208** / **#202** / **#200** /
+  **#195** / **#188** / **#187** / **#186** / **#184** (goose-schema tip) /
+  **#172** (goose-schema residual suite) (EXISTING three fixtures — `goose` /
+  `recipe-agents` / `recipe-titles` plus `schemas/goose-recipe.schema.json` +
+  `GOOSE-RECIPES.md` — no invented product / inventory bump): unsaturated type /
+  case reject leftovers (root bool/int, recipe list/bool, settings bool/string,
+  title object/float, version float/object, provider padded/float, model
+  list/object, instructions/prompt float, extensions string/bool, extension type
+  `SSE`/`Stdio`/`streamable_HTTP`/list, extension name bool/list, empty item /
+  timeout-only item, name mid-caps/space/tab/emoji), ACCEPT leftovers (`a123` /
+  `a1_b2`, trailing-newline name quirk, extension name spaces/unicode, long
+  instructions/prompt, uniqueItems same-name-diff-type + omit-vs-timeout,
+  item-name no-pattern self-lock), fence historic builtin/developer + model /
+  version msgs + on-disk schema-invalid empty name, uppercase YAML fence-tag
+  miss + `goose run` without `./` missing-run (not undeclared), titles
+  `found None` / non-string title + primary-only-in-prompt green +
+  multi-invented agents + orchestration missing two agents, inventory
+  `historic_goose_settings` model-only + `expected_recipe_files` wrong type +
+  schema missing `$schema` / title self-lock, concurrent races, and tip
+  isolation against #219/#209/#208/#202/#200 siblings. Historic four only;
+  Packaging inventory unchanged (v52 / 196 validators). Distinct from merged
+  #219 (prior goose-schema leftover after #209), #209
+  (hydration/security+handoff), #208 (goose leftover after #200), open #224
+  (prompts+flows after #219 — adjacent tip slice), closed CONFLICTING
+  #216/#212/#197, #202/#200 (listform+flows), #184 (tip type matrix), #172
+  (residual suite), #147 (nine goose-* phrase locks), and not a v53 invent
+  sibling or Dependabot bump.
+
 - Goose-recipe schema leftover **tests-only** deepeners after tip through **#209**
   (hydration/security+handoff leftover after #208) / **#208** / **#202** /
   **#200** / **#195** / **#188** / **#187** / **#186** / **#184** (goose-schema
