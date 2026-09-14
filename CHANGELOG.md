@@ -10,6 +10,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Security/manifest residual **tests-only** deepeners after **#151** tip (EXISTING
+  ten `security` / `security-*` phrase-lock validators only — no invented product /
+  inventory bump): concurrent validate races, empty/whitespace/header-only
+  SECURITY.md, invalid/invented security-timeout / v53 sibling keys, per-phrase
+  drop matrix, inventory mismatch matrix, and cross-isolation against
+  `security` / `security-supported` / `security-reporting` /
+  `security-standards` / `security-header` / `security-fips` /
+  `security-known-non-issues` / `security-scope` /
+  `security-reporting-channel` / `security-compliance-detail`. Historic four
+  only; inventory unchanged (v52 / 196). Distinct leftover slice from merged
+  #144/#147/#151 and closed CONFLICTING #148/#149/#150/#155.
+
 - Prompt-pre-v52 residual **tests-only** deepeners after #144/#147 tip (EXISTING
   thirty-three pre-v52 `prompt-*` fixtures only, including
   `prompt-orchestration-matrix` — no invented product / inventory bump):
