@@ -10,6 +10,32 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- CI/markdownlint residual **tests-only** leftover deepeners after tip through
+  **#236** (actionlint/linkcheck leftovers after #229) / **#229** / **#224** /
+  **#219** / **#209** / **#208** / **#202** / **#200** / **#195** / **#188** /
+  **#187** / **#186** (EXISTING six fixtures — `markdownlint` /
+  `ci-setup-python` / `ci-ruff` / `ci-pip-install` / `ci-pip-check` /
+  `ci-pytest` — no invented product / workflow / inventory bump):
+  `.markdownlint.yaml` ↔ `schemas/markdownlint.schema.json` required-key +
+  const lock parity, per-lock schema const mismatch, YAML structural + type
+  edges (root list / string consts / empty nested maps / int-boolish
+  MD025/MD033 / MD013 sequence / null consts / MD024 list / float
+  line_length / directory-not-file), remaining `ci.yml` assertion matrix
+  (setup-python cache/with + cache int/list type + dep-path int, ruff, pip
+  install/check, pytest markers, empty/scalar steps), inventory
+  path/schema/yaml drops + leftover types, `--only` isolation, concurrent
+  races, exact Finding equality + case/BOM/NBSP lookalikes, pytest
+  per-marker drop + ruff/pip lookalike commands, nested MD013/MD024 key drops
+  + simultaneous multi-lock drop, dual-surface concurrent races, and tip
+  isolation against #236/#229/#224/#219/#209/#208/#202/#200 siblings. Historic
+  four only; inventory unchanged (v52 / 196). Distinct from merged #236
+  (actionlint/linkcheck leftover), #229 (hydration/security+handoff edges),
+  #224 (prompts+flows leftover), #219 (goose-schema), #209 leftover suite,
+  #208 (goose-schema), #202/#200 (listform+flows), #195/#188/#186
+  (actionlint/link-check), #187 (docs-cross), closed CONFLICTING
+  #237/#233/#220/#214/#210/#204/#201/#196 (same leftover vs stale tips), and
+  historic v12/v13 setup-python/ruff/pip/pytest edges.
+
 - Actionlint/workflow + link-check residual **tests-only** leftover deepeners
   after tip through **#229** (hydration/security+handoff edges after #224) /
   **#224** / **#219** / **#209** / **#208** / **#202** / **#200** / **#195** /
