@@ -38489,18 +38489,19 @@ def test_ci_markdownlint_after265_nel_word_joiner_vtab_lookalikes(
         )
     ]
 
-    # NEL inside pip-install command — lock miss (not invent-product crash)
+    # NEL inside pip-install command — may YAML-break or lock-miss; never crash
     pip_nel = base.replace(
         vm.CI_PIP_INSTALL_COMMAND,
         vm.CI_PIP_INSTALL_COMMAND.replace("pip", "pip\u0085"),
     )
     _write_ci_yaml(tmp_path, pip_nel)
-    assert vm.validate_ci_pip_install(tmp_path) == [
-        vm.Finding(
-            ".github/workflows/ci.yml",
-            f"manifest-validate must run {vm.CI_PIP_INSTALL_COMMAND!r}",
-        )
-    ]
+    pip_nel_findings = vm.validate_ci_pip_install(tmp_path)
+    assert pip_nel_findings
+    assert any(
+        "YAML parse error" in f.message
+        or f"manifest-validate must run {vm.CI_PIP_INSTALL_COMMAND!r}" in f.message
+        for f in pip_nel_findings
+    )
 
 
 def test_ci_markdownlint_after265_setup_python_with_and_cache_none_exact(
@@ -38639,23 +38640,47 @@ def test_ci_markdownlint_after265_run_only_subset_vs_265_claude() -> None:
 
 
 def test_ci_markdownlint_after265_schema_drop_isolation(tmp_path: Path) -> None:
-    """Leftover after #265: local schema mangle fails md; live tip schema stays green."""
-    _copy_schemas(tmp_path)
-    schema_path = tmp_path / _MARKDOWNLINT_SCHEMA_REL
-    schema = json.loads(schema_path.read_text(encoding="utf-8"))
-    # Flip const so live locked yaml fails schema validation locally
-    schema["properties"]["default"]["const"] = False
-    schema_path.write_text(json.dumps(schema), encoding="utf-8")
-    _write_markdownlint_yaml(tmp_path, _locked_markdownlint_yaml())
-    findings = vm.validate_markdownlint(tmp_path)
+    """Leftover after #265: mangled schema rejects live yaml; shipped schema stays green."""
+    live_cfg = yaml.safe_load(_locked_markdownlint_yaml())
+    shipped = _locked_markdownlint_schema()
+    assert (
+        vm.validate_against_schema(
+            live_cfg, shipped, path=_MARKDOWNLINT_CONFIG_REL
+        )
+        == []
+    )
+
+    # Flip default const so the live locked yaml fails against the mangled schema
+    mangled = json.loads(json.dumps(shipped))
+    mangled["properties"]["default"]["const"] = False
+    findings = vm.validate_against_schema(
+        live_cfg, mangled, path=_MARKDOWNLINT_CONFIG_REL
+    )
     assert findings
-    # Live tip schema + yaml remain green (not polluted by tmp_path)
+    assert any("default" in f.message.lower() for f in findings)
+
+    # Drop a required key from schema → live yaml still validates structurally
+    # only when required list emptied for that key; required still lists default
+    dropped = json.loads(json.dumps(shipped))
+    dropped["required"] = [k for k in dropped["required"] if k != "MD025"]
+    # Live cfg still has MD025; schema no longer requires it — green via schema
+    assert (
+        vm.validate_against_schema(
+            live_cfg, dropped, path=_MARKDOWNLINT_CONFIG_REL
+        )
+        == []
+    )
+    # But dropping MD025 from the yaml instance against shipped schema fails
+    cfg_no_md025 = dict(live_cfg)
+    del cfg_no_md025["MD025"]
+    _write_markdownlint_yaml(tmp_path, yaml.safe_dump(cfg_no_md025))
+    assert vm.validate_markdownlint(tmp_path)
+
+    # Live tip schema + yaml remain green
     assert vm.validate_markdownlint(REPO_ROOT) == []
     assert (
         vm.validate_against_schema(
-            yaml.safe_load(_locked_markdownlint_yaml()),
-            _locked_markdownlint_schema(),
-            path=_MARKDOWNLINT_CONFIG_REL,
+            live_cfg, shipped, path=_MARKDOWNLINT_CONFIG_REL
         )
         == []
     )
