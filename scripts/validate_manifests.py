@@ -176,7 +176,7 @@ REQUIRED_ARCHIVE_DOCS = (
     "README.md",
 )
 
-INVENTORY_VERSION = 43
+INVENTORY_VERSION = 44
 CURSOR_ENVIRONMENT_NAME = "g0p-agents"
 DEPENDABOT_SCHEDULE_INTERVAL = "weekly"
 DEPENDABOT_DIRECTORIES: frozenset[str] = frozenset({"/"})
@@ -503,6 +503,42 @@ EXECUTION_SPECIALISTS_REQUIRED_PHRASES: tuple[str, ...] = (
     "On-Device Security",
     "YAML recipes, Docker Compose",
 )
+
+HYDRATION_META_REQUIRED_PHRASES: tuple[str, ...] = (
+    "# Agent Hydration Report — g0p-agents",
+    "Status: ACTIVE | Tier: 1 | Created: 2026-04-13",
+    "Owner: copilot (hydration run) | Edit policy: Agent-editable",
+)
+HYDRATION_IDENTITY_DETAIL_REQUIRED_PHRASES: tuple[str, ...] = (
+    "**LICENSE file absent**",
+    "No package.json, requirements.txt, pyproject.toml, Cargo.toml",
+    "No executable source code",
+    "Purpose statement is thin; no badges, no quick-start",
+    "Goose (referenced in YAML templates)",
+)
+HYDRATION_GIT_DETAIL_REQUIRED_PHRASES: tuple[str, ...] = (
+    "`main` (protected), `copilot/hydrate` (this run)",
+    "2 commits total (shallow clone)",
+    "main protected (push blocked)",
+    "copilot/hydrate: no protection",
+    "Feature branches per issue",
+    "Full history",
+)
+HYDRATION_PHASE2_REQUIRED_PHRASES: tuple[str, ...] = (
+    "## PHASE 2: QUESTIONS",
+    "Determines if crypto recommendations are current",
+    "Determines scaffolding language for quantum_circuits/",
+    "Andrew's head",
+    "Andrew / Notion North Star",
+    "Notion Master Index",
+    "Web/docs",
+    "OQS project",
+    "Codebase read",
+)
+HYDRATION_PHASE5_REQUIRED_PHRASES: tuple[str, ...] = (
+    "## PHASE 5: Roadmap",
+    "See GitHub Issue: [claude] g0p-agents Roadmap — Development Timeline & Issue Tracker",
+)
 HYDRATION_PHASE1_REQUIRED_PHRASES: tuple[str, ...] = (
     "### Identity",
     "### Source Architecture",
@@ -706,7 +742,7 @@ CONTRIBUTING_CI_HONESTY_REQUIRED_PHRASES: tuple[str, ...] = (
     "markdown lint, link check, actionlint",
     "manifest validate on Python 3.11/3.12/3.13",
     "Andrew or designated reviewer",
-    "Packaging inventory v43",
+    "Packaging inventory v44",
     "refuse invented recipes",
     "orphan on-disk YAML",
     "unknown `*Agent` tokens",
@@ -1382,7 +1418,7 @@ SCRATCHPAD_STATUS_MARKERS: tuple[str, ...] = (
 SPECIALIST_AGENTS: tuple[str, ...] = DOCUMENTED_AGENTS[:-1]
 
 MIN_COVERAGE_FAIL_UNDER = 99
-MIN_VALIDATOR_COUNT = 144
+MIN_VALIDATOR_COUNT = 149
 
 
 @dataclass(frozen=True)
@@ -2276,6 +2312,48 @@ def validate_packaging_inventory(root: Path) -> list[Finding]:
         findings.append(
             _lock_mismatch(schema_path, "hydration_deferred_required_phrases")
         )
+
+
+    if (
+        tuple(inventory.get("hydration_meta_required_phrases", ()))
+        != HYDRATION_META_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "hydration_meta_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("hydration_identity_detail_required_phrases", ()))
+        != HYDRATION_IDENTITY_DETAIL_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "hydration_identity_detail_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("hydration_git_detail_required_phrases", ()))
+        != HYDRATION_GIT_DETAIL_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "hydration_git_detail_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("hydration_phase2_required_phrases", ()))
+        != HYDRATION_PHASE2_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "hydration_phase2_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("hydration_phase5_required_phrases", ()))
+        != HYDRATION_PHASE5_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "hydration_phase5_required_phrases")
+        )
+
 
     if (
         tuple(inventory.get("postmortem_intro_required_phrases", ()))
@@ -4287,6 +4365,190 @@ def _inventory_lock_consistency(
 
 
 
+
+    meta = list(inventory.get("hydration_meta_required_phrases", ()))
+    if len(meta) != len(set(meta)):
+        findings.append(
+            Finding(schema_path, "hydration_meta_required_phrases must be unique")
+        )
+    if not meta:
+        findings.append(
+            Finding(schema_path, "hydration_meta_required_phrases must not be empty")
+        )
+    for phrase in meta:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "hydration_meta_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_meta = {
+            "# Agent Hydration Report — g0p-agents",
+            "Status: ACTIVE | Tier: 1 | Created: 2026-04-13",
+            "Owner: copilot (hydration run) | Edit policy: Agent-editable",
+        }
+        if meta and not required_meta <= set(meta):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "hydration_meta_required_phrases must include title/"
+                    "Status/Owner",
+                )
+            )
+
+    identity_detail = list(
+        inventory.get("hydration_identity_detail_required_phrases", ())
+    )
+    if len(identity_detail) != len(set(identity_detail)):
+        findings.append(
+            Finding(
+                schema_path,
+                "hydration_identity_detail_required_phrases must be unique",
+            )
+        )
+    if not identity_detail:
+        findings.append(
+            Finding(
+                schema_path,
+                "hydration_identity_detail_required_phrases must not be empty",
+            )
+        )
+    for phrase in identity_detail:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "hydration_identity_detail_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_identity = {
+            "**LICENSE file absent**",
+            "No package.json, requirements.txt, pyproject.toml, Cargo.toml",
+            "No executable source code",
+        }
+        if identity_detail and not required_identity <= set(identity_detail):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "hydration_identity_detail_required_phrases must include "
+                    "LICENSE/package.json/executable",
+                )
+            )
+
+    git_detail = list(inventory.get("hydration_git_detail_required_phrases", ()))
+    if len(git_detail) != len(set(git_detail)):
+        findings.append(
+            Finding(
+                schema_path, "hydration_git_detail_required_phrases must be unique"
+            )
+        )
+    if not git_detail:
+        findings.append(
+            Finding(
+                schema_path,
+                "hydration_git_detail_required_phrases must not be empty",
+            )
+        )
+    for phrase in git_detail:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "hydration_git_detail_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_git = {
+            "`main` (protected), `copilot/hydrate` (this run)",
+            "2 commits total (shallow clone)",
+            "copilot/hydrate: no protection",
+        }
+        if git_detail and not required_git <= set(git_detail):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "hydration_git_detail_required_phrases must include "
+                    "main/shallow/copilot protection",
+                )
+            )
+
+    phase2 = list(inventory.get("hydration_phase2_required_phrases", ()))
+    if len(phase2) != len(set(phase2)):
+        findings.append(
+            Finding(schema_path, "hydration_phase2_required_phrases must be unique")
+        )
+    if not phase2:
+        findings.append(
+            Finding(schema_path, "hydration_phase2_required_phrases must not be empty")
+        )
+    for phrase in phase2:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "hydration_phase2_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_phase2 = {
+            "## PHASE 2: QUESTIONS",
+            "Determines if crypto recommendations are current",
+            "Andrew's head",
+            "Notion Master Index",
+        }
+        if phase2 and not required_phase2 <= set(phase2):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "hydration_phase2_required_phrases must include PHASE 2/"
+                    "crypto/Andrew/Notion",
+                )
+            )
+
+    phase5 = list(inventory.get("hydration_phase5_required_phrases", ()))
+    if len(phase5) != len(set(phase5)):
+        findings.append(
+            Finding(schema_path, "hydration_phase5_required_phrases must be unique")
+        )
+    if not phase5:
+        findings.append(
+            Finding(schema_path, "hydration_phase5_required_phrases must not be empty")
+        )
+    for phrase in phase5:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "hydration_phase5_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_phase5 = {
+            "## PHASE 5: Roadmap",
+            "See GitHub Issue: [claude] g0p-agents Roadmap — Development Timeline & Issue Tracker",
+        }
+        if phase5 and not required_phase5 <= set(phase5):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "hydration_phase5_required_phrases must include PHASE 5/"
+                    "Roadmap issue",
+                )
+            )
+
     lead = list(inventory.get("readme_lead_required_phrases", ()))
     if len(lead) != len(set(lead)):
         findings.append(
@@ -5371,7 +5633,7 @@ def _inventory_lock_consistency(
     else:
         required_ci_honesty = {
             "markdown lint, link check, actionlint",
-            "Packaging inventory v43",
+            "Packaging inventory v44",
             "refuse invented recipes",
         }
         if ci_honesty and not required_ci_honesty <= set(ci_honesty):
@@ -5379,7 +5641,7 @@ def _inventory_lock_consistency(
                 Finding(
                     schema_path,
                     "contributing_ci_honesty_required_phrases must include "
-                    "CI checks/Packaging inventory v43/refuse invented recipes",
+                    "CI checks/Packaging inventory v44/refuse invented recipes",
                 )
             )
 
@@ -7431,6 +7693,95 @@ def validate_hydration_deferred(root: Path) -> list[Finding]:
     return findings
 
 
+
+
+def validate_hydration_meta(root: Path) -> list[Finding]:
+    rel = "docs/agent-hydration.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "hydration report missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "# Agent Hydration Report — g0p-agents" not in text:
+        findings.append(Finding(rel, "missing hydration report title"))
+    for phrase in HYDRATION_META_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(rel, f"missing locked hydration-meta phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_hydration_identity_detail(root: Path) -> list[Finding]:
+    rel = "docs/agent-hydration.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "hydration report missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "### Identity" not in text:
+        findings.append(Finding(rel, "missing Identity findings section"))
+    for phrase in HYDRATION_IDENTITY_DETAIL_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(
+                    rel, f"missing locked hydration-identity-detail phrase: {phrase}"
+                )
+            )
+    return findings
+
+
+def validate_hydration_git_detail(root: Path) -> list[Finding]:
+    rel = "docs/agent-hydration.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "hydration report missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "### Git State" not in text:
+        findings.append(Finding(rel, "missing Git State findings section"))
+    for phrase in HYDRATION_GIT_DETAIL_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(rel, f"missing locked hydration-git-detail phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_hydration_phase2(root: Path) -> list[Finding]:
+    rel = "docs/agent-hydration.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "hydration report missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## PHASE 2: QUESTIONS" not in text:
+        findings.append(Finding(rel, "missing PHASE 2 questions section"))
+    for phrase in HYDRATION_PHASE2_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(rel, f"missing locked hydration-phase2 phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_hydration_phase5(root: Path) -> list[Finding]:
+    rel = "docs/agent-hydration.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "hydration report missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## PHASE 5: Roadmap" not in text:
+        findings.append(Finding(rel, "missing PHASE 5 Roadmap section"))
+    for phrase in HYDRATION_PHASE5_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(rel, f"missing locked hydration-phase5 phrase: {phrase}")
+            )
+    return findings
+
+
 def validate_hydration_list_b(root: Path) -> list[Finding]:
     rel = "docs/agent-hydration.md"
     path = root / rel
@@ -8492,8 +8843,8 @@ def validate_contributing_ci_honesty(root: Path) -> list[Finding]:
         return [Finding(rel, "CONTRIBUTING.md missing")]
     text = path.read_text(encoding="utf-8")
     findings: list[Finding] = []
-    if "Packaging inventory v43" not in text:
-        findings.append(Finding(rel, "missing Packaging inventory v43 honesty lock"))
+    if "Packaging inventory v44" not in text:
+        findings.append(Finding(rel, "missing Packaging inventory v44 honesty lock"))
     for phrase in CONTRIBUTING_CI_HONESTY_REQUIRED_PHRASES:
         if phrase not in text:
             findings.append(
@@ -10405,6 +10756,11 @@ VALIDATORS: dict[str, ValidatorFn] = {
     "hydration-resolved": validate_hydration_resolved,
     "hydration-phase4": validate_hydration_phase4,
     "hydration-deferred": validate_hydration_deferred,
+    "hydration-meta": validate_hydration_meta,
+    "hydration-identity-detail": validate_hydration_identity_detail,
+    "hydration-git-detail": validate_hydration_git_detail,
+    "hydration-phase2": validate_hydration_phase2,
+    "hydration-phase5": validate_hydration_phase5,
     "link-check": validate_link_check,
     "prompts": validate_documented_agent_prompts,
     "cross-docs": validate_cross_doc_agents,

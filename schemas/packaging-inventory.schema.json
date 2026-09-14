@@ -104,10 +104,15 @@
     "historic_goose_settings",
     "historic_recipe_version",
     "hydration_deferred_required_phrases",
+    "hydration_git_detail_required_phrases",
+    "hydration_identity_detail_required_phrases",
     "hydration_list_a_required_phrases",
     "hydration_list_b_required_phrases",
+    "hydration_meta_required_phrases",
     "hydration_phase1_required_phrases",
+    "hydration_phase2_required_phrases",
     "hydration_phase4_required_phrases",
+    "hydration_phase5_required_phrases",
     "hydration_required_sections",
     "hydration_resolved_required_phrases",
     "implementation_faq_required_phrases",
@@ -1856,6 +1861,51 @@
       }
     },
     "readme_bootstrap_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "hydration_meta_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "hydration_identity_detail_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "hydration_git_detail_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "hydration_phase2_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "hydration_phase5_required_phrases": {
       "type": "array",
       "minItems": 1,
       "uniqueItems": true,
