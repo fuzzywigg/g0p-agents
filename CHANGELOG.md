@@ -10,6 +10,29 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Prompts listform + agentic_flows residual **tests-only** leftover deepeners
+  after tip through **#236** (actionlint/linkcheck leftover after #229) /
+  **#229** / **#224** / **#219** / **#209** / **#208** / **#202** / **#200**
+  (EXISTING nineteen fixtures — twelve list-form sibling `prompt-*` + seven
+  agentic_flows `goose` / `recipe-agents` / `recipe-titles` / `scratchpad*` —
+  no invented v53 list-form product / inventory bump; not markdownlint niche):
+  exact fence-count / duplicate-name / missing+extra recipe-name Findings,
+  documented **File** count/inventory + name→path bind mismatch, historic
+  title mismatch / invented recipe name / missing locked title, primary-agent
+  missing + orchestration missing-agent exact (≠ invent-token), fullwidth /
+  combining-accent / tab / ideographic-space lookalikes beyond #242
+  ZWSP/soft-hyphen/CRLF, per-module first-phrase exact drop matrix for all
+  twelve listform + scratchpad*, YAML parse-error fences + empty
+  AGENT-PROMPTS Finding shapes, inventory bool/float leftovers beyond #242
+  int/null/mapping + `run_all --only` isolation, cross isolation vs open
+  #240 markdownlint / #236 actionlint siblings + concurrent races + tip
+  live-green. Historic four only; Packaging inventory unchanged (v52 / 196);
+  no schema / validators / Dependabot bumps. Distinct from open MERGEABLE
+  #242 (ZWSP/on-disk/checkbox/inventory-types/triple-race), merged #236
+  (actionlint leftover), #229 (hydration/security+handoff), #224/#219
+  (prior prompts+flows leftovers), closed CONFLICTING
+  #238/#235/#230/#221/#223 tip refills, and open RED #240 markdownlint slice.
+
 - Actionlint/workflow + link-check residual **tests-only** leftover deepeners
   after tip through **#229** (hydration/security+handoff edges after #224) /
   **#224** / **#219** / **#209** / **#208** / **#202** / **#200** / **#195** /
