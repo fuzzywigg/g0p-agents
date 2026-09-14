@@ -18,15 +18,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   **#248** / **#242** / **#236** / **#229** / **#224** / **#219** / **#209**
   (EXISTING twenty-two fixtures — `hydration-phase4`, ten `security*`, seven
   handoff-cluster `constitution-*`, and four `scratchpad*` — no invented product
-  / inventory bump): exact missing-file Finding equality (≠ #258
+  / inventory bump): tip-relaunch after closed **#297** (Manifest Validate FAIL /
+  ruff E501) absorbing unsaturated closed CONFLICTING **#295** edges onto
+  post-#289 tip — exact missing-file Finding equality (≠ #258
   directory-not-file), section-present / phrases-absent matrix across PHASE 4 /
   security sections / handoff-escalation and on-device / scratchpad Format+Task,
   soft-hyphen / NBSP / ideographic-space / combining-accent lookalikes beyond
   #258 ZWSP/tab/CRLF/fullwidth, NEL / word-joiner / vertical-tab lookalikes
-  beyond #281 soft-hyphen niche, first-phrase exact drop matrix for all
-  twenty-two, last-phrase + simultaneous four-doc exact message leftovers,
-  packaging vs locked-* phrase asymmetry and invented/documented agent
-  isolation, empty/whitespace/header-only docs and empty/dup/blank/seed
+  beyond #281 soft-hyphen niche, figure-space / NNBSP / Mongolian / Ogham /
+  line-separator / paragraph-separator lookalikes beyond #297 soft-hyphen/NEL,
+  first/middle/last-phrase exact drop matrices for all twenty-two, last-phrase +
+  simultaneous four-doc exact message leftovers, dual invented-agent exact
+  Finding + packaging vs locked-* phrase asymmetry, mid-string BOM lookalikes,
+  multi `security-*` simultaneous phrase drops, packaging+scratchpad inventory
+  type leftovers, empty/whitespace/header-only docs and empty/dup/blank/seed
   inventory, null / list-of-int inventory leftovers beyond #258 bool/float,
   `run_all --only` subset, cross-isolation vs #289/#279 CI/markdownlint and
   #270 goose-schema and #265 Claude/routing and #258 siblings, concurrent
@@ -34,9 +39,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   unchanged (v52 / 196). Distinct from merged #258 (prior hydration/security
   leftover), #289/#279 (CI/markdownlint), #270 (goose-schema), #265
   (Claude/routing), #264 (goose-schema), #253 (prompts+flows), #248
-  (actionlint/linkcheck), closed CONFLICTING #295/#287/#281/#277 (same leftover
-  vs pre-#289 / pre-#279 / pre-#270 tips), and closed CONFLICTING
-  #252/#247/#241 (same leftover on stale tips).
+  (actionlint/linkcheck), closed #297 (same leftover Manifest Validate FAIL),
+  closed CONFLICTING #295/#287/#281/#277 (same leftover vs pre-#289 / pre-#279 /
+  pre-#270 tips), and closed CONFLICTING #252/#247/#241 (same leftover on stale
+  tips).
 
 - CI/markdownlint residual **tests-only** leftover deepeners after tip through
   **#279** (CI/markdownlint leftover after #270) / **#270** (goose-schema leftover
