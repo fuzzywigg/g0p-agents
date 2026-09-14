@@ -27,15 +27,37 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   missing BlockchainArchitectAgent / OrchestrationAgent exact (≠ #253
   Quantum/Edge), CI `--list-validators` / `--only` nineteen + required Manifest
   Validate step-marker smoke, inventory empty-list leftovers beyond #253
-  bool/float and #242 int/null, cross isolation vs #279/#270/#265/#264/#258/#253/#248
+  bool/float and #242 int/null, cross isolation vs #289/#279/#270/#265/#264/#258/#253/#248
   siblings with concurrent races and tip live-green. Historic four only; Packaging
   inventory unchanged (v52 / 196); no schema / validators / Dependabot bumps.
-  Distinct from merged #279 (CI/markdownlint niche), #270 (goose-schema niche),
+  Distinct from merged #289/#279 (CI/markdownlint niche), #270 (goose-schema niche),
   #265 (Claude/routing niche), #264 (prior goose-schema), #258
   (hydration/security+handoff), #253 (fence/File-bind/first-phrase/fullwidth),
   #242 (ZWSP/on-disk/checkbox/inventory-types), #236/#229/#224/#219 siblings, and
-  closed CONFLICTING #284/#269 (same leftover vs pre-#279/#265 tips) /
+  closed CONFLICTING #291/#290/#284/#272/#269 (same leftover vs pre-#279/#265 tips) /
   #251/#243/#238/#235/#230/#221/#223 tip refills.
+
+- CI/markdownlint residual **tests-only** leftover deepeners after tip through
+  **#279** (CI/markdownlint leftover after #270) / **#270** (goose-schema leftover
+  after #265) / **#265** / **#264** / **#258** / **#253** / **#248** / **#242** /
+  **#236** / **#229** / **#224** / **#219** / **#209** / **#208** / **#202** /
+  **#200** / **#195** / **#188** (EXISTING six fixtures — `markdownlint` /
+  `ci-setup-python` / `ci-ruff` / `ci-pip-install` / `ci-pip-check` / `ci-pytest`
+  — no invented product / workflow / inventory bump): tip-after-#279 HEAVY
+  deepeners beyond thin #279 after-#270 set — figure-space / NNBSP / Mongolian
+  lookalikes, exact dual md+ruff Findings, schema MD013.line_length const mangle,
+  setup-python cache-dependency-path drop exact, MD024 null + MD013.tables
+  string / code_blocks int leftovers, ruff + pip-install + pytest triple exact,
+  pytest last-marker drop + reorder green, inventory pytest-marker
+  type/uniqueness/--cov leftovers, simultaneous default+MD025+MD033 exact drops,
+  isolation vs #279 CI/markdownlint / #270 goose / #265 Claude / #264/#258/#253/
+  #248 siblings, `--only` subset vs siblings, quad-surface concurrent races,
+  live-green. Historic four only; inventory unchanged (v52 / 196). Distinct from
+  merged #279 (thin CI/markdownlint after #270), #270 (goose-schema leftover),
+  #265 (Claude/routing), #264/#258/#253/#248 siblings, closed CONFLICTING
+  #286/#276/#275/#267/#257/#250/#240/#237/#233/#220/#214/#210/#204/#201/#196
+  (same leftover vs stale tips), and historic v12/v13 setup-python/ruff/pip/
+  pytest edges.
 
 - CI/markdownlint residual **tests-only** leftover deepeners after tip through
   **#270** (goose-schema leftover after #265) / **#265** (Claude/routing leftover
