@@ -27870,3 +27870,671 @@ def test_goose_schema_after200_leftover_live_green() -> None:
     assert vm.validate_goose_conflicts(REPO_ROOT) == []
     assert vm.validate_recipe_titles(REPO_ROOT) == []
     assert vm.validate_recipe_agent_bindings(REPO_ROOT) == []
+
+# ---------------------------------------------------------------------------
+# TOKENMAXX HEAVY leftover deepen: actionlint/workflow + link-check after #208
+# Distinct unsaturated residual edges — not a #186/#187/#188/#195/#200/#202/#208 redo
+# and not invent-product. Tip after merged #208 (goose-schema leftover).
+# EXISTING seven CI fixtures only (v52 / 196). Supersedes closed CONFLICTING #206.
+# ---------------------------------------------------------------------------
+
+
+def test_actionlint_linkcheck_after208_on_and_pr_branch_leftover_edges(
+    tmp_path: Path,
+) -> None:
+    """Leftover: scalar on:, extra PR branches green, empty PR/branches."""
+    base = _actionlint_linkcheck_locked_ci_yaml()
+
+    # Scalar `on: push` — PyYAML 1.1 maps `on` to True; value is not a dict,
+    # so the pull_request branch is unsaturated (no trigger finding).
+    scalar_on = base.replace(
+        "on:\n  push:\n    branches: [\"**\"]\n  pull_request:\n    branches: [alpha]\n",
+        "on: push\n",
+    )
+    assert "pull_request:" not in scalar_on
+    _write_ci_yaml(tmp_path, scalar_on)
+    findings = vm.validate_ci_workflow(tmp_path)
+    assert not any("pull_request" in f.message for f in findings)
+    assert not any("on: trigger" in f.message for f in findings)
+    assert vm.validate_link_check(tmp_path) == []
+    assert vm.validate_actionlint_shell(tmp_path) == []
+
+    # Extra PR branch besides locked alpha is still green (membership, not equality).
+    extra_branch = base.replace(
+        "    branches: [alpha]\n",
+        "    branches: [alpha, main]\n",
+    )
+    _write_ci_yaml(tmp_path, extra_branch)
+    assert vm.validate_ci_workflow(tmp_path) == []
+
+    # pull_request: {} → branches missing → must include alpha
+    empty_pr = base.replace(
+        "  pull_request:\n    branches: [alpha]\n",
+        "  pull_request: {}\n",
+    )
+    _write_ci_yaml(tmp_path, empty_pr)
+    findings = vm.validate_ci_workflow(tmp_path)
+    assert any("pull_request.branches must include" in f.message for f in findings)
+
+    # branches: [] empty list
+    empty_branches = base.replace(
+        "    branches: [alpha]\n",
+        "    branches: []\n",
+    )
+    _write_ci_yaml(tmp_path, empty_branches)
+    findings = vm.validate_ci_workflow(tmp_path)
+    assert any("pull_request.branches must include" in f.message for f in findings)
+
+    _write_ci_yaml(tmp_path, base)
+    assert vm.validate_ci_workflow(tmp_path) == []
+
+
+def test_actionlint_linkcheck_after208_concurrency_and_jobs_type_edges(
+    tmp_path: Path,
+) -> None:
+    """Leftover: concurrency scalar/group-absent/empty + jobs sequence."""
+    base = _actionlint_linkcheck_locked_ci_yaml()
+
+    scalar_conc = base.replace(
+        "concurrency:\n"
+        "  group: ci-${{ github.workflow }}-${{ github.ref }}\n"
+        "  cancel-in-progress: true\n",
+        "concurrency: ci-${{ github.workflow }}-${{ github.ref }}\n",
+    )
+    _write_ci_yaml(tmp_path, scalar_conc)
+    findings = vm.validate_ci_workflow(tmp_path)
+    assert any("concurrency.group" in f.message for f in findings)
+
+    no_group_key = base.replace(
+        "concurrency:\n"
+        "  group: ci-${{ github.workflow }}-${{ github.ref }}\n"
+        "  cancel-in-progress: true\n",
+        "concurrency:\n  cancel-in-progress: true\n",
+    )
+    _write_ci_yaml(tmp_path, no_group_key)
+    findings = vm.validate_ci_workflow(tmp_path)
+    assert any("must define concurrency.group" in f.message for f in findings)
+    assert not any("cancel-in-progress" in f.message for f in findings)
+
+    empty_group = base.replace(
+        "group: ci-${{ github.workflow }}-${{ github.ref }}",
+        'group: ""',
+    )
+    _write_ci_yaml(tmp_path, empty_group)
+    findings = vm.validate_ci_workflow(tmp_path)
+    assert any("concurrency.group must start with" in f.message for f in findings)
+
+    no_cancel = base.replace(
+        "  group: ci-${{ github.workflow }}-${{ github.ref }}\n"
+        "  cancel-in-progress: true\n",
+        "  group: ci-${{ github.workflow }}-${{ github.ref }}\n",
+    )
+    assert "cancel-in-progress" not in no_cancel
+    _write_ci_yaml(tmp_path, no_cancel)
+    findings = vm.validate_ci_workflow(tmp_path)
+    assert any("cancel-in-progress must be" in f.message for f in findings)
+    assert not any("concurrency.group must start" in f.message for f in findings)
+
+    jobs_seq = base.split("jobs:\n")[0] + "jobs:\n  - markdown-lint\n"
+    _write_ci_yaml(tmp_path, jobs_seq)
+    findings = vm.validate_ci_workflow(tmp_path)
+    assert any("jobs mapping" in f.message for f in findings)
+    assert any("jobs mapping" in f.message for f in vm.validate_link_check(tmp_path))
+    assert any(
+        "jobs mapping" in f.message for f in vm.validate_actionlint_shell(tmp_path)
+    )
+
+    _write_ci_yaml(tmp_path, base)
+    assert vm.validate_ci_workflow(tmp_path) == []
+
+
+def test_actionlint_linkcheck_after208_permissions_and_matrix_leftover_types(
+    tmp_path: Path,
+) -> None:
+    """Leftover: empty permissions / contents-absent + strategy/version types."""
+    base = _actionlint_linkcheck_locked_ci_yaml()
+
+    empty_perms = _set_ci_job_key_scalar(base, "link-check", "permissions", "{}")
+    _write_ci_yaml(tmp_path, empty_perms)
+    findings = vm.validate_ci_workflow(tmp_path)
+    assert any(
+        "link-check" in f.message and "permissions.contents must be" in f.message
+        for f in findings
+    )
+
+    no_contents = base.replace(
+        "    permissions:\n      contents: read\n",
+        "    permissions:\n      actions: read\n",
+        1,
+    )
+    _write_ci_yaml(tmp_path, no_contents)
+    findings = vm.validate_ci_workflow(tmp_path)
+    assert any("permissions.contents must be" in f.message for f in findings)
+
+    scalar_strategy = _set_ci_job_key_scalar(
+        base, "manifest-validate", "strategy", "true"
+    )
+    _write_ci_yaml(tmp_path, scalar_strategy)
+    findings = vm.validate_ci_workflow(tmp_path)
+    assert any("Python version matrix" in f.message for f in findings)
+
+    no_fail_fast = base.replace("      fail-fast: false\n", "")
+    assert "fail-fast" not in no_fail_fast
+    _write_ci_yaml(tmp_path, no_fail_fast)
+    findings = vm.validate_ci_workflow(tmp_path)
+    assert any("fail-fast must be" in f.message for f in findings)
+
+    string_py = base.replace(
+        'python-version: ["3.11", "3.12", "3.13"]',
+        'python-version: "3.12"',
+    )
+    _write_ci_yaml(tmp_path, string_py)
+    findings = vm.validate_ci_workflow(tmp_path)
+    assert any("at least 2 versions" in f.message for f in findings)
+
+    extra_py = base.replace(
+        'python-version: ["3.11", "3.12", "3.13"]',
+        'python-version: ["3.11", "3.12", "3.13", "3.14"]',
+    )
+    _write_ci_yaml(tmp_path, extra_py)
+    findings = vm.validate_ci_workflow(tmp_path)
+    assert any("python-version must equal" in f.message for f in findings)
+
+    _write_ci_yaml(tmp_path, base)
+    assert vm.validate_ci_workflow(tmp_path) == []
+
+
+def test_actionlint_linkcheck_after208_lychee_with_partial_and_env_drop(
+    tmp_path: Path,
+) -> None:
+    """Leftover: lychee with: {} / args-only / fail-only; GITHUB_TOKEN env drop green."""
+    base = _actionlint_linkcheck_locked_ci_yaml()
+    lychee_block = (
+        "      - name: Check links\n"
+        "        uses: lycheeverse/lychee-action@v2\n"
+        "        with:\n"
+        f"          args: {vm.CI_LINK_CHECK_ARGS}\n"
+        "          fail: true\n"
+        "        env:\n"
+        "          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}\n"
+    )
+
+    empty_with = base.replace(
+        lychee_block,
+        "      - name: Check links\n"
+        "        uses: lycheeverse/lychee-action@v2\n"
+        "        with: {}\n",
+    )
+    _write_ci_yaml(tmp_path, empty_with)
+    findings = vm.validate_link_check(tmp_path)
+    assert any("link-check args must be" in f.message for f in findings)
+    assert any("link-check fail must be" in f.message for f in findings)
+    assert any("lychee args lock not found" in f.message for f in findings)
+    assert any("lychee fail lock not found" in f.message for f in findings)
+    assert not any("missing with" in f.message for f in findings)
+
+    args_only = base.replace(
+        lychee_block,
+        "      - name: Check links\n"
+        "        uses: lycheeverse/lychee-action@v2\n"
+        "        with:\n"
+        f"          args: {vm.CI_LINK_CHECK_ARGS}\n",
+    )
+    _write_ci_yaml(tmp_path, args_only)
+    findings = vm.validate_link_check(tmp_path)
+    assert any("link-check fail must be" in f.message for f in findings)
+    assert any("lychee fail lock not found" in f.message for f in findings)
+    assert not any("link-check args must be" in f.message for f in findings)
+    assert not any("lychee args lock not found" in f.message for f in findings)
+
+    fail_only = base.replace(
+        lychee_block,
+        "      - name: Check links\n"
+        "        uses: lycheeverse/lychee-action@v2\n"
+        "        with:\n"
+        "          fail: true\n",
+    )
+    _write_ci_yaml(tmp_path, fail_only)
+    findings = vm.validate_link_check(tmp_path)
+    assert any("link-check args must be" in f.message for f in findings)
+    assert any("lychee args lock not found" in f.message for f in findings)
+    assert not any("link-check fail must be" in f.message for f in findings)
+
+    no_env = base.replace(
+        "        env:\n"
+        "          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}\n",
+        "",
+    )
+    assert "GITHUB_TOKEN" not in no_env
+    _write_ci_yaml(tmp_path, no_env)
+    assert vm.validate_link_check(tmp_path) == []
+    assert vm.validate_actionlint_shell(tmp_path) == []
+    assert vm.validate_ci_actions(tmp_path) == []
+
+    _write_ci_yaml(tmp_path, base)
+    assert vm.validate_link_check(tmp_path) == []
+
+
+def test_actionlint_linkcheck_after208_markdownlint_scalar_and_partial_with(
+    tmp_path: Path,
+) -> None:
+    """Leftover: markdown-lint scalar job/steps + globs-only / config-only with:."""
+    base = _actionlint_linkcheck_locked_ci_yaml()
+
+    mdl_scalar_job = base.replace(
+        "  markdown-lint:\n",
+        "  markdown-lint: true\n  dropped-markdown-lint:\n",
+        1,
+    )
+    _write_ci_yaml(tmp_path, mdl_scalar_job)
+    findings = vm.validate_link_check(tmp_path)
+    assert any("missing markdown-lint job" in f.message for f in findings)
+    assert not any("lychee args lock not found" in f.message for f in findings)
+
+    mdl_scalar_steps = _set_ci_job_key_scalar(base, "markdown-lint", "steps", "true")
+    _write_ci_yaml(tmp_path, mdl_scalar_steps)
+    findings = vm.validate_link_check(tmp_path)
+    assert any("markdown-lint job missing steps" in f.message for f in findings)
+
+    globs_only = base.replace(
+        f'          globs: "{vm.CI_MARKDOWN_LINT_GLOBS}"\n'
+        f"          config: {vm.CI_MARKDOWN_LINT_CONFIG}\n",
+        f'          globs: "{vm.CI_MARKDOWN_LINT_GLOBS}"\n',
+    )
+    _write_ci_yaml(tmp_path, globs_only)
+    findings = vm.validate_link_check(tmp_path)
+    assert any("markdown-lint config must be" in f.message for f in findings)
+    assert any("markdown-lint config lock not found" in f.message for f in findings)
+    assert not any("globs must be" in f.message for f in findings)
+    assert not any("globs lock not found" in f.message for f in findings)
+
+    config_only = base.replace(
+        f'          globs: "{vm.CI_MARKDOWN_LINT_GLOBS}"\n'
+        f"          config: {vm.CI_MARKDOWN_LINT_CONFIG}\n",
+        f"          config: {vm.CI_MARKDOWN_LINT_CONFIG}\n",
+    )
+    _write_ci_yaml(tmp_path, config_only)
+    findings = vm.validate_link_check(tmp_path)
+    assert any("markdown-lint globs must be" in f.message for f in findings)
+    assert any("markdown-lint globs lock not found" in f.message for f in findings)
+    assert not any("config must be" in f.message for f in findings)
+
+    lines = base.splitlines()
+    out: list[str] = []
+    in_mdl = False
+    injected = False
+    for line in lines:
+        if line.startswith("  markdown-lint:"):
+            in_mdl = True
+        elif in_mdl and line.startswith("  ") and not line.startswith("    "):
+            in_mdl = False
+        if in_mdl and (not injected) and line.strip() == "steps:":
+            out.append(line)
+            out.append("      - not-a-mapping")
+            injected = True
+            continue
+        out.append(line)
+    _write_ci_yaml(tmp_path, "\n".join(out) + "\n")
+    assert vm.validate_link_check(tmp_path) == []
+
+    _write_ci_yaml(tmp_path, base)
+    assert vm.validate_link_check(tmp_path) == []
+
+
+def test_actionlint_linkcheck_after208_actionlint_scalar_empty_and_extra_shell(
+    tmp_path: Path,
+) -> None:
+    """Leftover: actionlint job scalar + empty shell + extra non-bash shell."""
+    base = _actionlint_linkcheck_locked_ci_yaml()
+
+    al_scalar = base.replace(
+        "  actionlint:\n",
+        "  actionlint: true\n  dropped-actionlint:\n",
+        1,
+    )
+    _write_ci_yaml(tmp_path, al_scalar)
+    findings = vm.validate_actionlint_shell(tmp_path)
+    assert any("missing actionlint job" in f.message for f in findings)
+    assert vm.validate_link_check(tmp_path) == []
+
+    empty_shell = base.replace(
+        f"shell: {vm.CI_ACTIONLINT_SHELL}",
+        'shell: ""',
+    )
+    _write_ci_yaml(tmp_path, empty_shell)
+    findings = vm.validate_actionlint_shell(tmp_path)
+    assert any("shell must be" in f.message for f in findings)
+
+    lines = base.splitlines()
+    out: list[str] = []
+    in_al = False
+    injected = False
+    for line in lines:
+        if line.startswith("  actionlint:"):
+            in_al = True
+        elif in_al and line.startswith("  ") and not line.startswith("    "):
+            in_al = False
+        if (
+            in_al
+            and (not injected)
+            and line.strip() == "- uses: actions/checkout@v7"
+        ):
+            out.append(line)
+            out.append("        shell: powershell")
+            injected = True
+            continue
+        out.append(line)
+    extra_shell = "\n".join(out) + "\n"
+    assert injected
+    _write_ci_yaml(tmp_path, extra_shell)
+    findings = vm.validate_actionlint_shell(tmp_path)
+    assert any("shell must be" in f.message and "powershell" in f.message for f in findings)
+    assert vm.validate_link_check(tmp_path) == []
+
+    _write_ci_yaml(tmp_path, base)
+    assert vm.validate_actionlint_shell(tmp_path) == []
+
+
+def test_actionlint_linkcheck_after208_job_name_runs_on_and_artifact_leftovers(
+    tmp_path: Path,
+) -> None:
+    """Leftover: missing name/runs-on keys, runs-on list, artifact path list gaps."""
+    base = _actionlint_linkcheck_locked_ci_yaml()
+
+    no_name = "\n".join(
+        line
+        for line in base.splitlines()
+        if line.strip() != "name: Link Check"
+    ) + "\n"
+    _write_ci_yaml(tmp_path, no_name)
+    findings = vm.validate_ci_job_names(tmp_path)
+    assert any("CI job 'link-check' name must be" in f.message for f in findings)
+    assert vm.validate_link_check(tmp_path) == []
+
+    lines = base.splitlines()
+    out: list[str] = []
+    in_link = False
+    for line in lines:
+        if line.startswith("  link-check:"):
+            in_link = True
+        elif in_link and line.startswith("  ") and not line.startswith("    "):
+            in_link = False
+        if in_link and line.strip() == f"runs-on: {vm.CI_RUNS_ON}":
+            continue
+        out.append(line)
+    no_runs = "\n".join(out) + "\n"
+    _write_ci_yaml(tmp_path, no_runs)
+    findings = vm.validate_ci_runs_on(tmp_path)
+    assert any("CI job 'link-check' runs-on must be" in f.message for f in findings)
+
+    list_runs = base.replace(
+        f"    runs-on: {vm.CI_RUNS_ON}\n",
+        f"    runs-on: [{vm.CI_RUNS_ON}]\n",
+        1,
+    )
+    _write_ci_yaml(tmp_path, list_runs)
+    findings = vm.validate_ci_runs_on(tmp_path)
+    assert any("runs-on must be" in f.message for f in findings)
+
+    no_if_no_files = base.replace(
+        f"          if-no-files-found: {vm.CI_ARTIFACT_IF_NO_FILES_FOUND}\n",
+        "",
+    )
+    assert "if-no-files-found" not in no_if_no_files
+    _write_ci_yaml(tmp_path, no_if_no_files)
+    findings = vm.validate_ci_artifacts(tmp_path)
+    assert any("if-no-files-found must be" in f.message for f in findings)
+
+    missing_list = base.replace(
+        "          path: |\n"
+        "            manifest-findings.json\n"
+        "            validators.txt\n"
+        "            coverage.xml\n"
+        "            pytest-junit.xml\n",
+        "          path:\n"
+        "            - manifest-findings.json\n"
+        "            - validators.txt\n"
+        "            - coverage.xml\n",
+    )
+    _write_ci_yaml(tmp_path, missing_list)
+    findings = vm.validate_ci_artifacts(tmp_path)
+    assert any(
+        "missing locked artifact" in f.message and "pytest-junit.xml" in f.message
+        for f in findings
+    )
+    assert not any("unexpected artifact" in f.message for f in findings)
+
+    extra_list = base.replace(
+        "          path: |\n"
+        "            manifest-findings.json\n"
+        "            validators.txt\n"
+        "            coverage.xml\n"
+        "            pytest-junit.xml\n",
+        "          path:\n"
+        + "".join(f"            - {p}\n" for p in vm.CI_ARTIFACT_PATHS)
+        + "            - leftover-extra.log\n",
+    )
+    _write_ci_yaml(tmp_path, extra_list)
+    findings = vm.validate_ci_artifacts(tmp_path)
+    assert any(
+        "unexpected artifact" in f.message and "leftover-extra.log" in f.message
+        for f in findings
+    )
+    assert not any("missing locked artifact" in f.message for f in findings)
+
+    _write_ci_yaml(tmp_path, base)
+    assert vm.validate_ci_job_names(tmp_path) == []
+    assert vm.validate_ci_runs_on(tmp_path) == []
+    assert vm.validate_ci_artifacts(tmp_path) == []
+
+
+def test_actionlint_linkcheck_after208_ci_actions_parse_error_still_scans_pins(
+    tmp_path: Path,
+) -> None:
+    """Leftover: unparseable yaml still reports pin/marker misses from raw text."""
+    pins = "\n".join(vm.CI_REQUIRED_ACTIONS)
+    markers = "\n".join(vm.CI_REQUIRED_TEXT_MARKERS)
+    broken_with_pins = (
+        f"name: {vm.CI_WORKFLOW_NAME}\n"
+        "this is : not: valid: [\n"
+        f"{pins}\n"
+        f"{markers}\n"
+    )
+    _write_ci_yaml(tmp_path, broken_with_pins)
+    findings = vm.validate_ci_actions(tmp_path)
+    assert any("YAML parse error" in f.message for f in findings)
+    assert not any("required action pin" in f.message for f in findings)
+    assert not any("required text marker" in f.message for f in findings)
+    # data is None → name lock is skipped; pins present → only parse findings
+    assert not any("CI workflow name must be" in f.message for f in findings)
+
+    broken_no_pins = "name: broken\n:\n  -\n"
+    _write_ci_yaml(tmp_path, broken_no_pins)
+    findings = vm.validate_ci_actions(tmp_path)
+    assert any("YAML parse error" in f.message for f in findings)
+    for action in vm.CI_REQUIRED_ACTIONS:
+        assert any(action in f.message for f in findings), action
+
+    _write_ci_yaml(tmp_path, _actionlint_linkcheck_locked_ci_yaml())
+    assert vm.validate_ci_actions(tmp_path) == []
+
+
+def test_actionlint_linkcheck_after208_run_only_and_inventory_leftover_types(
+    tmp_path: Path,
+) -> None:
+    """Leftover: run_all --only + inventory types beyond #188/#195/#206 cases."""
+    names = list(_ACTIONLINT_LINKCHECK_RESIDUAL_NAMES)
+    assert vm.run_all_validations(REPO_ROOT, only=names) == []
+
+    base = _actionlint_linkcheck_locked_ci_yaml()
+    args_only = base.replace(
+        "          fail: true\n"
+        "        env:\n"
+        "          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}\n",
+        "        env:\n"
+        "          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}\n",
+    )
+    _write_ci_yaml(tmp_path, args_only)
+    only_link = vm.run_all_validations(tmp_path, only=["link-check"])
+    assert only_link
+    assert vm.run_all_validations(tmp_path, only=["actionlint-shell"]) == []
+    # fail: drop is link-check-only — ci workflow locks stay green
+    assert vm.run_all_validations(tmp_path, only=["ci"]) == []
+    assert vm.run_all_validations(tmp_path, only=["ci-job-names"]) == []
+
+    _copy_schemas(tmp_path)
+    for rel in _inventory_payload()["required_paths"]:
+        target = tmp_path / rel
+        target.parent.mkdir(parents=True, exist_ok=True)
+        if not target.exists():
+            target.write_text("ok\n", encoding="utf-8")
+
+    inv = _inventory_payload()
+    type_cases: list[tuple[str, object]] = [
+        ("ci_link_check_args", "   "),
+        ("ci_actionlint_shell", 12),
+        ("ci_actionlint_step_id", None),
+        ("ci_markdown_lint_globs", ["**/*.md"]),
+        ("ci_markdown_lint_config", ""),
+        ("ci_cache_dependency_path", " "),
+        ("ci_artifact_if_no_files_found", "\t"),
+        ("ci_required_actions", [vm.CI_REQUIRED_ACTIONS[0]]),
+        (
+            "ci_job_display_names",
+            {**dict(vm.CI_JOB_DISPLAY_NAMES), "invented-ci-job": "Invented"},
+        ),
+        (
+            "ci_job_display_names",
+            {
+                "markdown-lint": "Same",
+                "link-check": "Same",
+                "actionlint": "Actionlint",
+                "manifest-validate": "Manifest Validate (Py ${{ matrix.python-version }})",
+            },
+        ),
+        ("required_ci_jobs", sorted(vm.REQUIRED_CI_JOBS | {"invented-ci-job"})),
+    ]
+    for key, value in type_cases:
+        payload = dict(inv)
+        payload[key] = value
+        (tmp_path / "schemas" / "packaging-inventory.json").write_text(
+            json.dumps(payload),
+            encoding="utf-8",
+        )
+        findings = vm.validate_packaging_inventory(tmp_path)
+        assert findings, key
+
+    assert vm.validate_packaging_inventory(REPO_ROOT) == []
+
+
+def test_actionlint_linkcheck_after208_cross_isolation_vs_208_siblings(
+    tmp_path: Path,
+) -> None:
+    """Tip isolation after #208: local CI fails; live #208/#202/#200 siblings stay green."""
+    base = _actionlint_linkcheck_locked_ci_yaml()
+
+    empty_with = base.replace(
+        "        with:\n"
+        f"          args: {vm.CI_LINK_CHECK_ARGS}\n"
+        "          fail: true\n",
+        "        with: {}\n",
+    )
+    _write_ci_yaml(tmp_path, empty_with)
+    assert vm.validate_link_check(tmp_path)
+    assert vm.validate_actionlint_shell(tmp_path) == []
+    assert vm.validate_ci_job_names(tmp_path) == []
+    assert vm.validate_ci_runs_on(tmp_path) == []
+    assert vm.validate_ci_artifacts(tmp_path) == []
+
+    extra_shell_lines = base.splitlines()
+    out: list[str] = []
+    in_al = False
+    injected = False
+    for line in extra_shell_lines:
+        if line.startswith("  actionlint:"):
+            in_al = True
+        elif in_al and line.startswith("  ") and not line.startswith("    "):
+            in_al = False
+        if (
+            in_al
+            and (not injected)
+            and line.strip() == "- uses: actions/checkout@v7"
+        ):
+            out.append(line)
+            out.append("        shell: powershell")
+            injected = True
+            continue
+        out.append(line)
+    _write_ci_yaml(tmp_path, "\n".join(out) + "\n")
+    assert vm.validate_actionlint_shell(tmp_path)
+    assert vm.validate_link_check(tmp_path) == []
+
+    for name, fn in _actionlint_linkcheck_residual_modules():
+        assert fn(REPO_ROOT) == [], name
+    # Merged #208 goose-schema + #202/#200 list-form/flows siblings remain green
+    assert vm.validate_prompt_usage(REPO_ROOT) == []
+    assert vm.validate_prompt_monthly(REPO_ROOT) == []
+    assert vm.validate_prompt_cannot_delegate(REPO_ROOT) == []
+    assert vm.validate_scratchpad(REPO_ROOT) == []
+    assert vm.validate_scratchpad_intro(REPO_ROOT) == []
+    assert vm.validate_goose_recipes(REPO_ROOT) == []
+    assert vm.validate_recipe_titles(REPO_ROOT) == []
+    assert vm.validate_recipe_agent_bindings(REPO_ROOT) == []
+    assert vm.validate_goose_howto(REPO_ROOT) == []
+    assert vm.validate_goose_conflicts(REPO_ROOT) == []
+    assert vm.validate_contributing_ci_honesty(REPO_ROOT) == []
+    assert vm.validate_changelog_changed(REPO_ROOT) == []
+    assert vm.validate_implementation_quickstart(REPO_ROOT) == []
+    assert vm.validate_hydration_phase4(REPO_ROOT) == []
+    assert vm.validate_security_packaging(REPO_ROOT) == []
+    assert vm.validate_constitution_handoff(REPO_ROOT) == []
+    assert vm.validate_changelog_unreleased(REPO_ROOT) == []
+    assert vm.validate_contributing_packaging(REPO_ROOT) == []
+    assert vm.validate_implementation_guide(REPO_ROOT) == []
+    assert vm.validate_execution_summary(REPO_ROOT) == []
+
+
+def test_actionlint_linkcheck_after208_leftover_live_green() -> None:
+    """Live seven CI fixtures + inventory stay green on tip after #208."""
+    for name, fn in _actionlint_linkcheck_residual_modules():
+        assert fn(REPO_ROOT) == [], name
+
+    assert vm.INVENTORY_VERSION == 52
+    assert vm.MIN_VALIDATOR_COUNT == 196
+    assert len(vm.VALIDATORS) == 196
+    assert vm.run_all_validations(
+        REPO_ROOT, only=list(_ACTIONLINT_LINKCHECK_RESIDUAL_NAMES)
+    ) == []
+
+    body = (REPO_ROOT / _ACTIONLINT_LINKCHECK_CI_REL).read_text(encoding="utf-8")
+    for action in vm.CI_REQUIRED_ACTIONS:
+        assert action in body
+    for marker in vm.CI_REQUIRED_TEXT_MARKERS:
+        assert marker in body
+    assert vm.CI_LINK_CHECK_ARGS in body
+    assert f"shell: {vm.CI_ACTIONLINT_SHELL}" in body
+    assert f"id: {vm.CI_ACTIONLINT_STEP_ID}" in body
+    assert "lycheeverse/lychee-action@v2" in body
+    assert "DavidAnson/markdownlint-cli2-action@v24" in body
+    assert "GITHUB_TOKEN" in body
+    for expected in vm.CI_JOB_DISPLAY_NAMES.values():
+        assert f"name: {expected}" in body
+
+    assert len(_actionlint_linkcheck_residual_modules()) == 7
+    assert "actionlint-timeouts" not in vm.VALIDATORS
+    assert "link-check-timeouts" not in vm.VALIDATORS
+    assert "ci-v53" not in vm.VALIDATORS
+    assert vm.validate_prompt_usage(REPO_ROOT) == []
+    assert vm.validate_scratchpad(REPO_ROOT) == []
+    assert vm.validate_goose_recipes(REPO_ROOT) == []
+    assert vm.validate_recipe_titles(REPO_ROOT) == []
+    assert vm.validate_recipe_agent_bindings(REPO_ROOT) == []
+    assert vm.validate_contributing_ci_honesty(REPO_ROOT) == []
+    assert vm.validate_changelog_changed(REPO_ROOT) == []
+    assert vm.validate_implementation_quickstart(REPO_ROOT) == []
+    assert vm.validate_hydration_phase4(REPO_ROOT) == []
+    assert vm.validate_security_packaging(REPO_ROOT) == []
+    assert vm.validate_constitution_handoff(REPO_ROOT) == []
+    assert vm.validate_changelog_unreleased(REPO_ROOT) == []
+    assert vm.validate_implementation_guide(REPO_ROOT) == []
+    assert vm.validate_execution_summary(REPO_ROOT) == []

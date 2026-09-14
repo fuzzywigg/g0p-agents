@@ -10,6 +10,29 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Actionlint/workflow + link-check residual **tests-only** leftover deepeners
+  after tip through **#208** (goose-schema leftover after #200) / **#202** /
+  **#200** / **#195** / **#188** / **#187** / **#186** (EXISTING seven CI
+  fixtures — `ci` / `ci-actions` / `link-check` / `actionlint-shell` /
+  `ci-job-names` / `ci-runs-on` / `ci-artifacts` — no invented product /
+  inventory bump): scalar `on:` (no pull_request finding), extra
+  `pull_request.branches` still green, empty `pull_request` / empty branches
+  list, concurrency as scalar + group-key absent + empty-string group +
+  cancel-in-progress key absent, jobs as a sequence, empty `permissions` +
+  contents-key absent, `strategy` scalar + fail-fast key absent +
+  python-version string / extra fourth version, lychee `with: {}` + args-only
+  / fail-only, markdown-lint scalar job/steps + globs-only / config-only,
+  GITHUB_TOKEN env drop stays green, actionlint job scalar + empty/extra shell,
+  job `name` / `runs-on` key absent + runs-on list, if-no-files-found key
+  absent + path list missing/extra, `ci-actions` parse error still scans pins,
+  inventory leftover types (whitespace/int/extra display-name key/dup values),
+  `run_all --only` isolation, and tip isolation against #208/#202/#200/#195
+  siblings. Historic four only; inventory unchanged (v52 / 196). Distinct from
+  merged #208 (goose-schema leftover), #202/#200 (list-form + flows),
+  #195/#188 (prior actionlint leftover suites), closed CONFLICTING #206
+  (same suite on pre-#208 tip), #187 (docs-cross), #186 (residual suite), and
+  historic v10/v11 link-check/actionlint edge suites.
+
 - Goose-recipe schema leftover **tests-only** deepeners after tip through **#202**
   (prompts+agentic_flows leftover after #200) / **#200** / **#195** / **#188** /
   **#187** / **#186** / **#184** (goose-schema tip) / **#172** (goose-schema
