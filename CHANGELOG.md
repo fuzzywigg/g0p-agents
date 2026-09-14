@@ -10,6 +10,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Goose recipes **v43** deepeners (post-#106 hydration v42): `goose-blockchain-task`,
+  `goose-edge-task`, `goose-adding-recipes` validators; GOOSE-RECIPES.md Smart Contract
+  Design Task STEP leftovers, On-Device Security Implementation Task STEP leftovers,
+  and Adding New Recipes workflow leftovers; consistency deepeners for
+  `goose_blockchain_task_required_phrases` / `goose_edge_task_required_phrases` /
+  `goose_adding_recipes_required_phrases`
+  (Packaging inventory 144 total; historic four only — goose recipes leftovers
+  slice, not hydration v42, implementation-guide v41, constitution v40, security v39,
+  contributing v38, agent prompts, changelog, execution-summary, or Dependabot)
+
 - Hydration report **v42** deepeners (post-#101 implementation-guide v41): `hydration-phase1`,
   `hydration-list-a`, `hydration-resolved`, `hydration-phase4`, `hydration-deferred`
   validators; docs/agent-hydration.md PHASE 1 findings category leftovers, LIST A
