@@ -32500,3 +32500,714 @@ def test_actionlint_linkcheck_after236_leftover_live_green() -> None:
     assert vm.validate_implementation_guide(REPO_ROOT) == []
     assert vm.validate_execution_summary(REPO_ROOT) == []
     assert vm.validate_markdownlint(REPO_ROOT) == []
+
+# ---------------------------------------------------------------------------
+# TOKENMAXX HEAVY: prompts listform + agentic_flows residual leftovers after #248
+# (#248 actionlint leftover after #242) / #242 / #236 / #229 / #224 / #219 /
+# #209 / #208 / #202. EXISTING nineteen fixtures only — twelve list-form sibling
+# prompt-* + seven agentic_flows (goose / recipe-agents / recipe-titles /
+# scratchpad*) — no invented v53 list-form product / inventory bump. Distinct
+# from merged #248 (actionlint leftover), #242 (ZWSP/on-disk/checkbox/
+# inventory-types/triple-race), #236/#229/#224/#219 siblings, closed CONFLICTING
+# #251/#243/#238/#235/#230/#221/#223 tip refills, and markdownlint niche drafts.
+# Still v52 / 196.
+# ---------------------------------------------------------------------------
+
+_PROMPTS_FLOWS_AFTER248_C85E_INVENT_NAMES: tuple[str, ...] = (
+    "prompts-flows-after248-c85e-timeouts",
+    "prompts-flows-fence-title-timeouts",
+    "listform-fullwidth-timeouts",
+    "goose-fence-bind-timeouts",
+    "recipe-primary-orch-timeouts",
+    "prompts-flows-after236-timeouts",
+    "prompts-flows-after224-timeouts",
+    "prompts-flows-after219-timeouts",
+    "listform-timeouts",
+    "agentic-flows-timeouts",
+    "flows-v53",
+    "prompt-matrix-rows",
+    "markdownlint-timeouts",
+)
+
+
+def _prompts_flows_after248_c85e_modules() -> list[tuple[str, object]]:
+    """Map the nineteen existing listform + agentic_flows tip validators."""
+    prompts = [(n, fn) for n, fn, _p, _k in _listform_prompt_residual_modules()]
+    scratch = [(n, fn) for n, fn, _p, _k in _agentic_flows_scratchpad_residual_modules()]
+    goose = _agentic_flows_goose_residual_modules()
+    return [*prompts, *scratch, *goose]
+
+
+def _write_prompts_flows_after248_c85e_docs(tmp_path: Path) -> None:
+    """Seed AGENT-PROMPTS + scratchpad + GOOSE-RECIPES with locked fixture text."""
+    if (tmp_path / "schemas").is_dir():
+        _write(tmp_path / "GOOSE-RECIPES.md", _goose_schema_residual_locked_doc())
+        flows = tmp_path / "agentic_flows"
+        flows.mkdir(parents=True, exist_ok=True)
+        _write(flows / "scratchpad.txt", _locked_scratchpad_text())
+    else:
+        _write_listform_flows_goose_fixture(tmp_path)
+    _write(tmp_path / "AGENT-PROMPTS.md", _listform_prompt_locked_text())
+
+
+def test_prompts_flows_after248_c85e_modules_existing_only() -> None:
+    """After #248 residual leftovers: nineteen existing fixtures — not invent-product."""
+    assert vm.INVENTORY_VERSION == 52
+    assert vm.MIN_VALIDATOR_COUNT == 196
+    assert len(vm.VALIDATORS) == 196
+
+    prompts = _listform_prompt_residual_modules()
+    scratch = _agentic_flows_scratchpad_residual_modules()
+    goose = _agentic_flows_goose_residual_modules()
+    modules = _prompts_flows_after248_c85e_modules()
+    assert len(prompts) == 12
+    assert len(scratch) == 4
+    assert len(goose) == 3
+    assert len(modules) == 19
+    assert [n for n, *_ in prompts] == list(_LISTFORM_PROMPT_RESIDUAL_NAMES)
+    assert [n for n, _ in goose] + [n for n, *_ in scratch] == list(
+        _AGENTIC_FLOWS_RESIDUAL_NAMES
+    )
+
+    for invented in _PROMPTS_FLOWS_AFTER248_C85E_INVENT_NAMES:
+        assert invented not in vm.VALIDATORS
+
+    inventory = json.loads(
+        (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
+    )
+    assert inventory["version"] == 52
+    assert inventory["min_validator_count"] == 196
+    assert sorted(vm.VALIDATORS) == inventory["validator_names"]
+    assert inventory["agentic_flows_allowed_files"] == ["scratchpad.txt"]
+    assert inventory["goose_docs_required_phrases"] == list(
+        vm.GOOSE_DOCS_REQUIRED_PHRASES
+    )
+    assert inventory["expected_recipe_files"] == list(vm.EXPECTED_RECIPE_FILES)
+    assert inventory["recipe_titles"] == vm.RECIPE_TITLES
+
+    for name, _fn, phrases, inv_key in prompts:
+        assert name in vm.VALIDATORS
+        assert inv_key in inventory
+        assert inventory[inv_key] == list(phrases)
+        assert len(phrases) >= 2
+    for name, _fn, phrases, inv_key in scratch:
+        assert name in vm.VALIDATORS
+        assert inv_key in inventory
+        assert inventory[inv_key] == list(phrases)
+
+    # Adjacent #248/#242/#236/#240 siblings stay registered but excluded.
+    assert "ci" in vm.VALIDATORS
+    assert "markdownlint" in vm.VALIDATORS
+    assert "hydration-phase4" in vm.VALIDATORS
+    assert "security" in vm.VALIDATORS
+    names = {m[0] for m in modules}
+    assert "ci" not in names
+    assert "markdownlint" not in names
+    assert "hydration-phase4" not in names
+    assert "security" not in names
+    assert "prompt-metrics-detail" not in names
+
+
+def test_prompts_flows_after248_c85e_fence_count_dup_and_name_set(
+    tmp_path: Path,
+) -> None:
+    """Exact fence-count / duplicate-name / missing+extra recipe-name Findings."""
+    _write(tmp_path / "GOOSE-RECIPES.md", "```yaml\nname: only_one\n```\n")
+    fence = vm.validate_goose_recipes(tmp_path)
+    assert any(
+        f.message == "expected exactly 4 documented Goose recipe YAML fences, found 1"
+        for f in fence
+    )
+    assert all(f.path.startswith("GOOSE-RECIPES.md") for f in fence)
+
+    # Four fences with the same locked name → duplicate + missing set.
+    blocks: list[str] = []
+    shared = "quantum_algorithm_design_workflow"
+    for _ in range(4):
+        recipe = json.loads(json.dumps(LOCKED_RECIPE))
+        recipe["name"] = shared
+        recipe["recipe"]["title"] = vm.RECIPE_TITLES[shared]
+        recipe["recipe"]["instructions"] = "You are QuantumArchitectAgent."
+        blocks.append(yaml.safe_dump(recipe, sort_keys=False))
+    body = "\n\n".join(f"```yaml\n{block}```" for block in blocks)
+    for rel in vm.EXPECTED_RECIPE_FILES:
+        body += f"\n**File**: `./{rel}`\n"
+        body += f"\ngoose run ./{rel}\n"
+    for phrase in vm.GOOSE_DOCS_REQUIRED_PHRASES:
+        if phrase not in body:
+            body += f"\n{phrase}\n"
+    _write(tmp_path / "GOOSE-RECIPES.md", body)
+    dup = vm.validate_goose_recipes(tmp_path)
+    assert any(f.message == "duplicate recipe name values" for f in dup)
+    assert any(
+        f.message.startswith("missing locked recipe name(s):") for f in dup
+    )
+
+    # Extra invented name + missing locked name exact.
+    _write_prompts_flows_after248_c85e_docs(tmp_path)
+    doc = (tmp_path / "GOOSE-RECIPES.md").read_text(encoding="utf-8")
+    mangled = doc.replace(
+        "name: quantum_algorithm_design_workflow",
+        "name: invented_after248_c85e_workflow",
+        1,
+    )
+    _write(tmp_path / "GOOSE-RECIPES.md", mangled)
+    nameset = vm.validate_goose_recipes(tmp_path)
+    assert any(
+        "missing locked recipe name(s): quantum_algorithm_design_workflow"
+        in f.message
+        for f in nameset
+    )
+    assert any(
+        "unexpected/invented recipe name(s): invented_after248_c85e_workflow"
+        in f.message
+        for f in nameset
+    )
+    # Listform + scratchpad stay green when only GOOSE name set is mangled.
+    for name, fn, _phrases, _key in _listform_prompt_residual_modules():
+        assert fn(tmp_path) == [], name
+    assert vm.validate_scratchpad(tmp_path) == []
+
+
+def test_prompts_flows_after248_c85e_file_bind_and_count_mismatch(
+    tmp_path: Path,
+) -> None:
+    """Documented **File** count/inventory + name→path bind mismatch exact."""
+    _write_prompts_flows_after248_c85e_docs(tmp_path)
+    files = list(vm.EXPECTED_RECIPE_FILES)
+    doc = (tmp_path / "GOOSE-RECIPES.md").read_text(encoding="utf-8")
+
+    # Drop one **File** line → count mismatch + inventory mismatch.
+    out: list[str] = []
+    dropped = False
+    for line in doc.splitlines():
+        if not dropped and line.startswith("**File**:"):
+            dropped = True
+            continue
+        out.append(line)
+    assert dropped
+    _write(tmp_path / "GOOSE-RECIPES.md", "\n".join(out) + "\n")
+    count = vm.validate_goose_recipes(tmp_path)
+    assert any(
+        f.message
+        == "documented **File** paths (3) do not match recipe fences (4)"
+        for f in count
+    )
+    assert any(
+        f.message
+        == "documented **File** paths do not match locked recipe file inventory"
+        for f in count
+    )
+
+    # Swap first two File paths → bind mismatch while fence count stays 4.
+    _write_prompts_flows_after248_c85e_docs(tmp_path)
+    doc = (tmp_path / "GOOSE-RECIPES.md").read_text(encoding="utf-8")
+    swapped = doc.replace(f"**File**: `./{files[0]}`", "**File**: `./TMP_SWAP`", 1)
+    swapped = swapped.replace(
+        f"**File**: `./{files[1]}`",
+        f"**File**: `./{files[0]}`",
+        1,
+    )
+    swapped = swapped.replace("**File**: `./TMP_SWAP`", f"**File**: `./{files[1]}`", 1)
+    _write(tmp_path / "GOOSE-RECIPES.md", swapped)
+    bind = vm.validate_goose_recipes(tmp_path)
+    assert any(
+        f.message
+        == (
+            "recipe quantum_algorithm_design_workflow must bind to "
+            "agentic_flows/quantum_algorithm_design.yaml, found "
+            "agentic_flows/blockchain_contract_design.yaml"
+        )
+        for f in bind
+    )
+    assert any(
+        f.message
+        == (
+            "recipe blockchain_contract_design_workflow must bind to "
+            "agentic_flows/blockchain_contract_design.yaml, found "
+            "agentic_flows/quantum_algorithm_design.yaml"
+        )
+        for f in bind
+    )
+    for name, fn, _phrases, _key in _listform_prompt_residual_modules():
+        assert fn(tmp_path) == [], name
+    assert vm.validate_scratchpad(tmp_path) == []
+
+
+def test_prompts_flows_after248_c85e_title_and_primary_agent_edges(
+    tmp_path: Path,
+) -> None:
+    """Title mismatch / invented name / missing title + primary/orch agent exact."""
+    _write_prompts_flows_after248_c85e_docs(tmp_path)
+    doc = (tmp_path / "GOOSE-RECIPES.md").read_text(encoding="utf-8")
+    first_name = next(iter(vm.RECIPE_TITLES))
+    expected_title = vm.RECIPE_TITLES[first_name]
+    mangled = doc.replace(f"title: {expected_title}", "title: Wrong After248 Title", 1)
+    assert expected_title not in mangled.split("title:", 1)[1].split("\n", 1)[0]
+    _write(tmp_path / "GOOSE-RECIPES.md", mangled)
+    titles = vm.validate_recipe_titles(tmp_path)
+    assert any(
+        f.message
+        == (
+            f"historic recipe title must be {expected_title!r}, "
+            f"found 'Wrong After248 Title'"
+        )
+        for f in titles
+    )
+    assert all(
+        f.path.startswith("GOOSE-RECIPES.md") for f in titles if "title must be" in f.message
+    )
+
+    # Invented recipe name in titles path + missing locked title for absented name.
+    invented_doc = doc.replace(
+        f"name: {first_name}",
+        "name: invented_after248_title_workflow",
+        1,
+    )
+    _write(tmp_path / "GOOSE-RECIPES.md", invented_doc)
+    invent_titles = vm.validate_recipe_titles(tmp_path)
+    assert any(
+        f.message == "unexpected/invented recipe name: invented_after248_title_workflow"
+        for f in invent_titles
+    )
+    assert any(
+        f.message == f"missing locked recipe title for: {first_name}"
+        for f in invent_titles
+    )
+
+    # Primary agent missing (≠ invent-token theme in #242).
+    _write_prompts_flows_after248_c85e_docs(tmp_path)
+    doc = (tmp_path / "GOOSE-RECIPES.md").read_text(encoding="utf-8")
+    no_primary = doc.replace("QuantumArchitectAgent", "quantum architect role")
+    assert "QuantumArchitectAgent" not in no_primary
+    _write(tmp_path / "GOOSE-RECIPES.md", no_primary)
+    agents = vm.validate_recipe_agent_bindings(tmp_path)
+    assert any(
+        f.message
+        == "primary agent missing from recipe text: QuantumArchitectAgent"
+        for f in agents
+    )
+    assert any(
+        f.message
+        == "orchestration recipe missing documented agent: QuantumArchitectAgent"
+        for f in agents
+    )
+
+    # Orchestration-only missing EdgeSecurityAgent (edge primary also fails).
+    _write_prompts_flows_after248_c85e_docs(tmp_path)
+    doc = (tmp_path / "GOOSE-RECIPES.md").read_text(encoding="utf-8")
+    no_edge = doc.replace("EdgeSecurityAgent", "EdgeSecurityRole")
+    _write(tmp_path / "GOOSE-RECIPES.md", no_edge)
+    edge = vm.validate_recipe_agent_bindings(tmp_path)
+    assert any(
+        f.message == "primary agent missing from recipe text: EdgeSecurityAgent"
+        for f in edge
+    )
+    assert any(
+        f.message
+        == "orchestration recipe missing documented agent: EdgeSecurityAgent"
+        for f in edge
+    )
+    for name, fn, _phrases, _key in _listform_prompt_residual_modules():
+        assert fn(tmp_path) == [], name
+    assert vm.validate_scratchpad(tmp_path) == []
+
+
+def test_prompts_flows_after248_c85e_fullwidth_combining_tab_lookalikes(
+    tmp_path: Path,
+) -> None:
+    """Unsaturated lookalikes beyond merged #242 ZWSP/soft-hyphen: fullwidth / combining / tab."""
+    prompt_base = _listform_prompt_locked_text()
+    scratch_base = _locked_scratchpad_text()
+    _write_prompts_flows_after248_c85e_docs(tmp_path)
+
+    # Fullwidth Latin small letter i inside Usage Instructions.
+    fullwidth = prompt_base.replace(
+        "## Usage Instructions",
+        "## Usage Instruct\uff49ons",
+    )
+    assert "## Usage Instructions" not in fullwidth
+    _write(tmp_path / "AGENT-PROMPTS.md", fullwidth)
+    usage = vm.validate_prompt_usage(tmp_path)
+    assert any(f.message == "missing Usage Instructions section" for f in usage)
+    assert any(
+        f.message == "missing locked prompt-usage phrase: ## Usage Instructions"
+        for f in usage
+    )
+    assert vm.validate_scratchpad(tmp_path) == []
+    assert vm.validate_goose_recipes(tmp_path) == []
+
+    # Combining acute on 'o' in Monthly Checklist.
+    combining = prompt_base.replace(
+        "## Your Monthly Checklist",
+        "## Your Monthly Checkl\u0301ist",
+    )
+    assert "## Your Monthly Checklist" not in combining
+    _write(tmp_path / "AGENT-PROMPTS.md", combining)
+    monthly = vm.validate_prompt_monthly(tmp_path)
+    assert any(f.message == "missing Your Monthly Checklist section" for f in monthly)
+    assert vm.validate_recipe_titles(tmp_path) == []
+
+    # Tab infix in Decision Authority section header.
+    tabbed = prompt_base.replace(
+        "## Your Decision Authority",
+        "## Your\tDecision Authority",
+    )
+    assert "## Your Decision Authority" not in tabbed
+    _write(tmp_path / "AGENT-PROMPTS.md", tabbed)
+    decision = vm.validate_prompt_decision_authority(tmp_path)
+    assert any(
+        f.message == "missing Your Decision Authority section" for f in decision
+    )
+
+    # Scratchpad Format: tab lookalike; listform restored green.
+    _write(tmp_path / "AGENT-PROMPTS.md", prompt_base)
+    scratch_tab = scratch_base.replace("Format:", "Format\t:")
+    assert "Format:" not in scratch_tab
+    _write(tmp_path / "agentic_flows" / "scratchpad.txt", scratch_tab)
+    assert any(
+        f.message == "missing Format legend section"
+        for f in vm.validate_scratchpad_format(tmp_path)
+    )
+    for name, fn, _phrases, _key in _listform_prompt_residual_modules():
+        assert fn(tmp_path) == [], name
+    assert vm.validate_goose_recipes(tmp_path) == []
+
+    # GOOSE_DOCS ideographic-space lookalike on packaging phrase; listform green.
+    _write(tmp_path / "agentic_flows" / "scratchpad.txt", scratch_base)
+    goose_base = (tmp_path / "GOOSE-RECIPES.md").read_text(encoding="utf-8")
+    goose_fw = goose_base.replace("goose run", "goose\u3000run")
+    assert "goose run" not in goose_fw
+    _write(tmp_path / "GOOSE-RECIPES.md", goose_fw)
+    titles = vm.validate_recipe_titles(tmp_path)
+    assert any(
+        f.message == "GOOSE-RECIPES missing packaging phrase: goose run"
+        for f in titles
+    )
+    for name, fn, _phrases, _key in _listform_prompt_residual_modules():
+        assert fn(tmp_path) == [], name
+
+
+def test_prompts_flows_after248_c85e_per_phrase_exact_drop_matrix(
+    tmp_path: Path,
+) -> None:
+    """Per-module first-phrase exact drop for all twelve listform + scratchpad*."""
+    prompt_base = _listform_prompt_locked_text()
+    scratch_base = _locked_scratchpad_text()
+    _write_prompts_flows_after248_c85e_docs(tmp_path)
+
+    for name, fn, phrases, _key in _listform_prompt_residual_modules():
+        phrase = phrases[0]
+        mangled = prompt_base.replace(phrase, f"ABSENT_AFTER248_{name}")
+        assert phrase not in mangled
+        _write(tmp_path / "AGENT-PROMPTS.md", mangled)
+        findings = fn(tmp_path)
+        assert any(
+            f.message == f"missing locked {name} phrase: {phrase}"
+            or f.message.endswith(phrase)
+            or phrase in f.message
+            for f in findings
+        ), (name, phrase, findings[:3])
+        assert all(f.path == "AGENT-PROMPTS.md" for f in findings), name
+        assert vm.validate_scratchpad(tmp_path) == []
+        assert vm.validate_recipe_titles(tmp_path) == []
+
+    _write(tmp_path / "AGENT-PROMPTS.md", prompt_base)
+    for name, fn, phrases, _key in _agentic_flows_scratchpad_residual_modules():
+        # scratchpad base also checks status/checkbox; drop a unique required phrase.
+        phrase = phrases[0]
+        if phrase not in scratch_base:
+            continue
+        mangled = scratch_base.replace(phrase, f"ABSENT_AFTER248_{name}")
+        assert phrase not in mangled
+        _write(tmp_path / "agentic_flows" / "scratchpad.txt", mangled)
+        findings = fn(tmp_path)
+        assert findings, name
+        assert any(phrase in f.message for f in findings), (name, phrase)
+        assert all(f.path == "agentic_flows/scratchpad.txt" for f in findings)
+        for pname, pfn, _p, _k in _listform_prompt_residual_modules():
+            assert pfn(tmp_path) == [], pname
+        assert vm.validate_goose_recipes(tmp_path) == []
+
+    _write_prompts_flows_after248_c85e_docs(tmp_path)
+    for name, fn in _prompts_flows_after248_c85e_modules():
+        assert fn(tmp_path) == [], name
+
+
+def test_prompts_flows_after248_c85e_parse_error_and_empty_prompts(
+    tmp_path: Path,
+) -> None:
+    """YAML parse-error fences + empty AGENT-PROMPTS exact Finding shapes."""
+    body = "```yaml\n:\nbad\n```\n" * 4
+    for rel in vm.EXPECTED_RECIPE_FILES:
+        body += f"\n**File**: `./{rel}`\n"
+        body += f"\ngoose run ./{rel}\n"
+    for phrase in vm.GOOSE_DOCS_REQUIRED_PHRASES:
+        if phrase not in body:
+            body += f"\n{phrase}\n"
+    _write(tmp_path / "GOOSE-RECIPES.md", body)
+    _write(tmp_path / "AGENT-PROMPTS.md", _listform_prompt_locked_text())
+    _write(tmp_path / "agentic_flows" / "scratchpad.txt", _locked_scratchpad_text())
+
+    parse = vm.validate_goose_recipes(tmp_path)
+    assert any("YAML parse error" in f.message for f in parse)
+    assert all(f.path.startswith("GOOSE-RECIPES.md") for f in parse)
+    titles = vm.validate_recipe_titles(tmp_path)
+    assert any("YAML parse error" in f.message for f in titles)
+    for name in vm.RECIPE_TITLES:
+        assert any(
+            f.message == f"missing locked recipe title for: {name}" for f in titles
+        ), name
+    for name, fn, _phrases, _key in _listform_prompt_residual_modules():
+        assert fn(tmp_path) == [], name
+    assert vm.validate_scratchpad(tmp_path) == []
+
+    # Empty prompts file: usage asymmetry vs other listform siblings.
+    _write(tmp_path / "AGENT-PROMPTS.md", "")
+    usage = vm.validate_prompt_usage(tmp_path)
+    assert any(f.message == "missing Usage Instructions section" for f in usage)
+    assert any(
+        f.message == "missing locked prompt-usage phrase: ## Usage Instructions"
+        for f in usage
+    )
+    monthly = vm.validate_prompt_monthly(tmp_path)
+    assert monthly[0] == vm.Finding(
+        "AGENT-PROMPTS.md", "missing Your Monthly Checklist section"
+    )
+    living = vm.validate_prompt_living_docs(tmp_path)
+    assert any(
+        f.message == "missing Agent Prompt Templates header" for f in living
+    )
+    # Goose parse surface still red; scratchpad stays green.
+    assert vm.validate_scratchpad(tmp_path) == []
+    assert vm.validate_goose_recipes(tmp_path)
+
+
+def test_prompts_flows_after248_c85e_inventory_bool_float_and_run_only(
+    tmp_path: Path,
+) -> None:
+    """Inventory bool/float leftovers beyond merged #242 int/null/mapping + run_all --only."""
+    only_names = [
+        *_LISTFORM_PROMPT_RESIDUAL_NAMES,
+        *_AGENTIC_FLOWS_RESIDUAL_NAMES,
+    ]
+    assert vm.run_all_validations(REPO_ROOT, only=only_names) == []
+
+    for invented in _PROMPTS_FLOWS_AFTER248_C85E_INVENT_NAMES[:5]:
+        with pytest.raises(ValueError, match="unknown validator"):
+            vm.run_all_validations(REPO_ROOT, only=[invented])
+        with pytest.raises(KeyError):
+            _ = vm.VALIDATORS[invented]
+
+    _write_prompts_flows_after248_c85e_docs(tmp_path)
+    mangled = _listform_prompt_locked_text().replace(
+        "## Your Decision Authority",
+        "ABSENT_DECISION_AFTER248",
+    )
+    _write(tmp_path / "AGENT-PROMPTS.md", mangled)
+    only_decision = vm.run_all_validations(
+        tmp_path, only=["prompt-decision-authority"]
+    )
+    assert only_decision
+    assert all(f.path == "AGENT-PROMPTS.md" for f in only_decision)
+    assert vm.run_all_validations(tmp_path, only=["scratchpad"]) == []
+    assert vm.run_all_validations(tmp_path, only=["goose"]) == []
+    assert vm.run_all_validations(tmp_path, only=["recipe-titles"]) == []
+    assert vm.run_all_validations(tmp_path, only=["prompt-monthly"]) == []
+    # markdownlint niche stays green on tip on tip and is excluded from this slice.
+    assert "markdownlint" not in only_names
+    assert vm.run_all_validations(REPO_ROOT, only=["markdownlint"]) == []
+
+    assert (tmp_path / "schemas").is_dir()
+    for rel in _inventory_payload()["required_paths"]:
+        target = tmp_path / rel
+        target.parent.mkdir(parents=True, exist_ok=True)
+        if not target.exists():
+            target.write_text("ok\n", encoding="utf-8")
+
+    inv = _inventory_payload()
+    type_cases: list[tuple[str, object]] = [
+        ("prompt_usage_required_phrases", True),
+        ("prompt_usage_required_phrases", False),
+        ("prompt_monthly_required_phrases", 1.5),
+        ("prompt_living_docs_required_phrases", 0.0),
+        ("prompt_decision_authority_required_phrases", True),
+        ("prompt_matrix_resolutions_required_phrases", False),
+        ("scratchpad_required_phrases", 2.0),
+        ("scratchpad_intro_required_phrases", True),
+        ("scratchpad_format_required_phrases", False),
+        ("goose_docs_required_phrases", 3.14),
+        ("agentic_flows_allowed_files", True),
+        ("expected_recipe_files", False),
+        ("scratchpad_status_markers", 1.0),
+        ("recipe_titles", True),
+    ]
+    for key, value in type_cases:
+        payload = dict(inv)
+        payload[key] = value
+        (tmp_path / "schemas" / "packaging-inventory.json").write_text(
+            json.dumps(payload),
+            encoding="utf-8",
+        )
+        findings = vm.validate_packaging_inventory(tmp_path)
+        assert findings, (key, value)
+        assert any(
+            key in f.message or "inventory" in f.message.lower() for f in findings
+        ), (key, value)
+
+    assert vm.validate_packaging_inventory(REPO_ROOT) == []
+
+
+def test_prompts_flows_after248_c85e_cross_isolation_races_and_live_green(
+    tmp_path: Path,
+) -> None:
+    """Cross isolation vs markdownlint niche + concurrent races + live nineteen green."""
+    modules = _prompts_flows_after248_c85e_modules()
+    live_fns = [fn for _n, fn in modules]
+
+    def _read_live() -> list[vm.Finding]:
+        out: list[vm.Finding] = []
+        for fn in live_fns:
+            out.extend(fn(REPO_ROOT))
+        return out
+
+    errors: list[BaseException] = []
+    with ThreadPoolExecutor(max_workers=16) as pool:
+        futures = [pool.submit(_read_live) for _ in range(40)]
+        for fut in as_completed(futures):
+            try:
+                assert fut.result() == []
+            except BaseException as exc:  # noqa: BLE001 — collect race failures
+                errors.append(exc)
+    assert errors == []
+
+    prompt_locked = _listform_prompt_locked_text()
+    scratch_locked = _locked_scratchpad_text()
+    goose_locked = _goose_schema_residual_locked_doc()
+    _write(tmp_path / "AGENT-PROMPTS.md", prompt_locked)
+    _write(tmp_path / "agentic_flows" / "scratchpad.txt", scratch_locked)
+    _write(tmp_path / "GOOSE-RECIPES.md", goose_locked)
+    _copy_schemas(tmp_path)
+
+    # Cross isolation: listform section drop leaves flows+goose (+ markdownlint live) green.
+    mangled = prompt_locked.replace(
+        "## Key Responsibilities You CANNOT Delegate",
+        "ABSENT_CANNOT_AFTER248",
+    )
+    _write(tmp_path / "AGENT-PROMPTS.md", mangled)
+    assert any(
+        f.message == "missing Key Responsibilities You CANNOT Delegate section"
+        for f in vm.validate_prompt_cannot_delegate(tmp_path)
+    )
+    assert vm.validate_scratchpad(tmp_path) == []
+    assert vm.validate_goose_recipes(tmp_path) == []
+    assert vm.validate_recipe_titles(tmp_path) == []
+    assert vm.validate_markdownlint(REPO_ROOT) == []
+    assert vm.validate_ci_workflow(REPO_ROOT) == []
+    assert vm.validate_link_check(REPO_ROOT) == []
+
+    # Restore prompts; invent agentic_flows file — goose red; listform green.
+    _write(tmp_path / "AGENT-PROMPTS.md", prompt_locked)
+    _write(tmp_path / "agentic_flows" / "after248-c85e-invented.bin", "nope\n")
+    assert any(
+        "unexpected/invented agentic_flows file" in f.message
+        for f in vm.validate_goose_recipes(tmp_path)
+    )
+    for name, fn, _phrases, _key in _listform_prompt_residual_modules():
+        assert fn(tmp_path) == [], name
+    (tmp_path / "agentic_flows" / "after248-c85e-invented.bin").unlink()
+
+    stop = threading.Event()
+    race_errors: list[BaseException] = []
+    prompt_path = tmp_path / "AGENT-PROMPTS.md"
+    scratch_path = tmp_path / "agentic_flows" / "scratchpad.txt"
+    goose_path = tmp_path / "GOOSE-RECIPES.md"
+
+    def _writer() -> None:
+        flip = False
+        while not stop.is_set():
+            try:
+                if flip:
+                    prompt_path.write_text(prompt_locked, encoding="utf-8")
+                    scratch_path.write_text(scratch_locked, encoding="utf-8")
+                    goose_path.write_text(goose_locked, encoding="utf-8")
+                else:
+                    prompt_path.write_text("\n", encoding="utf-8")
+                    scratch_path.write_text("\n", encoding="utf-8")
+                    goose_path.write_text("\n", encoding="utf-8")
+                flip = not flip
+            except BaseException as exc:  # noqa: BLE001
+                race_errors.append(exc)
+                return
+
+    def _reader() -> None:
+        while not stop.is_set():
+            try:
+                for fn in live_fns:
+                    fn(tmp_path)
+            except BaseException as exc:  # noqa: BLE001
+                race_errors.append(exc)
+                return
+
+    threads = [
+        threading.Thread(target=_writer),
+        threading.Thread(target=_reader),
+        threading.Thread(target=_reader),
+        threading.Thread(target=_reader),
+    ]
+    for t in threads:
+        t.start()
+    time.sleep(0.35)
+    stop.set()
+    for t in threads:
+        t.join(timeout=2.0)
+    assert race_errors == []
+
+    for name, fn in modules:
+        assert fn(REPO_ROOT) == [], name
+        assert vm.VALIDATORS[name](REPO_ROOT) == [], name
+
+    assert vm.INVENTORY_VERSION == 52
+    assert vm.MIN_VALIDATOR_COUNT == 196
+    assert len(vm.VALIDATORS) == 196
+    assert (
+        vm.run_all_validations(
+            REPO_ROOT,
+            only=[
+                *_LISTFORM_PROMPT_RESIDUAL_NAMES,
+                *_AGENTIC_FLOWS_RESIDUAL_NAMES,
+            ],
+        )
+        == []
+    )
+
+    prompts_doc = (REPO_ROOT / "AGENT-PROMPTS.md").read_text(encoding="utf-8")
+    assert "## Usage Instructions" in prompts_doc
+    assert "## Your Monthly Checklist" in prompts_doc
+    assert "# Agent Prompt Templates" in prompts_doc
+    assert (REPO_ROOT / "agentic_flows" / "scratchpad.txt").is_file()
+    assert not any((REPO_ROOT / "agentic_flows").glob("*.yaml"))
+    goose_doc = (REPO_ROOT / "GOOSE-RECIPES.md").read_text(encoding="utf-8")
+    assert "Recipe-Based Agent Orchestration" in goose_doc
+    assert "goose run" in goose_doc
+
+    for invented in _PROMPTS_FLOWS_AFTER248_C85E_INVENT_NAMES:
+        assert invented not in vm.VALIDATORS
+
+    # Tip isolation vs #248 actionlint / #242 prompts+flows / markdownlint niche.
+    assert vm.validate_hydration_phase4(REPO_ROOT) == []
+    assert vm.validate_security_packaging(REPO_ROOT) == []
+    assert vm.validate_constitution_handoff(REPO_ROOT) == []
+    assert vm.validate_goose_recipes(REPO_ROOT) == []
+    assert vm.validate_recipe_agent_bindings(REPO_ROOT) == []
+    assert vm.validate_recipe_titles(REPO_ROOT) == []
+    assert vm.validate_schemas_meta(REPO_ROOT) == []
+    assert vm.validate_ci_workflow(REPO_ROOT) == []
+    assert vm.validate_link_check(REPO_ROOT) == []
+    assert vm.validate_actionlint_shell(REPO_ROOT) == []
+    assert vm.validate_markdownlint(REPO_ROOT) == []
+    assert vm.validate_changelog_unreleased(REPO_ROOT) == []
+    assert vm.validate_contributing_packaging(REPO_ROOT) == []
+    assert vm.validate_implementation_guide(REPO_ROOT) == []
+    assert vm.validate_execution_summary(REPO_ROOT) == []
+    assert vm.validate_packaging_inventory(REPO_ROOT) == []
