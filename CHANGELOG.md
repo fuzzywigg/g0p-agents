@@ -10,18 +10,30 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
-- Hydration report **v43** deepeners (post-#106 hydration v42): `hydration-meta`,
-  `hydration-identity-detail`, `hydration-git-detail`, `hydration-phase2`,
-  `hydration-phase5` validators; docs/agent-hydration.md header Status/Owner leftovers,
-  Identity LICENSE/manifest/executable leftovers, Git State branch/shallow leftovers,
-  PHASE 2 questions crypto/Andrew/Notion leftovers, and PHASE 5 Roadmap leftovers;
-  consistency deepeners for `hydration_meta_required_phrases` /
-  `hydration_identity_detail_required_phrases` / `hydration_git_detail_required_phrases` /
-  `hydration_phase2_required_phrases` / `hydration_phase5_required_phrases`
-  (Packaging inventory 146 total; historic four only — hydration leftovers slice,
-  not hydration v42, implementation-guide v41, constitution v40, security v39,
-  contributing v38, goose recipes, execution-summary, agent prompts, changelog,
-  or Dependabot)
+- Hydration report **v44** deepeners (post-#111 README v43; NEW after #108
+  CONFLICTING closed): `hydration-meta`, `hydration-identity-detail`,
+  `hydration-git-detail`, `hydration-phase2`, `hydration-phase5` validators;
+  docs/agent-hydration.md header Status/Owner leftovers, Identity LICENSE/manifest
+  leftovers, Git State branch/shallow leftovers, PHASE 2 questions crypto/Andrew/Notion
+  leftovers, and PHASE 5 Roadmap leftovers; consistency deepeners for
+  `hydration_meta_required_phrases` / `hydration_identity_detail_required_phrases` /
+  `hydration_git_detail_required_phrases` / `hydration_phase2_required_phrases` /
+  `hydration_phase5_required_phrases`
+  (Packaging inventory 149 total; historic four only — hydration leftovers slice,
+  not README v43, hydration v42, implementation-guide v41, constitution v40,
+  security v39, contributing v38, goose recipes, execution-summary, agent prompts,
+  changelog, or Dependabot)
+
+- README **v43** deepeners (post-#106 hydration v42; NEW PR after #109
+  CONFLICTING closed): `readme-lead`, `readme-blurbs`, `readme-bootstrap` validators;
+  README.md Docs-only / Oracle-Style lead leftovers, Contents blurb leftovers, and
+  Note/Cloud/Manifest/License bootstrap-closing leftovers; consistency deepeners for
+  `readme_lead_required_phrases` / `readme_blurbs_required_phrases` /
+  `readme_bootstrap_required_phrases`
+  (Packaging inventory 144 total; historic four only — README leftovers
+  slice, not hydration v42, implementation-guide v41, constitution v40, security,
+  contributing, postmortem, goose recipes, execution-summary, agent prompts, or
+  Dependabot)
 
 - Hydration report **v42** deepeners (post-#101 implementation-guide v41): `hydration-phase1`,
   `hydration-list-a`, `hydration-resolved`, `hydration-phase4`, `hydration-deferred`
