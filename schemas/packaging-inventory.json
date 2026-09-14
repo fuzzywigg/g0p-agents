@@ -1,5 +1,5 @@
 {
-  "version": 40,
+  "version": 41,
   "documented_agents": [
     "QuantumArchitectAgent",
     "BlockchainArchitectAgent",
@@ -340,10 +340,13 @@
     "goose-state-machine",
     "hydration",
     "hydration-list-b",
+    "implementation-faq",
     "implementation-guide",
+    "implementation-issues",
     "implementation-phases",
     "implementation-quickstart",
     "implementation-success",
+    "implementation-support",
     "implementation-tools",
     "inventory",
     "issue-metadata",
@@ -405,7 +408,7 @@
     "yaml-configs"
   ],
   "min_coverage_fail_under": 99,
-  "min_validator_count": 133,
+  "min_validator_count": 136,
   "required_paths": [
     "README.md",
     "LICENSE",
@@ -1245,7 +1248,7 @@
     "markdown lint, link check, actionlint",
     "manifest validate on Python 3.11/3.12/3.13",
     "Andrew or designated reviewer",
-    "Packaging inventory v40",
+    "Packaging inventory v41",
     "refuse invented recipes",
     "orphan on-disk YAML",
     "unknown `*Agent` tokens",
@@ -1299,5 +1302,38 @@
     "**Crypto Algorithm Choice**",
     "**Deployment Timeline**",
     "**Final Decision Maker**: OrchestrationAgent"
+  ],
+  "implementation_issues_required_phrases": [
+    "## Common Issues & Solutions",
+    "### Issue 1: \"Cirq is too slow for mobile\"",
+    "Use Qualtran to analyze circuit resource requirements",
+    "### Issue 2: \"Smart contract gas cost exceeds budget\"",
+    "Consider rollups (Arbitrum, Optimism)",
+    "### Issue 3: \"Mobile device can't run quantum circuit\"",
+    "Implement classical simulation fallback",
+    "### Issue 4: \"Agents can't reach consensus on design\"",
+    "### Issue 5: \"Scratchpad gets out of sync\"",
+    "Scratchpad is append-only, never overwrite"
+  ],
+  "implementation_faq_required_phrases": [
+    "## FAQ",
+    "Do I need a real quantum computer to start?",
+    "Cirq simulator works locally",
+    "Can I use different LLMs for each agent?",
+    "How often should I update AGENTS.md?",
+    "Quarterly risk tolerance review",
+    "Can I run agents in parallel?",
+    "How do I measure agent quality?"
+  ],
+  "implementation_support_required_phrases": [
+    "## Support & Resources",
+    "**Documentation**:",
+    "AGENTS.md v2.2 (your constitution)",
+    "AGENT-PROMPTS.md (specialist prompts)",
+    "GOOSE-RECIPES.md (Goose recipe templates)",
+    "**External Resources**:",
+    "https://quantumai.google/cirq",
+    "https://hardhat.org/",
+    "https://block.github.io/goose/"
   ]
 }
