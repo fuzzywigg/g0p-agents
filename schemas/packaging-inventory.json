@@ -1,5 +1,5 @@
 {
-  "version": 31,
+  "version": 32,
   "documented_agents": [
     "QuantumArchitectAgent",
     "BlockchainArchitectAgent",
@@ -318,6 +318,9 @@
     "goose-naming",
     "goose-state-machine",
     "hydration",
+    "hydration-findings",
+    "hydration-issues",
+    "hydration-list-a",
     "hydration-list-b",
     "implementation-guide",
     "implementation-phases",
@@ -378,7 +381,7 @@
     "yaml-configs"
   ],
   "min_coverage_fail_under": 99,
-  "min_validator_count": 106,
+  "min_validator_count": 109,
   "required_paths": [
     "README.md",
     "LICENSE",
@@ -1031,5 +1034,39 @@
     "**EdgeSecurityAgent escalates when**:",
     "Crypto operations > 500ms",
     "**OrchestrationAgent escalates to user when**:"
+  ],
+  "hydration_findings_required_phrases": [
+    "### Identity",
+    "### Source Architecture",
+    "### Dependencies",
+    "### Tests",
+    "### CI/CD",
+    "### Documentation",
+    "### Governance",
+    "### Templates",
+    "### Security",
+    "### Observability",
+    "### Deployment",
+    "### Git State"
+  ],
+  "hydration_list_a_required_phrases": [
+    "### LIST A \u2014 Researchable",
+    "What is the Goose framework?",
+    "What are CRYSTALS-Kyber and CRYSTALS-Dilithium?",
+    "What is `liboqs`?",
+    "What is `stimgery`",
+    "Goose is Block's open-source AI agent framework",
+    "LIST B items B1\u2013B5 are deferred to Andrew"
+  ],
+  "hydration_issues_required_phrases": [
+    "## PHASE 4: ISSUES GENERATED",
+    "Add LICENSE file",
+    "Create .github/workflows/ CI pipeline",
+    "Add CONTRIBUTING.md",
+    "Add SECURITY.md",
+    "Scaffold agentic_flows/",
+    "Scaffold quantum_circuits/",
+    "Scaffold contracts/",
+    "Scaffold mobile/"
   ]
 }
