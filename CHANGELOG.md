@@ -10,6 +10,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Prompt-pre-v52 residual **tests-only** deepeners after #144/#147 tip (EXISTING
+  thirty-three pre-v52 `prompt-*` fixtures only, including
+  `prompt-orchestration-matrix` — no invented product / inventory bump):
+  concurrent validate races, empty/whitespace/header-only AGENT-PROMPTS,
+  invalid/invented timeout+v53 keys, per-phrase drop matrix, inventory mismatch
+  matrix, and cross-isolation. Historic four only; inventory unchanged
+  (v52 / 196). Distinct from merged #144 (twelve v52 prompt residuals), merged
+  #147 (nine goose-recipe residuals), and closed CONFLICTING #143/#145/#146
+  timeout PRs.
+
 - Goose-recipe residual **tests-only** deepeners after **#144** (EXISTING nine
   `goose-*` phrase-lock validators only — no invented product / inventory bump):
   concurrent validate races, empty/whitespace/header-only GOOSE-RECIPES,

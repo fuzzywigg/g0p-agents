@@ -17674,3 +17674,398 @@ def test_goose_recipe_residual_live_green() -> None:
     assert vm.validate_goose_recipes(REPO_ROOT) == []
     assert vm.validate_prompt_usage_detail(REPO_ROOT) == []
     assert vm.validate_scratchpad(REPO_ROOT) == []
+
+
+# Prompt-pre-v52 residual HEAVY edges after #144/#147 tip.
+# EXISTING thirty-three pre-v52 prompt-* fixtures only — no invented timeout /
+# v53 product / inventory bump. Distinct from merged #144 (twelve v52 prompt
+# residuals), merged #147 (nine goose-recipe residuals), and closed CONFLICTING
+# #143/#145/#146 timeout PRs.
+# ---------------------------------------------------------------------------
+
+_V52_PROMPT_RESIDUAL_EXCLUDE: frozenset[str] = frozenset(
+    {
+        "prompt-metrics-detail",
+        "prompt-orch-metrics-detail",
+        "prompt-communication-detail",
+        "prompt-principles-detail",
+        "prompt-responsibilities-residual",
+        "prompt-expertise-residual",
+        "prompt-vision-context",
+        "prompt-context-residual",
+        "prompt-monthly-detail",
+        "prompt-docs-residual",
+        "prompt-matrix-resolutions",
+        "prompt-usage-detail",
+    }
+)
+
+
+def _prompt_pre_v52_residual_modules() -> list[
+    tuple[str, object, tuple[str, ...], str]
+]:
+    """Map every live pre-v52 prompt-* validator to phrase tuple + inventory key."""
+    modules: list[tuple[str, object, tuple[str, ...], str]] = []
+    for name in sorted(
+        n
+        for n in vm.VALIDATORS
+        if n.startswith("prompt-") and n not in _V52_PROMPT_RESIDUAL_EXCLUDE
+    ):
+        suffix = name.removeprefix("prompt-").replace("-", "_")
+        const_name = f"PROMPT_{suffix.upper()}_REQUIRED_PHRASES"
+        fn_name = f"validate_{name.replace('-', '_')}"
+        inv_key = f"prompt_{suffix}_required_phrases"
+        modules.append(
+            (name, getattr(vm, fn_name), getattr(vm, const_name), inv_key)
+        )
+    return modules
+
+
+def _prompt_pre_v52_locked_text() -> str:
+    """Union of locked phrases (+ anchors) for the thirty-three pre-v52 modules."""
+    lines: list[str] = []
+    seen: set[str] = set()
+    ordered: list[str] = []
+    for _name, _fn, phrases, _key in _prompt_pre_v52_residual_modules():
+        ordered.extend(phrases)
+    for anchor in (
+        "# Agent Prompt Templates",
+        "System Prompt",
+        "## When You Escalate",
+        "## Your Escalation Authority",
+        "## Core Responsibilities",
+        "## Decision Making Principles",
+        "## Success Metrics",
+        "## Your Tools",
+        "## Communication Style",
+        "## Expertise",
+        "Current Project Context",
+        "CANNOT Delegate",
+        "Escalation Authority",
+        "Conflict Resolution Matrix",
+        "Monthly Checklist",
+        "## Conflict Resolution Matrix",
+        "### Example: Instantiate QuantumArchitectAgent",
+    ):
+        ordered.append(anchor)
+    for phrase in sorted(ordered, key=len, reverse=True):
+        if phrase not in seen:
+            seen.add(phrase)
+            lines.append(phrase)
+    return "\n".join(lines) + "\n"
+
+
+def test_prompt_pre_v52_residual_modules_existing_only() -> None:
+    """Slice targets thirty-three pre-v52 prompt fixtures — not #144/#147 siblings."""
+    modules = _prompt_pre_v52_residual_modules()
+    assert len(modules) == 33
+    assert vm.INVENTORY_VERSION == 52
+    assert vm.MIN_VALIDATOR_COUNT == 196
+    assert len(vm.VALIDATORS) == 196
+
+    # #144 twelve remain live but are intentionally excluded from this slice
+    for name in _V52_PROMPT_RESIDUAL_EXCLUDE:
+        assert name in vm.VALIDATORS
+        assert name not in {m[0] for m in modules}
+
+    for invented in (
+        "goose-timeouts",
+        "goose-deadlines",
+        "constitution-deadlines",
+        "implementation-timeouts",
+        "prompt-v53-invented",
+        "prompt-interpolation",
+        "prompt-checklist-detail",
+        "prompt-escalate-when",
+    ):
+        assert invented not in vm.VALIDATORS
+
+    inventory = json.loads(
+        (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
+    )
+    assert inventory["version"] == 52
+    assert inventory["min_validator_count"] == 196
+    assert sorted(vm.VALIDATORS) == inventory["validator_names"]
+
+    for name, _fn, phrases, inv_key in modules:
+        assert name in vm.VALIDATORS
+        assert name in inventory["validator_names"]
+        assert inv_key in inventory
+        assert inventory[inv_key] == list(phrases)
+        assert len(phrases) >= 2
+
+    # Orch-facing pre-v52 fixture stays in this leftover slice
+    assert "prompt-orchestration-matrix" in {m[0] for m in modules}
+
+
+def test_prompt_pre_v52_residual_empty_maps_and_empty_prompts(tmp_path: Path) -> None:
+    """Empty / whitespace / header-only AGENT-PROMPTS + empty pre-v52 phrase maps."""
+    modules = _prompt_pre_v52_residual_modules()
+    for name, fn, _phrases, _key in modules:
+        findings = fn(tmp_path)
+        assert any("missing" in f.message for f in findings), name
+
+    _write(tmp_path / "AGENT-PROMPTS.md", "\n\t  \n")
+    for name, fn, phrases, _key in modules:
+        findings = fn(tmp_path)
+        assert findings, name
+        assert any(
+            phrase in f.message or "missing" in f.message
+            for f in findings
+            for phrase in phrases[:1]
+        ) or any("missing" in f.message for f in findings)
+
+    _write(tmp_path / "AGENT-PROMPTS.md", "# Agent Prompt Templates\n")
+    for name, fn, phrases, _key in modules:
+        findings = fn(tmp_path)
+        phrase_hits = [f for f in findings if any(p in f.message for p in phrases)]
+        assert phrase_hits, name
+
+    for _name, _fn, _phrases, key in modules:
+        payload = _inventory_payload()
+        payload[key] = []
+        findings = vm._inventory_lock_consistency(
+            payload, schema_path="schemas/packaging-inventory.json"
+        )
+        assert any(f"{key} must not be empty" in f.message for f in findings), key
+
+
+def test_prompt_pre_v52_residual_invalid_keys(tmp_path: Path) -> None:
+    """Reject invented timeout / v53 keys; live pre-v52 + #144 names remain selectable."""
+    with pytest.raises(KeyError):
+        _ = vm.VALIDATORS["goose-timeouts"]
+    with pytest.raises(KeyError):
+        _ = vm.VALIDATORS["prompt-v53-invented"]
+    with pytest.raises(ValueError, match="unknown validator"):
+        vm.run_all_validations(REPO_ROOT, only=["goose-timeouts"])
+    with pytest.raises(ValueError, match="unknown validator"):
+        vm.run_all_validations(REPO_ROOT, only=["prompt-interpolation"])
+
+    findings = vm.run_all_validations(
+        REPO_ROOT,
+        only=[
+            "prompt-orchestration-matrix",
+            "prompt-role-blurbs",
+            "prompt-instantiation",
+            "prompt-metrics-detail",
+        ],
+    )
+    assert findings == []
+
+    _copy_schemas(tmp_path)
+    for rel in _inventory_payload()["required_paths"]:
+        target = tmp_path / rel
+        target.parent.mkdir(parents=True, exist_ok=True)
+        if not target.exists():
+            target.write_text("ok\n", encoding="utf-8")
+
+    bad = _inventory_payload()
+    bad["invented_prompt_pre_v52_residual_map"] = {"slot": "x"}
+    (tmp_path / "schemas" / "packaging-inventory.json").write_text(
+        json.dumps(bad),
+        encoding="utf-8",
+    )
+    findings = vm.validate_packaging_inventory(tmp_path)
+    assert findings
+
+    bad2 = _inventory_payload()
+    bad2["prompt_orchestration_matrix_required_phrases"] = "not-a-list"
+    (tmp_path / "schemas" / "packaging-inventory.json").write_text(
+        json.dumps(bad2),
+        encoding="utf-8",
+    )
+    findings = vm.validate_packaging_inventory(tmp_path)
+    assert findings
+
+
+def test_prompt_pre_v52_residual_per_phrase_drop_matrix(tmp_path: Path) -> None:
+    """Drop each locked phrase independently across all thirty-three pre-v52 modules."""
+    base = _prompt_pre_v52_locked_text()
+    _write(tmp_path / "AGENT-PROMPTS.md", base)
+    modules = _prompt_pre_v52_residual_modules()
+    for name, fn, _phrases, _key in modules:
+        assert fn(tmp_path) == [], name
+
+    for name, fn, phrases, _key in modules:
+        for phrase in phrases:
+            mangled = base.replace(phrase, "ABSENT_PHRASE_TOKEN")
+            assert phrase not in mangled, (name, phrase)
+            _write(tmp_path / "AGENT-PROMPTS.md", mangled)
+            findings = fn(tmp_path)
+            assert any(phrase in f.message for f in findings), (name, phrase)
+
+    _write(tmp_path / "AGENT-PROMPTS.md", base)
+    for name, fn, _phrases, _key in modules:
+        assert fn(tmp_path) == [], name
+
+
+def test_prompt_pre_v52_residual_inventory_mismatch_matrix() -> None:
+    """Empty / dup / blank / seed mismatches for every pre-v52 prompt_* inventory key."""
+    modules = _prompt_pre_v52_residual_modules()
+    for _name, _fn, phrases, key in modules:
+        payload = _inventory_payload()
+        payload[key] = []
+        findings = vm._inventory_lock_consistency(
+            payload, schema_path="schemas/packaging-inventory.json"
+        )
+        assert any(f"{key} must not be empty" in f.message for f in findings), key
+
+        payload = _inventory_payload()
+        payload[key] = [phrases[0], phrases[0], *phrases[1:]]
+        findings = vm._inventory_lock_consistency(
+            payload, schema_path="schemas/packaging-inventory.json"
+        )
+        assert any(f"{key} must be unique" in f.message for f in findings), key
+
+        payload = _inventory_payload()
+        payload[key] = ["ok", "  "]
+        findings = vm._inventory_lock_consistency(
+            payload, schema_path="schemas/packaging-inventory.json"
+        )
+        assert any(
+            f"{key} entries must be non-empty strings" in f.message for f in findings
+        ), key
+
+        payload = _inventory_payload()
+        payload[key] = [phrases[0]]
+        findings = vm._inventory_lock_consistency(
+            payload, schema_path="schemas/packaging-inventory.json"
+        )
+        assert any(f"{key} must include" in f.message for f in findings), key
+
+
+def test_prompt_pre_v52_residual_concurrent_validate_races(tmp_path: Path) -> None:
+    """Concurrent readers/writers against AGENT-PROMPTS.md must not crash."""
+    modules = _prompt_pre_v52_residual_modules()
+    live_fns = [fn for _name, fn, _phrases, _key in modules]
+
+    def _read_live() -> list[vm.Finding]:
+        out: list[vm.Finding] = []
+        for fn in live_fns:
+            out.extend(fn(REPO_ROOT))
+        return out
+
+    errors: list[BaseException] = []
+    with ThreadPoolExecutor(max_workers=16) as pool:
+        futures = [pool.submit(_read_live) for _ in range(48)]
+        for fut in as_completed(futures):
+            try:
+                assert fut.result() == []
+            except BaseException as exc:  # noqa: BLE001 — collect race failures
+                errors.append(exc)
+    assert errors == []
+
+    locked = _prompt_pre_v52_locked_text()
+    path = tmp_path / "AGENT-PROMPTS.md"
+    _write(path, locked)
+    for name, fn, _phrases, _key in modules:
+        assert fn(tmp_path) == [], name
+
+    stop = threading.Event()
+    race_errors: list[BaseException] = []
+
+    def _writer() -> None:
+        flip = False
+        while not stop.is_set():
+            try:
+                if flip:
+                    path.write_text(locked, encoding="utf-8")
+                else:
+                    path.write_text("\n", encoding="utf-8")
+                flip = not flip
+            except BaseException as exc:  # noqa: BLE001
+                race_errors.append(exc)
+                return
+
+    def _reader() -> None:
+        while not stop.is_set():
+            try:
+                for fn in live_fns:
+                    fn(tmp_path)
+            except BaseException as exc:  # noqa: BLE001
+                race_errors.append(exc)
+                return
+
+    threads = [
+        threading.Thread(target=_writer),
+        threading.Thread(target=_reader),
+        threading.Thread(target=_reader),
+        threading.Thread(target=_reader),
+    ]
+    for t in threads:
+        t.start()
+    time.sleep(0.35)
+    stop.set()
+    for t in threads:
+        t.join(timeout=2.0)
+    assert race_errors == []
+
+    def _empty_map_check(key: str) -> bool:
+        payload = _inventory_payload()
+        payload[key] = []
+        findings = vm._inventory_lock_consistency(
+            payload, schema_path="schemas/packaging-inventory.json"
+        )
+        return any(f"{key} must not be empty" in f.message for f in findings)
+
+    keys = [key for _n, _f, _p, key in modules]
+    with ThreadPoolExecutor(max_workers=8) as pool:
+        futs = [pool.submit(_empty_map_check, k) for k in keys for _ in range(2)]
+        assert all(fut.result() for fut in as_completed(futs))
+
+
+def test_prompt_pre_v52_residual_cross_isolation(tmp_path: Path) -> None:
+    """Dropping one pre-v52 module's phrases must not falsely green that module."""
+    base = _prompt_pre_v52_locked_text()
+    modules = _prompt_pre_v52_residual_modules()
+    targets = [
+        "prompt-orchestration-matrix",
+        "prompt-role-blurbs",
+        "prompt-constraints-detail",
+        "prompt-tools-detail",
+        "prompt-instantiation",
+        "prompt-context",
+        "prompt-metrics",
+        "prompt-roles",
+    ]
+    by_name = {name: (fn, phrases) for name, fn, phrases, _key in modules}
+    for target in targets:
+        fn, phrases = by_name[target]
+        mangled = base
+        for phrase in phrases:
+            mangled = mangled.replace(phrase, "GONE_PHRASE_TOKEN")
+            assert phrase not in mangled, (target, phrase)
+        _write(tmp_path / "AGENT-PROMPTS.md", mangled)
+        findings = fn(tmp_path)
+        assert findings, target
+        assert any(p in f.message for f in findings for p in phrases), target
+        # Unrelated live root + #144/#147 siblings stay green
+        assert by_name["prompt-related-docs"][0](REPO_ROOT) == []
+        assert vm.validate_prompt_usage_detail(REPO_ROOT) == []
+        assert vm.validate_goose_orchestration(REPO_ROOT) == []
+
+
+def test_prompt_pre_v52_residual_live_green() -> None:
+    """All thirty-three live pre-v52 prompt validators remain clean; inventory v52/196."""
+    modules = _prompt_pre_v52_residual_modules()
+    assert len(modules) == 33
+    for name, fn, _phrases, _key in modules:
+        assert fn(REPO_ROOT) == [], name
+        assert vm.VALIDATORS[name](REPO_ROOT) == [], name
+
+    assert vm.INVENTORY_VERSION == 52
+    assert vm.MIN_VALIDATOR_COUNT == 196
+    assert len(vm.VALIDATORS) == 196
+    body = (REPO_ROOT / "AGENT-PROMPTS.md").read_text(encoding="utf-8")
+    assert "# Agent Prompt Templates" in body
+    assert "System Prompt" in body
+    assert "Packaging inventory v52" in (
+        REPO_ROOT / "CONTRIBUTING.md"
+    ).read_text(encoding="utf-8")
+    assert "inventory v52 locks" in (REPO_ROOT / "README.md").read_text(
+        encoding="utf-8"
+    )
+    # Adjacent #144 / #147 slices remain green alongside this residual
+    assert vm.validate_prompt_metrics_detail(REPO_ROOT) == []
+    assert vm.validate_goose_howto(REPO_ROOT) == []
+    assert vm.validate_scratchpad(REPO_ROOT) == []
