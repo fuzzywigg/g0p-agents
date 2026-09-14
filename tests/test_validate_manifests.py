@@ -29867,7 +29867,7 @@ def test_hydration_security_handoff_after224_modules_existing_only() -> None:
     )
     assert inventory["agentic_flows_allowed_files"] == ["scratchpad.txt"]
 
-    # Adjacent #208/#202/#200 siblings stay registered but are excluded
+    # Adjacent #224/#219/#209/#208/#202/#200 siblings stay registered but are excluded
     assert "goose" in vm.VALIDATORS
     assert "recipe-agents" in vm.VALIDATORS
     assert "prompt-usage" in vm.VALIDATORS
