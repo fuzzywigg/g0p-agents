@@ -33212,3 +33212,939 @@ def test_prompts_flows_after248_c85e_cross_isolation_races_and_live_green(
     assert vm.validate_implementation_guide(REPO_ROOT) == []
     assert vm.validate_execution_summary(REPO_ROOT) == []
     assert vm.validate_packaging_inventory(REPO_ROOT) == []
+
+
+# ---------------------------------------------------------------------------
+# TOKENMAXX HEAVY: Claude/routing governance leftovers after #253
+# (prompts+flows leftover after #248) / #248 / #242 / #236 / #229 / #224 /
+# #219 / #209 / #208 / #202 / #200 / #195 / #188 / #187 (docs-cross tip).
+# EXISTING twelve CLAUDE.md fixtures — historic v14–v16 + closed CONFLICTING
+# #192 residual (never merged) — no invented v53 product / inventory bump.
+# Distinct from open #254/#255 goose-schema, #256 actionlint/linkcheck,
+# #257 CI/markdownlint, #258 hydration/security+handoff, and merged #253
+# prompts+flows. Still v52 / 196.
+# ---------------------------------------------------------------------------
+
+_CLAUDE_ROUTING_AFTER253_SPECS: tuple[tuple[str, str, str], ...] = (
+    ("claude", "CLAUDE_REQUIRED_PHRASES", "claude_required_phrases"),
+    (
+        "claude-metadata",
+        "CLAUDE_METADATA_REQUIRED_PHRASES",
+        "claude_metadata_required_phrases",
+    ),
+    ("routing", "ROUTING_SURFACES", "routing_surfaces"),
+    (
+        "routing-matrix",
+        "ROUTING_MATRIX_REQUIRED_PHRASES",
+        "routing_matrix_required_phrases",
+    ),
+    (
+        "routing-rationales",
+        "ROUTING_MATRIX_RATIONALE_PHRASES",
+        "routing_matrix_rationale_phrases",
+    ),
+    ("repo-identity", "REPO_IDENTITY_REQUIRED_PHRASES", "repo_identity_required_phrases"),
+    (
+        "state-residency",
+        "STATE_RESIDENCY_REQUIRED_PHRASES",
+        "state_residency_required_phrases",
+    ),
+    ("key-files", "KEY_FILES_REQUIRED_ENTRIES", "key_files_required_entries"),
+    (
+        "escalation-format",
+        "ESCALATION_BLOCK_REQUIRED_PHRASES",
+        "escalation_block_required_phrases",
+    ),
+    (
+        "escalation-usage",
+        "ESCALATION_USAGE_REQUIRED_PHRASES",
+        "escalation_usage_required_phrases",
+    ),
+    ("quarterly-review", "QUARTERLY_REVIEW_PHRASES", "quarterly_review_phrases"),
+    (
+        "negative-constraints",
+        "NEGATIVE_CONSTRAINT_PHRASES",
+        "negative_constraint_phrases",
+    ),
+)
+
+_CLAUDE_ROUTING_AFTER253_EMPTY_MAP_KEYS: frozenset[str] = frozenset(
+    {
+        "claude_metadata_required_phrases",
+        "routing_matrix_required_phrases",
+        "routing_matrix_rationale_phrases",
+        "repo_identity_required_phrases",
+        "state_residency_required_phrases",
+        "key_files_required_entries",
+        "escalation_block_required_phrases",
+        "escalation_usage_required_phrases",
+        "quarterly_review_phrases",
+    }
+)
+
+_CLAUDE_ROUTING_AFTER253_INVENT_NAMES: tuple[str, ...] = (
+    "claude-routing-after253-timeouts",
+    "claude-routing-timeouts",
+    "claude-timeouts",
+    "routing-timeouts",
+    "claude-v53",
+    "routing-v53",
+    "docs-cross-timeouts",
+    "goose-schema-timeouts",
+    "actionlint-timeouts",
+    "markdownlint-timeouts",
+    "hydration-security-timeouts",
+    "prompts-flows-after253-timeouts",
+    "memory-slot-v53",
+    "agent-handoff-lru",
+)
+
+
+def _claude_routing_after253_modules() -> list[tuple[str, object, tuple[str, ...], str]]:
+    """Map the twelve existing CLAUDE.md governance validators (not invent-product)."""
+    modules: list[tuple[str, object, tuple[str, ...], str]] = []
+    for name, const_name, inv_key in _CLAUDE_ROUTING_AFTER253_SPECS:
+        modules.append(
+            (
+                name,
+                vm.VALIDATORS[name],
+                tuple(getattr(vm, const_name)),
+                inv_key,
+            )
+        )
+    return modules
+
+
+def _claude_routing_after253_locked_text() -> str:
+    """Union of sections + locked phrases so all twelve validators go green."""
+    lines: list[str] = list(vm.CLAUDE_REQUIRED_SECTIONS)
+    lines.append("Task | Surface | Rationale")
+    ordered: list[str] = []
+    seen: set[str] = set()
+    for agent in vm.DOCUMENTED_AGENTS:
+        ordered.append(agent)
+    for _name, _fn, phrases, _key in _claude_routing_after253_modules():
+        ordered.extend(phrases)
+    for phrase in vm.ESCALATION_FORMAT_PHRASES:
+        ordered.append(phrase)
+    for phrase in sorted(ordered, key=len, reverse=True):
+        if phrase not in seen:
+            seen.add(phrase)
+            lines.append(phrase)
+    return "\n".join(lines) + "\n"
+
+
+def test_claude_routing_after253_modules_existing_only() -> None:
+    """After #253 leftover: twelve existing CLAUDE.md fixtures — invent-key refuse."""
+    assert vm.INVENTORY_VERSION == 52
+    assert vm.MIN_VALIDATOR_COUNT == 196
+    assert len(vm.VALIDATORS) == 196
+
+    modules = _claude_routing_after253_modules()
+    assert len(modules) == 12
+    assert [n for n, _fn, _p, _k in modules] == [
+        spec[0] for spec in _CLAUDE_ROUTING_AFTER253_SPECS
+    ]
+
+    assert "AGENTS-v2.2.md" in vm.KEY_FILES_REQUIRED_ENTRIES
+    assert "AGENT-PROMPTS.md" in vm.KEY_FILES_REQUIRED_ENTRIES
+    assert "GOOSE-RECIPES.md" in vm.KEY_FILES_REQUIRED_ENTRIES
+    assert "IMPLEMENTATION-GUIDE.md" in vm.KEY_FILES_REQUIRED_ENTRIES
+    assert "docs/agent-hydration.md" in vm.KEY_FILES_REQUIRED_ENTRIES
+    assert "agentic_flows/" in vm.KEY_FILES_REQUIRED_ENTRIES
+    assert any("AGENTS-v2.2.md" in phrase for phrase in vm.QUARTERLY_REVIEW_PHRASES)
+    assert "ESCALATION REQUIRED" in vm.ESCALATION_BLOCK_REQUIRED_PHRASES
+    assert "From Agent:" in vm.ESCALATION_BLOCK_REQUIRED_PHRASES
+    assert "claude-cowork" in vm.ROUTING_SURFACES
+    assert "geryon" in vm.ROUTING_SURFACES
+    assert "copilot" in vm.ROUTING_SURFACES
+    assert "playwright" in vm.ROUTING_SURFACES
+    assert "Status: ACTIVE" in vm.CLAUDE_METADATA_REQUIRED_PHRASES
+    assert "Owner: claude-cowork" in vm.CLAUDE_METADATA_REQUIRED_PHRASES
+    assert "Push to `main` branch" in vm.NEGATIVE_CONSTRAINT_PHRASES
+
+    for invented in _CLAUDE_ROUTING_AFTER253_INVENT_NAMES:
+        assert invented not in vm.VALIDATORS
+    with pytest.raises(KeyError):
+        _ = vm.VALIDATORS["claude-routing-after253-timeouts"]
+    with pytest.raises(ValueError, match="unknown validator"):
+        vm.run_all_validations(REPO_ROOT, only=["claude-v53"])
+
+    inventory = json.loads(
+        (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
+    )
+    assert inventory["version"] == 52
+    assert inventory["min_validator_count"] == 196
+    assert sorted(vm.VALIDATORS) == inventory["validator_names"]
+
+    for name, _fn, phrases, inv_key in modules:
+        assert name in vm.VALIDATORS
+        assert name in inventory["validator_names"]
+        assert inv_key in inventory
+        assert inventory[inv_key] == list(phrases)
+        assert len(phrases) >= 2
+
+    # Adjacent #253/#248/#257/#258 siblings stay registered but excluded.
+    names = {m[0] for m in modules}
+    for sibling in (
+        "prompt-decision-authority",
+        "scratchpad",
+        "goose",
+        "ci",
+        "link-check",
+        "actionlint-shell",
+        "markdownlint",
+        "hydration-phase4",
+        "security",
+        "constitution-handoff",
+        "contributing-ci-honesty",
+    ):
+        assert sibling in vm.VALIDATORS
+        assert sibling not in names
+
+
+def test_claude_routing_after253_exact_missing_and_directory_not_file(
+    tmp_path: Path,
+) -> None:
+    """Exact CLAUDE.md missing Finding equality + directory-not-file (≠ soft asserts)."""
+    modules = _claude_routing_after253_modules()
+
+    # Absent path — routing uses a distinct missing message vs the other eleven.
+    for name, fn, _phrases, _key in modules:
+        findings = fn(tmp_path)
+        assert findings, name
+        if name == "routing":
+            assert any(
+                f.message == "required documentation file is missing" for f in findings
+            ), name
+        else:
+            assert any(f.message == "CLAUDE.md missing" for f in findings), name
+        assert all(f.path == "CLAUDE.md" for f in findings), name
+
+    # Directory-not-file still reports missing (is_file() False).
+    (tmp_path / "CLAUDE.md").mkdir()
+    for name, fn, _phrases, _key in modules:
+        findings = fn(tmp_path)
+        assert findings, name
+        if name == "routing":
+            assert any(
+                f.message == "required documentation file is missing" for f in findings
+            ), name
+        else:
+            assert any(f.message == "CLAUDE.md missing" for f in findings), name
+
+    # Live tip stays green.
+    for name, fn, _phrases, _key in modules:
+        assert fn(REPO_ROOT) == [], name
+
+
+def test_claude_routing_after253_exact_section_missing_messages(
+    tmp_path: Path,
+) -> None:
+    """Exact section-missing Finding equality across governance section headers."""
+    _write(tmp_path / "CLAUDE.md", "# CLAUDE.md — empty governance body\n")
+
+    cases: list[tuple[str, object, str]] = [
+        ("repo-identity", vm.validate_repo_identity, "missing Repo Identity section"),
+        (
+            "routing-matrix",
+            vm.validate_routing_matrix,
+            "missing Agent Routing Matrix section",
+        ),
+        (
+            "routing-rationales",
+            vm.validate_routing_rationales,
+            "missing Agent Routing Matrix section",
+        ),
+        (
+            "state-residency",
+            vm.validate_state_residency,
+            "missing State Residency Rules section",
+        ),
+        ("key-files", vm.validate_key_files, "missing Key Files section"),
+        (
+            "escalation-format",
+            vm.validate_escalation_format,
+            "missing Escalation Format section",
+        ),
+        (
+            "escalation-usage",
+            vm.validate_escalation_usage,
+            "missing Escalation Format section",
+        ),
+        (
+            "quarterly-review",
+            vm.validate_quarterly_review,
+            "missing Quarterly Review Triggers section",
+        ),
+        (
+            "negative-constraints",
+            vm.validate_negative_constraints,
+            "missing Negative Constraints section",
+        ),
+    ]
+    for name, fn, message in cases:
+        findings = fn(tmp_path)
+        assert any(f.message == message for f in findings), (name, message)
+
+    # routing (surfaces) uses the CLAUDE_REQUIRED_SECTIONS message shape.
+    routing = vm.validate_routing_surfaces(tmp_path)
+    for section in vm.CLAUDE_REQUIRED_SECTIONS:
+        assert any(
+            f.message == f"missing required CLAUDE.md section: {section}"
+            for f in routing
+        ), section
+
+    # claude packaging uses CLAUDE.md missing required section: …
+    packaging = vm.validate_claude_packaging(tmp_path)
+    for section in vm.CLAUDE_REQUIRED_SECTIONS:
+        assert any(
+            f.message == f"CLAUDE.md missing required section: {section}"
+            for f in packaging
+        ), section
+
+
+def test_claude_routing_after253_section_present_phrases_absent_matrix(
+    tmp_path: Path,
+) -> None:
+    """Section headers present but locked phrases absent — exact message formats."""
+    _write(tmp_path / "CLAUDE.md", "## Repo Identity\n")
+    findings = vm.validate_repo_identity(tmp_path)
+    assert not any("missing Repo Identity section" in f.message for f in findings)
+    for phrase in vm.REPO_IDENTITY_REQUIRED_PHRASES:
+        assert any(
+            f.message == f"missing locked repo-identity phrase: {phrase}"
+            for f in findings
+        ), phrase
+
+    _write(tmp_path / "CLAUDE.md", "## Agent Routing Matrix\n")
+    findings = vm.validate_routing_matrix(tmp_path)
+    assert not any("missing Agent Routing Matrix section" in f.message for f in findings)
+    for phrase in vm.ROUTING_MATRIX_REQUIRED_PHRASES:
+        assert any(
+            f.message == f"missing locked routing-matrix phrase: {phrase}"
+            for f in findings
+        ), phrase
+    for surface in vm.ROUTING_SURFACES:
+        assert any(
+            f.message == f"missing locked routing surface in matrix: {surface}"
+            for f in findings
+        ), surface
+
+    rationale = vm.validate_routing_rationales(tmp_path)
+    assert any(f.message == "missing routing-matrix column header" for f in rationale)
+    for phrase in vm.ROUTING_MATRIX_RATIONALE_PHRASES:
+        assert any(
+            f.message == f"missing locked routing-rationale phrase: {phrase}"
+            for f in rationale
+        ), phrase
+
+    _write(tmp_path / "CLAUDE.md", "## State Residency Rules\n")
+    findings = vm.validate_state_residency(tmp_path)
+    assert not any(
+        "missing State Residency Rules section" in f.message for f in findings
+    )
+    for phrase in vm.STATE_RESIDENCY_REQUIRED_PHRASES:
+        assert any(
+            f.message == f"missing locked state-residency phrase: {phrase}"
+            for f in findings
+        ), phrase
+
+    _write(tmp_path / "CLAUDE.md", "## Key Files\n")
+    findings = vm.validate_key_files(tmp_path)
+    assert not any("missing Key Files section" in f.message for f in findings)
+    for entry in vm.KEY_FILES_REQUIRED_ENTRIES:
+        assert any(
+            f.message == f"missing locked key-files entry: {entry}" for f in findings
+        ), entry
+
+    _write(tmp_path / "CLAUDE.md", "## Escalation Format\n")
+    findings = vm.validate_escalation_format(tmp_path)
+    assert not any("missing Escalation Format section" in f.message for f in findings)
+    for phrase in vm.ESCALATION_BLOCK_REQUIRED_PHRASES:
+        assert any(
+            f.message == f"missing locked escalation-format phrase: {phrase}"
+            for f in findings
+        ), phrase
+    usage = vm.validate_escalation_usage(tmp_path)
+    for phrase in vm.ESCALATION_USAGE_REQUIRED_PHRASES:
+        assert any(
+            f.message == f"missing locked escalation-usage phrase: {phrase}"
+            for f in usage
+        ), phrase
+
+    _write(tmp_path / "CLAUDE.md", "## Quarterly Review Triggers\n")
+    findings = vm.validate_quarterly_review(tmp_path)
+    assert not any(
+        "missing Quarterly Review Triggers section" in f.message for f in findings
+    )
+    for phrase in vm.QUARTERLY_REVIEW_PHRASES:
+        assert any(
+            f.message == f"CLAUDE.md missing quarterly-review phrase: {phrase}"
+            for f in findings
+        ), phrase
+
+    _write(tmp_path / "CLAUDE.md", "## Negative Constraints\n")
+    findings = vm.validate_negative_constraints(tmp_path)
+    assert not any(
+        "missing Negative Constraints section" in f.message for f in findings
+    )
+    for phrase in vm.NEGATIVE_CONSTRAINT_PHRASES:
+        assert any(
+            f.message == f"missing locked negative constraint phrase: {phrase}"
+            for f in findings
+        ), phrase
+
+
+def test_claude_routing_after253_lookalike_zwsp_tab_crlf_fullwidth(
+    tmp_path: Path,
+) -> None:
+    """Unsaturated lookalikes: ZWSP / tab / CRLF / fullwidth / soft-hyphen / NBSP."""
+    base = (REPO_ROOT / "CLAUDE.md").read_text(encoding="utf-8")
+    _write(tmp_path / "CLAUDE.md", base)
+    for name, fn, _phrases, _key in _claude_routing_after253_modules():
+        assert fn(tmp_path) == [], name
+
+    # ZWSP inside Key Files header.
+    zwsp = base.replace("## Key Files", "## Key\u200b Files")
+    assert "## Key Files" not in zwsp
+    _write(tmp_path / "CLAUDE.md", zwsp)
+    assert any(
+        f.message == "missing Key Files section" for f in vm.validate_key_files(tmp_path)
+    )
+    assert vm.validate_repo_identity(tmp_path) == []
+
+    # Tab infix in Repo Identity.
+    tabbed = base.replace("## Repo Identity", "## Repo\tIdentity")
+    assert "## Repo Identity" not in tabbed
+    _write(tmp_path / "CLAUDE.md", tabbed)
+    assert any(
+        f.message == "missing Repo Identity section"
+        for f in vm.validate_repo_identity(tmp_path)
+    )
+    assert vm.validate_key_files(tmp_path) == []
+
+    # CRLF-broken Escalation Format header (CR inserted mid-token).
+    crlf = base.replace("## Escalation Format", "## Escalation\r Format")
+    assert "## Escalation Format" not in crlf
+    _write(tmp_path / "CLAUDE.md", crlf)
+    assert any(
+        f.message == "missing Escalation Format section"
+        for f in vm.validate_escalation_format(tmp_path)
+    )
+    assert any(
+        f.message == "missing Escalation Format section"
+        for f in vm.validate_escalation_usage(tmp_path)
+    )
+
+    # Fullwidth Latin 'e' in Agent Routing Matrix.
+    fullwidth = base.replace(
+        "## Agent Routing Matrix",
+        "## Agent Routing Matrix".replace("e", "\uff45", 1),
+    )
+    # Ensure the exact ASCII header is gone.
+    assert "## Agent Routing Matrix" not in fullwidth or "\uff45" in fullwidth
+    # More reliable: replace 'Matrix' -> fullwidth M.
+    fullwidth = base.replace("## Agent Routing Matrix", "## Agent Routing \uff2datrix")
+    assert "## Agent Routing Matrix" not in fullwidth
+    _write(tmp_path / "CLAUDE.md", fullwidth)
+    assert any(
+        f.message == "missing Agent Routing Matrix section"
+        for f in vm.validate_routing_matrix(tmp_path)
+    )
+    assert any(
+        f.message == "missing Agent Routing Matrix section"
+        for f in vm.validate_routing_rationales(tmp_path)
+    )
+
+    # Soft hyphen in State Residency.
+    soft = base.replace(
+        "## State Residency Rules",
+        "## State Residen\u00adcy Rules",
+    )
+    assert "## State Residency Rules" not in soft
+    _write(tmp_path / "CLAUDE.md", soft)
+    assert any(
+        f.message == "missing State Residency Rules section"
+        for f in vm.validate_state_residency(tmp_path)
+    )
+
+    # NBSP in Quarterly Review Triggers.
+    nbsp = base.replace(
+        "## Quarterly Review Triggers",
+        "## Quarterly\u00a0Review Triggers",
+    )
+    assert "## Quarterly Review Triggers" not in nbsp
+    _write(tmp_path / "CLAUDE.md", nbsp)
+    assert any(
+        f.message == "missing Quarterly Review Triggers section"
+        for f in vm.validate_quarterly_review(tmp_path)
+    )
+
+    # Surface lookalike: claude-cowork with ideographic space.
+    surface = base.replace("claude-cowork", "claude\u3000cowork")
+    assert "claude-cowork" not in surface
+    _write(tmp_path / "CLAUDE.md", surface)
+    routing = vm.validate_routing_surfaces(tmp_path)
+    assert any(
+        f.message == "missing locked routing surface: claude-cowork" for f in routing
+    )
+    matrix = vm.validate_routing_matrix(tmp_path)
+    assert any(
+        f.message == "missing locked routing surface in matrix: claude-cowork"
+        for f in matrix
+    )
+    # Key-files entry lookalike for AGENTS-v2.2.md
+    agents_lk = base.replace("AGENTS-v2.2.md", "AGENTS\u200b-v2.2.md")
+    assert "AGENTS-v2.2.md" not in agents_lk
+    _write(tmp_path / "CLAUDE.md", agents_lk)
+    assert any(
+        f.message == "missing locked key-files entry: AGENTS-v2.2.md"
+        for f in vm.validate_key_files(tmp_path)
+    )
+    # Sibling niches stay green on live root.
+    assert vm.validate_goose_recipes(REPO_ROOT) == []
+    assert vm.validate_link_check(REPO_ROOT) == []
+    assert vm.validate_markdownlint(REPO_ROOT) == []
+
+
+def test_claude_routing_after253_per_phrase_exact_drop_matrix(tmp_path: Path) -> None:
+    """Drop each locked phrase independently — exact message substring per module."""
+    base = _claude_routing_after253_locked_text()
+    _write(tmp_path / "CLAUDE.md", base)
+    modules = _claude_routing_after253_modules()
+    for name, fn, _phrases, _key in modules:
+        assert fn(tmp_path) == [], name
+
+    for name, fn, phrases, _key in modules:
+        for phrase in phrases:
+            mangled = base.replace(phrase, "ABSENT_PHRASE_TOKEN")
+            assert phrase not in mangled, (name, phrase)
+            _write(tmp_path / "CLAUDE.md", mangled)
+            findings = fn(tmp_path)
+            assert any(phrase in f.message for f in findings), (name, phrase)
+
+    # Column header drop for routing-rationales only.
+    no_header = base.replace("Task | Surface | Rationale", "Task Surface Rationale")
+    assert "Task | Surface | Rationale" not in no_header
+    _write(tmp_path / "CLAUDE.md", no_header)
+    assert any(
+        f.message == "missing routing-matrix column header"
+        for f in vm.validate_routing_rationales(tmp_path)
+    )
+    assert vm.validate_routing_matrix(tmp_path) == []
+
+    _write(tmp_path / "CLAUDE.md", base)
+    for name, fn, _phrases, _key in modules:
+        assert fn(tmp_path) == [], name
+
+
+def test_claude_routing_after253_invented_agent_and_documented_agent_drops(
+    tmp_path: Path,
+) -> None:
+    """Invented agent exact Finding + documented-agent drop isolation."""
+    base = _claude_routing_after253_locked_text()
+    _write(tmp_path / "CLAUDE.md", base)
+    assert vm.validate_claude_packaging(tmp_path) == []
+    assert vm.validate_routing_surfaces(tmp_path) == []
+    assert vm.validate_negative_constraints(tmp_path) == []
+
+    invented = base + "\nInventedTimeoutAgent coordinates leftovers.\n"
+    _write(tmp_path / "CLAUDE.md", invented)
+    packaging = vm.validate_claude_packaging(tmp_path)
+    assert any(
+        f.message == "invented or unknown agent token(s): InventedTimeoutAgent"
+        for f in packaging
+    )
+    # routing / negative-constraints do not invent-scan — stay green on same body.
+    assert vm.validate_routing_surfaces(tmp_path) == []
+    assert vm.validate_negative_constraints(tmp_path) == []
+    assert vm.validate_key_files(tmp_path) == []
+
+    # Drop one documented agent — packaging + routing + negative fail with distinct msgs.
+    agent = vm.DOCUMENTED_AGENTS[0]
+    dropped = base.replace(agent, "ABSENT_DOCUMENTED_AGENT_TOKEN")
+    assert agent not in dropped
+    _write(tmp_path / "CLAUDE.md", dropped)
+    packaging = vm.validate_claude_packaging(tmp_path)
+    assert any(
+        f.message == f"CLAUDE.md missing documented agent: {agent}" for f in packaging
+    )
+    routing = vm.validate_routing_surfaces(tmp_path)
+    assert any(
+        f.message == f"documented agent missing from routing/doc identity: {agent}"
+        for f in routing
+    )
+    negative = vm.validate_negative_constraints(tmp_path)
+    assert any(
+        f.message == f"documented agent missing from CLAUDE.md: {agent}"
+        for f in negative
+    )
+    # Escalation-format (phrase-only) stays green when agents are mangled.
+    assert vm.validate_escalation_format(tmp_path) == []
+    assert vm.validate_claude_metadata(tmp_path) == []
+
+
+def test_claude_routing_after253_key_files_and_escalation_cross_isolation(
+    tmp_path: Path,
+) -> None:
+    """key-files↔archive + CLAUDE↔constitution↔prompts escalation isolation."""
+    claude = (REPO_ROOT / "CLAUDE.md").read_text(encoding="utf-8")
+    agents = (REPO_ROOT / "AGENTS-v2.2.md").read_text(encoding="utf-8")
+    prompts = (REPO_ROOT / "AGENT-PROMPTS.md").read_text(encoding="utf-8")
+    _write(tmp_path / "CLAUDE.md", claude)
+    _write(tmp_path / "AGENTS-v2.2.md", agents)
+    _write(tmp_path / "AGENT-PROMPTS.md", prompts)
+
+    for entry in (
+        "AGENTS-v2.2.md",
+        "AGENT-PROMPTS.md",
+        "GOOSE-RECIPES.md",
+        "IMPLEMENTATION-GUIDE.md",
+        "EXECUTION-SUMMARY.md",
+        "docs/agent-hydration.md",
+        "agentic_flows/",
+    ):
+        token = f"ABSENT_{entry.replace('.', '_').replace('-', '_').replace('/', '_')}"
+        mangled = claude.replace(entry, token)
+        assert entry not in mangled, entry
+        _write(tmp_path / "CLAUDE.md", mangled)
+        findings = vm.validate_key_files(tmp_path)
+        assert any(
+            f.message == f"missing locked key-files entry: {entry}" for f in findings
+        ), entry
+        # Not a docs-cross / prompts+flows / hydration redo — siblings green on tip.
+        assert vm.validate_goose_howto(REPO_ROOT) == []
+        assert vm.validate_prompt_decision_authority(REPO_ROOT) == []
+        assert vm.validate_hydration_phase4(REPO_ROOT) == []
+        assert vm.validate_security_packaging(REPO_ROOT) == []
+        assert vm.validate_markdownlint(REPO_ROOT) == []
+        assert vm.validate_link_check(REPO_ROOT) == []
+
+    # Quarterly AGENTS-v2.2.md lock fails locally; constitution risk-tolerance stays.
+    _write(tmp_path / "CLAUDE.md", claude)
+    phrase = "Risk tolerance update (AGENTS-v2.2.md Section 12.4.1)"
+    mangled_q = claude.replace(phrase, "ABSENT_QUARTERLY_AGENTS_REF")
+    assert phrase not in mangled_q
+    _write(tmp_path / "CLAUDE.md", mangled_q)
+    findings = vm.validate_quarterly_review(tmp_path)
+    assert any(
+        f.message == f"CLAUDE.md missing quarterly-review phrase: {phrase}"
+        for f in findings
+    )
+    assert vm.validate_constitution_risk_tolerance(REPO_ROOT) == []
+
+    # Escalation cross: CLAUDE fails; constitution + prompts stay.
+    _write(tmp_path / "CLAUDE.md", claude)
+    mangled = claude.replace("## Escalation Format", "## ABSENT Escalation Format")
+    assert "## Escalation Format" not in mangled
+    _write(tmp_path / "CLAUDE.md", mangled)
+    assert vm.validate_escalation_format(tmp_path)
+    assert vm.validate_escalation_usage(tmp_path)
+    assert vm.validate_constitution_escalation_format(tmp_path) == []
+    assert vm.validate_prompt_escalation_format(tmp_path) == []
+
+    # Restore CLAUDE; drop constitution escalation — constitution fails; CLAUDE stays.
+    _write(tmp_path / "CLAUDE.md", claude)
+    mangled_a = agents.replace(
+        "#### 22.4.3 Escalation Format (All Agents)",
+        "#### ABSENT Escalation Format (All Agents)",
+    )
+    assert "#### 22.4.3 Escalation Format (All Agents)" not in mangled_a
+    _write(tmp_path / "AGENTS-v2.2.md", mangled_a)
+    assert vm.validate_constitution_escalation_format(tmp_path)
+    assert vm.validate_escalation_format(tmp_path) == []
+    assert vm.validate_prompt_escalation_format(tmp_path) == []
+
+    # Restore constitution; drop prompts escalation — prompts fail; CLAUDE stays.
+    _write(tmp_path / "AGENTS-v2.2.md", agents)
+    mangled_p = prompts.replace("## When You Escalate", "## ABSENT When You Escalate")
+    assert "## When You Escalate" not in mangled_p
+    _write(tmp_path / "AGENT-PROMPTS.md", mangled_p)
+    assert vm.validate_prompt_escalation_format(tmp_path)
+    assert vm.validate_escalation_format(tmp_path) == []
+    assert vm.validate_constitution_escalation_format(tmp_path) == []
+
+
+def test_claude_routing_after253_inventory_types_and_run_only(
+    tmp_path: Path,
+) -> None:
+    """Inventory bool/float/null leftovers + run_all --only subset isolation."""
+    only_names = [name for name, _fn, _p, _k in _claude_routing_after253_modules()]
+    assert vm.run_all_validations(REPO_ROOT, only=only_names) == []
+
+    for invented in _CLAUDE_ROUTING_AFTER253_INVENT_NAMES[:6]:
+        with pytest.raises(ValueError, match="unknown validator"):
+            vm.run_all_validations(REPO_ROOT, only=[invented])
+        with pytest.raises(KeyError):
+            _ = vm.VALIDATORS[invented]
+
+    locked = _claude_routing_after253_locked_text()
+    _write(tmp_path / "CLAUDE.md", locked)
+    mangled = locked.replace("## Key Files", "ABSENT_KEY_FILES_AFTER253")
+    _write(tmp_path / "CLAUDE.md", mangled)
+    only_key = vm.run_all_validations(tmp_path, only=["key-files"])
+    assert only_key
+    assert all(f.path == "CLAUDE.md" for f in only_key)
+    assert any(f.message == "missing Key Files section" for f in only_key)
+    assert vm.run_all_validations(tmp_path, only=["repo-identity"]) == []
+    assert vm.run_all_validations(tmp_path, only=["claude-metadata"]) == []
+    # Competing niches stay selectable on tip and are excluded from this slice.
+    assert "goose" not in only_names
+    assert "markdownlint" not in only_names
+    assert "hydration-phase4" not in only_names
+    assert vm.run_all_validations(REPO_ROOT, only=["goose"]) == []
+    assert vm.run_all_validations(REPO_ROOT, only=["markdownlint"]) == []
+    assert vm.run_all_validations(REPO_ROOT, only=["link-check"]) == []
+
+    _copy_schemas(tmp_path)
+    for rel in _inventory_payload()["required_paths"]:
+        target = tmp_path / rel
+        target.parent.mkdir(parents=True, exist_ok=True)
+        if not target.exists():
+            target.write_text("ok\n", encoding="utf-8")
+
+    inv = _inventory_payload()
+    type_cases: list[tuple[str, object]] = [
+        ("claude_required_phrases", True),
+        ("claude_required_phrases", False),
+        ("claude_metadata_required_phrases", 1.5),
+        ("routing_surfaces", True),
+        ("routing_surfaces", None),
+        ("routing_matrix_required_phrases", False),
+        ("routing_matrix_rationale_phrases", 0.0),
+        ("repo_identity_required_phrases", True),
+        ("state_residency_required_phrases", 2.0),
+        ("key_files_required_entries", False),
+        ("escalation_block_required_phrases", None),
+        ("escalation_usage_required_phrases", 3.14),
+        ("quarterly_review_phrases", True),
+        ("negative_constraint_phrases", False),
+    ]
+    for key, value in type_cases:
+        payload = dict(inv)
+        payload[key] = value
+        (tmp_path / "schemas" / "packaging-inventory.json").write_text(
+            json.dumps(payload),
+            encoding="utf-8",
+        )
+        findings = vm.validate_packaging_inventory(tmp_path)
+        assert findings, (key, value)
+        assert any(
+            key in f.message or "inventory" in f.message.lower() for f in findings
+        ), (key, value)
+
+    # Empty-map consistency for governance keys (not invent-product).
+    for key in _CLAUDE_ROUTING_AFTER253_EMPTY_MAP_KEYS:
+        payload = _inventory_payload()
+        payload[key] = []
+        findings = vm._inventory_lock_consistency(
+            payload, schema_path="schemas/packaging-inventory.json"
+        )
+        assert any(f"{key} must not be empty" in f.message for f in findings), key
+
+    assert vm.validate_packaging_inventory(REPO_ROOT) == []
+
+
+def test_claude_routing_after253_empty_maps_dup_blank_seed(tmp_path: Path) -> None:
+    """Empty / whitespace / header-only CLAUDE.md + dup/blank/seed inventory edges."""
+    modules = _claude_routing_after253_modules()
+    for name, fn, _phrases, _key in modules:
+        findings = fn(tmp_path)
+        assert any("missing" in f.message for f in findings), name
+
+    _write(tmp_path / "CLAUDE.md", "\n\t  \n")
+    for name, fn, phrases, _key in modules:
+        findings = fn(tmp_path)
+        assert findings, name
+        assert any(
+            phrase in f.message or "missing" in f.message
+            for f in findings
+            for phrase in phrases[:1]
+        ) or any("missing" in f.message for f in findings)
+
+    _write(tmp_path / "CLAUDE.md", "# CLAUDE.md — g0p-agents Repo Agent Instructions\n")
+    for name, fn, phrases, _key in modules:
+        findings = fn(tmp_path)
+        assert findings, name
+        phrase_hits = [f for f in findings if any(p in f.message for p in phrases)]
+        assert phrase_hits or any("missing" in f.message for f in findings), name
+
+    for _name, _fn, phrases, key in modules:
+        if key not in _CLAUDE_ROUTING_AFTER253_EMPTY_MAP_KEYS:
+            continue
+        payload = _inventory_payload()
+        payload[key] = [phrases[0], phrases[0], *phrases[1:]]
+        findings = vm._inventory_lock_consistency(
+            payload, schema_path="schemas/packaging-inventory.json"
+        )
+        assert any(f"{key} must be unique" in f.message for f in findings), key
+
+        if key == "quarterly_review_phrases":
+            continue
+        payload = _inventory_payload()
+        payload[key] = ["ok", "  "]
+        findings = vm._inventory_lock_consistency(
+            payload, schema_path="schemas/packaging-inventory.json"
+        )
+        assert any(
+            f"{key} entries must be non-empty strings" in f.message for f in findings
+        ), key
+
+    # Seed drift via packaging inventory for lock-mismatch-only keys.
+    _copy_schemas(tmp_path)
+    for rel in _inventory_payload()["required_paths"]:
+        target = tmp_path / rel
+        target.parent.mkdir(parents=True, exist_ok=True)
+        if not target.exists():
+            target.write_text("ok\n", encoding="utf-8")
+    for key, seed in (
+        ("claude_required_phrases", list(vm.CLAUDE_REQUIRED_PHRASES[:-1]) + ["invented"]),
+        ("routing_surfaces", list(vm.ROUTING_SURFACES[:-1]) + ["invented-surface"]),
+        (
+            "negative_constraint_phrases",
+            list(vm.NEGATIVE_CONSTRAINT_PHRASES[:-1]) + ["invented-constraint"],
+        ),
+    ):
+        bad_seed = _inventory_payload()
+        bad_seed[key] = seed
+        (tmp_path / "schemas" / "packaging-inventory.json").write_text(
+            json.dumps(bad_seed),
+            encoding="utf-8",
+        )
+        findings = vm.validate_packaging_inventory(tmp_path)
+        assert any(key in f.message for f in findings), key
+
+
+def test_claude_routing_after253_concurrent_races_and_cross_isolation(
+    tmp_path: Path,
+) -> None:
+    """Concurrent CLAUDE.md races + isolation vs #253/#248/#257/#258 siblings."""
+    modules = _claude_routing_after253_modules()
+    live_fns = [fn for _name, fn, _phrases, _key in modules]
+
+    def _read_live() -> list[vm.Finding]:
+        out: list[vm.Finding] = []
+        for fn in live_fns:
+            out.extend(fn(REPO_ROOT))
+        return out
+
+    errors: list[BaseException] = []
+    with ThreadPoolExecutor(max_workers=16) as pool:
+        futures = [pool.submit(_read_live) for _ in range(48)]
+        for fut in as_completed(futures):
+            try:
+                assert fut.result() == []
+            except BaseException as exc:  # noqa: BLE001 — collect race failures
+                errors.append(exc)
+    assert errors == []
+
+    locked = _claude_routing_after253_locked_text()
+    path = tmp_path / "CLAUDE.md"
+    _write(path, locked)
+    for name, fn, _phrases, _key in modules:
+        assert fn(tmp_path) == [], name
+
+    stop = threading.Event()
+    race_errors: list[BaseException] = []
+
+    def _writer() -> None:
+        flip = False
+        while not stop.is_set():
+            try:
+                if flip:
+                    path.write_text(locked, encoding="utf-8")
+                else:
+                    path.write_text("\n", encoding="utf-8")
+                flip = not flip
+            except BaseException as exc:  # noqa: BLE001
+                race_errors.append(exc)
+                return
+
+    def _reader() -> None:
+        while not stop.is_set():
+            try:
+                for fn in live_fns:
+                    fn(tmp_path)
+            except BaseException as exc:  # noqa: BLE001
+                race_errors.append(exc)
+                return
+
+    threads = [
+        threading.Thread(target=_writer),
+        threading.Thread(target=_reader),
+        threading.Thread(target=_reader),
+        threading.Thread(target=_reader),
+    ]
+    for t in threads:
+        t.start()
+    time.sleep(0.35)
+    stop.set()
+    for t in threads:
+        t.join(timeout=2.0)
+    assert race_errors == []
+
+    # Local CLAUDE fails; competing niche siblings stay green on tip.
+    claude = (REPO_ROOT / "CLAUDE.md").read_text(encoding="utf-8")
+    mangled = claude.replace("## Key Files", "## ABSENT Key Files")
+    _write(tmp_path / "CLAUDE.md", mangled)
+    assert vm.validate_key_files(tmp_path)
+    assert vm.validate_claude_packaging(tmp_path)
+
+    assert vm.validate_prompt_decision_authority(REPO_ROOT) == []
+    assert vm.validate_prompt_living_docs(REPO_ROOT) == []
+    assert vm.validate_goose_recipes(REPO_ROOT) == []
+    assert vm.validate_recipe_titles(REPO_ROOT) == []
+    assert vm.validate_scratchpad(REPO_ROOT) == []
+    assert vm.validate_link_check(REPO_ROOT) == []
+    assert vm.validate_actionlint_shell(REPO_ROOT) == []
+    assert vm.validate_ci_actions(REPO_ROOT) == []
+    assert vm.validate_markdownlint(REPO_ROOT) == []
+    assert vm.validate_hydration_phase4(REPO_ROOT) == []
+    assert vm.validate_security_packaging(REPO_ROOT) == []
+    assert vm.validate_constitution_handoff(REPO_ROOT) == []
+    assert vm.validate_contributing_ci_honesty(REPO_ROOT) == []
+
+
+def test_claude_routing_after253_leftover_live_green() -> None:
+    """Live twelve CLAUDE.md fixtures stay green after #253; inventory unchanged."""
+    for name, fn, _phrases, _key in _claude_routing_after253_modules():
+        assert fn(REPO_ROOT) == [], name
+
+    assert vm.INVENTORY_VERSION == 52
+    assert vm.MIN_VALIDATOR_COUNT == 196
+    assert len(vm.VALIDATORS) == 196
+    assert sorted(vm.VALIDATORS) == json.loads(
+        (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
+    )["validator_names"]
+
+    body = (REPO_ROOT / "CLAUDE.md").read_text(encoding="utf-8")
+    assert "## Repo Identity" in body
+    assert "## Agent Routing Matrix" in body
+    assert "## State Residency Rules" in body
+    assert "## Key Files" in body
+    assert "## Escalation Format" in body
+    assert "## Quarterly Review Triggers" in body
+    assert "## Negative Constraints" in body
+    assert "AGENTS-v2.2.md" in body
+    assert "GOOSE-RECIPES.md" in body
+    assert "claude-cowork" in body
+    assert "geryon" in body
+    assert "Risk tolerance update (AGENTS-v2.2.md Section 12.4.1)" in body
+    assert "ESCALATION REQUIRED" in body
+    assert "Push to `main` branch" in body
+    assert "Status: ACTIVE" in body
+    assert "Task | Surface | Rationale" in body
+
+    # Adjacent tip siblings through #253 / #248 / open niches remain green.
+    assert vm.validate_prompt_decision_authority(REPO_ROOT) == []
+    assert vm.validate_goose_recipes(REPO_ROOT) == []
+    assert vm.validate_link_check(REPO_ROOT) == []
+    assert vm.validate_actionlint_shell(REPO_ROOT) == []
+    assert vm.validate_markdownlint(REPO_ROOT) == []
+    assert vm.validate_hydration_phase4(REPO_ROOT) == []
+    assert vm.validate_security_packaging(REPO_ROOT) == []
+    assert vm.validate_constitution_handoff(REPO_ROOT) == []
+    assert vm.validate_contributing_ci_honesty(REPO_ROOT) == []
+    assert vm.validate_changelog_unreleased(REPO_ROOT) == []
+    assert vm.validate_packaging_inventory(REPO_ROOT) == []

@@ -10,6 +10,30 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Claude/routing governance residual **tests-only** leftover deepeners after tip
+  through **#253** (prompts+flows leftover after #248) / **#248** / **#242** /
+  **#236** / **#229** / **#224** / **#219** / **#209** / **#208** / **#202** /
+  **#200** / **#195** / **#188** / **#187** (docs-cross tip) (EXISTING twelve
+  CLAUDE.md fixtures — `claude` / `claude-metadata` / `routing` /
+  `routing-matrix` / `routing-rationales` / `repo-identity` / `state-residency` /
+  `key-files` / `escalation-format` / `escalation-usage` / `quarterly-review` /
+  `negative-constraints` — historic v14–v16 + closed CONFLICTING **#192**
+  residual never merged; no invented product / inventory bump): exact
+  `CLAUDE.md missing` / directory-not-file Finding equality (routing uses
+  distinct missing message), exact section-missing + section-present /
+  phrases-absent message formats including routing-matrix surfaces and column
+  header, ZWSP / tab / CRLF / fullwidth / soft-hyphen / NBSP / ideographic-space
+  lookalikes on headers + `claude-cowork` + `AGENTS-v2.2.md`, per-phrase exact
+  drop matrix, invented-agent exact Finding + documented-agent drop isolation,
+  key-files↔archive + CLAUDE↔constitution↔prompts escalation isolation,
+  inventory bool/float/null leftovers + empty/dup/blank/seed consistency and
+  `run_all --only` subset, concurrent CLAUDE.md races, and tip isolation against
+  #253/#248/#257/#258/#254/#255 siblings. Historic four only; Packaging inventory
+  unchanged (v52 / 196). Distinct from open #254/#255 (goose-schema), #256
+  (actionlint/linkcheck), #257 (CI/markdownlint), #258 (hydration/security+
+  handoff), merged #253 (prompts+flows), #187 (docs-cross), and closed
+  CONFLICTING #192 (same leftover vs pre-#253 tip).
+
 - Prompts listform + agentic_flows residual **tests-only** leftover deepeners
   after tip through **#248** (actionlint/linkcheck leftover after #242) /
   **#242** / **#236** / **#229** / **#224** / **#219** / **#209** / **#208** /
