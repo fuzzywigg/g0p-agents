@@ -10,6 +10,25 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Prompts + agentic_flows residual **tests-only** unsaturated edge deepeners after
+  tip through **#229** (hydration/security edges after #224) / **#224** / **#219** /
+  **#209** / **#208** / **#202** / **#200** / **#195** / **#188** (EXISTING nineteen
+  fixtures — twelve list-form sibling `prompt-*` + seven agentic_flows `goose` /
+  `recipe-agents` / `recipe-titles` / `scratchpad*` — no invented v53 list-form
+  product / inventory bump): exact GOOSE missing Finding equality +
+  directory-not-file on `GOOSE-RECIPES.md`, ZWSP / soft-hyphen / CRLF lookalikes
+  beyond #224 case/BOM/NBSP, exact locked-phrase message formats + simultaneous
+  multi-surface drops (living-docs / cannot-delegate / scratchpad / GOOSE_DOCS),
+  scratchpad checkbox / status-marker / identifying-header exact messages with
+  listform↔goose isolation, on-disk must-live-at + invented yaml + recipe-agents
+  invent-token leftovers, inventory type leftovers (int/null/mapping) +
+  `run_all --only` subset, triple-doc concurrent races, and tip isolation against
+  #229/#224/#219/#209/#208/#202 siblings. Historic four only; inventory unchanged
+  (v52 / 196). Distinct from merged #229 (hydration/security edges), #224 (prior
+  prompts+flows leftover suite), #219 (goose-schema leftover), #209
+  (hydration/security+handoff), #202/#200 (listform+flows leftover / residual
+  suites), and closed CONFLICTING #235/#230/#221/#223 tip refills.
+
 - Hydration↔security + handoff unsaturated **tests-only** edge deepeners after tip
   through **#224** (prompts+agentic_flows leftover after #219) / **#219** /
   **#209** / **#208** / **#202** / **#200** / **#195** / **#188** / **#187** /
