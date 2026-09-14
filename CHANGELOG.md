@@ -10,6 +10,27 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Hydration↔security + handoff unsaturated **tests-only** edge deepeners after tip
+  through **#224** (prompts+agentic_flows leftover after #219) / **#219** /
+  **#209** / **#208** / **#202** / **#200** / **#195** / **#188** / **#187** /
+  **#186** / **#184** / **#181** (EXISTING twenty-two fixtures —
+  `hydration-phase4` + ten `security*` and seven handoff-cluster
+  `constitution-*` + four `scratchpad*` — no invented product / inventory bump):
+  exact missing-file message + Finding.path locks, remaining handoff-cluster
+  section-present (multichain / recipe-orchestration / scratchpad-state /
+  conflict-matrix), SECURITY section-header drop isolation with
+  hydration+handoff green, ASCII-arrow / NBSP / Memory-footprint / secrets-case
+  lookalikes + historic-four SECURITY allowlist, exact locked-phrase message
+  formats + simultaneous dual-phrase drops, scratchpad exact
+  empty/header/checkbox/status-marker messages, inventory seed mismatches +
+  `run_all --only` subset isolation, and tip live-green vs
+  #224/#219/#209/#208/#202/#200 siblings. Historic four only; Packaging
+  inventory unchanged (v52 / 196). Distinct from merged #209 leftover suite
+  (four-doc isolation / case-BOM / inventory-types / concurrent races), merged
+  #219 (goose-schema leftover), merged #224 (prompts+agentic_flows leftover),
+  closed CONFLICTING #213/#217/#225 tip refills, #184 (hydration↔security +
+  goose tip), #181 (memory-handoff), and not a v53 invent sibling.
+
 - Prompts + agentic_flows residual **tests-only** leftover deepeners after tip
   through **#219** (goose-schema leftover after #209) / **#209** / **#208** /
   **#202** / **#200** / **#195** / **#188** (EXISTING nineteen fixtures —
