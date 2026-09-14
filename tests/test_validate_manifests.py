@@ -26799,13 +26799,29 @@ def test_goose_schema_after200_jsonschema_extension_item_shape_leftovers() -> No
             {**base, "recipe": {**base["recipe"], "extensions": None}},
         ),
         (
-            "timeout_float_one",
+            "timeout_list",
             {
                 **base,
                 "recipe": {
                     **base["recipe"],
                     "extensions": [
-                        {"type": "builtin", "name": "developer", "timeout": 1.0}
+                        {"type": "builtin", "name": "developer", "timeout": [30]}
+                    ],
+                },
+            },
+        ),
+        (
+            "timeout_object",
+            {
+                **base,
+                "recipe": {
+                    **base["recipe"],
+                    "extensions": [
+                        {
+                            "type": "builtin",
+                            "name": "developer",
+                            "timeout": {"seconds": 30},
+                        }
                     ],
                 },
             },
@@ -26852,7 +26868,13 @@ def test_goose_schema_after200_docs_parse_file_run_leftovers(tmp_path: Path) -> 
     findings = vm.validate_goose_recipes(tmp_path)
     assert any("YAML parse error" in f.message for f in findings)
 
-    mapping_bad = locked.replace("```yaml\n", "```yaml\n- just-a-list\n", 1)
+    mapping_start = locked.find("```yaml\n")
+    mapping_end = locked.find("```", mapping_start + 7)
+    mapping_bad = (
+        locked[: mapping_start + len("```yaml\n")]
+        + "- just-a-list\n"
+        + locked[mapping_end:]
+    )
     _write(tmp_path / "GOOSE-RECIPES.md", mapping_bad)
     findings = vm.validate_goose_recipes(tmp_path)
     assert any("recipe YAML must be a mapping" in f.message for f in findings)
@@ -26904,7 +26926,8 @@ def test_goose_schema_after200_titles_agents_ondisk_leftovers(tmp_path: Path) ->
     assert vm.validate_recipe_agent_bindings(tmp_path) == []
 
     for phrase in vm.GOOSE_DOCS_REQUIRED_PHRASES:
-        mangled = locked.replace(phrase, f"GONE_{phrase.replace(' ', '_')}")
+        token = f"ABSENT_{abs(hash(phrase))}"
+        mangled = locked.replace(phrase, token)
         assert phrase not in mangled
         _write(tmp_path / "GOOSE-RECIPES.md", mangled)
         findings = vm.validate_recipe_titles(tmp_path)
@@ -26930,26 +26953,23 @@ def test_goose_schema_after200_titles_agents_ondisk_leftovers(tmp_path: Path) ->
         "You are unnamed.",
         1,
     )
+    no_primary = no_primary.replace(
+        "STEP for QuantumArchitectAgent\n",
+        "STEP for unnamed\n",
+        1,
+    )
     assert "You are QuantumArchitectAgent." not in no_primary
+    assert "STEP for QuantumArchitectAgent\n" not in no_primary
     _write(tmp_path / "GOOSE-RECIPES.md", no_primary)
     agent_findings = vm.validate_recipe_agent_bindings(tmp_path)
     assert any("primary agent missing" in f.message for f in agent_findings)
     assert vm.validate_recipe_titles(tmp_path) == []
 
-    agents_blob = " ".join(vm.DOCUMENTED_AGENTS)
-    missing_blob = " ".join(
-        agent for agent in vm.DOCUMENTED_AGENTS if agent != "BlockchainArchitectAgent"
-    )
-    orch_missing = locked.replace(
-        f"You are OrchestrationAgent. Coordinate {agents_blob}.",
-        f"You are OrchestrationAgent. Coordinate {missing_blob}.",
-        1,
-    )
-    orch_missing = orch_missing.replace(
-        f"STEP for {agents_blob}",
-        f"STEP for {missing_blob}",
-        1,
-    )
+    fence_idx = locked.rfind("```yaml\n")
+    orch_head, orch_tail = locked[:fence_idx], locked[fence_idx:]
+    orch_missing = orch_head + orch_tail.replace("BlockchainArchitectAgent", "")
+    assert "BlockchainArchitectAgent" not in orch_missing[fence_idx:]
+    assert "BlockchainArchitectAgent" in orch_missing[:fence_idx]
     _write(tmp_path / "GOOSE-RECIPES.md", orch_missing)
     orch_findings = vm.validate_recipe_agent_bindings(tmp_path)
     assert any(
