@@ -10,6 +10,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Goose-recipe schema + security residual **tests-only** deepeners after **#161**
+  tip (EXISTING `goose` / `recipe-agents` / `recipe-titles` +
+  `goose-recipe.schema.json` edges, and ten `security` / `security-*`
+  phrase-lock validators — no invented product / inventory bump): concurrent
+  validate races, empty/whitespace/header-only docs, invalid/invented
+  schema/timeout sibling keys, HEAVY JSON Schema edge matrix, fence/binding
+  residual matrix, inventory mismatch matrix, security per-phrase drop matrix,
+  cross-isolation, and combined live matrix against #147/#151/#156/#161
+  siblings. Historic four only; inventory unchanged (v52 / 196). Distinct from
+  merged #147 (nine goose-* phrase locks), merged #151 (prompt-pre-v52),
+  merged #156 (constitution), merged #161 (hydration), and closed CONFLICTING
+  #155/#158/#165 security residual drafts on older tips.
+
 - Hydration residual **tests-only** deepeners after **#151** tip / post-#156
   (EXISTING eleven `hydration-*` phrase-lock fixtures plus the live `hydration`
   report lock — no invented product / inventory bump): concurrent validate races,
