@@ -166,12 +166,15 @@
     "pr_summary_required_phrases",
     "pr_template_headings",
     "prompt_cannot_delegate_required_phrases",
+    "prompt_checklist_detail_required_phrases",
+    "prompt_communication_detail_required_phrases",
     "prompt_communication_required_phrases",
     "prompt_constraints_detail_required_phrases",
     "prompt_constraints_required_phrases",
     "prompt_context_detail_required_phrases",
     "prompt_context_required_phrases",
     "prompt_decision_authority_required_phrases",
+    "prompt_escalate_when_required_phrases",
     "prompt_escalation_authority_required_phrases",
     "prompt_escalation_format_required_phrases",
     "prompt_escalation_identity_required_phrases",
@@ -180,11 +183,16 @@
     "prompt_human_fields_required_phrases",
     "prompt_instantiation_required_phrases",
     "prompt_integration_required_phrases",
+    "prompt_interpolation_required_phrases",
     "prompt_living_docs_required_phrases",
+    "prompt_metrics_detail_required_phrases",
     "prompt_metrics_required_phrases",
     "prompt_monthly_required_phrases",
     "prompt_orchestration_matrix_required_phrases",
+    "prompt_postmortem_refs_required_phrases",
+    "prompt_principles_detail_required_phrases",
     "prompt_principles_required_phrases",
+    "prompt_qualtran_tools_required_phrases",
     "prompt_related_docs_required_phrases",
     "prompt_related_health_required_phrases",
     "prompt_responsibilities_detail_required_phrases",
@@ -2256,6 +2264,78 @@
       }
     },
     "prompt_instantiation_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "prompt_metrics_detail_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "prompt_principles_detail_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "prompt_communication_detail_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "prompt_escalate_when_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "prompt_qualtran_tools_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "prompt_interpolation_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "prompt_checklist_detail_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "prompt_postmortem_refs_required_phrases": {
       "type": "array",
       "minItems": 1,
       "uniqueItems": true,

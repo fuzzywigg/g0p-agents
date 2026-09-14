@@ -1,5 +1,5 @@
 {
-  "version": 51,
+  "version": 52,
   "documented_agents": [
     "QuantumArchitectAgent",
     "BlockchainArchitectAgent",
@@ -387,12 +387,15 @@
     "pr-summary",
     "pr-template",
     "prompt-cannot-delegate",
+    "prompt-checklist-detail",
     "prompt-communication",
+    "prompt-communication-detail",
     "prompt-constraints",
     "prompt-constraints-detail",
     "prompt-context",
     "prompt-context-detail",
     "prompt-decision-authority",
+    "prompt-escalate-when",
     "prompt-escalation-authority",
     "prompt-escalation-format",
     "prompt-escalation-identity",
@@ -401,11 +404,16 @@
     "prompt-human-fields",
     "prompt-instantiation",
     "prompt-integration",
+    "prompt-interpolation",
     "prompt-living-docs",
     "prompt-metrics",
+    "prompt-metrics-detail",
     "prompt-monthly",
     "prompt-orchestration-matrix",
+    "prompt-postmortem-refs",
     "prompt-principles",
+    "prompt-principles-detail",
+    "prompt-qualtran-tools",
     "prompt-related-docs",
     "prompt-related-health",
     "prompt-responsibilities",
@@ -456,7 +464,7 @@
     "yaml-configs"
   ],
   "min_coverage_fail_under": 99,
-  "min_validator_count": 184,
+  "min_validator_count": 192,
   "required_paths": [
     "README.md",
     "LICENSE",
@@ -1296,7 +1304,7 @@
     "markdown lint, link check, actionlint",
     "manifest validate on Python 3.11/3.12/3.13",
     "Andrew or designated reviewer",
-    "Packaging inventory v51",
+    "Packaging inventory v52",
     "refuse invented recipes",
     "orphan on-disk YAML",
     "unknown `*Agent` tokens",
@@ -1837,5 +1845,69 @@
     "System Prompt: [Copy QuantumArchitectAgent Prompt Template]",
     "Reads ./agentic_flows/scratchpad.txt (finds pending quantum mint task)",
     "Updates scratchpad with gate count, depth, error rate"
+  ],
+  "prompt_metrics_detail_required_phrases": [
+    "Gate count optimized for target hardware",
+    "Quantum-safe properties validated (NIST standards)",
+    "Hardware estimates within device constraints",
+    "Multi-chain sync < 2 minutes",
+    "< 10% variance in gas estimates vs. actual",
+    "All smart contracts quantum-safe audited",
+    "Battery drain < 2% per transaction",
+    "Apple security review: PASS",
+    "Google security review: PASS",
+    "Team consensus on direction (if possible)",
+    "On-time delivery",
+    "Stakeholder satisfaction"
+  ],
+  "prompt_principles_detail_required_phrases": [
+    "Recommend testing on multiple backends",
+    "Validate circuit correctness before integration",
+    "Estimate gate count, depth, and error rates",
+    "Validate quantum-resistant cryptographic choices",
+    "Validate Apple/Google security guidelines compliance",
+    "Identify conflicts (if any)",
+    "Make final go/no-go decision"
+  ],
+  "prompt_communication_detail_required_phrases": [
+    "Conservative on claims (\"this is theoretically possible, but...\")",
+    "Flag quantum advantage deadlines and threats",
+    "Explain via architecture diagrams",
+    "Provide cost/benefit analysis for design trade-offs",
+    "Explain via user flow diagrams",
+    "Provide device-specific constraints and workarounds",
+    "Explain trade-off reasoning",
+    "Acknowledge risks clearly"
+  ],
+  "prompt_escalate_when_required_phrases": [
+    "Validate quantum-safe properties (post-quantum crypto)",
+    "Escalate when constraints cannot be met",
+    "Estimate gas costs and optimization opportunities",
+    "Escalate when security or performance constraints cannot be met",
+    "Optimize for mobile constraints (battery, memory, CPU)",
+    "Escalate when device constraints cannot be met"
+  ],
+  "prompt_qualtran_tools_required_phrases": [
+    "Qualtran (resource analysis)",
+    "Qualtran (algorithm analysis)",
+    "Data lifecycle management",
+    "Battery/memory optimization"
+  ],
+  "prompt_interpolation_required_phrases": [
+    "Error tolerance: < 1%",
+    "Gas budget: [INSERT LIMIT]",
+    "Deadline: [INSERT DATE]",
+    "## Current Project Vision",
+    "Timeline: [INSERT TARGET DATE]",
+    "Budget: [INSERT IF APPLICABLE]"
+  ],
+  "prompt_checklist_detail_required_phrases": [
+    "[ ] Update risk register (quarterly, minimum)",
+    "[ ] Communicate progress to stakeholder"
+  ],
+  "prompt_postmortem_refs_required_phrases": [
+    "See postmortem.md (incident log)",
+    "postmortem.md (incident log)",
+    "Agent Action:"
   ]
 }

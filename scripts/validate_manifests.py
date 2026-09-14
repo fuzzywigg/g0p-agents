@@ -188,7 +188,7 @@ REQUIRED_ARCHIVE_DOCS = (
     "README.md",
 )
 
-INVENTORY_VERSION = 51
+INVENTORY_VERSION = 52
 CURSOR_ENVIRONMENT_NAME = "g0p-agents"
 DEPENDABOT_SCHEDULE_INTERVAL = "weekly"
 DEPENDABOT_DIRECTORIES: frozenset[str] = frozenset({"/"})
@@ -841,7 +841,7 @@ CONTRIBUTING_CI_HONESTY_REQUIRED_PHRASES: tuple[str, ...] = (
     "markdown lint, link check, actionlint",
     "manifest validate on Python 3.11/3.12/3.13",
     "Andrew or designated reviewer",
-    "Packaging inventory v51",
+    "Packaging inventory v52",
     "refuse invented recipes",
     "orphan on-disk YAML",
     "unknown `*Agent` tokens",
@@ -1214,6 +1214,78 @@ PROMPT_INSTANTIATION_REQUIRED_PHRASES: tuple[str, ...] = (
     'System Prompt: [Copy QuantumArchitectAgent Prompt Template]',
     'Reads ./agentic_flows/scratchpad.txt (finds pending quantum mint task)',
     'Updates scratchpad with gate count, depth, error rate',
+)
+
+PROMPT_METRICS_DETAIL_REQUIRED_PHRASES: tuple[str, ...] = (
+    'Gate count optimized for target hardware',
+    'Quantum-safe properties validated (NIST standards)',
+    'Hardware estimates within device constraints',
+    'Multi-chain sync < 2 minutes',
+    '< 10% variance in gas estimates vs. actual',
+    'All smart contracts quantum-safe audited',
+    'Battery drain < 2% per transaction',
+    'Apple security review: PASS',
+    'Google security review: PASS',
+    'Team consensus on direction (if possible)',
+    'On-time delivery',
+    'Stakeholder satisfaction',
+)
+
+PROMPT_PRINCIPLES_DETAIL_REQUIRED_PHRASES: tuple[str, ...] = (
+    'Recommend testing on multiple backends',
+    'Validate circuit correctness before integration',
+    'Estimate gate count, depth, and error rates',
+    'Validate quantum-resistant cryptographic choices',
+    'Validate Apple/Google security guidelines compliance',
+    'Identify conflicts (if any)',
+    'Make final go/no-go decision',
+)
+
+PROMPT_COMMUNICATION_DETAIL_REQUIRED_PHRASES: tuple[str, ...] = (
+    'Conservative on claims ("this is theoretically possible, but...")',
+    'Flag quantum advantage deadlines and threats',
+    'Explain via architecture diagrams',
+    'Provide cost/benefit analysis for design trade-offs',
+    'Explain via user flow diagrams',
+    'Provide device-specific constraints and workarounds',
+    'Explain trade-off reasoning',
+    'Acknowledge risks clearly',
+)
+
+PROMPT_ESCALATE_WHEN_REQUIRED_PHRASES: tuple[str, ...] = (
+    'Validate quantum-safe properties (post-quantum crypto)',
+    'Escalate when constraints cannot be met',
+    'Estimate gas costs and optimization opportunities',
+    'Escalate when security or performance constraints cannot be met',
+    'Optimize for mobile constraints (battery, memory, CPU)',
+    'Escalate when device constraints cannot be met',
+)
+
+PROMPT_QUALTRAN_TOOLS_REQUIRED_PHRASES: tuple[str, ...] = (
+    'Qualtran (resource analysis)',
+    'Qualtran (algorithm analysis)',
+    'Data lifecycle management',
+    'Battery/memory optimization',
+)
+
+PROMPT_INTERPOLATION_REQUIRED_PHRASES: tuple[str, ...] = (
+    'Error tolerance: < 1%',
+    'Gas budget: [INSERT LIMIT]',
+    'Deadline: [INSERT DATE]',
+    '## Current Project Vision',
+    'Timeline: [INSERT TARGET DATE]',
+    'Budget: [INSERT IF APPLICABLE]',
+)
+
+PROMPT_CHECKLIST_DETAIL_REQUIRED_PHRASES: tuple[str, ...] = (
+    '[ ] Update risk register (quarterly, minimum)',
+    '[ ] Communicate progress to stakeholder',
+)
+
+PROMPT_POSTMORTEM_REFS_REQUIRED_PHRASES: tuple[str, ...] = (
+    'See postmortem.md (incident log)',
+    'postmortem.md (incident log)',
+    'Agent Action:',
 )
 
 
@@ -1819,7 +1891,7 @@ SCRATCHPAD_STATUS_MARKERS: tuple[str, ...] = (
 SPECIALIST_AGENTS: tuple[str, ...] = DOCUMENTED_AGENTS[:-1]
 
 MIN_COVERAGE_FAIL_UNDER = 99
-MIN_VALIDATOR_COUNT = 184
+MIN_VALIDATOR_COUNT = 192
 
 
 @dataclass(frozen=True)
@@ -3037,6 +3109,70 @@ def validate_packaging_inventory(root: Path) -> list[Finding]:
     ):
         findings.append(
             _lock_mismatch(schema_path, "prompt_instantiation_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("prompt_metrics_detail_required_phrases", ()))
+        != PROMPT_METRICS_DETAIL_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "prompt_metrics_detail_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("prompt_principles_detail_required_phrases", ()))
+        != PROMPT_PRINCIPLES_DETAIL_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "prompt_principles_detail_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("prompt_communication_detail_required_phrases", ()))
+        != PROMPT_COMMUNICATION_DETAIL_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "prompt_communication_detail_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("prompt_escalate_when_required_phrases", ()))
+        != PROMPT_ESCALATE_WHEN_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "prompt_escalate_when_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("prompt_qualtran_tools_required_phrases", ()))
+        != PROMPT_QUALTRAN_TOOLS_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "prompt_qualtran_tools_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("prompt_interpolation_required_phrases", ()))
+        != PROMPT_INTERPOLATION_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "prompt_interpolation_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("prompt_checklist_detail_required_phrases", ()))
+        != PROMPT_CHECKLIST_DETAIL_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "prompt_checklist_detail_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("prompt_postmortem_refs_required_phrases", ()))
+        != PROMPT_POSTMORTEM_REFS_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "prompt_postmortem_refs_required_phrases")
         )
 
     if (
@@ -5789,6 +5925,322 @@ def _inventory_lock_consistency(
                 )
             )
 
+
+    prompt_metrics_detail = list(
+        inventory.get("prompt_metrics_detail_required_phrases", ())
+    )
+    if len(prompt_metrics_detail) != len(set(prompt_metrics_detail)):
+        findings.append(
+            Finding(schema_path, "prompt_metrics_detail_required_phrases must be unique")
+        )
+    if not prompt_metrics_detail:
+        findings.append(
+            Finding(schema_path, "prompt_metrics_detail_required_phrases must not be empty")
+        )
+    for phrase in prompt_metrics_detail:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_metrics_detail_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_prompt_metrics_detail = {
+            'Gate count optimized for target hardware',
+            'Quantum-safe properties validated (NIST standards)',
+            'Hardware estimates within device constraints',
+        }
+        if prompt_metrics_detail and not required_prompt_metrics_detail <= set(
+            prompt_metrics_detail
+        ):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_metrics_detail_required_phrases must include "
+                    "Gate count/NIST/Hardware estimates/Multi-chain sync/"
+                    "Battery drain/Apple/Google PASS",
+                )
+            )
+
+
+    prompt_principles_detail = list(
+        inventory.get("prompt_principles_detail_required_phrases", ())
+    )
+    if len(prompt_principles_detail) != len(set(prompt_principles_detail)):
+        findings.append(
+            Finding(schema_path, "prompt_principles_detail_required_phrases must be unique")
+        )
+    if not prompt_principles_detail:
+        findings.append(
+            Finding(schema_path, "prompt_principles_detail_required_phrases must not be empty")
+        )
+    for phrase in prompt_principles_detail:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_principles_detail_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_prompt_principles_detail = {
+            'Recommend testing on multiple backends',
+            'Validate circuit correctness before integration',
+            'Estimate gate count, depth, and error rates',
+        }
+        if prompt_principles_detail and not required_prompt_principles_detail <= set(
+            prompt_principles_detail
+        ):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_principles_detail_required_phrases must include "
+                    "Recommend testing/Validate circuit/Estimate gate/go/no-go",
+                )
+            )
+
+
+    prompt_communication_detail = list(
+        inventory.get("prompt_communication_detail_required_phrases", ())
+    )
+    if len(prompt_communication_detail) != len(set(prompt_communication_detail)):
+        findings.append(
+            Finding(schema_path, "prompt_communication_detail_required_phrases must be unique")
+        )
+    if not prompt_communication_detail:
+        findings.append(
+            Finding(schema_path, "prompt_communication_detail_required_phrases must not be empty")
+        )
+    for phrase in prompt_communication_detail:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_communication_detail_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_prompt_communication_detail = {
+            'Conservative on claims ("this is theoretically possible, but...")',
+            'Flag quantum advantage deadlines and threats',
+            'Explain via architecture diagrams',
+        }
+        if prompt_communication_detail and not required_prompt_communication_detail <= set(
+            prompt_communication_detail
+        ):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_communication_detail_required_phrases must include "
+                    "Conservative on claims/Flag quantum/architecture diagrams/"
+                    "trade-off reasoning",
+                )
+            )
+
+
+    prompt_escalate_when = list(
+        inventory.get("prompt_escalate_when_required_phrases", ())
+    )
+    if len(prompt_escalate_when) != len(set(prompt_escalate_when)):
+        findings.append(
+            Finding(schema_path, "prompt_escalate_when_required_phrases must be unique")
+        )
+    if not prompt_escalate_when:
+        findings.append(
+            Finding(schema_path, "prompt_escalate_when_required_phrases must not be empty")
+        )
+    for phrase in prompt_escalate_when:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_escalate_when_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_prompt_escalate_when = {
+            'Validate quantum-safe properties (post-quantum crypto)',
+            'Escalate when constraints cannot be met',
+            'Estimate gas costs and optimization opportunities',
+        }
+        if prompt_escalate_when and not required_prompt_escalate_when <= set(
+            prompt_escalate_when
+        ):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_escalate_when_required_phrases must include "
+                    "Escalate when constraints/security or performance/"
+                    "device constraints",
+                )
+            )
+
+
+    prompt_qualtran_tools = list(
+        inventory.get("prompt_qualtran_tools_required_phrases", ())
+    )
+    if len(prompt_qualtran_tools) != len(set(prompt_qualtran_tools)):
+        findings.append(
+            Finding(schema_path, "prompt_qualtran_tools_required_phrases must be unique")
+        )
+    if not prompt_qualtran_tools:
+        findings.append(
+            Finding(schema_path, "prompt_qualtran_tools_required_phrases must not be empty")
+        )
+    for phrase in prompt_qualtran_tools:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_qualtran_tools_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_prompt_qualtran_tools = {
+            'Qualtran (resource analysis)',
+            'Qualtran (algorithm analysis)',
+            'Data lifecycle management',
+        }
+        if prompt_qualtran_tools and not required_prompt_qualtran_tools <= set(
+            prompt_qualtran_tools
+        ):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_qualtran_tools_required_phrases must include "
+                    "Qualtran resource/algorithm/Data lifecycle/"
+                    "Battery/memory",
+                )
+            )
+
+
+    prompt_interpolation = list(
+        inventory.get("prompt_interpolation_required_phrases", ())
+    )
+    if len(prompt_interpolation) != len(set(prompt_interpolation)):
+        findings.append(
+            Finding(schema_path, "prompt_interpolation_required_phrases must be unique")
+        )
+    if not prompt_interpolation:
+        findings.append(
+            Finding(schema_path, "prompt_interpolation_required_phrases must not be empty")
+        )
+    for phrase in prompt_interpolation:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_interpolation_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_prompt_interpolation = {
+            'Error tolerance: < 1%',
+            'Gas budget: [INSERT LIMIT]',
+            'Deadline: [INSERT DATE]',
+        }
+        if prompt_interpolation and not required_prompt_interpolation <= set(
+            prompt_interpolation
+        ):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_interpolation_required_phrases must include "
+                    "Error tolerance/Gas budget/Deadline/Current Project Vision/"
+                    "Timeline/Budget",
+                )
+            )
+
+
+    prompt_checklist_detail = list(
+        inventory.get("prompt_checklist_detail_required_phrases", ())
+    )
+    if len(prompt_checklist_detail) != len(set(prompt_checklist_detail)):
+        findings.append(
+            Finding(schema_path, "prompt_checklist_detail_required_phrases must be unique")
+        )
+    if not prompt_checklist_detail:
+        findings.append(
+            Finding(schema_path, "prompt_checklist_detail_required_phrases must not be empty")
+        )
+    for phrase in prompt_checklist_detail:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_checklist_detail_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_prompt_checklist_detail = {
+            '[ ] Update risk register (quarterly, minimum)',
+            '[ ] Communicate progress to stakeholder',
+        }
+        if prompt_checklist_detail and not required_prompt_checklist_detail <= set(
+            prompt_checklist_detail
+        ):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_checklist_detail_required_phrases must include "
+                    "Update risk register/Communicate progress",
+                )
+            )
+
+
+    prompt_postmortem_refs = list(
+        inventory.get("prompt_postmortem_refs_required_phrases", ())
+    )
+    if len(prompt_postmortem_refs) != len(set(prompt_postmortem_refs)):
+        findings.append(
+            Finding(schema_path, "prompt_postmortem_refs_required_phrases must be unique")
+        )
+    if not prompt_postmortem_refs:
+        findings.append(
+            Finding(schema_path, "prompt_postmortem_refs_required_phrases must not be empty")
+        )
+    for phrase in prompt_postmortem_refs:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_postmortem_refs_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_prompt_postmortem_refs = {
+            'See postmortem.md (incident log)',
+            'postmortem.md (incident log)',
+            'Agent Action:',
+        }
+        if prompt_postmortem_refs and not required_prompt_postmortem_refs <= set(
+            prompt_postmortem_refs
+        ):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_postmortem_refs_required_phrases must include "
+                    "See postmortem.md/incident log/Agent Action",
+                )
+            )
+
     intro = list(inventory.get("postmortem_intro_required_phrases", ()))
     if len(intro) != len(set(intro)):
         findings.append(
@@ -7632,7 +8084,7 @@ def _inventory_lock_consistency(
     else:
         required_ci_honesty = {
             "markdown lint, link check, actionlint",
-            "Packaging inventory v51",
+            "Packaging inventory v52",
             "refuse invented recipes",
         }
         if ci_honesty and not required_ci_honesty <= set(ci_honesty):
@@ -7640,7 +8092,7 @@ def _inventory_lock_consistency(
                 Finding(
                     schema_path,
                     "contributing_ci_honesty_required_phrases must include "
-                    "CI checks/Packaging inventory v51/refuse invented recipes",
+                    "CI checks/Packaging inventory v52/refuse invented recipes",
                 )
             )
 
@@ -10345,6 +10797,142 @@ def validate_prompt_instantiation(root: Path) -> list[Finding]:
             )
     return findings
 
+def validate_prompt_metrics_detail(root: Path) -> list[Finding]:
+    rel = "AGENT-PROMPTS.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "prompts missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if 'Gate count optimized for target hardware' not in body:
+        findings.append(Finding(rel, 'missing metrics-detail Gate count lock'))
+    for phrase in PROMPT_METRICS_DETAIL_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked prompt-metrics-detail phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_prompt_principles_detail(root: Path) -> list[Finding]:
+    rel = "AGENT-PROMPTS.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "prompts missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if 'Recommend testing on multiple backends' not in body:
+        findings.append(Finding(rel, 'missing principles-detail Recommend testing lock'))
+    for phrase in PROMPT_PRINCIPLES_DETAIL_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked prompt-principles-detail phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_prompt_communication_detail(root: Path) -> list[Finding]:
+    rel = "AGENT-PROMPTS.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "prompts missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if 'Conservative on claims' not in body:
+        findings.append(Finding(rel, 'missing communication-detail Conservative on claims lock'))
+    for phrase in PROMPT_COMMUNICATION_DETAIL_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked prompt-communication-detail phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_prompt_escalate_when(root: Path) -> list[Finding]:
+    rel = "AGENT-PROMPTS.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "prompts missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if 'Escalate when constraints cannot be met' not in body:
+        findings.append(Finding(rel, 'missing escalate-when constraints cannot be met lock'))
+    for phrase in PROMPT_ESCALATE_WHEN_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked prompt-escalate-when phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_prompt_qualtran_tools(root: Path) -> list[Finding]:
+    rel = "AGENT-PROMPTS.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "prompts missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if 'Qualtran (resource analysis)' not in body:
+        findings.append(Finding(rel, 'missing qualtran-tools Qualtran resource analysis lock'))
+    for phrase in PROMPT_QUALTRAN_TOOLS_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked prompt-qualtran-tools phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_prompt_interpolation(root: Path) -> list[Finding]:
+    rel = "AGENT-PROMPTS.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "prompts missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if 'Error tolerance: < 1%' not in body:
+        findings.append(Finding(rel, 'missing interpolation Error tolerance lock'))
+    for phrase in PROMPT_INTERPOLATION_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked prompt-interpolation phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_prompt_checklist_detail(root: Path) -> list[Finding]:
+    rel = "AGENT-PROMPTS.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "prompts missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if 'Update risk register (quarterly, minimum)' not in body:
+        findings.append(Finding(rel, 'missing checklist-detail Update risk register lock'))
+    for phrase in PROMPT_CHECKLIST_DETAIL_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked prompt-checklist-detail phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_prompt_postmortem_refs(root: Path) -> list[Finding]:
+    rel = "AGENT-PROMPTS.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "prompts missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if 'See postmortem.md (incident log)' not in body:
+        findings.append(Finding(rel, 'missing postmortem-refs See postmortem.md lock'))
+    for phrase in PROMPT_POSTMORTEM_REFS_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked prompt-postmortem-refs phrase: {phrase}")
+            )
+    return findings
+
+
 def validate_changelog_initial(root: Path) -> list[Finding]:
     rel = "CHANGELOG.md"
     path = root / rel
@@ -11474,8 +12062,8 @@ def validate_contributing_ci_honesty(root: Path) -> list[Finding]:
         return [Finding(rel, "CONTRIBUTING.md missing")]
     text = path.read_text(encoding="utf-8")
     findings: list[Finding] = []
-    if "Packaging inventory v51" not in text:
-        findings.append(Finding(rel, "missing Packaging inventory v51 honesty lock"))
+    if "Packaging inventory v52" not in text:
+        findings.append(Finding(rel, "missing Packaging inventory v52 honesty lock"))
     for phrase in CONTRIBUTING_CI_HONESTY_REQUIRED_PHRASES:
         if phrase not in text:
             findings.append(
@@ -13426,6 +14014,14 @@ VALIDATORS: dict[str, ValidatorFn] = {
     "prompt-tools-detail": validate_prompt_tools_detail,
     "prompt-responsibilities-detail": validate_prompt_responsibilities_detail,
     "prompt-instantiation": validate_prompt_instantiation,
+    "prompt-metrics-detail": validate_prompt_metrics_detail,
+    "prompt-principles-detail": validate_prompt_principles_detail,
+    "prompt-communication-detail": validate_prompt_communication_detail,
+    "prompt-escalate-when": validate_prompt_escalate_when,
+    "prompt-qualtran-tools": validate_prompt_qualtran_tools,
+    "prompt-interpolation": validate_prompt_interpolation,
+    "prompt-checklist-detail": validate_prompt_checklist_detail,
+    "prompt-postmortem-refs": validate_prompt_postmortem_refs,
     "hydration-phase2": validate_hydration_phase2,
     "hydration-phase5": validate_hydration_phase5,
     "link-check": validate_link_check,

@@ -10,6 +10,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Prompts residual **v52 HEAVY** deepeners / **prompt-template-locks** (post-#131 prompts v51 heavy leftovers):
+  `prompt-metrics-detail`, `prompt-principles-detail`, `prompt-communication-detail`,
+  `prompt-escalate-when`, `prompt-qualtran-tools`, `prompt-interpolation`,
+  `prompt-checklist-detail`, `prompt-postmortem-refs`
+  validators; AGENT-PROMPTS.md residual template locks across success-metrics-detail /
+  principles-detail / communication-detail / escalate-when / Qualtran tools /
+  INSERT interpolation slots / checklist-detail / postmortem refs; consistency deepeners
+  for matching `*_required_phrases` inventory keys
+  (Packaging inventory 192 total; historic four only — prompts template-locks
+  residual slice after v51, not colliding with closed prompts-locks-v51 leftover/residual
+  naming; not constitution/changelog, hydration, README invent, security, contributing,
+  goose recipes, postmortem module, or Dependabot)
+
 - Prompts residual **v51 HEAVY** deepeners / **v50 leftovers max** (post-#128 prompts context/cannot-delegate/escalation-authority v50):
   `prompt-role-blurbs`, `prompt-escalation-format`, `prompt-living-docs`,
   `prompt-constraints-detail`, `prompt-triggers-detail`, `prompt-human-fields`,
