@@ -1,5 +1,5 @@
 {
-  "version": 30,
+  "version": 31,
   "documented_agents": [
     "QuantumArchitectAgent",
     "BlockchainArchitectAgent",
@@ -315,7 +315,10 @@
     "goose-naming",
     "goose-state-machine",
     "hydration",
+    "hydration-issues",
+    "hydration-list-a",
     "hydration-list-b",
+    "hydration-phase1",
     "implementation-guide",
     "implementation-phases",
     "implementation-quickstart",
@@ -375,7 +378,7 @@
     "yaml-configs"
   ],
   "min_coverage_fail_under": 99,
-  "min_validator_count": 103,
+  "min_validator_count": 106,
   "required_paths": [
     "README.md",
     "LICENSE",
@@ -1000,5 +1003,31 @@
     "ML-DSA (FIPS 204)",
     "pre-finalization names",
     "The underlying algorithms are correct"
+  ],
+  "hydration_phase1_required_phrases": [
+    "### Identity",
+    "### Source Architecture",
+    "### Governance",
+    "### Templates",
+    "### Security",
+    "Public archive of Quantum-Blockchain agentic protocols v2.2",
+    "Markdown only (documentation archive)"
+  ],
+  "hydration_list_a_required_phrases": [
+    "### LIST A \u2014 Researchable",
+    "What is the Goose framework?",
+    "What are CRYSTALS-Kyber and CRYSTALS-Dilithium?",
+    "What is `liboqs`?",
+    "What is `stimgery`"
+  ],
+  "hydration_issues_required_phrases": [
+    "## PHASE 4: ISSUES GENERATED",
+    "Add LICENSE file",
+    "Create .github/workflows/ CI pipeline",
+    "Add CONTRIBUTING.md",
+    "Add SECURITY.md",
+    "Create GitHub issue templates",
+    "Create PR template",
+    "Scaffold agentic_flows/"
   ]
 }
