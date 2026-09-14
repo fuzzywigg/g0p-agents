@@ -10,6 +10,29 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Actionlint/workflow + link-check residual **tests-only** leftover deepeners
+  after tip through **#219** (goose-schema leftover after #209) / **#209** /
+  **#208** / **#202** / **#200** / **#195** / **#188** / **#187** / **#186**
+  (EXISTING seven CI fixtures — `ci` / `ci-actions` / `link-check` /
+  `actionlint-shell` / `ci-job-names` / `ci-runs-on` / `ci-artifacts` — no
+  invented product / inventory bump; prefer actionlint+linkcheck niche, not
+  markdownlint): scalar `on:` (no pull_request finding), empty
+  `pull_request` / empty branches, concurrency scalar + group-absent +
+  empty-string group + cancel-absent, jobs sequence, empty `permissions` +
+  contents-absent, strategy scalar + fail-fast absent + python-version
+  string / extra version, lychee `with: {}` + args-only / fail-only,
+  markdown-lint scalar/partial `with:` via `link-check` fixture only,
+  GITHUB_TOKEN env drop green, actionlint scalar/empty/extra shell, missing
+  name/runs-on + runs-on list, if-no-files-found absent + path list
+  missing/extra, `ci-actions` parse-error pin scan, inventory leftover
+  types, `run_all --only` isolation, and tip isolation against
+  #219/#209/#208/#202/#200/#195 siblings. Historic four only; inventory
+  unchanged (v52 / 196). Distinct from merged #219 (goose-schema leftover),
+  #209 (hydration/security+handoff), #208/#202/#200, #195/#188/#186 (prior
+  actionlint leftovers), closed CONFLICTING #218/#215/#211/#206 (same
+  leftover vs stale tips), closed #220/#214/#210 (CI/markdownlint slice),
+  and historic v10/v11 link-check/actionlint edges.
+
 - Goose-recipe schema leftover **tests-only** deepeners after tip through **#209**
   (hydration/security+handoff leftover after #208) / **#208** / **#202** /
   **#200** / **#195** / **#188** / **#187** / **#186** / **#184** (goose-schema
