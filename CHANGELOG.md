@@ -10,6 +10,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Changelog **v41** deepeners (post-#96 constitution v40): `changelog-preamble`,
+  `changelog-changed`, `changelog-initial` validators; CHANGELOG.md Keep a
+  Changelog URL / separator preamble leftovers, Changed-section inventory/CI/
+  Dependabot/`alpha` leftovers, and 0.1.0 README / IMPLEMENTATION-GUIDE /
+  EXECUTION-SUMMARY initial-archive leftovers; consistency deepeners for
+  `changelog_preamble_required_phrases` / `changelog_changed_required_phrases` /
+  `changelog_initial_required_phrases`
+  (Packaging inventory 136 total; historic four only — changelog leftovers
+  slice, not constitution v40, security v39, contributing v38, goose recipes,
+  execution-summary, hydration, implementation-guide, agent prompts, or Dependabot)
+
 - Constitution **v40** deepeners (post-#94 security v39): `constitution-recipe-orchestration`,
   `constitution-scratchpad-state`, `constitution-conflict-matrix` validators;
   AGENTS-v2.2.md §22.5 Recipe-Based Orchestration Structure locks, §22.6 Scratchpad
