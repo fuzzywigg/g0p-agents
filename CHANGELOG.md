@@ -10,6 +10,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Security policy **v30** deepeners (post-#63): `security-header`,
+  `security-fips`, `security-known-non-issues` validators; SECURITY.md
+  Status/Tier/Created/Edit-policy header locks, Standards-table FIPS
+  (ML-KEM/ML-DSA/SLH-DSA) / Slither / Apple-Google / `.env` locks, and
+  Known Non-Issues CRYSTALS→NIST rename locks; consistency deepeners for
+  `security_header_required_phrases` / `security_fips_required_phrases` /
+  `security_known_non_issues_required_phrases` (103 total; historic four only —
+  security policy slice, not contributing, execution-summary, implementation
+  guide, agent prompts, goose recipes, README honesty, PR-template,
+  issue-template, scratchpad, postmortem, archive snapshot, routing/identity,
+  or Dependabot)
+
 - Contributing guide **v29** deepeners (post-#61): `contributing-issues`,
   `contributing-local`, `contributing-governance` validators; CONTRIBUTING.md
   Issue Reporting / Bug / Feature / Agent Task locks, Local validation

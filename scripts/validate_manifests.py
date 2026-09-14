@@ -44,6 +44,7 @@ Checks structural correctness of:
 - CLAUDE.md header metadata locks (Status/Tier/Owner/Created/Edit/Canonical)
 - CLAUDE.md escalation usage intro + fenced placeholder field locks
 - SECURITY.md Supported Versions / Reporting / Standards domain locks
+- SECURITY.md header / FIPS standards-row / Known Non-Issues rename locks
 - IMPLEMENTATION-GUIDE Quick Start / EXECUTION-SUMMARY specialist table /
   hydration LIST B HITL question locks (Dec 2025 archive snapshot slice)
 - postmortem.md intro / Decision field / Next Steps surface locks
@@ -160,7 +161,7 @@ REQUIRED_ARCHIVE_DOCS = (
     "README.md",
 )
 
-INVENTORY_VERSION = 29
+INVENTORY_VERSION = 30
 CURSOR_ENVIRONMENT_NAME = "g0p-agents"
 DEPENDABOT_SCHEDULE_INTERVAL = "weekly"
 DEPENDABOT_DIRECTORIES: frozenset[str] = frozenset({"/"})
@@ -315,6 +316,29 @@ SECURITY_STANDARDS_REQUIRED_PHRASES: tuple[str, ...] = (
     "Slither audit pass",
     "Never commit secrets",
     "Never expose plaintext keys",
+)
+SECURITY_HEADER_REQUIRED_PHRASES: tuple[str, ...] = (
+    "# Security Policy",
+    "Status: ACTIVE | Tier: 1 | Created: 2026-04-13",
+    "Edit policy: Structural changes require Andrew approval",
+)
+SECURITY_FIPS_REQUIRED_PHRASES: tuple[str, ...] = (
+    "## Security Standards for This Ecosystem",
+    "ML-KEM/FIPS 203",
+    "ML-DSA/FIPS 204",
+    "SLH-DSA/FIPS 205",
+    "0 critical vulnerabilities",
+    "Apple/Google security guidelines compliance",
+    "use `.env` files excluded by `.gitignore`",
+)
+SECURITY_KNOWN_NON_ISSUES_REQUIRED_PHRASES: tuple[str, ...] = (
+    "## Known Non-Issues",
+    "CRYSTALS-Kyber",
+    "CRYSTALS-Dilithium",
+    "ML-KEM (FIPS 203)",
+    "ML-DSA (FIPS 204)",
+    "pre-finalization names",
+    "The underlying algorithms are correct",
 )
 IMPLEMENTATION_QUICKSTART_REQUIRED_PHRASES: tuple[str, ...] = (
     "## Quick Start (30 minutes)",
@@ -953,7 +977,7 @@ SCRATCHPAD_STATUS_MARKERS: tuple[str, ...] = (
 SPECIALIST_AGENTS: tuple[str, ...] = DOCUMENTED_AGENTS[:-1]
 
 MIN_COVERAGE_FAIL_UNDER = 99
-MIN_VALIDATOR_COUNT = 100
+MIN_VALIDATOR_COUNT = 103
 
 
 @dataclass(frozen=True)
@@ -1627,6 +1651,28 @@ def validate_packaging_inventory(root: Path) -> list[Finding]:
     ):
         findings.append(
             _lock_mismatch(schema_path, "security_standards_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("security_header_required_phrases", ()))
+        != SECURITY_HEADER_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "security_header_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("security_fips_required_phrases", ()))
+        != SECURITY_FIPS_REQUIRED_PHRASES
+    ):
+        findings.append(_lock_mismatch(schema_path, "security_fips_required_phrases"))
+
+    if (
+        tuple(inventory.get("security_known_non_issues_required_phrases", ()))
+        != SECURITY_KNOWN_NON_ISSUES_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "security_known_non_issues_required_phrases")
         )
 
     if (
@@ -3855,6 +3901,114 @@ def _inventory_lock_consistency(
                 )
             )
 
+    header = list(inventory.get("security_header_required_phrases", ()))
+    if len(header) != len(set(header)):
+        findings.append(
+            Finding(schema_path, "security_header_required_phrases must be unique")
+        )
+    if not header:
+        findings.append(
+            Finding(schema_path, "security_header_required_phrases must not be empty")
+        )
+    for phrase in header:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "security_header_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_header = {
+            "# Security Policy",
+            "Status: ACTIVE | Tier: 1 | Created: 2026-04-13",
+            "Edit policy: Structural changes require Andrew approval",
+        }
+        if header and not required_header <= set(header):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "security_header_required_phrases must include Security "
+                    "Policy/Status/Edit policy",
+                )
+            )
+
+    fips = list(inventory.get("security_fips_required_phrases", ()))
+    if len(fips) != len(set(fips)):
+        findings.append(
+            Finding(schema_path, "security_fips_required_phrases must be unique")
+        )
+    if not fips:
+        findings.append(
+            Finding(schema_path, "security_fips_required_phrases must not be empty")
+        )
+    for phrase in fips:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "security_fips_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_fips = {
+            "## Security Standards for This Ecosystem",
+            "ML-KEM/FIPS 203",
+            "SLH-DSA/FIPS 205",
+        }
+        if fips and not required_fips <= set(fips):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "security_fips_required_phrases must include Security "
+                    "Standards/ML-KEM/SLH-DSA",
+                )
+            )
+
+    non_issues = list(inventory.get("security_known_non_issues_required_phrases", ()))
+    if len(non_issues) != len(set(non_issues)):
+        findings.append(
+            Finding(
+                schema_path,
+                "security_known_non_issues_required_phrases must be unique",
+            )
+        )
+    if not non_issues:
+        findings.append(
+            Finding(
+                schema_path,
+                "security_known_non_issues_required_phrases must not be empty",
+            )
+        )
+    for phrase in non_issues:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "security_known_non_issues_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_non_issues = {
+            "## Known Non-Issues",
+            "CRYSTALS-Kyber",
+            "ML-KEM (FIPS 203)",
+        }
+        if non_issues and not required_non_issues <= set(non_issues):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "security_known_non_issues_required_phrases must include "
+                    "Known Non-Issues/Kyber/ML-KEM",
+                )
+            )
+
     return findings
 
 
@@ -4524,6 +4678,61 @@ def validate_security_standards(root: Path) -> list[Finding]:
         if phrase not in text:
             findings.append(
                 Finding(rel, f"missing locked security-standards phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_security_header(root: Path) -> list[Finding]:
+    rel = "SECURITY.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "SECURITY.md missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "# Security Policy" not in text:
+        findings.append(Finding(rel, "missing Security Policy heading"))
+    for phrase in SECURITY_HEADER_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(rel, f"missing locked security-header phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_security_fips(root: Path) -> list[Finding]:
+    rel = "SECURITY.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "SECURITY.md missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## Security Standards for This Ecosystem" not in text:
+        findings.append(
+            Finding(rel, "missing Security Standards for This Ecosystem section")
+        )
+    for phrase in SECURITY_FIPS_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(rel, f"missing locked security-fips phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_security_known_non_issues(root: Path) -> list[Finding]:
+    rel = "SECURITY.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "SECURITY.md missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## Known Non-Issues" not in text:
+        findings.append(Finding(rel, "missing Known Non-Issues section"))
+    for phrase in SECURITY_KNOWN_NON_ISSUES_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(
+                    rel, f"missing locked security-known-non-issues phrase: {phrase}"
+                )
             )
     return findings
 
@@ -7124,6 +7333,9 @@ VALIDATORS: dict[str, ValidatorFn] = {
     "security-supported": validate_security_supported,
     "security-reporting": validate_security_reporting,
     "security-standards": validate_security_standards,
+    "security-header": validate_security_header,
+    "security-fips": validate_security_fips,
+    "security-known-non-issues": validate_security_known_non_issues,
     "implementation-quickstart": validate_implementation_quickstart,
     "execution-specialists": validate_execution_specialists,
     "hydration-list-b": validate_hydration_list_b,
