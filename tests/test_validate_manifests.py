@@ -18069,3 +18069,1002 @@ def test_prompt_pre_v52_residual_live_green() -> None:
     assert vm.validate_prompt_metrics_detail(REPO_ROOT) == []
     assert vm.validate_goose_howto(REPO_ROOT) == []
     assert vm.validate_scratchpad(REPO_ROOT) == []
+
+# ---------------------------------------------------------------------------
+# Goose-recipe SCHEMA + Security residual HEAVY edges after #151.
+# EXISTING modules only:
+#   - goose / recipe-agents / recipe-titles (+ goose-recipe.schema.json edges)
+#   - ten security / security-* phrase-lock validators
+# No invented product / inventory bump. Distinct from merged #147 (nine goose-*
+# phrase locks), merged #151 (thirty-three prompt-pre-v52 residuals), closed
+# CONFLICTING #155 (security residuals on pre-#151 tip), and open constitution
+# residual drafts.
+# ---------------------------------------------------------------------------
+
+_GOOSE_SCHEMA_RESIDUAL_NAMES: tuple[str, ...] = (
+    "goose",
+    "recipe-agents",
+    "recipe-titles",
+)
+
+_SECURITY_RESIDUAL_NAMES: tuple[str, ...] = (
+    "security",
+    "security-supported",
+    "security-reporting",
+    "security-standards",
+    "security-header",
+    "security-fips",
+    "security-known-non-issues",
+    "security-scope",
+    "security-reporting-channel",
+    "security-compliance-detail",
+)
+
+
+def _goose_schema_residual_modules() -> list[tuple[str, object]]:
+    """Map the three existing goose schema / binding / title validators."""
+    return [
+        ("goose", vm.validate_goose_recipes),
+        ("recipe-agents", vm.validate_recipe_agent_bindings),
+        ("recipe-titles", vm.validate_recipe_titles),
+    ]
+
+
+def _goose_schema_residual_locked_doc() -> str:
+    """Four locked historic recipes with correct titles, bindings, and docs phrases."""
+    blocks: list[str] = []
+    for name, primary in vm.RECIPE_PRIMARY_AGENT.items():
+        recipe = json.loads(json.dumps(LOCKED_RECIPE))
+        recipe["name"] = name
+        recipe["recipe"]["title"] = vm.RECIPE_TITLES[name]
+        if name == vm.ORCHESTRATION_RECIPE_NAME:
+            agents_blob = " ".join(vm.DOCUMENTED_AGENTS)
+            recipe["recipe"]["instructions"] = (
+                f"You are {primary}. Coordinate {agents_blob}."
+            )
+            recipe["recipe"]["prompt"] = f"STEP for {agents_blob}"
+        else:
+            recipe["recipe"]["instructions"] = f"You are {primary}."
+            recipe["recipe"]["prompt"] = f"STEP for {primary}"
+        blocks.append(yaml.safe_dump(recipe, sort_keys=False))
+    body = "\n\n".join(f"```yaml\n{block}```" for block in blocks)
+    for rel in vm.EXPECTED_RECIPE_FILES:
+        body += f"\n**File**: `./{rel}`\n"
+        body += f"\ngoose run ./{rel}\n"
+    for phrase in vm.GOOSE_DOCS_REQUIRED_PHRASES:
+        if phrase not in body:
+            body += f"\n{phrase}\n"
+    return body
+
+
+def _security_residual_modules() -> list[tuple[str, object, tuple[str, ...], str]]:
+    """Map the ten existing SECURITY.md phrase-lock validators."""
+    modules: list[tuple[str, object, tuple[str, ...], str]] = []
+    for name in _SECURITY_RESIDUAL_NAMES:
+        if name == "security":
+            fn = vm.validate_security_packaging
+            phrases = vm.SECURITY_REQUIRED_PHRASES
+            inv_key = "security_required_phrases"
+        else:
+            suffix = name.removeprefix("security-").replace("-", "_")
+            fn = getattr(vm, f"validate_security_{suffix}")
+            phrases = getattr(vm, f"SECURITY_{suffix.upper()}_REQUIRED_PHRASES")
+            inv_key = f"security_{suffix}_required_phrases"
+        modules.append((name, fn, phrases, inv_key))
+    return modules
+
+
+def _security_residual_locked_text() -> str:
+    """Union of locked phrases for the ten security residual validators."""
+    lines: list[str] = []
+    seen: set[str] = set()
+    ordered: list[str] = []
+    for _name, _fn, phrases, _key in _security_residual_modules():
+        ordered.extend(phrases)
+    for phrase in sorted(ordered, key=len, reverse=True):
+        if phrase not in seen:
+            seen.add(phrase)
+            lines.append(phrase)
+    return "\n".join(lines) + "\n"
+
+
+def test_goose_schema_residual_modules_existing_only() -> None:
+    """Slice targets goose/recipe-agents/recipe-titles — not #147 phrase locks."""
+    modules = _goose_schema_residual_modules()
+    assert [name for name, _fn in modules] == list(_GOOSE_SCHEMA_RESIDUAL_NAMES)
+    assert len(modules) == 3
+    assert vm.INVENTORY_VERSION == 52
+    assert vm.MIN_VALIDATOR_COUNT == 196
+    assert len(vm.VALIDATORS) == 196
+
+    for invented in (
+        "goose-timeouts",
+        "goose-deadlines",
+        "goose-schema-v53",
+        "recipe-timeouts",
+        "recipe-agents-v53",
+        "security-timeouts",
+        "constitution-deadlines",
+        "implementation-timeouts",
+        "prompt-v53-invented",
+    ):
+        assert invented not in vm.VALIDATORS
+
+    # #147's nine goose-* phrase locks stay registered but are out of this slice.
+    for name in (
+        "goose-howto",
+        "goose-state-machine",
+        "goose-naming",
+        "goose-recipe-headers",
+        "goose-instruction-agents",
+        "goose-extensions",
+        "goose-orchestration",
+        "goose-conflicts",
+        "goose-quantum-task",
+    ):
+        assert name in vm.VALIDATORS
+        assert name not in _GOOSE_SCHEMA_RESIDUAL_NAMES
+
+    inventory = json.loads(
+        (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
+    )
+    assert inventory["version"] == 52
+    assert inventory["min_validator_count"] == 196
+    assert sorted(vm.VALIDATORS) == inventory["validator_names"]
+    assert inventory["recipe_titles"] == vm.RECIPE_TITLES
+    assert inventory["goose_docs_required_phrases"] == list(vm.GOOSE_DOCS_REQUIRED_PHRASES)
+    assert "goose-recipe.schema.json" in inventory["required_schema_files"]
+    assert (REPO_ROOT / "schemas" / "goose-recipe.schema.json").is_file()
+
+    for name, _fn in modules:
+        assert name in vm.VALIDATORS
+        assert name in inventory["validator_names"]
+
+
+def test_goose_schema_residual_empty_and_missing_docs(tmp_path: Path) -> None:
+    """Missing / empty / header-only GOOSE-RECIPES fails goose + recipe-titles."""
+    modules = _goose_schema_residual_modules()
+    for name, fn in modules:
+        findings = fn(tmp_path)
+        assert any("missing" in f.message for f in findings), name
+
+    # recipe-agents is fence-driven: empty docs yield no agent findings (no blocks).
+    # goose + recipe-titles still fail hard on whitespace / header-only stubs.
+    _write(tmp_path / "GOOSE-RECIPES.md", "\n\t  \n")
+    assert vm.validate_goose_recipes(tmp_path)
+    assert vm.validate_recipe_titles(tmp_path)
+    assert vm.validate_recipe_agent_bindings(tmp_path) == []
+
+    _write(tmp_path / "GOOSE-RECIPES.md", "# Recipe-Based Agent Orchestration\n")
+    goose_findings = vm.validate_goose_recipes(tmp_path)
+    title_findings = vm.validate_recipe_titles(tmp_path)
+    assert any("expected exactly 4" in f.message for f in goose_findings)
+    assert any(
+        "missing" in f.message or "packaging phrase" in f.message for f in title_findings
+    )
+    assert vm.validate_recipe_agent_bindings(tmp_path) == []
+
+
+def test_goose_schema_residual_invalid_keys(tmp_path: Path) -> None:
+    """Reject invented schema/timeout sibling keys; corrupt recipe inventory maps."""
+    with pytest.raises(KeyError):
+        _ = vm.VALIDATORS["goose-schema-v53"]
+    with pytest.raises(KeyError):
+        _ = vm.VALIDATORS["recipe-timeouts"]
+    with pytest.raises(ValueError, match="unknown validator"):
+        vm.run_all_validations(REPO_ROOT, only=["goose-schema-v53"])
+    with pytest.raises(ValueError, match="unknown validator"):
+        vm.run_all_validations(REPO_ROOT, only=["recipe-timeouts"])
+
+    findings = vm.run_all_validations(
+        REPO_ROOT, only=["goose", "recipe-agents", "recipe-titles"]
+    )
+    assert findings == []
+
+    _copy_schemas(tmp_path)
+    for rel in _inventory_payload()["required_paths"]:
+        target = tmp_path / rel
+        target.parent.mkdir(parents=True, exist_ok=True)
+        if not target.exists():
+            target.write_text("ok\n", encoding="utf-8")
+
+    bad = _inventory_payload()
+    bad["invented_goose_schema_residual_map"] = {"slot": "x"}
+    (tmp_path / "schemas" / "packaging-inventory.json").write_text(
+        json.dumps(bad),
+        encoding="utf-8",
+    )
+    findings = vm.validate_packaging_inventory(tmp_path)
+    assert findings
+
+    bad2 = _inventory_payload()
+    bad2["recipe_titles"] = "not-a-map"
+    (tmp_path / "schemas" / "packaging-inventory.json").write_text(
+        json.dumps(bad2),
+        encoding="utf-8",
+    )
+    findings = vm.validate_packaging_inventory(tmp_path)
+    assert findings
+
+    bad3 = _inventory_payload()
+    bad3["goose_docs_required_phrases"] = list(vm.GOOSE_DOCS_REQUIRED_PHRASES)[:-1] + [
+        "invented-goose-docs-phrase"
+    ]
+    (tmp_path / "schemas" / "packaging-inventory.json").write_text(
+        json.dumps(bad3),
+        encoding="utf-8",
+    )
+    findings = vm.validate_packaging_inventory(tmp_path)
+    assert any("goose_docs_required_phrases" in f.message for f in findings)
+
+
+def test_goose_schema_residual_jsonschema_edge_matrix() -> None:
+    """HEAVY goose-recipe.schema.json residual edges beyond the thin matrix."""
+    schema = vm.load_schema("goose-recipe.schema.json")
+    base = json.loads(json.dumps(MINIMAL_RECIPE))
+
+    # Live-shaped minimal payload stays green.
+    assert vm.validate_against_schema(base, schema, path="fixture") == []
+
+    cases: list[tuple[str, dict]] = [
+        ("empty_name", {**base, "name": ""}),
+        ("bad_name_caps", {**base, "name": "BadName"}),
+        ("bad_name_hyphen", {**base, "name": "bad-name"}),
+        ("name_too_long", {**base, "name": "a" * 129}),
+        (
+            "empty_title",
+            {
+                **base,
+                "recipe": {**base["recipe"], "title": ""},
+            },
+        ),
+        (
+            "title_too_long",
+            {
+                **base,
+                "recipe": {**base["recipe"], "title": "x" * 257},
+            },
+        ),
+        (
+            "empty_instructions",
+            {
+                **base,
+                "recipe": {**base["recipe"], "instructions": ""},
+            },
+        ),
+        (
+            "empty_prompt",
+            {
+                **base,
+                "recipe": {**base["recipe"], "prompt": ""},
+            },
+        ),
+        (
+            "empty_extensions",
+            {
+                **base,
+                "recipe": {**base["recipe"], "extensions": []},
+            },
+        ),
+        (
+            "dup_extensions",
+            {
+                **base,
+                "recipe": {
+                    **base["recipe"],
+                    "extensions": [
+                        {"type": "builtin", "name": "developer", "timeout": 30},
+                        {"type": "builtin", "name": "developer", "timeout": 30},
+                    ],
+                },
+            },
+        ),
+        (
+            "timeout_zero",
+            {
+                **base,
+                "recipe": {
+                    **base["recipe"],
+                    "extensions": [
+                        {"type": "builtin", "name": "developer", "timeout": 0}
+                    ],
+                },
+            },
+        ),
+        (
+            "settings_extra",
+            {
+                **base,
+                "recipe": {
+                    **base["recipe"],
+                    "settings": {**base["recipe"]["settings"], "extra": 1},
+                },
+            },
+        ),
+        (
+            "recipe_extra",
+            {
+                **base,
+                "recipe": {**base["recipe"], "extra": True},
+            },
+        ),
+        (
+            "unknown_extension_type",
+            {
+                **base,
+                "recipe": {
+                    **base["recipe"],
+                    "extensions": [{"type": "unknown", "name": "x"}],
+                },
+            },
+        ),
+        (
+            "non_historic_provider",
+            {
+                **base,
+                "recipe": {
+                    **base["recipe"],
+                    "settings": {
+                        "goose_provider": "openai",
+                        "goose_model": "claude-opus-4",
+                    },
+                },
+            },
+        ),
+        (
+            "non_historic_model",
+            {
+                **base,
+                "recipe": {
+                    **base["recipe"],
+                    "settings": {
+                        "goose_provider": "anthropic",
+                        "goose_model": "gpt-x",
+                    },
+                },
+            },
+        ),
+        (
+            "non_historic_version",
+            {
+                **base,
+                "recipe": {**base["recipe"], "version": "2.0.0"},
+            },
+        ),
+    ]
+
+    for label, payload in cases:
+        findings = vm.validate_against_schema(payload, schema, path="fixture")
+        assert findings, label
+
+    # Allowed extension transports + max timeout remain green.
+    for ext_type in ("builtin", "stdio", "sse", "streamable_http"):
+        ok = json.loads(json.dumps(base))
+        ok["recipe"]["extensions"] = [{"type": ext_type, "name": "x", "timeout": 86400}]
+        assert vm.validate_against_schema(ok, schema, path="fixture") == [], ext_type
+
+    missing_name = json.loads(json.dumps(base))
+    del missing_name["name"]
+    assert vm.validate_against_schema(missing_name, schema, path="fixture")
+
+    missing_instructions = json.loads(json.dumps(base))
+    del missing_instructions["recipe"]["instructions"]
+    assert vm.validate_against_schema(missing_instructions, schema, path="fixture")
+
+
+def test_goose_schema_residual_fence_and_binding_matrix(tmp_path: Path) -> None:
+    """Fence count / names / titles / agents / File+run binding residual edges."""
+    locked = _goose_schema_residual_locked_doc()
+    _write(tmp_path / "GOOSE-RECIPES.md", locked)
+    assert vm.validate_goose_recipes(tmp_path) == []
+    assert vm.validate_recipe_agent_bindings(tmp_path) == []
+    assert vm.validate_recipe_titles(tmp_path) == []
+
+    # Wrong fence count
+    _write(tmp_path / "GOOSE-RECIPES.md", "```yaml\nname: only_one\n```\n")
+    findings = vm.validate_goose_recipes(tmp_path)
+    assert any("expected exactly 4" in f.message for f in findings)
+
+    # Duplicate locked names
+    recipes = []
+    names = sorted(vm.EXPECTED_RECIPE_NAMES)
+    for name in [names[0], names[0], names[1], names[2]]:
+        recipe = json.loads(json.dumps(LOCKED_RECIPE))
+        recipe["name"] = name
+        recipe["recipe"]["title"] = vm.RECIPE_TITLES.get(name, "x")
+        recipes.append(yaml.safe_dump(recipe, sort_keys=False))
+    body = "\n\n".join(f"```yaml\n{block}```" for block in recipes)
+    for rel in vm.EXPECTED_RECIPE_FILES:
+        body += f"\n**File**: `./{rel}`\n\ngoose run ./{rel}\n"
+    _write(tmp_path / "GOOSE-RECIPES.md", body)
+    findings = vm.validate_goose_recipes(tmp_path)
+    assert any("duplicate recipe name" in f.message for f in findings)
+
+    # Wrong historic title
+    body = _goose_schema_residual_locked_doc()
+    wrong_title = list(vm.RECIPE_TITLES.values())[0]
+    other = [t for t in vm.RECIPE_TITLES.values() if t != wrong_title][0]
+    body = body.replace(wrong_title, other, 1)
+    _write(tmp_path / "GOOSE-RECIPES.md", body)
+    findings = vm.validate_recipe_titles(tmp_path)
+    assert any("historic recipe title must be" in f.message for f in findings)
+
+    # Invented agent token in recipe text
+    body = _goose_schema_residual_locked_doc()
+    body = body.replace("QuantumArchitectAgent", "InventedGhostAgent", 1)
+    _write(tmp_path / "GOOSE-RECIPES.md", body)
+    findings = vm.validate_recipe_agent_bindings(tmp_path)
+    assert any("InventedGhostAgent" in f.message for f in findings)
+
+    # Swapped File path bindings
+    recipes = []
+    for name in sorted(vm.EXPECTED_RECIPE_NAMES):
+        recipe = json.loads(json.dumps(LOCKED_RECIPE))
+        recipe["name"] = name
+        recipe["recipe"]["title"] = vm.RECIPE_TITLES[name]
+        primary = vm.RECIPE_PRIMARY_AGENT[name]
+        if name == vm.ORCHESTRATION_RECIPE_NAME:
+            agents_blob = " ".join(vm.DOCUMENTED_AGENTS)
+            recipe["recipe"]["instructions"] = (
+                f"You are {primary}. Coordinate {agents_blob}."
+            )
+            recipe["recipe"]["prompt"] = f"STEP for {agents_blob}"
+        else:
+            recipe["recipe"]["instructions"] = f"You are {primary}."
+            recipe["recipe"]["prompt"] = f"STEP for {primary}"
+        recipes.append(yaml.safe_dump(recipe, sort_keys=False))
+    files = list(vm.EXPECTED_RECIPE_FILES)
+    files[0], files[1] = files[1], files[0]
+    body = "\n\n".join(f"```yaml\n{block}```" for block in recipes)
+    for rel in files:
+        body += f"\n**File**: `./{rel}`\n\ngoose run ./{rel}\n"
+    for phrase in vm.GOOSE_DOCS_REQUIRED_PHRASES:
+        if phrase not in body:
+            body += f"\n{phrase}\n"
+    _write(tmp_path / "GOOSE-RECIPES.md", body)
+    findings = vm.validate_goose_recipes(tmp_path)
+    assert any(
+        "must bind to" in f.message or "locked recipe file" in f.message for f in findings
+    )
+
+    # Invented on-disk YAML refused (docs-only archive)
+    _write(tmp_path / "GOOSE-RECIPES.md", locked)
+    flows = tmp_path / "agentic_flows"
+    flows.mkdir(parents=True, exist_ok=True)
+    _write(flows / "scratchpad.txt", "ok\n")
+    _write(flows / "invented_schema_residual.yaml", "name: invented\n")
+    findings = vm.validate_goose_recipes(tmp_path)
+    assert any("unexpected/invented" in f.message for f in findings)
+
+
+def test_goose_schema_residual_inventory_mismatch_matrix(tmp_path: Path) -> None:
+    """Inventory lock mismatches for recipe_titles / goose_docs / historic settings."""
+    payload = _inventory_payload()
+    payload["recipe_titles"] = {}
+    findings = vm._inventory_lock_consistency(
+        payload, schema_path="schemas/packaging-inventory.json"
+    )
+    assert any("recipe_titles" in f.message for f in findings)
+
+    payload = _inventory_payload()
+    # Duplicate title values (consistency deepener)
+    vals = list(vm.RECIPE_TITLES.values())
+    dup = {n: vals[0] for n in vm.RECIPE_TITLES}
+    payload["recipe_titles"] = dup
+    findings = vm._inventory_lock_consistency(
+        payload, schema_path="schemas/packaging-inventory.json"
+    )
+    assert any("recipe_titles values must be unique" in f.message for f in findings)
+
+    payload = _inventory_payload()
+    payload["expected_recipe_names"] = sorted(vm.EXPECTED_RECIPE_NAMES)[:-1] + [
+        "invented_schema_workflow"
+    ]
+    findings = vm._inventory_lock_consistency(
+        payload, schema_path="schemas/packaging-inventory.json"
+    )
+    assert any("expected_recipe_names" in f.message for f in findings)
+
+    # Seed / historic / goose_docs lock mismatches live on packaging inventory path.
+    _copy_schemas(tmp_path)
+    for rel in _inventory_payload()["required_paths"]:
+        target = tmp_path / rel
+        target.parent.mkdir(parents=True, exist_ok=True)
+        if not target.exists():
+            target.write_text("ok\n", encoding="utf-8")
+
+    bad_titles = _inventory_payload()
+    titles = dict(vm.RECIPE_TITLES)
+    first = next(iter(titles))
+    titles[first] = "invented-title-seed"
+    bad_titles["recipe_titles"] = titles
+    (tmp_path / "schemas" / "packaging-inventory.json").write_text(
+        json.dumps(bad_titles),
+        encoding="utf-8",
+    )
+    findings = vm.validate_packaging_inventory(tmp_path)
+    assert any("recipe_titles" in f.message for f in findings)
+
+    bad_docs = _inventory_payload()
+    bad_docs["goose_docs_required_phrases"] = []
+    (tmp_path / "schemas" / "packaging-inventory.json").write_text(
+        json.dumps(bad_docs),
+        encoding="utf-8",
+    )
+    findings = vm.validate_packaging_inventory(tmp_path)
+    assert any("goose_docs_required_phrases" in f.message for f in findings)
+
+    bad_hist = _inventory_payload()
+    bad_hist["historic_goose_settings"] = {
+        "goose_provider": "openai",
+        "goose_model": vm.HISTORIC_GOOSE_MODEL,
+        "extension_type": vm.HISTORIC_EXTENSION_TYPE,
+        "extension_name": vm.HISTORIC_EXTENSION_NAME,
+    }
+    (tmp_path / "schemas" / "packaging-inventory.json").write_text(
+        json.dumps(bad_hist),
+        encoding="utf-8",
+    )
+    findings = vm.validate_packaging_inventory(tmp_path)
+    assert any("historic_goose_settings" in f.message for f in findings)
+
+
+def test_goose_schema_residual_concurrent_validate_races(tmp_path: Path) -> None:
+    """Concurrent readers/writers against goose schema modules must not crash."""
+    modules = _goose_schema_residual_modules()
+    live_fns = [fn for _name, fn in modules]
+
+    def _read_live() -> list[vm.Finding]:
+        out: list[vm.Finding] = []
+        for fn in live_fns:
+            out.extend(fn(REPO_ROOT))
+        return out
+
+    errors: list[BaseException] = []
+    with ThreadPoolExecutor(max_workers=16) as pool:
+        futures = [pool.submit(_read_live) for _ in range(48)]
+        for fut in as_completed(futures):
+            try:
+                assert fut.result() == []
+            except BaseException as exc:  # noqa: BLE001 — collect race failures
+                errors.append(exc)
+    assert errors == []
+
+    locked = _goose_schema_residual_locked_doc()
+    path = tmp_path / "GOOSE-RECIPES.md"
+    _write(path, locked)
+    for name, fn in modules:
+        assert fn(tmp_path) == [], name
+
+    stop = threading.Event()
+    race_errors: list[BaseException] = []
+
+    def _writer() -> None:
+        flip = False
+        while not stop.is_set():
+            try:
+                if flip:
+                    path.write_text(locked, encoding="utf-8")
+                else:
+                    path.write_text("\n", encoding="utf-8")
+                flip = not flip
+            except BaseException as exc:  # noqa: BLE001
+                race_errors.append(exc)
+                return
+
+    def _reader() -> None:
+        while not stop.is_set():
+            try:
+                for fn in live_fns:
+                    fn(tmp_path)
+            except BaseException as exc:  # noqa: BLE001
+                race_errors.append(exc)
+                return
+
+    threads = [
+        threading.Thread(target=_writer),
+        threading.Thread(target=_reader),
+        threading.Thread(target=_reader),
+        threading.Thread(target=_reader),
+    ]
+    for t in threads:
+        t.start()
+    time.sleep(0.35)
+    stop.set()
+    for t in threads:
+        t.join(timeout=2.0)
+    assert race_errors == []
+
+    schema = vm.load_schema("goose-recipe.schema.json")
+
+    def _schema_check() -> bool:
+        bad = json.loads(json.dumps(MINIMAL_RECIPE))
+        bad["name"] = "Bad-Name"
+        return bool(vm.validate_against_schema(bad, schema, path="race"))
+
+    with ThreadPoolExecutor(max_workers=8) as pool:
+        futs = [pool.submit(_schema_check) for _ in range(16)]
+        assert all(fut.result() for fut in as_completed(futs))
+
+
+def test_goose_schema_residual_cross_isolation(tmp_path: Path) -> None:
+    """Schema module failures stay isolated; #147 phrase locks stay green on live."""
+    locked = _goose_schema_residual_locked_doc()
+
+    # Titles fail when a historic title is swapped; goose may still parse schema-wise.
+    body = locked
+    titles = list(vm.RECIPE_TITLES.values())
+    body = body.replace(titles[0], titles[1], 1)
+    _write(tmp_path / "GOOSE-RECIPES.md", body)
+    assert vm.validate_recipe_titles(tmp_path)
+    assert vm.validate_goose_howto(REPO_ROOT) == []
+    assert vm.validate_goose_orchestration(REPO_ROOT) == []
+    assert vm.validate_goose_quantum_task(REPO_ROOT) == []
+
+    # Agent bindings fail on invented token; live security + #151 siblings stay green.
+    body = locked.replace("BlockchainArchitectAgent", "InventedGhostAgent", 1)
+    _write(tmp_path / "GOOSE-RECIPES.md", body)
+    assert vm.validate_recipe_agent_bindings(tmp_path)
+    assert vm.validate_security_packaging(REPO_ROOT) == []
+    assert vm.validate_prompt_roles(REPO_ROOT) == []
+    assert vm.validate_goose_recipes(REPO_ROOT) == []
+
+
+def test_goose_schema_residual_live_green() -> None:
+    """Live goose/recipe-agents/recipe-titles + schema file remain clean."""
+    modules = _goose_schema_residual_modules()
+    assert len(modules) == 3
+    for name, fn in modules:
+        assert fn(REPO_ROOT) == [], name
+        assert vm.VALIDATORS[name](REPO_ROOT) == [], name
+
+    schema = vm.load_schema("goose-recipe.schema.json")
+    assert vm.validate_against_schema(MINIMAL_RECIPE, schema, path="live") == []
+    assert vm.INVENTORY_VERSION == 52
+    assert vm.MIN_VALIDATOR_COUNT == 196
+    assert len(vm.VALIDATORS) == 196
+    body = (REPO_ROOT / "GOOSE-RECIPES.md").read_text(encoding="utf-8")
+    assert "Recipe-Based Agent Orchestration" in body
+    assert "goose run" in body
+    fences = vm.extract_fenced_yaml_blocks(body)
+    assert len(fences) == 4
+    # Adjacent #147 / #151 slices remain green
+    assert vm.validate_goose_howto(REPO_ROOT) == []
+    assert vm.validate_goose_conflicts(REPO_ROOT) == []
+    assert vm.validate_prompt_roles(REPO_ROOT) == []
+    assert vm.validate_scratchpad(REPO_ROOT) == []
+
+
+def test_security_residual_modules_existing_only() -> None:
+    """Slice targets ten existing security modules — no invented v53 sibling."""
+    modules = _security_residual_modules()
+    assert len(modules) == 10
+    assert vm.INVENTORY_VERSION == 52
+    assert vm.MIN_VALIDATOR_COUNT == 196
+    assert len(vm.VALIDATORS) == 196
+
+    for invented in (
+        "security-timeouts",
+        "security-deadlines",
+        "security-v53-invented",
+        "security-quantum-threat",
+        "goose-timeouts",
+        "goose-schema-v53",
+        "constitution-specialists-overview",
+        "constitution-deadlines",
+        "implementation-timeouts",
+    ):
+        assert invented not in vm.VALIDATORS
+
+    inventory = json.loads(
+        (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
+    )
+    assert inventory["version"] == 52
+    assert inventory["min_validator_count"] == 196
+    assert sorted(vm.VALIDATORS) == inventory["validator_names"]
+
+    for name, _fn, phrases, inv_key in modules:
+        assert name in vm.VALIDATORS
+        assert name in inventory["validator_names"]
+        assert inv_key in inventory
+        assert inventory[inv_key] == list(phrases)
+        assert len(phrases) >= 2
+
+
+def test_security_residual_empty_maps_and_empty_doc(tmp_path: Path) -> None:
+    """Empty / whitespace / header-only SECURITY.md + empty security phrase maps."""
+    modules = _security_residual_modules()
+    for name, fn, _phrases, _key in modules:
+        findings = fn(tmp_path)
+        assert any("missing" in f.message for f in findings), name
+
+    _write(tmp_path / "SECURITY.md", "\n\t  \n")
+    for name, fn, phrases, _key in modules:
+        findings = fn(tmp_path)
+        assert findings, name
+        assert any(
+            phrase in f.message or "missing" in f.message
+            for f in findings
+            for phrase in phrases[:1]
+        ) or any("missing" in f.message for f in findings)
+
+    _write(tmp_path / "SECURITY.md", "# Security Policy\n")
+    for name, fn, phrases, _key in modules:
+        findings = fn(tmp_path)
+        phrase_hits = [f for f in findings if any(p in f.message for p in phrases)]
+        assert phrase_hits or any("missing" in f.message for f in findings), name
+
+    # Nine security-* keys have empty-map consistency deepeners; base
+    # security_required_phrases is lock-mismatch-only (pre-deepener era).
+    for _name, _fn, _phrases, key in modules:
+        if key == "security_required_phrases":
+            continue
+        payload = _inventory_payload()
+        payload[key] = []
+        findings = vm._inventory_lock_consistency(
+            payload, schema_path="schemas/packaging-inventory.json"
+        )
+        assert any(f"{key} must not be empty" in f.message for f in findings), key
+
+    # Base packaging phrase map still rejects seed drift via inventory lock.
+    _copy_schemas(tmp_path)
+    for rel in _inventory_payload()["required_paths"]:
+        target = tmp_path / rel
+        target.parent.mkdir(parents=True, exist_ok=True)
+        if not target.exists():
+            target.write_text("ok\n", encoding="utf-8")
+    bad_seed = _inventory_payload()
+    bad_seed["security_required_phrases"] = list(vm.SECURITY_REQUIRED_PHRASES[:-1]) + [
+        "invented-security-phrase"
+    ]
+    (tmp_path / "schemas" / "packaging-inventory.json").write_text(
+        json.dumps(bad_seed),
+        encoding="utf-8",
+    )
+    findings = vm.validate_packaging_inventory(tmp_path)
+    assert any("security_required_phrases" in f.message for f in findings)
+
+
+def test_security_residual_invalid_keys(tmp_path: Path) -> None:
+    """Reject invented security/timeout sibling keys; corrupt live security maps."""
+    with pytest.raises(KeyError):
+        _ = vm.VALIDATORS["security-timeouts"]
+    with pytest.raises(KeyError):
+        _ = vm.VALIDATORS["security-v53-invented"]
+    with pytest.raises(ValueError, match="unknown validator"):
+        vm.run_all_validations(REPO_ROOT, only=["security-timeouts"])
+    with pytest.raises(ValueError, match="unknown validator"):
+        vm.run_all_validations(REPO_ROOT, only=["security-v53-invented"])
+
+    findings = vm.run_all_validations(
+        REPO_ROOT,
+        only=["security", "security-fips", "security-compliance-detail"],
+    )
+    assert findings == []
+
+    _copy_schemas(tmp_path)
+    for rel in _inventory_payload()["required_paths"]:
+        target = tmp_path / rel
+        target.parent.mkdir(parents=True, exist_ok=True)
+        if not target.exists():
+            target.write_text("ok\n", encoding="utf-8")
+
+    bad = _inventory_payload()
+    bad["invented_security_timeout_residual_map"] = {"slot": "x"}
+    (tmp_path / "schemas" / "packaging-inventory.json").write_text(
+        json.dumps(bad),
+        encoding="utf-8",
+    )
+    findings = vm.validate_packaging_inventory(tmp_path)
+    assert findings
+
+    bad2 = _inventory_payload()
+    bad2["security_required_phrases"] = "not-a-list"
+    (tmp_path / "schemas" / "packaging-inventory.json").write_text(
+        json.dumps(bad2),
+        encoding="utf-8",
+    )
+    findings = vm.validate_packaging_inventory(tmp_path)
+    assert findings
+
+
+def test_security_residual_per_phrase_drop_matrix(tmp_path: Path) -> None:
+    """Drop each locked phrase independently across all ten security modules."""
+    base = _security_residual_locked_text()
+    _write(tmp_path / "SECURITY.md", base)
+    modules = _security_residual_modules()
+    for name, fn, _phrases, _key in modules:
+        assert fn(tmp_path) == [], name
+
+    for name, fn, phrases, _key in modules:
+        for phrase in phrases:
+            mangled = base.replace(phrase, "ABSENT_PHRASE_TOKEN")
+            assert phrase not in mangled, (name, phrase)
+            _write(tmp_path / "SECURITY.md", mangled)
+            findings = fn(tmp_path)
+            assert any(
+                phrase in f.message or "missing" in f.message for f in findings
+            ), (name, phrase)
+
+    _write(tmp_path / "SECURITY.md", base)
+    for name, fn, _phrases, _key in modules:
+        assert fn(tmp_path) == [], name
+
+
+def test_security_residual_inventory_mismatch_matrix() -> None:
+    """Empty / dup / blank / seed mismatches for security-* consistency keys."""
+    modules = _security_residual_modules()
+    for _name, _fn, phrases, key in modules:
+        if key == "security_required_phrases":
+            continue
+        payload = _inventory_payload()
+        payload[key] = []
+        findings = vm._inventory_lock_consistency(
+            payload, schema_path="schemas/packaging-inventory.json"
+        )
+        assert any(f"{key} must not be empty" in f.message for f in findings), key
+
+        payload = _inventory_payload()
+        payload[key] = [phrases[0], phrases[0], *phrases[1:]]
+        findings = vm._inventory_lock_consistency(
+            payload, schema_path="schemas/packaging-inventory.json"
+        )
+        assert any(f"{key} must be unique" in f.message for f in findings), key
+
+        payload = _inventory_payload()
+        payload[key] = ["ok", "  "]
+        findings = vm._inventory_lock_consistency(
+            payload, schema_path="schemas/packaging-inventory.json"
+        )
+        assert any(
+            f"{key} entries must be non-empty strings" in f.message for f in findings
+        ), key
+
+        payload = _inventory_payload()
+        payload[key] = ["seed-only-token"]
+        findings = vm._inventory_lock_consistency(
+            payload, schema_path="schemas/packaging-inventory.json"
+        )
+        assert any(
+            key in f.message
+            and (
+                "must include" in f.message
+                or "must mention" in f.message
+                or "must refuse" in f.message
+            )
+            for f in findings
+        ), key
+
+
+def test_security_residual_concurrent_validate_races(tmp_path: Path) -> None:
+    """Concurrent readers/writers against SECURITY.md must not crash."""
+    modules = _security_residual_modules()
+    live_fns = [fn for _name, fn, _phrases, _key in modules]
+
+    def _read_live() -> list[vm.Finding]:
+        out: list[vm.Finding] = []
+        for fn in live_fns:
+            out.extend(fn(REPO_ROOT))
+        return out
+
+    errors: list[BaseException] = []
+    with ThreadPoolExecutor(max_workers=16) as pool:
+        futures = [pool.submit(_read_live) for _ in range(48)]
+        for fut in as_completed(futures):
+            try:
+                assert fut.result() == []
+            except BaseException as exc:  # noqa: BLE001 — collect race failures
+                errors.append(exc)
+    assert errors == []
+
+    locked = _security_residual_locked_text()
+    path = tmp_path / "SECURITY.md"
+    _write(path, locked)
+    for name, fn, _phrases, _key in modules:
+        assert fn(tmp_path) == [], name
+
+    stop = threading.Event()
+    race_errors: list[BaseException] = []
+
+    def _writer() -> None:
+        flip = False
+        while not stop.is_set():
+            try:
+                if flip:
+                    path.write_text(locked, encoding="utf-8")
+                else:
+                    path.write_text("\n", encoding="utf-8")
+                flip = not flip
+            except BaseException as exc:  # noqa: BLE001
+                race_errors.append(exc)
+                return
+
+    def _reader() -> None:
+        while not stop.is_set():
+            try:
+                for fn in live_fns:
+                    fn(tmp_path)
+            except BaseException as exc:  # noqa: BLE001
+                race_errors.append(exc)
+                return
+
+    threads = [
+        threading.Thread(target=_writer),
+        threading.Thread(target=_reader),
+        threading.Thread(target=_reader),
+        threading.Thread(target=_reader),
+    ]
+    for t in threads:
+        t.start()
+    time.sleep(0.35)
+    stop.set()
+    for t in threads:
+        t.join(timeout=2.0)
+    assert race_errors == []
+
+    def _empty_map_check(key: str) -> bool:
+        payload = _inventory_payload()
+        payload[key] = []
+        findings = vm._inventory_lock_consistency(
+            payload, schema_path="schemas/packaging-inventory.json"
+        )
+        return any(f"{key} must not be empty" in f.message for f in findings)
+
+    keys = [
+        key for _n, _f, _p, key in modules if key != "security_required_phrases"
+    ]
+    with ThreadPoolExecutor(max_workers=8) as pool:
+        futs = [pool.submit(_empty_map_check, k) for k in keys for _ in range(2)]
+        assert all(fut.result() for fut in as_completed(futs))
+
+
+def test_security_residual_cross_isolation(tmp_path: Path) -> None:
+    """Dropping one security module's phrases must not falsely green that module."""
+    base = _security_residual_locked_text()
+    modules = _security_residual_modules()
+    targets = list(_SECURITY_RESIDUAL_NAMES)
+    by_name = {name: (fn, phrases) for name, fn, phrases, _key in modules}
+    for target in targets:
+        fn, phrases = by_name[target]
+        mangled = base
+        for phrase in phrases:
+            mangled = mangled.replace(phrase, "GONE_PHRASE_TOKEN")
+            assert phrase not in mangled, (target, phrase)
+        _write(tmp_path / "SECURITY.md", mangled)
+        findings = fn(tmp_path)
+        assert findings, target
+        assert any(
+            p in f.message or "missing" in f.message for f in findings for p in phrases
+        ), target
+        # Unrelated live root + goose-schema residual stay green
+        assert by_name["security-header"][0](REPO_ROOT) == []
+        assert vm.validate_security_packaging(REPO_ROOT) == []
+        assert vm.validate_goose_recipes(REPO_ROOT) == []
+
+
+def test_security_residual_live_green() -> None:
+    """All ten live security residual validators remain clean; inventory v52/196."""
+    modules = _security_residual_modules()
+    assert len(modules) == 10
+    for name, fn, _phrases, _key in modules:
+        assert fn(REPO_ROOT) == [], name
+        assert vm.VALIDATORS[name](REPO_ROOT) == [], name
+
+    assert vm.INVENTORY_VERSION == 52
+    assert vm.MIN_VALIDATOR_COUNT == 196
+    assert len(vm.VALIDATORS) == 196
+    body = (REPO_ROOT / "SECURITY.md").read_text(encoding="utf-8")
+    assert "# Security Policy" in body
+    assert "## Supported Versions" in body
+    assert "Packaging inventory v52" in (
+        REPO_ROOT / "CONTRIBUTING.md"
+    ).read_text(encoding="utf-8")
+    assert "inventory v52 locks" in (REPO_ROOT / "README.md").read_text(
+        encoding="utf-8"
+    )
+    # Adjacent goose-schema + #147 / #151 slices remain green
+    assert vm.validate_goose_recipes(REPO_ROOT) == []
+    assert vm.validate_recipe_titles(REPO_ROOT) == []
+    assert vm.validate_goose_howto(REPO_ROOT) == []
+    assert vm.validate_prompt_roles(REPO_ROOT) == []
+    assert vm.validate_scratchpad(REPO_ROOT) == []
