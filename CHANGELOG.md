@@ -10,6 +10,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Manifest-validate command-lock residual **tests-only** leftover deepeners
+  after tip through **#188** (actionlint/workflow + link-check leftover) /
+  **#187** (docs-cross) / **#186** / **#184** / **#181** (EXISTING five
+  `manifest-validate` command fixtures — `ci-setup-python` / `ci-ruff` /
+  `ci-pip-install` / `ci-pip-check` / `ci-pytest` — no invented product /
+  inventory bump): missing/empty/non-mapping workflow edges, non-dict
+  steps + non-string `run`/`uses`, dual setup-python first-bad/second-good,
+  cache-only vs path-only isolation (≠ link-check cache-path lock), ruff
+  in the wrong job, pytest first-step `break` shadowing a later complete
+  step, per-marker drop matrix, pip/ruff/pytest per-lock mangles on live
+  `ci.yml`, inventory lock mismatches, concurrent `ci.yml` races, invalid
+  invented tip keys, and tip isolation against #188/#187/#186 siblings.
+  Historic four only; inventory unchanged (v52 / 196). Distinct from
+  merged #188/#186 (actionlint/link-check), #187 (docs-cross), historic
+  v12 (setup-python/ruff/license-mit) and v13 (pip/pytest) edge suites.
+  `license-mit` stays excluded (v12 sibling, not a command lock).
+
 - Actionlint/workflow + link-check residual **tests-only** leftover deepeners
   after tip through **#187** (docs-cross) / **#186** (actionlint/workflow +
   link-check) / **#184** / **#181** / **#178** / **#176** / **#174**

@@ -25168,3 +25168,716 @@ def test_actionlint_linkcheck_after186_leftover_live_green() -> None:
     assert vm.validate_changelog_unreleased(REPO_ROOT) == []
     assert vm.validate_implementation_guide(REPO_ROOT) == []
     assert vm.validate_execution_summary(REPO_ROOT) == []
+
+
+# ---------------------------------------------------------------------------
+# TOKENMAXX HEAVY leftover: manifest-validate command locks after #188/#187/#186
+# EXISTING five fixtures only — ci-setup-python / ci-ruff / ci-pip-install /
+# ci-pip-check / ci-pytest. Distinct from merged #188/#186 (seven actionlint/
+# link-check CI fixtures), #187 (docs-cross), historic v12 (setup-python/ruff/
+# license-mit) and v13 (pip/pytest). No invent-product / inventory bump
+# (still v52 / 196). license-mit stays excluded (not a command lock).
+# ---------------------------------------------------------------------------
+
+_CI_CMD_LOCK_RESIDUAL_NAMES: tuple[str, ...] = (
+    "ci-setup-python",
+    "ci-ruff",
+    "ci-pip-install",
+    "ci-pip-check",
+    "ci-pytest",
+)
+
+_CI_CMD_LOCK_CI_REL = ".github/workflows/ci.yml"
+
+
+def _ci_cmd_lock_residual_modules() -> list[tuple[str, object]]:
+    """Map the five existing manifest-validate command-lock validators."""
+    return [(name, vm.VALIDATORS[name]) for name in _CI_CMD_LOCK_RESIDUAL_NAMES]
+
+
+def _ci_cmd_lock_locked_ci_yaml() -> str:
+    """Live locked ci.yml text used as the command-lock fixture baseline."""
+    return (REPO_ROOT / _CI_CMD_LOCK_CI_REL).read_text(encoding="utf-8")
+
+
+def test_ci_cmd_lock_residual_modules_existing_only() -> None:
+    """Tip slice reuses five live command locks — not invent-product / not #188 redo."""
+    assert vm.INVENTORY_VERSION == 52
+    assert vm.MIN_VALIDATOR_COUNT == 196
+    assert len(vm.VALIDATORS) == 196
+
+    modules = _ci_cmd_lock_residual_modules()
+    assert len(modules) == 5
+    assert [n for n, _ in modules] == list(_CI_CMD_LOCK_RESIDUAL_NAMES)
+
+    for invented in (
+        "ci-cmd-timeouts",
+        "ci-setup-python-timeouts",
+        "ci-ruff-timeouts",
+        "ci-pip-timeouts",
+        "ci-pytest-timeouts",
+        "ci-v53",
+        "actionlint-timeouts",
+        "link-check-timeouts",
+        "docs-cross-timeouts",
+        "license-mit-timeouts",
+        "memory-slot",
+        "handoff-timeouts",
+    ):
+        assert invented not in vm.VALIDATORS
+
+    inventory = json.loads(
+        (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
+    )
+    assert inventory["version"] == 52
+    assert inventory["min_validator_count"] == 196
+    assert sorted(vm.VALIDATORS) == inventory["validator_names"]
+    assert inventory["ci_setup_python_cache"] == vm.CI_SETUP_PYTHON_CACHE
+    assert inventory["ci_ruff_check_command"] == vm.CI_RUFF_CHECK_COMMAND
+    assert inventory["ci_pip_install_command"] == vm.CI_PIP_INSTALL_COMMAND
+    assert inventory["ci_pip_check_command"] == vm.CI_PIP_CHECK_COMMAND
+    assert inventory["ci_pytest_required_markers"] == list(vm.CI_PYTEST_REQUIRED_MARKERS)
+    assert inventory["ci_cache_dependency_path"] == vm.CI_CACHE_DEPENDENCY_PATH
+
+    # Adjacent tip siblings stay registered but are intentionally excluded
+    assert "link-check" in vm.VALIDATORS
+    assert "actionlint-shell" in vm.VALIDATORS
+    assert "license-mit" in vm.VALIDATORS
+    assert "contributing-ci-honesty" in vm.VALIDATORS
+    assert "link-check" not in {m[0] for m in modules}
+    assert "actionlint-shell" not in {m[0] for m in modules}
+    assert "license-mit" not in {m[0] for m in modules}
+
+
+def test_ci_cmd_lock_residual_invalid_keys(tmp_path: Path) -> None:
+    """Reject invented command-lock / tip sibling keys; live names stay selectable."""
+    with pytest.raises(KeyError):
+        _ = vm.VALIDATORS["ci-cmd-timeouts"]
+    with pytest.raises(KeyError):
+        _ = vm.VALIDATORS["ci-ruff-timeouts"]
+    with pytest.raises(KeyError):
+        _ = vm.VALIDATORS["ci-pytest-timeouts"]
+    with pytest.raises(ValueError, match="unknown validator"):
+        vm.run_all_validations(REPO_ROOT, only=["ci-cmd-timeouts"])
+    with pytest.raises(ValueError, match="unknown validator"):
+        vm.run_all_validations(REPO_ROOT, only=["ci-pip-timeouts"])
+    with pytest.raises(ValueError, match="unknown validator"):
+        vm.run_all_validations(REPO_ROOT, only=["ci-v53"])
+
+    findings = vm.run_all_validations(
+        REPO_ROOT,
+        only=list(_CI_CMD_LOCK_RESIDUAL_NAMES),
+    )
+    assert findings == []
+
+    _copy_schemas(tmp_path)
+    for rel in _inventory_payload()["required_paths"]:
+        target = tmp_path / rel
+        target.parent.mkdir(parents=True, exist_ok=True)
+        if not target.exists():
+            target.write_text("ok\n", encoding="utf-8")
+
+    bad = _inventory_payload()
+    bad["invented_ci_cmd_lock_residual_map"] = {"slot": "x"}
+    (tmp_path / "schemas" / "packaging-inventory.json").write_text(
+        json.dumps(bad),
+        encoding="utf-8",
+    )
+    assert vm.validate_packaging_inventory(tmp_path)
+
+
+def test_ci_cmd_lock_missing_and_empty_workflow(tmp_path: Path) -> None:
+    """Missing / whitespace / non-mapping / jobs-missing ci.yml edges for all five."""
+    modules = _ci_cmd_lock_residual_modules()
+    for name, fn in modules:
+        findings = fn(tmp_path)
+        assert any("missing" in f.message for f in findings), name
+
+    # Whitespace / null YAML: structural command locks return [] (historic v12/v13).
+    _write_ci_yaml(tmp_path, "\n")
+    for name, fn in modules:
+        assert fn(tmp_path) == [], name
+    _write_ci_yaml(tmp_path, "null\n")
+    for name, fn in modules:
+        assert fn(tmp_path) == [], name
+
+    _write_ci_yaml(tmp_path, "- just-a-list\n")
+    for name, fn in modules:
+        findings = fn(tmp_path)
+        assert any("mapping" in f.message for f in findings), name
+
+    _write_ci_yaml(tmp_path, "name: CI\non: push\n")
+    for name, fn in modules:
+        findings = fn(tmp_path)
+        assert any(
+            "jobs" in f.message or "missing" in f.message for f in findings
+        ), name
+
+    # jobs as a list (unsaturated vs v12/v13 mapping-missing)
+    _write_ci_yaml(tmp_path, "name: CI\njobs:\n  - manifest-validate\n")
+    for name, fn in modules:
+        findings = fn(tmp_path)
+        assert any("jobs mapping" in f.message for f in findings), name
+
+    # Jobs present but manifest-validate absent
+    _write_ci_yaml(
+        tmp_path,
+        "\n".join(
+            [
+                f"name: {vm.CI_WORKFLOW_NAME}",
+                "on:",
+                "  push: {}",
+                "jobs:",
+                "  markdown-lint:",
+                f"    name: {vm.CI_JOB_DISPLAY_NAMES['markdown-lint']}",
+                f"    runs-on: {vm.CI_RUNS_ON}",
+                "    steps:",
+                "      - run: echo hi",
+                "",
+            ]
+        ),
+    )
+    for name, fn in modules:
+        findings = fn(tmp_path)
+        assert any("manifest-validate" in f.message for f in findings), name
+
+    # YAML parse error path
+    _write_ci_yaml(tmp_path, ":\n  - bad\n")
+    for name, fn in modules:
+        findings = fn(tmp_path)
+        assert any("YAML parse error" in f.message for f in findings), name
+
+
+def _write_manifest_steps_yaml(tmp_path: Path, step_lines: list[str]) -> None:
+    """Write a stub ci.yml whose manifest-validate job uses the given step lines."""
+    body = [
+        "name: CI",
+        "jobs:",
+        "  manifest-validate:",
+        f"    runs-on: {vm.CI_RUNS_ON}",
+        "    steps:",
+        *step_lines,
+        "",
+    ]
+    _write_ci_yaml(tmp_path, "\n".join(body))
+
+
+def test_ci_cmd_lock_non_dict_steps_and_type_skips(tmp_path: Path) -> None:
+    """Non-dict steps / non-string run/uses are skipped; later locks still scan."""
+    pytest_run = "python -m pytest " + " ".join(vm.CI_PYTEST_REQUIRED_MARKERS)
+    _write_manifest_steps_yaml(
+        tmp_path,
+        [
+            "      - not-a-mapping",
+            "      - run: 12",
+            "      - uses: 99",
+            "      - uses: actions/setup-python@v7",
+            "        with:",
+            f"          cache: {vm.CI_SETUP_PYTHON_CACHE}",
+            f"          cache-dependency-path: {vm.CI_CACHE_DEPENDENCY_PATH}",
+            f"      - run: {vm.CI_PIP_INSTALL_COMMAND}",
+            f"      - run: {vm.CI_PIP_CHECK_COMMAND}",
+            f"      - run: {vm.CI_RUFF_CHECK_COMMAND}",
+            f"      - run: {pytest_run}",
+        ],
+    )
+    for name, fn in _ci_cmd_lock_residual_modules():
+        assert fn(tmp_path) == [], name
+
+    # uses without setup-python substring + integer run → all five fail
+    _write_manifest_steps_yaml(
+        tmp_path,
+        [
+            "      - not-a-mapping",
+            "      - run: 7",
+            "      - uses: actions/checkout@v7",
+            "      - run: echo no commands",
+        ],
+    )
+    assert any(
+        "missing setup-python step" in f.message
+        for f in vm.validate_ci_setup_python(tmp_path)
+    )
+    assert any("must run" in f.message for f in vm.validate_ci_ruff(tmp_path))
+    assert any("must run" in f.message for f in vm.validate_ci_pip_install(tmp_path))
+    assert any("must run" in f.message for f in vm.validate_ci_pip_check(tmp_path))
+    assert any(
+        "must run a python -m pytest step" in f.message
+        for f in vm.validate_ci_pytest(tmp_path)
+    )
+
+
+def test_ci_cmd_lock_setup_python_dual_step_and_cache_isolation(tmp_path: Path) -> None:
+    """Dual setup-python: first missing with still findings; cache ≠ path isolation."""
+    pytest_run = "python -m pytest " + " ".join(vm.CI_PYTEST_REQUIRED_MARKERS)
+    cmd_tail = [
+        f"      - run: {vm.CI_PIP_INSTALL_COMMAND}",
+        f"      - run: {vm.CI_PIP_CHECK_COMMAND}",
+        f"      - run: {vm.CI_RUFF_CHECK_COMMAND}",
+        f"      - run: {pytest_run}",
+    ]
+
+    # First setup-python missing with:; second complete — still reports missing with
+    _write_manifest_steps_yaml(
+        tmp_path,
+        [
+            "      - uses: actions/setup-python@v7",
+            "      - uses: actions/setup-python@v7",
+            "        with:",
+            f"          cache: {vm.CI_SETUP_PYTHON_CACHE}",
+            f"          cache-dependency-path: {vm.CI_CACHE_DEPENDENCY_PATH}",
+            *cmd_tail,
+        ],
+    )
+    findings = vm.validate_ci_setup_python(tmp_path)
+    assert any("setup-python step missing with" in f.message for f in findings)
+    assert vm.validate_ci_ruff(tmp_path) == []
+    assert vm.validate_ci_pip_install(tmp_path) == []
+
+    # cache wrong, path correct — setup-python fails; ruff/pip stay green
+    _write_manifest_steps_yaml(
+        tmp_path,
+        [
+            "      - uses: actions/setup-python@v7",
+            "        with:",
+            "          cache: npm",
+            f"          cache-dependency-path: {vm.CI_CACHE_DEPENDENCY_PATH}",
+            *cmd_tail,
+        ],
+    )
+    findings = vm.validate_ci_setup_python(tmp_path)
+    assert any("setup-python cache must be" in f.message for f in findings)
+    assert not any("cache-dependency-path" in f.message for f in findings)
+    assert vm.validate_ci_ruff(tmp_path) == []
+
+    # cache correct, path wrong
+    _write_manifest_steps_yaml(
+        tmp_path,
+        [
+            "      - uses: actions/setup-python@v7",
+            "        with:",
+            f"          cache: {vm.CI_SETUP_PYTHON_CACHE}",
+            "          cache-dependency-path: poetry.lock",
+            *cmd_tail,
+        ],
+    )
+    findings = vm.validate_ci_setup_python(tmp_path)
+    assert any(
+        "setup-python cache-dependency-path must be" in f.message for f in findings
+    )
+
+    # with: empty mapping
+    _write_manifest_steps_yaml(
+        tmp_path,
+        [
+            "      - uses: actions/setup-python@v7",
+            "        with: {}",
+            *cmd_tail,
+        ],
+    )
+    findings = vm.validate_ci_setup_python(tmp_path)
+    assert any("cache must be" in f.message for f in findings)
+    assert any("cache-dependency-path must be" in f.message for f in findings)
+
+
+def test_ci_cmd_lock_ruff_wrong_job_and_substring(tmp_path: Path) -> None:
+    """Ruff only in markdown-lint fails; substring in a larger run still passes."""
+    pytest_run = "python -m pytest " + " ".join(vm.CI_PYTEST_REQUIRED_MARKERS)
+    _write_ci_yaml(
+        tmp_path,
+        "\n".join(
+            [
+                "name: CI",
+                "jobs:",
+                "  markdown-lint:",
+                "    steps:",
+                f"      - run: {vm.CI_RUFF_CHECK_COMMAND}",
+                "  manifest-validate:",
+                "    steps:",
+                "      - uses: actions/setup-python@v7",
+                "        with:",
+                f"          cache: {vm.CI_SETUP_PYTHON_CACHE}",
+                f"          cache-dependency-path: {vm.CI_CACHE_DEPENDENCY_PATH}",
+                f"      - run: {vm.CI_PIP_INSTALL_COMMAND}",
+                f"      - run: {vm.CI_PIP_CHECK_COMMAND}",
+                f"      - run: {pytest_run}",
+                "",
+            ]
+        ),
+    )
+    assert any("must run" in f.message for f in vm.validate_ci_ruff(tmp_path))
+    assert vm.validate_ci_setup_python(tmp_path) == []
+    assert vm.validate_ci_pip_install(tmp_path) == []
+    assert vm.validate_ci_pytest(tmp_path) == []
+
+    # Larger run containing the exact command still locks (substring match)
+    _write_manifest_steps_yaml(
+        tmp_path,
+        [
+            "      - uses: actions/setup-python@v7",
+            "        with:",
+            f"          cache: {vm.CI_SETUP_PYTHON_CACHE}",
+            f"          cache-dependency-path: {vm.CI_CACHE_DEPENDENCY_PATH}",
+            f"      - run: {vm.CI_PIP_INSTALL_COMMAND} && echo ok",
+            f"      - run: set -euo pipefail; {vm.CI_PIP_CHECK_COMMAND}",
+            f"      - run: {vm.CI_RUFF_CHECK_COMMAND} --output-format=github",
+            f"      - run: {pytest_run} -q",
+        ],
+    )
+    for name, fn in _ci_cmd_lock_residual_modules():
+        assert fn(tmp_path) == [], name
+
+    # Near-miss ruff (scripts only)
+    _write_manifest_steps_yaml(
+        tmp_path,
+        [
+            "      - uses: actions/setup-python@v7",
+            "        with:",
+            f"          cache: {vm.CI_SETUP_PYTHON_CACHE}",
+            f"          cache-dependency-path: {vm.CI_CACHE_DEPENDENCY_PATH}",
+            "      - run: ruff check scripts",
+            f"      - run: {vm.CI_PIP_INSTALL_COMMAND}",
+            f"      - run: {vm.CI_PIP_CHECK_COMMAND}",
+            f"      - run: {pytest_run}",
+        ],
+    )
+    assert any("must run" in f.message for f in vm.validate_ci_ruff(tmp_path))
+    assert vm.validate_ci_pip_install(tmp_path) == []
+
+
+def test_ci_cmd_lock_pytest_first_step_break_and_per_marker(tmp_path: Path) -> None:
+    """First python -m pytest step is the only one scanned; per-marker drop matrix."""
+    complete = "python -m pytest " + " ".join(vm.CI_PYTEST_REQUIRED_MARKERS)
+    _write_manifest_steps_yaml(
+        tmp_path,
+        [
+            "      - uses: actions/setup-python@v7",
+            "        with:",
+            f"          cache: {vm.CI_SETUP_PYTHON_CACHE}",
+            f"          cache-dependency-path: {vm.CI_CACHE_DEPENDENCY_PATH}",
+            f"      - run: {vm.CI_PIP_INSTALL_COMMAND}",
+            f"      - run: {vm.CI_PIP_CHECK_COMMAND}",
+            f"      - run: {vm.CI_RUFF_CHECK_COMMAND}",
+            "      - run: python -m pytest -q",
+            f"      - run: {complete}",
+        ],
+    )
+    findings = vm.validate_ci_pytest(tmp_path)
+    assert findings
+    for marker in vm.CI_PYTEST_REQUIRED_MARKERS:
+        assert any(marker in f.message for f in findings), marker
+    assert vm.validate_ci_pip_install(tmp_path) == []
+    assert vm.validate_ci_ruff(tmp_path) == []
+
+    # pytest without python -m is not a pytest step
+    markers_only = " ".join(vm.CI_PYTEST_REQUIRED_MARKERS)
+    _write_manifest_steps_yaml(
+        tmp_path,
+        [
+            "      - uses: actions/setup-python@v7",
+            "        with:",
+            f"          cache: {vm.CI_SETUP_PYTHON_CACHE}",
+            f"          cache-dependency-path: {vm.CI_CACHE_DEPENDENCY_PATH}",
+            f"      - run: {vm.CI_PIP_INSTALL_COMMAND}",
+            f"      - run: {vm.CI_PIP_CHECK_COMMAND}",
+            f"      - run: {vm.CI_RUFF_CHECK_COMMAND}",
+            f"      - run: pytest {markers_only}",
+        ],
+    )
+    assert any(
+        "must run a python -m pytest step" in f.message
+        for f in vm.validate_ci_pytest(tmp_path)
+    )
+
+    # Drop one marker at a time from an otherwise complete step
+    for marker in vm.CI_PYTEST_REQUIRED_MARKERS:
+        remaining = [m for m in vm.CI_PYTEST_REQUIRED_MARKERS if m != marker]
+        run = "python -m pytest " + " ".join(remaining)
+        _write_manifest_steps_yaml(
+            tmp_path,
+            [
+                "      - uses: actions/setup-python@v7",
+                "        with:",
+                f"          cache: {vm.CI_SETUP_PYTHON_CACHE}",
+                f"          cache-dependency-path: {vm.CI_CACHE_DEPENDENCY_PATH}",
+                f"      - run: {vm.CI_PIP_INSTALL_COMMAND}",
+                f"      - run: {vm.CI_PIP_CHECK_COMMAND}",
+                f"      - run: {vm.CI_RUFF_CHECK_COMMAND}",
+                f"      - run: {run}",
+            ],
+        )
+        findings = vm.validate_ci_pytest(tmp_path)
+        assert any(marker in f.message for f in findings), marker
+        for other in remaining:
+            assert not any(
+                f"missing marker {other!r}" in f.message for f in findings
+            ), other
+
+
+def test_ci_cmd_lock_live_ci_yml_per_lock_mangle_matrix(tmp_path: Path) -> None:
+    """Per-lock mangles on live ci.yml — not a v12/v13 stub redo."""
+    base = _ci_cmd_lock_locked_ci_yaml()
+    _write_ci_yaml(tmp_path, base)
+    for name, fn in _ci_cmd_lock_residual_modules():
+        assert fn(tmp_path) == [], name
+
+    mangled_ruff = base.replace(vm.CI_RUFF_CHECK_COMMAND, "ruff check scripts")
+    assert vm.CI_RUFF_CHECK_COMMAND not in mangled_ruff
+    _write_ci_yaml(tmp_path, mangled_ruff)
+    assert any("must run" in f.message for f in vm.validate_ci_ruff(tmp_path))
+    assert vm.validate_ci_pip_install(tmp_path) == []
+    assert vm.validate_ci_pip_check(tmp_path) == []
+    assert vm.validate_ci_pytest(tmp_path) == []
+    assert vm.validate_ci_setup_python(tmp_path) == []
+
+    mangled_install = base.replace(
+        vm.CI_PIP_INSTALL_COMMAND, "python -m pip install -r requirements.txt"
+    )
+    _write_ci_yaml(tmp_path, mangled_install)
+    assert any("must run" in f.message for f in vm.validate_ci_pip_install(tmp_path))
+    assert vm.validate_ci_pip_check(tmp_path) == []
+    assert vm.validate_ci_ruff(tmp_path) == []
+
+    mangled_check = base.replace(vm.CI_PIP_CHECK_COMMAND, "python -m pip freeze")
+    _write_ci_yaml(tmp_path, mangled_check)
+    assert any("must run" in f.message for f in vm.validate_ci_pip_check(tmp_path))
+    assert vm.validate_ci_pip_install(tmp_path) == []
+
+    mangled_cache = base.replace(
+        f"cache: {vm.CI_SETUP_PYTHON_CACHE}",
+        "cache: npm",
+        1,
+    )
+    _write_ci_yaml(tmp_path, mangled_cache)
+    findings = vm.validate_ci_setup_python(tmp_path)
+    assert any("setup-python cache must be" in f.message for f in findings)
+    # cache-dependency-path unchanged — link-check (#188 sibling) stays green
+    assert vm.validate_link_check(tmp_path) == []
+    assert vm.validate_ci_ruff(tmp_path) == []
+
+    drop_cov = base.replace("--cov=scripts", "--cov=tests", 1)
+    _write_ci_yaml(tmp_path, drop_cov)
+    findings = vm.validate_ci_pytest(tmp_path)
+    assert any("--cov=scripts" in f.message for f in findings)
+    assert vm.validate_ci_pip_install(tmp_path) == []
+    assert vm.validate_ci_ruff(tmp_path) == []
+
+    # Restore
+    _write_ci_yaml(tmp_path, base)
+    for name, fn in _ci_cmd_lock_residual_modules():
+        assert fn(tmp_path) == [], name
+
+
+def test_ci_cmd_lock_inventory_mismatch_matrix(tmp_path: Path) -> None:
+    """Empty / wrong / type-mismatch inventory locks for the five command fixtures."""
+    _copy_schemas(tmp_path)
+    for rel in _inventory_payload()["required_paths"]:
+        target = tmp_path / rel
+        target.parent.mkdir(parents=True, exist_ok=True)
+        if not target.exists():
+            target.write_text("ok\n", encoding="utf-8")
+
+    base = _inventory_payload()
+    cases: list[tuple[str, object]] = [
+        ("ci_setup_python_cache", ""),
+        ("ci_setup_python_cache", "npm"),
+        ("ci_ruff_check_command", ""),
+        ("ci_ruff_check_command", "ruff check elsewhere"),
+        ("ci_pip_install_command", ""),
+        ("ci_pip_install_command", "pip install wrong"),
+        ("ci_pip_check_command", ""),
+        ("ci_pip_check_command", "pip freeze"),
+        ("ci_pytest_required_markers", []),
+        ("ci_pytest_required_markers", ["--invented"]),
+        ("ci_cache_dependency_path", "poetry.lock"),
+        ("ci_pytest_required_markers", list(vm.CI_PYTEST_REQUIRED_MARKERS)[:-1]),
+    ]
+
+    for key, value in cases:
+        payload = dict(base)
+        payload[key] = value
+        (tmp_path / "schemas" / "packaging-inventory.json").write_text(
+            json.dumps(payload),
+            encoding="utf-8",
+        )
+        findings = vm.validate_packaging_inventory(tmp_path)
+        assert findings, key
+        assert any(
+            key in f.message
+            or "lock" in f.message.lower()
+            or "mismatch" in f.message.lower()
+            or "empty" in f.message.lower()
+            or "non-empty" in f.message.lower()
+            for f in findings
+        ), (key, [f.message for f in findings[:5]])
+
+    dup_markers = dict(base)
+    dup_markers["ci_pytest_required_markers"] = list(vm.CI_PYTEST_REQUIRED_MARKERS) + [
+        vm.CI_PYTEST_REQUIRED_MARKERS[0]
+    ]
+    findings = vm._inventory_lock_consistency(
+        dup_markers, schema_path="schemas/packaging-inventory.json"
+    )
+    assert any("ci_pytest_required_markers" in f.message for f in findings)
+
+    assert vm.validate_packaging_inventory(REPO_ROOT) == []
+
+
+def test_ci_cmd_lock_concurrent_validate_races(tmp_path: Path) -> None:
+    """Concurrent readers/writers across the five command-lock validators on ci.yml."""
+    modules = _ci_cmd_lock_residual_modules()
+    fns = [fn for _n, fn in modules]
+
+    def _read_live() -> list[vm.Finding]:
+        out: list[vm.Finding] = []
+        for fn in fns:
+            out.extend(fn(REPO_ROOT))
+        return out
+
+    errors: list[BaseException] = []
+    with ThreadPoolExecutor(max_workers=16) as pool:
+        futures = [pool.submit(_read_live) for _ in range(48)]
+        for fut in as_completed(futures):
+            try:
+                assert fut.result() == []
+            except BaseException as exc:  # noqa: BLE001 — collect race failures
+                errors.append(exc)
+    assert errors == []
+
+    ci_path = tmp_path / _CI_CMD_LOCK_CI_REL
+    locked = _ci_cmd_lock_locked_ci_yaml()
+    broken = "name: broken\non: push\njobs: {}\n"
+    _write(ci_path, locked)
+    for name, fn in modules:
+        assert fn(tmp_path) == [], name
+
+    stop = threading.Event()
+    race_errors: list[BaseException] = []
+
+    def _writer() -> None:
+        flip = False
+        while not stop.is_set():
+            try:
+                ci_path.write_text(locked if flip else broken, encoding="utf-8")
+                flip = not flip
+            except BaseException as exc:  # noqa: BLE001
+                race_errors.append(exc)
+                return
+
+    def _reader() -> None:
+        while not stop.is_set():
+            try:
+                for fn in fns:
+                    fn(tmp_path)
+            except BaseException as exc:  # noqa: BLE001
+                race_errors.append(exc)
+                return
+
+    threads = [
+        threading.Thread(target=_writer),
+        threading.Thread(target=_reader),
+        threading.Thread(target=_reader),
+        threading.Thread(target=_reader),
+    ]
+    for t in threads:
+        t.start()
+    time.sleep(0.35)
+    stop.set()
+    for t in threads:
+        t.join(timeout=2.0)
+    assert race_errors == []
+
+
+def test_ci_cmd_lock_isolation_vs_actionlint_docs_cross(tmp_path: Path) -> None:
+    """Command-lock mangles fail locally; #188/#187 siblings stay green on live root."""
+    base = _ci_cmd_lock_locked_ci_yaml()
+    mangled = base.replace(vm.CI_RUFF_CHECK_COMMAND, "ruff format scripts tests")
+    _write_ci_yaml(tmp_path, mangled)
+    assert vm.validate_ci_ruff(tmp_path)
+    assert vm.validate_ci_setup_python(tmp_path) == []
+    assert vm.validate_ci_pip_install(tmp_path) == []
+    assert vm.validate_link_check(tmp_path) == []
+    assert vm.validate_actionlint_shell(tmp_path) == []
+
+    # cache-only mangle: setup-python fails; link-check cache-path lock stays
+    cache_only = base.replace(f"cache: {vm.CI_SETUP_PYTHON_CACHE}", "cache: pipenv", 1)
+    _write_ci_yaml(tmp_path, cache_only)
+    assert vm.validate_ci_setup_python(tmp_path)
+    assert vm.validate_link_check(tmp_path) == []
+    assert vm.validate_ci_artifacts(tmp_path) == []
+
+    # Live #188/#187/#186 siblings remain green
+    assert vm.validate_link_check(REPO_ROOT) == []
+    assert vm.validate_actionlint_shell(REPO_ROOT) == []
+    assert vm.validate_ci_workflow(REPO_ROOT) == []
+    assert vm.validate_contributing_ci_honesty(REPO_ROOT) == []
+    assert vm.validate_changelog_changed(REPO_ROOT) == []
+    assert vm.validate_implementation_quickstart(REPO_ROOT) == []
+    assert vm.validate_goose_howto(REPO_ROOT) == []
+    assert vm.validate_hydration_phase4(REPO_ROOT) == []
+    assert vm.validate_security_packaging(REPO_ROOT) == []
+    assert vm.validate_constitution_handoff(REPO_ROOT) == []
+    assert vm.validate_scratchpad(REPO_ROOT) == []
+    assert vm.validate_license_mit(REPO_ROOT) == []
+
+
+def test_ci_cmd_lock_pip_vs_pytest_vs_ruff_isolation(tmp_path: Path) -> None:
+    """Distinct leftover: one command lock fails without taking the others."""
+    base = _ci_cmd_lock_locked_ci_yaml()
+    _write_ci_yaml(tmp_path, base)
+    for name, fn in _ci_cmd_lock_residual_modules():
+        assert fn(tmp_path) == [], name
+
+    pip_only = base.replace(vm.CI_PIP_INSTALL_COMMAND, "python -m uv sync")
+    _write_ci_yaml(tmp_path, pip_only)
+    assert vm.validate_ci_pip_install(tmp_path)
+    assert vm.validate_ci_pip_check(tmp_path) == []
+    assert vm.validate_ci_pytest(tmp_path) == []
+    assert vm.validate_ci_ruff(tmp_path) == []
+
+    pytest_only = base.replace("--junitxml=pytest-junit.xml", "--junitxml=other.xml")
+    _write_ci_yaml(tmp_path, pytest_only)
+    assert vm.validate_ci_pytest(tmp_path)
+    assert vm.validate_ci_pip_install(tmp_path) == []
+    assert vm.validate_ci_ruff(tmp_path) == []
+    assert vm.validate_ci_setup_python(tmp_path) == []
+
+    assert vm.validate_ci_pip_install(REPO_ROOT) == []
+    assert vm.validate_ci_pytest(REPO_ROOT) == []
+    assert vm.validate_ci_ruff(REPO_ROOT) == []
+
+
+def test_ci_cmd_lock_residual_live_green() -> None:
+    """Live command-lock fixtures stay green after #188/#187/#186; inventory unchanged."""
+    for name, fn in _ci_cmd_lock_residual_modules():
+        assert fn(REPO_ROOT) == [], name
+
+    assert vm.INVENTORY_VERSION == 52
+    assert vm.MIN_VALIDATOR_COUNT == 196
+    assert len(vm.VALIDATORS) == 196
+    assert vm.run_all_validations(
+        REPO_ROOT, only=list(_CI_CMD_LOCK_RESIDUAL_NAMES)
+    ) == []
+
+    body = (REPO_ROOT / _CI_CMD_LOCK_CI_REL).read_text(encoding="utf-8")
+    assert vm.CI_SETUP_PYTHON_CACHE in body
+    assert vm.CI_CACHE_DEPENDENCY_PATH in body
+    assert vm.CI_RUFF_CHECK_COMMAND in body
+    assert vm.CI_PIP_INSTALL_COMMAND in body
+    assert vm.CI_PIP_CHECK_COMMAND in body
+    for marker in vm.CI_PYTEST_REQUIRED_MARKERS:
+        assert marker in body
+
+    assert vm.validate_link_check(REPO_ROOT) == []
+    assert vm.validate_actionlint_shell(REPO_ROOT) == []
+    assert vm.validate_contributing_ci_honesty(REPO_ROOT) == []
+    assert vm.validate_changelog_changed(REPO_ROOT) == []
+    assert vm.validate_implementation_quickstart(REPO_ROOT) == []
+    assert vm.validate_hydration_phase4(REPO_ROOT) == []
+    assert vm.validate_security_packaging(REPO_ROOT) == []
+    assert vm.validate_goose_recipes(REPO_ROOT) == []
+    assert vm.validate_constitution_handoff(REPO_ROOT) == []
+    assert vm.validate_scratchpad(REPO_ROOT) == []
+    assert vm.validate_license_mit(REPO_ROOT) == []
+    assert vm.validate_implementation_guide(REPO_ROOT) == []
+    assert vm.validate_execution_summary(REPO_ROOT) == []
