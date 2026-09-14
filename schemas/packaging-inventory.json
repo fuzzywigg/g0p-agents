@@ -1,5 +1,5 @@
 {
-  "version": 49,
+  "version": 50,
   "documented_agents": [
     "QuantumArchitectAgent",
     "BlockchainArchitectAgent",
@@ -386,9 +386,12 @@
     "pr-routing",
     "pr-summary",
     "pr-template",
+    "prompt-cannot-delegate",
     "prompt-communication",
     "prompt-constraints",
+    "prompt-context",
     "prompt-decision-authority",
+    "prompt-escalation-authority",
     "prompt-escalation-identity",
     "prompt-expertise",
     "prompt-integration",
@@ -441,7 +444,7 @@
     "yaml-configs"
   ],
   "min_coverage_fail_under": 99,
-  "min_validator_count": 169,
+  "min_validator_count": 172,
   "required_paths": [
     "README.md",
     "LICENSE",
@@ -1281,7 +1284,7 @@
     "markdown lint, link check, actionlint",
     "manifest validate on Python 3.11/3.12/3.13",
     "Andrew or designated reviewer",
-    "Packaging inventory v49",
+    "Packaging inventory v50",
     "refuse invented recipes",
     "orphan on-disk YAML",
     "unknown `*Agent` tokens",
@@ -1682,5 +1685,31 @@
     "\ud83d\udea8 ESCALATION TO HUMAN REQUIRED",
     "Human approval required before proceeding.",
     "Remember: You are not smarter than the three specialists. Your job is to listen, understand, mediate, and make calls when consensus is impossible."
+  ],
+  "prompt_context_required_phrases": [
+    "## Current Project Context",
+    "[INSERT PROJECT-SPECIFIC INFO HERE]",
+    "Target quantum hardware: [Cirq-sim initially, then Google/IBM hardware]",
+    "Circuit depth limit: [2MB RAM on mobile device]",
+    "Primary blockchain: Ethereum (Sepolia testnet, mainnet)",
+    "Consensus requirement: Quantum-resistant validation required",
+    "Target devices: Android (minimum Snapdragon 8 Gen 2), iOS (minimum iPhone 12)",
+    "Crypto algorithms: CRYSTALS-Kyber (key encapsulation), CRYSTALS-Dilithium (signatures)"
+  ],
+  "prompt_cannot_delegate_required_phrases": [
+    "## Key Responsibilities You CANNOT Delegate",
+    "Final go/no-go decisions",
+    "Risk acceptance (acknowledging consequences)",
+    "Human escalation (when agents can't decide)",
+    "Vision articulation (Mickey 18 \u2192 technical architecture)",
+    "Stakeholder communication"
+  ],
+  "prompt_escalation_authority_required_phrases": [
+    "## Your Escalation Authority",
+    "You MUST escalate to human if:",
+    "Two or more agents have irresolvable conflicts",
+    "Risk exceeds acceptable threshold",
+    "Timeline pressure conflicts with quality requirements",
+    "Budget constraints conflict with scope"
   ]
 }
