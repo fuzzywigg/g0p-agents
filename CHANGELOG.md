@@ -11,8 +11,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 
 - Prompts listform + agentic_flows residual **tests-only** leftover deepeners after
-  tip through **#270** (goose-schema leftover after #265) / **#265** / **#264** / **#258** /
-  **#253** (prompts+flows after #248) / **#248** / **#242** / **#236** / **#229** /
+  tip through **#279** (CI/markdownlint leftover after #270) / **#270** / **#265** /
+  **#264** / **#258** / **#253** (prompts+flows after #248) / **#248** / **#242** /
+  **#236** / **#229** /
   **#224** / **#219** / **#209** / **#208** / **#202** / **#200** (EXISTING
   nineteen fixtures — twelve list-form sibling `prompt-*` + seven agentic_flows
   `goose` / `recipe-agents` / `recipe-titles` / `scratchpad*` — no invented v53
@@ -26,15 +27,45 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   missing BlockchainArchitectAgent / OrchestrationAgent exact (≠ #253
   Quantum/Edge), CI `--list-validators` / `--only` nineteen + required Manifest
   Validate step-marker smoke, inventory empty-list leftovers beyond #253
-  bool/float and #242 int/null, cross isolation vs #265/#264/#258/#253/#248
+  bool/float and #242 int/null, cross isolation vs #279/#270/#265/#264/#258/#253/#248
   siblings with concurrent races and tip live-green. Historic four only; Packaging
   inventory unchanged (v52 / 196); no schema / validators / Dependabot bumps.
-  Distinct from merged #270 (goose-schema niche), #265 (Claude/routing niche),
-  #264 (prior goose-schema), #258 (hydration/security+handoff), #253
-  (fence/File-bind/first-phrase/fullwidth),
+  Distinct from merged #279 (CI/markdownlint niche), #270 (goose-schema niche),
+  #265 (Claude/routing niche), #264 (prior goose-schema), #258
+  (hydration/security+handoff), #253 (fence/File-bind/first-phrase/fullwidth),
   #242 (ZWSP/on-disk/checkbox/inventory-types), #236/#229/#224/#219 siblings, and
-  closed CONFLICTING #269 (same leftover vs pre-#265 tip) /
+  closed CONFLICTING #284/#269 (same leftover vs pre-#279/#265 tips) /
   #251/#243/#238/#235/#230/#221/#223 tip refills.
+
+- CI/markdownlint residual **tests-only** leftover deepeners after tip through
+  **#270** (goose-schema leftover after #265) / **#265** (Claude/routing leftover
+  after #264) / **#264** / **#258** / **#253** / **#248** / **#242** / **#236** /
+  **#229** / **#224** / **#219** / **#209** / **#208** / **#202** / **#200** /
+  **#195** / **#188** / **#187** / **#186** (EXISTING six fixtures —
+  `markdownlint` / `ci-setup-python` / `ci-ruff` / `ci-pip-install` /
+  `ci-pip-check` / `ci-pytest` — no invented product / workflow / inventory
+  bump): `.markdownlint.yaml` ↔ `schemas/markdownlint.schema.json` required-key
+  and const lock parity, per-lock schema const mismatch, YAML structural and type
+  edges, remaining `ci.yml` assertion matrix (setup-python / ruff / pip /
+  pytest), inventory path/schema/yaml drops and leftover types, `--only`
+  isolation, concurrent races, exact Finding equality and case/BOM/NBSP
+  lookalikes, pytest per-marker drop and ruff/pip lookalike commands, nested
+  MD013/MD024 key drops and simultaneous multi-lock drop, dual-surface
+  concurrent races, tip-after-#248/#264/#265 deepeners (exact CI fixture Finding
+  equality, ZWSP/soft-hyphen/CRLF/fullwidth/tab/ideographic/NEL lookalikes,
+  simultaneous multi-lock exact drops, triple/quad-surface races, schema
+  additionalProperties + mangled-const isolation, setup-python with/cache-none,
+  MD025 list / MD033 float, inventory str leftovers, dual-pip exact + pytest
+  absent), tip-after-#270 deepeners (isolation vs #270 goose-schema / #265
+  Claude/routing, `--only` subset vs siblings, live-green), and tip isolation
+  against #270/#265/#264/#258/#253/#248 siblings. Historic four only; inventory
+  unchanged (v52 / 196). Distinct from merged #270 (goose-schema leftover), #265
+  (Claude/routing leftover), #264 (goose-schema leftover), #258
+  (hydration/security+handoff), #253 (prompts+flows leftover), #248
+  (actionlint/linkcheck leftover), closed CONFLICTING
+  #276/#275/#267/#257/#250/#240/#237/#233/#220/#214/#210/#204/#201/#196 (same
+  leftover vs stale tips), and historic v12/v13 setup-python/ruff/pip/pytest
+  edges.
 
 - Goose-recipe schema leftover **tests-only** deepeners after tip through **#265**
   (Claude/routing leftover after #264) / **#264** (goose-schema leftover after #258)
