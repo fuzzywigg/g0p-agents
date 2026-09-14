@@ -10,6 +10,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Prompt/validator residual **HEAVY tests-only** deepeners (post-#134 memory-slot;
+  EXISTING `prompt-*` modules only — no invented v52 product / inventory bump):
+  concurrent AGENT-PROMPTS validate races, empty/whitespace/header-only prompt
+  bodies, invalid/invented prompt registry keys, per-phrase drop matrix across
+  all 33 prompt validators, inventory empty/dup/blank/seed mismatch matrix, and
+  cross-isolation checks. Distinct from open conflicting prompts-locks-v52
+  siblings (#133 / #135). Historic four only; inventory version unchanged
+  (v51 / 184).
+
 - Memory-slot **tests-only** deepeners (EXISTING modules only — no invented product):
   concurrent validate races, empty scratchpad/inventory maps, invalid registry/
   allow-list keys, and full-capacity agentic_flows overflow rejection against
