@@ -11,6 +11,29 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 
 - Claude/routing governance residual **tests-only** leftover deepeners after tip
+  through **#265** (Claude/routing leftover after #264) / **#264** / **#258** /
+  **#253** / **#248** / **#242** / **#236** / **#229** / **#224** / **#219** /
+  **#209** / **#208** / **#202** / **#200** / **#195** / **#188** / **#187**
+  (docs-cross tip) (EXISTING twelve CLAUDE.md fixtures — `claude` /
+  `claude-metadata` / `routing` / `routing-matrix` / `routing-rationales` /
+  `repo-identity` / `state-residency` / `key-files` / `escalation-format` /
+  `escalation-usage` / `quarterly-review` / `negative-constraints` — historic
+  v14–v16 + merged **#265** residual; no invented product / inventory bump):
+  CI `--list-validators` / `--only` twelve + required manifest step-marker smoke,
+  exact `claude` packaging / escalation-format / documented-agent /
+  invented-token Finding equality, exact `routing` section/surface/agent-identity
+  message formats, exact `negative-constraints` agent + phrase Findings, BOM +
+  ZWNJ / word-joiner / Mongolian-vowel-separator / RLM / casefold lookalikes +
+  symlink follow/dangling leftovers, `claude_required_sections` +
+  `escalation_format_phrases` inventory seed/type leftovers, matrix surface vs
+  rationale column-header vs metadata isolation, concurrent CLAUDE.md races, and
+  tip isolation against #265/#264/#258/#253 siblings. Historic four only;
+  Packaging inventory unchanged (v52 / 196). Distinct from merged #265 (prior
+  Claude/routing leftover), #264 (goose-schema), #258 (hydration/security+handoff),
+  #253 (prompts+flows), #248 (actionlint/linkcheck), #187 (docs-cross), and closed
+  CONFLICTING #260/#192 (same niche on stale tips).
+
+- Claude/routing governance residual **tests-only** leftover deepeners after tip
   through **#264** (goose-schema leftover after #258) / **#258** / **#253** /
   **#248** / **#242** / **#236** / **#229** / **#224** / **#219** / **#209** /
   **#208** / **#202** / **#200** / **#195** / **#188** / **#187** (docs-cross tip)
