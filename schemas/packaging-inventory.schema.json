@@ -166,9 +166,12 @@
     "pytest_testpaths",
     "quarterly_review_phrases",
     "readme_badge_phrases",
+    "readme_blurbs_required_phrases",
+    "readme_bootstrap_required_phrases",
     "readme_contents_required_phrases",
     "readme_historic_required_phrases",
     "readme_honesty_required_phrases",
+    "readme_lead_required_phrases",
     "readme_required_phrases",
     "recipe_bindings",
     "recipe_primary_agents",
@@ -1746,6 +1749,33 @@
       }
     },
     "constitution_scratchpad_state_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "readme_lead_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "readme_blurbs_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "readme_bootstrap_required_phrases": {
       "type": "array",
       "minItems": 1,
       "uniqueItems": true,

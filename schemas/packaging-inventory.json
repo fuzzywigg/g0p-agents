@@ -1,5 +1,5 @@
 {
-  "version": 40,
+  "version": 41,
   "documented_agents": [
     "QuantumArchitectAgent",
     "BlockchainArchitectAgent",
@@ -376,9 +376,12 @@
     "quarterly-review",
     "readme",
     "readme-badges",
+    "readme-blurbs",
+    "readme-bootstrap",
     "readme-contents",
     "readme-historic",
     "readme-honesty",
+    "readme-lead",
     "recipe-agents",
     "recipe-titles",
     "repo-identity",
@@ -405,7 +408,7 @@
     "yaml-configs"
   ],
   "min_coverage_fail_under": 99,
-  "min_validator_count": 133,
+  "min_validator_count": 136,
   "required_paths": [
     "README.md",
     "LICENSE",
@@ -1245,7 +1248,7 @@
     "markdown lint, link check, actionlint",
     "manifest validate on Python 3.11/3.12/3.13",
     "Andrew or designated reviewer",
-    "Packaging inventory v40",
+    "Packaging inventory v41",
     "refuse invented recipes",
     "orphan on-disk YAML",
     "unknown `*Agent` tokens",
@@ -1299,5 +1302,27 @@
     "**Crypto Algorithm Choice**",
     "**Deployment Timeline**",
     "**Final Decision Maker**: OrchestrationAgent"
+  ],
+  "readme_lead_required_phrases": [
+    "Docs-only archive of 2025 \"Quantum-Blockchain\" agent prompts (v2.2, Dec 2025).",
+    "Oracle-Style Quantum Hive Mind",
+    "This repository contains the \"Quantum-Blockchain\" agentic protocols v2.2 (Dec 2025).",
+    "architecture *on paper*"
+  ],
+  "readme_blurbs_required_phrases": [
+    "Full system prompts for the 4 specialist agents.",
+    "YAML-based orchestration logic (Goose Framework).",
+    "Step-by-step setup for a quantum-dev environment.",
+    "Historic snapshot of the agent constitution.",
+    "Repo routing, contribution, and reporting policy."
+  ],
+  "readme_bootstrap_required_phrases": [
+    "This is an archived reference implementation, not a live hive.",
+    "Docs-only bootstrap lives in",
+    "(`install` verifies key archive files; no `start` services).",
+    "This archive has no runtime agent code.",
+    "Schemas and the packaging inventory live under",
+    "does **not** invent specialist agents beyond the historic four",
+    "MIT \u2014 see [LICENSE](LICENSE)."
   ]
 }

@@ -10,6 +10,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- README **v41** deepeners (post-#96 constitution v40; orthogonal to open
+  implementation-guide v41 #101): `readme-lead`, `readme-blurbs`,
+  `readme-bootstrap` validators; README.md Docs-only / Oracle-Style lead locks,
+  Contents blurb locks, and Note/Cloud/Manifest/License bootstrap-closing locks;
+  consistency deepeners for `readme_lead_required_phrases` /
+  `readme_blurbs_required_phrases` / `readme_bootstrap_required_phrases`
+  (Packaging inventory 136 total; historic four only — README leftovers slice,
+  not constitution v40, security v39, contributing v38, hydration, postmortem,
+  implementation-guide, goose recipes, execution-summary, agent prompts, or
+  Dependabot)
+
 - Constitution **v40** deepeners (post-#94 security v39): `constitution-recipe-orchestration`,
   `constitution-scratchpad-state`, `constitution-conflict-matrix` validators;
   AGENTS-v2.2.md §22.5 Recipe-Based Orchestration Structure locks, §22.6 Scratchpad
