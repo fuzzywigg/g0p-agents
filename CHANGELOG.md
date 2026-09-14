@@ -10,6 +10,28 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Goose-recipe schema leftover **tests-only** deepeners after tip through **#208**
+  (goose-schema leftover after #200) / **#202** / **#200** / **#195** / **#188** /
+  **#187** / **#186** / **#184** (goose-schema tip) / **#172** (goose-schema
+  residual suite) (EXISTING three fixtures — `goose` / `recipe-agents` /
+  `recipe-titles` plus `schemas/goose-recipe.schema.json` + `GOOSE-RECIPES.md`
+  — no invented product / inventory bump): leftover jsonschema reject matrix
+  beyond #208 (name float/dollar/plus, empty settings/recipe objects, version
+  bool/list, instructions int, title float, prompt int, model bool, provider
+  object, timeout null, extension name null/bool, extension type list/case,
+  recipe list), ACCEPT + deep schema-file self-locks (title/ext-name bounds,
+  mixed transports, pattern/const/enum/timeout mins), live fenced YAML→schema
+  + historic round-trip, `GOOSE-RECIPES.md` extra-**File** / `.yml`-**File** /
+  info-string / indented-closer leftovers, on-disk parse + historic provider +
+  non-yaml allow-list leftovers, title-type / incomplete-agent skip /
+  `recipe_primary_agents` inventory leftovers, concurrent races, and tip
+  isolation against #208/#202/#200/#195 siblings. Historic four only; Packaging
+  inventory unchanged (v52 / 196 validators). Distinct from merged #208
+  (after-200 leftover suite), closed CONFLICTING #197 (schema-only tip-burned
+  leftovers), #184 (goose-schema tip type matrix), #172 (goose-schema residual
+  suite), #147 (nine goose-* phrase locks), and not a v53 invent sibling,
+  contributing/goose-howto leftover, or Dependabot bump.
+
 - Goose-recipe schema leftover **tests-only** deepeners after tip through **#202**
   (prompts+agentic_flows leftover after #200) / **#200** / **#195** / **#188** /
   **#187** / **#186** / **#184** (goose-schema tip) / **#172** (goose-schema
