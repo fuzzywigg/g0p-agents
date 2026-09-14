@@ -1,5 +1,5 @@
 {
-  "version": 51,
+  "version": 52,
   "documented_agents": [
     "QuantumArchitectAgent",
     "BlockchainArchitectAgent",
@@ -386,6 +386,9 @@
     "pr-routing",
     "pr-summary",
     "pr-template",
+    "prompt-bc-edge-comms",
+    "prompt-bc-edge-principles",
+    "prompt-bc-metrics",
     "prompt-cannot-delegate",
     "prompt-communication",
     "prompt-constraints",
@@ -393,6 +396,8 @@
     "prompt-context",
     "prompt-context-detail",
     "prompt-decision-authority",
+    "prompt-edge-review-metrics",
+    "prompt-escalate-closures",
     "prompt-escalation-authority",
     "prompt-escalation-format",
     "prompt-escalation-identity",
@@ -404,8 +409,14 @@
     "prompt-living-docs",
     "prompt-metrics",
     "prompt-monthly",
+    "prompt-orch-comms-residual",
+    "prompt-orch-delivery-metrics",
     "prompt-orchestration-matrix",
     "prompt-principles",
+    "prompt-qualtran-expertise-residual",
+    "prompt-quantum-comms-residual",
+    "prompt-quantum-hw-metrics",
+    "prompt-quantum-principles-residual",
     "prompt-related-docs",
     "prompt-related-health",
     "prompt-responsibilities",
@@ -419,6 +430,7 @@
     "prompt-triggers-detail",
     "prompt-usage",
     "prompt-usage-example",
+    "prompt-vision-matrix-residual",
     "prompts",
     "pyproject",
     "quarterly-review",
@@ -456,7 +468,7 @@
     "yaml-configs"
   ],
   "min_coverage_fail_under": 99,
-  "min_validator_count": 184,
+  "min_validator_count": 196,
   "required_paths": [
     "README.md",
     "LICENSE",
@@ -1296,7 +1308,7 @@
     "markdown lint, link check, actionlint",
     "manifest validate on Python 3.11/3.12/3.13",
     "Andrew or designated reviewer",
-    "Packaging inventory v51",
+    "Packaging inventory v52",
     "refuse invented recipes",
     "orphan on-disk YAML",
     "unknown `*Agent` tokens",
@@ -1837,5 +1849,81 @@
     "System Prompt: [Copy QuantumArchitectAgent Prompt Template]",
     "Reads ./agentic_flows/scratchpad.txt (finds pending quantum mint task)",
     "Updates scratchpad with gate count, depth, error rate"
+  ],
+  "prompt_quantum_hw_metrics_required_phrases": [
+    "Gate count optimized for target hardware",
+    "Quantum-safe properties validated (NIST standards)",
+    "Hardware estimates within device constraints",
+    "Error tolerance: < 1%"
+  ],
+  "prompt_bc_metrics_required_phrases": [
+    "Multi-chain sync < 2 minutes",
+    "< 10% variance in gas estimates vs. actual",
+    "All smart contracts quantum-safe audited",
+    "Gas budget: [INSERT LIMIT]",
+    "Deadline: [INSERT DATE]"
+  ],
+  "prompt_edge_review_metrics_required_phrases": [
+    "Battery drain < 2% per transaction",
+    "Apple security review: PASS",
+    "Google security review: PASS"
+  ],
+  "prompt_orch_delivery_metrics_required_phrases": [
+    "Team consensus on direction (if possible)",
+    "On-time delivery",
+    "Stakeholder satisfaction"
+  ],
+  "prompt_quantum_comms_residual_required_phrases": [
+    "Conservative on claims (\"this is theoretically possible, but...\")",
+    "Flag quantum advantage deadlines and threats"
+  ],
+  "prompt_bc_edge_comms_required_phrases": [
+    "Explain via architecture diagrams",
+    "Provide cost/benefit analysis for design trade-offs",
+    "Explain via user flow diagrams",
+    "Provide device-specific constraints and workarounds"
+  ],
+  "prompt_orch_comms_residual_required_phrases": [
+    "Explain trade-off reasoning",
+    "Acknowledge risks clearly"
+  ],
+  "prompt_quantum_principles_residual_required_phrases": [
+    "Recommend testing on multiple backends",
+    "Validate circuit correctness before integration",
+    "Estimate gate count, depth, and error rates"
+  ],
+  "prompt_bc_edge_principles_required_phrases": [
+    "Validate quantum-resistant cryptographic choices",
+    "Validate Apple/Google security guidelines compliance"
+  ],
+  "prompt_escalate_closures_required_phrases": [
+    "Validate quantum-safe properties (post-quantum crypto)",
+    "Escalate when constraints cannot be met",
+    "Estimate gas costs and optimization opportunities",
+    "Escalate when security or performance constraints cannot be met",
+    "Optimize for mobile constraints (battery, memory, CPU)",
+    "Escalate when device constraints cannot be met",
+    "Identify conflicts (if any)",
+    "Make final go/no-go decision"
+  ],
+  "prompt_qualtran_expertise_residual_required_phrases": [
+    "Qualtran (resource analysis)",
+    "Qualtran (algorithm analysis)",
+    "Data lifecycle management",
+    "Battery/memory optimization"
+  ],
+  "prompt_vision_matrix_residual_required_phrases": [
+    "## Current Project Vision",
+    "Timeline: [INSERT TARGET DATE]",
+    "Budget: [INSERT IF APPLICABLE]",
+    "Update risk register (quarterly, minimum)",
+    "Communicate progress to stakeholder",
+    "See postmortem.md (incident log)",
+    "postmortem.md (incident log)",
+    "Agent Action:",
+    "Weigh risk tolerance. Choose testnet approach to validate.",
+    "Redesign contract interface or reduce scope.",
+    "Use hybrid (post-quantum + RSA), implement staged migration.",
+    "Reduce scope, increase risk, escalate to stakeholder."
   ]
 }

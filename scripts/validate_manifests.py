@@ -72,6 +72,8 @@ Checks structural correctness of:
 - AGENT-PROMPTS.md constraints-detail / triggers-detail / human-fields leftover locks
 - AGENT-PROMPTS.md context-detail / expertise-detail / related-health leftover locks
 - AGENT-PROMPTS.md tools-detail / responsibilities-detail / instantiation leftover locks
+- AGENT-PROMPTS.md quantum-hw/bc/edge/orch metrics / comms / principles /
+  escalate-closures / qualtran-expertise / vision-matrix residual leftover locks
   PHASE 4 issues / LIST B deferred leftover locks
 - postmortem.md intro / Decision field / Next Steps surface locks
 - agentic_flows/scratchpad.txt intro / format-legend / task-meta locks
@@ -188,7 +190,7 @@ REQUIRED_ARCHIVE_DOCS = (
     "README.md",
 )
 
-INVENTORY_VERSION = 51
+INVENTORY_VERSION = 52
 CURSOR_ENVIRONMENT_NAME = "g0p-agents"
 DEPENDABOT_SCHEDULE_INTERVAL = "weekly"
 DEPENDABOT_DIRECTORIES: frozenset[str] = frozenset({"/"})
@@ -841,7 +843,7 @@ CONTRIBUTING_CI_HONESTY_REQUIRED_PHRASES: tuple[str, ...] = (
     "markdown lint, link check, actionlint",
     "manifest validate on Python 3.11/3.12/3.13",
     "Andrew or designated reviewer",
-    "Packaging inventory v51",
+    "Packaging inventory v52",
     "refuse invented recipes",
     "orphan on-disk YAML",
     "unknown `*Agent` tokens",
@@ -1215,6 +1217,95 @@ PROMPT_INSTANTIATION_REQUIRED_PHRASES: tuple[str, ...] = (
     'Reads ./agentic_flows/scratchpad.txt (finds pending quantum mint task)',
     'Updates scratchpad with gate count, depth, error rate',
 )
+
+PROMPT_QUANTUM_HW_METRICS_REQUIRED_PHRASES: tuple[str, ...] = (
+    'Gate count optimized for target hardware',
+    'Quantum-safe properties validated (NIST standards)',
+    'Hardware estimates within device constraints',
+    'Error tolerance: < 1%',
+)
+
+PROMPT_BC_METRICS_REQUIRED_PHRASES: tuple[str, ...] = (
+    'Multi-chain sync < 2 minutes',
+    '< 10% variance in gas estimates vs. actual',
+    'All smart contracts quantum-safe audited',
+    'Gas budget: [INSERT LIMIT]',
+    'Deadline: [INSERT DATE]',
+)
+
+PROMPT_EDGE_REVIEW_METRICS_REQUIRED_PHRASES: tuple[str, ...] = (
+    'Battery drain < 2% per transaction',
+    'Apple security review: PASS',
+    'Google security review: PASS',
+)
+
+PROMPT_ORCH_DELIVERY_METRICS_REQUIRED_PHRASES: tuple[str, ...] = (
+    'Team consensus on direction (if possible)',
+    'On-time delivery',
+    'Stakeholder satisfaction',
+)
+
+PROMPT_QUANTUM_COMMS_RESIDUAL_REQUIRED_PHRASES: tuple[str, ...] = (
+    'Conservative on claims ("this is theoretically possible, but...")',
+    'Flag quantum advantage deadlines and threats',
+)
+
+PROMPT_BC_EDGE_COMMS_REQUIRED_PHRASES: tuple[str, ...] = (
+    'Explain via architecture diagrams',
+    'Provide cost/benefit analysis for design trade-offs',
+    'Explain via user flow diagrams',
+    'Provide device-specific constraints and workarounds',
+)
+
+PROMPT_ORCH_COMMS_RESIDUAL_REQUIRED_PHRASES: tuple[str, ...] = (
+    'Explain trade-off reasoning',
+    'Acknowledge risks clearly',
+)
+
+PROMPT_QUANTUM_PRINCIPLES_RESIDUAL_REQUIRED_PHRASES: tuple[str, ...] = (
+    'Recommend testing on multiple backends',
+    'Validate circuit correctness before integration',
+    'Estimate gate count, depth, and error rates',
+)
+
+PROMPT_BC_EDGE_PRINCIPLES_REQUIRED_PHRASES: tuple[str, ...] = (
+    'Validate quantum-resistant cryptographic choices',
+    'Validate Apple/Google security guidelines compliance',
+)
+
+PROMPT_ESCALATE_CLOSURES_REQUIRED_PHRASES: tuple[str, ...] = (
+    'Validate quantum-safe properties (post-quantum crypto)',
+    'Escalate when constraints cannot be met',
+    'Estimate gas costs and optimization opportunities',
+    'Escalate when security or performance constraints cannot be met',
+    'Optimize for mobile constraints (battery, memory, CPU)',
+    'Escalate when device constraints cannot be met',
+    'Identify conflicts (if any)',
+    'Make final go/no-go decision',
+)
+
+PROMPT_QUALTRAN_EXPERTISE_RESIDUAL_REQUIRED_PHRASES: tuple[str, ...] = (
+    'Qualtran (resource analysis)',
+    'Qualtran (algorithm analysis)',
+    'Data lifecycle management',
+    'Battery/memory optimization',
+)
+
+PROMPT_VISION_MATRIX_RESIDUAL_REQUIRED_PHRASES: tuple[str, ...] = (
+    '## Current Project Vision',
+    'Timeline: [INSERT TARGET DATE]',
+    'Budget: [INSERT IF APPLICABLE]',
+    'Update risk register (quarterly, minimum)',
+    'Communicate progress to stakeholder',
+    'See postmortem.md (incident log)',
+    'postmortem.md (incident log)',
+    'Agent Action:',
+    'Weigh risk tolerance. Choose testnet approach to validate.',
+    'Redesign contract interface or reduce scope.',
+    'Use hybrid (post-quantum + RSA), implement staged migration.',
+    'Reduce scope, increase risk, escalate to stakeholder.',
+)
+
 
 
 
@@ -1819,7 +1910,7 @@ SCRATCHPAD_STATUS_MARKERS: tuple[str, ...] = (
 SPECIALIST_AGENTS: tuple[str, ...] = DOCUMENTED_AGENTS[:-1]
 
 MIN_COVERAGE_FAIL_UNDER = 99
-MIN_VALIDATOR_COUNT = 184
+MIN_VALIDATOR_COUNT = 196
 
 
 @dataclass(frozen=True)
@@ -3040,6 +3131,102 @@ def validate_packaging_inventory(root: Path) -> list[Finding]:
         )
 
     if (
+        tuple(inventory.get("prompt_quantum_hw_metrics_required_phrases", ()))
+        != PROMPT_QUANTUM_HW_METRICS_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "prompt_quantum_hw_metrics_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("prompt_bc_metrics_required_phrases", ()))
+        != PROMPT_BC_METRICS_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "prompt_bc_metrics_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("prompt_edge_review_metrics_required_phrases", ()))
+        != PROMPT_EDGE_REVIEW_METRICS_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "prompt_edge_review_metrics_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("prompt_orch_delivery_metrics_required_phrases", ()))
+        != PROMPT_ORCH_DELIVERY_METRICS_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "prompt_orch_delivery_metrics_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("prompt_quantum_comms_residual_required_phrases", ()))
+        != PROMPT_QUANTUM_COMMS_RESIDUAL_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "prompt_quantum_comms_residual_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("prompt_bc_edge_comms_required_phrases", ()))
+        != PROMPT_BC_EDGE_COMMS_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "prompt_bc_edge_comms_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("prompt_orch_comms_residual_required_phrases", ()))
+        != PROMPT_ORCH_COMMS_RESIDUAL_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "prompt_orch_comms_residual_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("prompt_quantum_principles_residual_required_phrases", ()))
+        != PROMPT_QUANTUM_PRINCIPLES_RESIDUAL_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "prompt_quantum_principles_residual_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("prompt_bc_edge_principles_required_phrases", ()))
+        != PROMPT_BC_EDGE_PRINCIPLES_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "prompt_bc_edge_principles_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("prompt_escalate_closures_required_phrases", ()))
+        != PROMPT_ESCALATE_CLOSURES_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "prompt_escalate_closures_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("prompt_qualtran_expertise_residual_required_phrases", ()))
+        != PROMPT_QUALTRAN_EXPERTISE_RESIDUAL_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "prompt_qualtran_expertise_residual_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("prompt_vision_matrix_residual_required_phrases", ()))
+        != PROMPT_VISION_MATRIX_RESIDUAL_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "prompt_vision_matrix_residual_required_phrases")
+        )
+
+    if (
         tuple(inventory.get("postmortem_intro_required_phrases", ()))
         != POSTMORTEM_INTRO_REQUIRED_PHRASES
     ):
@@ -3896,7 +4083,9 @@ def _inventory_lock_consistency(
             break
     else:
         required_core = {"Surface", "Issue", "Branch", "Priority"}
-        if pr_fields and not required_core <= set(pr_fields):
+        if pr_fields and not required_core <= set(
+            pr_fields
+        ):
             findings.append(
                 Finding(
                     schema_path,
@@ -3985,7 +4174,9 @@ def _inventory_lock_consistency(
             "Recommendation:",
             "Timeline:",
         }
-        if escalation and not required_esc <= set(escalation):
+        if escalation and not required_esc <= set(
+            escalation
+        ):
             findings.append(
                 Finding(
                     schema_path,
@@ -4046,7 +4237,9 @@ def _inventory_lock_consistency(
             "Owner: claude-cowork",
             "Created: 2026-04-13",
         }
-        if metadata and not required_meta <= set(metadata):
+        if metadata and not required_meta <= set(
+            metadata
+        ):
             findings.append(
                 Finding(
                     schema_path,
@@ -4078,7 +4271,9 @@ def _inventory_lock_consistency(
             "```text",
             "From Agent: [surface name]",
         }
-        if usage and not required_usage <= set(usage):
+        if usage and not required_usage <= set(
+            usage
+        ):
             findings.append(
                 Finding(
                     schema_path,
@@ -4174,7 +4369,9 @@ def _inventory_lock_consistency(
             "Secrets",
             "Keys",
         }
-        if standards and not required_domains <= set(standards):
+        if standards and not required_domains <= set(
+            standards
+        ):
             findings.append(
                 Finding(
                     schema_path,
@@ -4350,7 +4547,9 @@ def _inventory_lock_consistency(
             "What are CRYSTALS-Kyber and CRYSTALS-Dilithium?",
             "What is `stimgery`",
         }
-        if list_a and not required_list_a <= set(list_a):
+        if list_a and not required_list_a <= set(
+            list_a
+        ):
             findings.append(
                 Finding(
                     schema_path,
@@ -4389,7 +4588,9 @@ def _inventory_lock_consistency(
             "liboqs (Open Quantum Safe)",
             "LIST B items B1–B5 are deferred to Andrew",
         }
-        if resolved and not required_resolved <= set(resolved):
+        if resolved and not required_resolved <= set(
+            resolved
+        ):
             findings.append(
                 Finding(
                     schema_path,
@@ -4465,7 +4666,9 @@ def _inventory_lock_consistency(
             "What specific PikoClaw features depend on g0p-agents by May 27, 2026?",
             "Does a Notion page for g0p-agents exist?",
         }
-        if deferred and not required_deferred <= set(deferred):
+        if deferred and not required_deferred <= set(
+            deferred
+        ):
             findings.append(
                 Finding(
                     schema_path,
@@ -4501,7 +4704,9 @@ def _inventory_lock_consistency(
             "#### Tier 1: Foundation (All Developers)",
             "Cirq (Google quantum circuits)"
         }
-        if ide_stack and not required_ide_stack <= set(ide_stack):
+        if ide_stack and not required_ide_stack <= set(
+            ide_stack
+        ):
             findings.append(
                 Finding(
                     schema_path,
@@ -4536,7 +4741,9 @@ def _inventory_lock_consistency(
             "pip install liboqs",
             "\u2705 Quantum-Blockchain development environment ready!"
         }
-        if install_script and not required_install_script <= set(install_script):
+        if install_script and not required_install_script <= set(
+            install_script
+        ):
             findings.append(
                 Finding(
                     schema_path,
@@ -4571,7 +4778,9 @@ def _inventory_lock_consistency(
             "JuanBlanco.solidity",
             "ms-vscode-remote.remote-wsl"
         }
-        if vscode_ext and not required_vscode_ext <= set(vscode_ext):
+        if vscode_ext and not required_vscode_ext <= set(
+            vscode_ext
+        ):
             findings.append(
                 Finding(
                     schema_path,
@@ -4606,7 +4815,9 @@ def _inventory_lock_consistency(
             "Claim quantum-safe without formal verification",
             "NIST-standardized algorithms (Kyber, Dilithium, SPHINCS+)"
         }
-        if hard_constraints and not required_hard_constraints <= set(hard_constraints):
+        if hard_constraints and not required_hard_constraints <= set(
+            hard_constraints
+        ):
             findings.append(
                 Finding(
                     schema_path,
@@ -4641,7 +4852,9 @@ def _inventory_lock_consistency(
             "Success rate > 99.5% (at current tier)",
             "If failure rate > 2% in new tier, immediately revert to previous tier."
         }
-        if risk_tol and not required_risk_tol <= set(risk_tol):
+        if risk_tol and not required_risk_tol <= set(
+            risk_tol
+        ):
             findings.append(
                 Finding(
                     schema_path,
@@ -4675,7 +4888,9 @@ def _inventory_lock_consistency(
             "All notable changes to this project will be documented in this file.",
             "---"
         }
-        if cl_preamble and not required_cl_preamble <= set(cl_preamble):
+        if cl_preamble and not required_cl_preamble <= set(
+            cl_preamble
+        ):
             findings.append(
                 Finding(
                     schema_path,
@@ -4710,7 +4925,9 @@ def _inventory_lock_consistency(
             "CI `pull_request` trigger targets `alpha`",
             "Dependabot now tracks pip (`requirements-dev.txt`)"
         }
-        if cl_changed and not required_cl_changed <= set(cl_changed):
+        if cl_changed and not required_cl_changed <= set(
+            cl_changed
+        ):
             findings.append(
                 Finding(
                     schema_path,
@@ -4745,7 +4962,9 @@ def _inventory_lock_consistency(
             "`IMPLEMENTATION-GUIDE.md` \u2014 step-by-step setup guide",
             "`EXECUTION-SUMMARY.md` \u2014 implementation summary"
         }
-        if cl_initial and not required_cl_initial <= set(cl_initial):
+        if cl_initial and not required_cl_initial <= set(
+            cl_initial
+        ):
             findings.append(
                 Finding(
                     schema_path,
@@ -4781,7 +5000,9 @@ def _inventory_lock_consistency(
             "Distributed ledger architecture",
             "Hardware security modules (HSM, Secure Enclave)"
         }
-        if prompt_expertise and not required_prompt_expertise <= set(prompt_expertise):
+        if prompt_expertise and not required_prompt_expertise <= set(
+            prompt_expertise
+        ):
             findings.append(
                 Finding(
                     schema_path,
@@ -4815,7 +5036,9 @@ def _inventory_lock_consistency(
             "Prioritize user security and privacy",
             "Recommend staged rollouts (testnet \u2192 staging \u2192 mainnet)"
         }
-        if prompt_principles and not required_prompt_principles <= set(prompt_principles):
+        if prompt_principles and not required_prompt_principles <= set(
+            prompt_principles
+        ):
             findings.append(
                 Finding(
                     schema_path,
@@ -4850,7 +5073,9 @@ def _inventory_lock_consistency(
             "0 critical vulnerabilities (Slither pass)",
             "Crypto operations < 500ms on Snapdragon 8 Gen 3 (or specified device)"
         }
-        if prompt_metrics and not required_prompt_metrics <= set(prompt_metrics):
+        if prompt_metrics and not required_prompt_metrics <= set(
+            prompt_metrics
+        ):
             findings.append(
                 Finding(
                     schema_path,
@@ -4885,7 +5110,9 @@ def _inventory_lock_consistency(
             "Hardhat (local blockchain, contract testing)",
             "liboqs (post-quantum crypto on device)",
         }
-        if prompt_tools and not required_prompt_tools <= set(prompt_tools):
+        if prompt_tools and not required_prompt_tools <= set(
+            prompt_tools
+        ):
             findings.append(
                 Finding(
                     schema_path,
@@ -5054,7 +5281,9 @@ def _inventory_lock_consistency(
             "Ultimate Goal: Build quantum-safe, multi-chain NFT ecosystem with on-device security",
             "Risk Tolerance: ALPHA-STAGE (conservative, threshold increases with success)",
         }
-        if prompt_monthly and not required_prompt_monthly <= set(prompt_monthly):
+        if prompt_monthly and not required_prompt_monthly <= set(
+            prompt_monthly
+        ):
             findings.append(
                 Finding(
                     schema_path,
@@ -5262,7 +5491,9 @@ def _inventory_lock_consistency(
             "Primary blockchain: Ethereum (Sepolia testnet, mainnet)",
             "Target devices: Android (minimum Snapdragon 8 Gen 2), iOS (minimum iPhone 12)",
         }
-        if prompt_context and not required_prompt_context <= set(prompt_context):
+        if prompt_context and not required_prompt_context <= set(
+            prompt_context
+        ):
             findings.append(
                 Finding(
                     schema_path,
@@ -5456,7 +5687,9 @@ def _inventory_lock_consistency(
             '## FUZZYWIGG-AI Quantum-Blockchain System',
             'Task.md (current sprint)',
         }
-        if prompt_living_docs and not required_prompt_living_docs <= set(prompt_living_docs):
+        if prompt_living_docs and not required_prompt_living_docs <= set(
+            prompt_living_docs
+        ):
             findings.append(
                 Finding(
                     schema_path,
@@ -5564,7 +5797,9 @@ def _inventory_lock_consistency(
             'Risk Assessment: [What could go wrong with each option?]',
             'Situation: [What decision needs human input?]',
         }
-        if prompt_human_fields and not required_prompt_human_fields <= set(prompt_human_fields):
+        if prompt_human_fields and not required_prompt_human_fields <= set(
+            prompt_human_fields
+        ):
             findings.append(
                 Finding(
                     schema_path,
@@ -5706,7 +5941,9 @@ def _inventory_lock_consistency(
             'IBM Quantum Experience (real hardware validation)',
             'React Native + Expo (cross-platform prototyping)',
         }
-        if prompt_tools_detail and not required_prompt_tools_detail <= set(prompt_tools_detail):
+        if prompt_tools_detail and not required_prompt_tools_detail <= set(
+            prompt_tools_detail
+        ):
             findings.append(
                 Finding(
                     schema_path,
@@ -5780,12 +6017,495 @@ def _inventory_lock_consistency(
             '**Run the agent** on a specific recipe/task',
             'Current scratchpad.txt (state machine)',
         }
-        if prompt_instantiation and not required_prompt_instantiation <= set(prompt_instantiation):
+        if prompt_instantiation and not required_prompt_instantiation <= set(
+            prompt_instantiation
+        ):
             findings.append(
                 Finding(
                     schema_path,
                     "prompt_instantiation_required_phrases must include "
                     "Provide access/scratchpad.txt/Run the agent/Updates scratchpad",
+                )
+            )
+
+
+    prompt_quantum_hw_metrics = list(
+        inventory.get("prompt_quantum_hw_metrics_required_phrases", ())
+    )
+    if len(prompt_quantum_hw_metrics) != len(set(prompt_quantum_hw_metrics)):
+        findings.append(
+            Finding(
+                schema_path, "prompt_quantum_hw_metrics_required_phrases must be unique"
+            )
+        )
+    if not prompt_quantum_hw_metrics:
+        findings.append(
+            Finding(
+                schema_path, "prompt_quantum_hw_metrics_required_phrases must not be empty"
+            )
+        )
+    for phrase in prompt_quantum_hw_metrics:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_quantum_hw_metrics_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_prompt_quantum_hw_metrics = {
+            'Gate count optimized for target hardware',
+        }
+        if prompt_quantum_hw_metrics and not required_prompt_quantum_hw_metrics <= set(
+            prompt_quantum_hw_metrics
+        ):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_quantum_hw_metrics_required_phrases must include "
+                    "Gate count/NIST/Hardware estimates/Error tolerance",
+                )
+            )
+
+    prompt_bc_metrics = list(
+        inventory.get("prompt_bc_metrics_required_phrases", ())
+    )
+    if len(prompt_bc_metrics) != len(set(prompt_bc_metrics)):
+        findings.append(
+            Finding(
+                schema_path, "prompt_bc_metrics_required_phrases must be unique"
+            )
+        )
+    if not prompt_bc_metrics:
+        findings.append(
+            Finding(
+                schema_path, "prompt_bc_metrics_required_phrases must not be empty"
+            )
+        )
+    for phrase in prompt_bc_metrics:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_bc_metrics_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_prompt_bc_metrics = {
+            'Multi-chain sync < 2 minutes',
+        }
+        if prompt_bc_metrics and not required_prompt_bc_metrics <= set(
+            prompt_bc_metrics
+        ):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_bc_metrics_required_phrases must include "
+                    "Multi-chain sync/gas variance/quantum-safe audited/Gas budget",
+                )
+            )
+
+    prompt_edge_review_metrics = list(
+        inventory.get("prompt_edge_review_metrics_required_phrases", ())
+    )
+    if len(prompt_edge_review_metrics) != len(set(prompt_edge_review_metrics)):
+        findings.append(
+            Finding(
+                schema_path, "prompt_edge_review_metrics_required_phrases must be unique"
+            )
+        )
+    if not prompt_edge_review_metrics:
+        findings.append(
+            Finding(
+                schema_path, "prompt_edge_review_metrics_required_phrases must not be empty"
+            )
+        )
+    for phrase in prompt_edge_review_metrics:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_edge_review_metrics_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_prompt_edge_review_metrics = {
+            'Apple security review: PASS',
+        }
+        if prompt_edge_review_metrics and not required_prompt_edge_review_metrics <= set(
+            prompt_edge_review_metrics
+        ):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_edge_review_metrics_required_phrases must include "
+                    "Battery drain/Apple PASS/Google PASS",
+                )
+            )
+
+    prompt_orch_delivery_metrics = list(
+        inventory.get("prompt_orch_delivery_metrics_required_phrases", ())
+    )
+    if len(prompt_orch_delivery_metrics) != len(set(prompt_orch_delivery_metrics)):
+        findings.append(
+            Finding(
+                schema_path, "prompt_orch_delivery_metrics_required_phrases must be unique"
+            )
+        )
+    if not prompt_orch_delivery_metrics:
+        findings.append(
+            Finding(
+                schema_path, "prompt_orch_delivery_metrics_required_phrases must not be empty"
+            )
+        )
+    for phrase in prompt_orch_delivery_metrics:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_orch_delivery_metrics_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_prompt_orch_delivery_metrics = {
+            'On-time delivery',
+        }
+        if prompt_orch_delivery_metrics and not required_prompt_orch_delivery_metrics <= set(
+            prompt_orch_delivery_metrics
+        ):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_orch_delivery_metrics_required_phrases must include "
+                    "Team consensus/On-time delivery/Stakeholder satisfaction",
+                )
+            )
+
+    prompt_quantum_comms_residual = list(
+        inventory.get("prompt_quantum_comms_residual_required_phrases", ())
+    )
+    if len(prompt_quantum_comms_residual) != len(set(prompt_quantum_comms_residual)):
+        findings.append(
+            Finding(
+                schema_path, "prompt_quantum_comms_residual_required_phrases must be unique"
+            )
+        )
+    if not prompt_quantum_comms_residual:
+        findings.append(
+            Finding(
+                schema_path, "prompt_quantum_comms_residual_required_phrases must not be empty"
+            )
+        )
+    for phrase in prompt_quantum_comms_residual:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_quantum_comms_residual_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_prompt_quantum_comms_residual = {
+            'Flag quantum advantage deadlines and threats',
+        }
+        if prompt_quantum_comms_residual and not required_prompt_quantum_comms_residual <= set(
+            prompt_quantum_comms_residual
+        ):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_quantum_comms_residual_required_phrases must include "
+                    "Conservative claims/Flag quantum advantage",
+                )
+            )
+
+    prompt_bc_edge_comms = list(
+        inventory.get("prompt_bc_edge_comms_required_phrases", ())
+    )
+    if len(prompt_bc_edge_comms) != len(set(prompt_bc_edge_comms)):
+        findings.append(
+            Finding(
+                schema_path, "prompt_bc_edge_comms_required_phrases must be unique"
+            )
+        )
+    if not prompt_bc_edge_comms:
+        findings.append(
+            Finding(
+                schema_path, "prompt_bc_edge_comms_required_phrases must not be empty"
+            )
+        )
+    for phrase in prompt_bc_edge_comms:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_bc_edge_comms_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_prompt_bc_edge_comms = {
+            'Explain via architecture diagrams',
+        }
+        if prompt_bc_edge_comms and not required_prompt_bc_edge_comms <= set(
+            prompt_bc_edge_comms
+        ):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_bc_edge_comms_required_phrases must include "
+                    "architecture diagrams/cost-benefit/user flow/device-specific",
+                )
+            )
+
+    prompt_orch_comms_residual = list(
+        inventory.get("prompt_orch_comms_residual_required_phrases", ())
+    )
+    if len(prompt_orch_comms_residual) != len(set(prompt_orch_comms_residual)):
+        findings.append(
+            Finding(
+                schema_path, "prompt_orch_comms_residual_required_phrases must be unique"
+            )
+        )
+    if not prompt_orch_comms_residual:
+        findings.append(
+            Finding(
+                schema_path, "prompt_orch_comms_residual_required_phrases must not be empty"
+            )
+        )
+    for phrase in prompt_orch_comms_residual:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_orch_comms_residual_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_prompt_orch_comms_residual = {
+            'Explain trade-off reasoning',
+        }
+        if prompt_orch_comms_residual and not required_prompt_orch_comms_residual <= set(
+            prompt_orch_comms_residual
+        ):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_orch_comms_residual_required_phrases must include "
+                    "trade-off reasoning/Acknowledge risks",
+                )
+            )
+
+    prompt_quantum_principles_residual = list(
+        inventory.get("prompt_quantum_principles_residual_required_phrases", ())
+    )
+    if len(prompt_quantum_principles_residual) != len(set(prompt_quantum_principles_residual)):
+        findings.append(
+            Finding(
+                schema_path, "prompt_quantum_principles_residual_required_phrases must be unique"
+            )
+        )
+    if not prompt_quantum_principles_residual:
+        findings.append(
+            Finding(
+                schema_path, "prompt_quantum_principles_residual_required_phrases must not be empty"
+            )
+        )
+    for phrase in prompt_quantum_principles_residual:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_quantum_principles_residual_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_prompt_quantum_principles_residual = {
+            'Recommend testing on multiple backends',
+        }
+        present = set(prompt_quantum_principles_residual)
+        missing_required = not required_prompt_quantum_principles_residual <= present
+        if prompt_quantum_principles_residual and missing_required:
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_quantum_principles_residual_required_phrases must include "
+                    "multiple backends/circuit correctness/gate count depth",
+                )
+            )
+
+    prompt_bc_edge_principles = list(
+        inventory.get("prompt_bc_edge_principles_required_phrases", ())
+    )
+    if len(prompt_bc_edge_principles) != len(set(prompt_bc_edge_principles)):
+        findings.append(
+            Finding(
+                schema_path, "prompt_bc_edge_principles_required_phrases must be unique"
+            )
+        )
+    if not prompt_bc_edge_principles:
+        findings.append(
+            Finding(
+                schema_path, "prompt_bc_edge_principles_required_phrases must not be empty"
+            )
+        )
+    for phrase in prompt_bc_edge_principles:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_bc_edge_principles_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_prompt_bc_edge_principles = {
+            'Validate quantum-resistant cryptographic choices',
+        }
+        if prompt_bc_edge_principles and not required_prompt_bc_edge_principles <= set(
+            prompt_bc_edge_principles
+        ):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_bc_edge_principles_required_phrases must include "
+                    "quantum-resistant choices/Apple/Google guidelines",
+                )
+            )
+
+    prompt_escalate_closures = list(
+        inventory.get("prompt_escalate_closures_required_phrases", ())
+    )
+    if len(prompt_escalate_closures) != len(set(prompt_escalate_closures)):
+        findings.append(
+            Finding(
+                schema_path, "prompt_escalate_closures_required_phrases must be unique"
+            )
+        )
+    if not prompt_escalate_closures:
+        findings.append(
+            Finding(
+                schema_path, "prompt_escalate_closures_required_phrases must not be empty"
+            )
+        )
+    for phrase in prompt_escalate_closures:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_escalate_closures_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_prompt_escalate_closures = {
+            'Escalate when constraints cannot be met',
+        }
+        if prompt_escalate_closures and not required_prompt_escalate_closures <= set(
+            prompt_escalate_closures
+        ):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_escalate_closures_required_phrases must include "
+                    "Escalate when/Estimate gas/Optimize mobile/go/no-go",
+                )
+            )
+
+    prompt_qualtran_expertise_residual = list(
+        inventory.get("prompt_qualtran_expertise_residual_required_phrases", ())
+    )
+    if len(prompt_qualtran_expertise_residual) != len(set(prompt_qualtran_expertise_residual)):
+        findings.append(
+            Finding(
+                schema_path, "prompt_qualtran_expertise_residual_required_phrases must be unique"
+            )
+        )
+    if not prompt_qualtran_expertise_residual:
+        findings.append(
+            Finding(
+                schema_path, "prompt_qualtran_expertise_residual_required_phrases must not be empty"
+            )
+        )
+    for phrase in prompt_qualtran_expertise_residual:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_qualtran_expertise_residual_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_prompt_qualtran_expertise_residual = {
+            'Qualtran (resource analysis)',
+        }
+        present = set(prompt_qualtran_expertise_residual)
+        missing_required = not required_prompt_qualtran_expertise_residual <= present
+        if prompt_qualtran_expertise_residual and missing_required:
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_qualtran_expertise_residual_required_phrases must include "
+                    "Qualtran resource/algorithm/Data lifecycle/Battery/memory",
+                )
+            )
+
+    prompt_vision_matrix_residual = list(
+        inventory.get("prompt_vision_matrix_residual_required_phrases", ())
+    )
+    if len(prompt_vision_matrix_residual) != len(set(prompt_vision_matrix_residual)):
+        findings.append(
+            Finding(
+                schema_path, "prompt_vision_matrix_residual_required_phrases must be unique"
+            )
+        )
+    if not prompt_vision_matrix_residual:
+        findings.append(
+            Finding(
+                schema_path, "prompt_vision_matrix_residual_required_phrases must not be empty"
+            )
+        )
+    for phrase in prompt_vision_matrix_residual:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_vision_matrix_residual_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_prompt_vision_matrix_residual = {
+            '## Current Project Vision',
+        }
+        if prompt_vision_matrix_residual and not required_prompt_vision_matrix_residual <= set(
+            prompt_vision_matrix_residual
+        ):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_vision_matrix_residual_required_phrases must include "
+                    "Current Project Vision/risk register/postmortem/matrix HOW",
                 )
             )
 
@@ -5836,7 +6556,9 @@ def _inventory_lock_consistency(
             break
     else:
         required_fields = {"**Date**:", "**Decision**:", "**Agent**:"}
-        if fields and not required_fields <= set(fields):
+        if fields and not required_fields <= set(
+            fields
+        ):
             findings.append(
                 Finding(
                     schema_path,
@@ -5869,7 +6591,9 @@ def _inventory_lock_consistency(
             "Andrew answers LIST B (B1–B5) in docs/agent-hydration.md",
             "geryon scaffolds agentic_flows/ once B1 is answered",
         }
-        if next_steps and not required_next <= set(next_steps):
+        if next_steps and not required_next <= set(
+            next_steps
+        ):
             findings.append(
                 Finding(
                     schema_path,
@@ -5928,7 +6652,9 @@ def _inventory_lock_consistency(
             break
     else:
         required_format = {"[x] = DONE", "[ ] = PENDING", "[~] = IN_PROGRESS"}
-        if format_sp and not required_format <= set(format_sp):
+        if format_sp and not required_format <= set(
+            format_sp
+        ):
             findings.append(
                 Finding(
                     schema_path,
@@ -5960,7 +6686,9 @@ def _inventory_lock_consistency(
             break
     else:
         required_meta = {"Status:", "Created:", "Owner:", "Current blocker:"}
-        if task_meta and not required_meta <= set(task_meta):
+        if task_meta and not required_meta <= set(
+            task_meta
+        ):
             findings.append(
                 Finding(
                     schema_path,
@@ -5993,7 +6721,9 @@ def _inventory_lock_consistency(
             "Tier: 1",
             "Edit policy: Agent-editable; structural changes require Andrew approval",
         }
-        if meta_phrases and not required_meta_hdr <= set(meta_phrases):
+        if meta_phrases and not required_meta_hdr <= set(
+            meta_phrases
+        ):
             findings.append(
                 Finding(
                     schema_path,
@@ -6028,7 +6758,9 @@ def _inventory_lock_consistency(
             "| Branch |",
             "| Dependencies |",
         }
-        if routing_phrases and not required_routing <= set(routing_phrases):
+        if routing_phrases and not required_routing <= set(
+            routing_phrases
+        ):
             findings.append(
                 Finding(
                     schema_path,
@@ -6061,7 +6793,9 @@ def _inventory_lock_consistency(
             "## Expected Behavior",
             "## Actual Behavior",
         }
-        if bug_repro and not required_repro <= set(bug_repro):
+        if bug_repro and not required_repro <= set(
+            bug_repro
+        ):
             findings.append(
                 Finding(
                     schema_path,
@@ -6125,7 +6859,9 @@ def _inventory_lock_consistency(
             "`geryon/<task>`",
             "`cursor/<task>`",
         }
-        if branches and not required_branches <= set(branches):
+        if branches and not required_branches <= set(
+            branches
+        ):
             findings.append(
                 Finding(
                     schema_path,
@@ -6158,7 +6894,9 @@ def _inventory_lock_consistency(
             "All CI checks must pass before merge",
             "## Governance",
         }
-        if pr_reqs and not required_pr <= set(pr_reqs):
+        if pr_reqs and not required_pr <= set(
+            pr_reqs
+        ):
             findings.append(
                 Finding(
                     schema_path,
@@ -6187,7 +6925,9 @@ def _inventory_lock_consistency(
             break
     else:
         required_summary = {"# Summary", "## Problem", "Closes #N"}
-        if pr_summary and not required_summary <= set(pr_summary):
+        if pr_summary and not required_summary <= set(
+            pr_summary
+        ):
             findings.append(
                 Finding(
                     schema_path,
@@ -6220,7 +6960,9 @@ def _inventory_lock_consistency(
             "## Acceptance Criteria",
             "- [ ]",
         }
-        if pr_acceptance and not required_acceptance <= set(pr_acceptance):
+        if pr_acceptance and not required_acceptance <= set(
+            pr_acceptance
+        ):
             findings.append(
                 Finding(
                     schema_path,
@@ -6253,7 +6995,9 @@ def _inventory_lock_consistency(
             "[agent-surface]",
             "[P1/P2/P3]",
         }
-        if pr_notes and not required_notes <= set(pr_notes):
+        if pr_notes and not required_notes <= set(
+            pr_notes
+        ):
             findings.append(
                 Finding(
                     schema_path,
@@ -6286,7 +7030,9 @@ def _inventory_lock_consistency(
             "prompt fiction",
             "fuzzywigg/agents-standard",
         }
-        if honesty and not required_honesty <= set(honesty):
+        if honesty and not required_honesty <= set(
+            honesty
+        ):
             findings.append(
                 Finding(
                     schema_path,
@@ -6319,7 +7065,9 @@ def _inventory_lock_consistency(
             "Designing quantum-safe algorithms",
             "Managing conflicts via stimgery and YAML recipes",
         }
-        if historic and not required_historic <= set(historic):
+        if historic and not required_historic <= set(
+            historic
+        ):
             findings.append(
                 Finding(
                     schema_path,
@@ -6353,7 +7101,9 @@ def _inventory_lock_consistency(
             "## Manifest validation",
             "## License",
         }
-        if contents and not required_contents <= set(contents):
+        if contents and not required_contents <= set(
+            contents
+        ):
             findings.append(
                 Finding(
                     schema_path,
@@ -6390,7 +7140,9 @@ def _inventory_lock_consistency(
             "Status: ACTIVE | Tier: 1 | Created: 2026-04-13",
             "Owner: copilot (hydration run) | Edit policy: Agent-editable",
         }
-        if meta and not required_meta <= set(meta):
+        if meta and not required_meta <= set(
+            meta
+        ):
             findings.append(
                 Finding(
                     schema_path,
@@ -6432,7 +7184,9 @@ def _inventory_lock_consistency(
             "No package.json, requirements.txt, pyproject.toml, Cargo.toml",
             "No executable source code",
         }
-        if identity_detail and not required_identity <= set(identity_detail):
+        if identity_detail and not required_identity <= set(
+            identity_detail
+        ):
             findings.append(
                 Finding(
                     schema_path,
@@ -6471,7 +7225,9 @@ def _inventory_lock_consistency(
             "2 commits total (shallow clone)",
             "copilot/hydrate: no protection",
         }
-        if git_detail and not required_git <= set(git_detail):
+        if git_detail and not required_git <= set(
+            git_detail
+        ):
             findings.append(
                 Finding(
                     schema_path,
@@ -6572,7 +7328,9 @@ def _inventory_lock_consistency(
             '"Oracle-Style',
             'architecture *on paper*',
         }
-        if lead and not required_lead <= set(lead):
+        if lead and not required_lead <= set(
+            lead
+        ):
             findings.append(
                 Finding(
                     schema_path,
@@ -6605,7 +7363,9 @@ def _inventory_lock_consistency(
             'YAML-based orchestration logic (Goose Framework).',
             'Historic snapshot of the agent constitution.',
         }
-        if blurbs and not required_blurbs <= set(blurbs):
+        if blurbs and not required_blurbs <= set(
+            blurbs
+        ):
             findings.append(
                 Finding(
                     schema_path,
@@ -6638,7 +7398,9 @@ def _inventory_lock_consistency(
             'Docs-only bootstrap lives in',
             'This archive has no runtime agent code.',
         }
-        if bootstrap and not required_bootstrap <= set(bootstrap):
+        if bootstrap and not required_bootstrap <= set(
+            bootstrap
+        ):
             findings.append(
                 Finding(
                     schema_path,
@@ -6671,7 +7433,9 @@ def _inventory_lock_consistency(
             "### Step 1: Individual Recipe (Single Agent)",
             "### Step 2: Master Recipe (All Agents)",
         }
-        if howto and not required_howto <= set(howto):
+        if howto and not required_howto <= set(
+            howto
+        ):
             findings.append(
                 Finding(
                     schema_path,
@@ -6707,7 +7471,9 @@ def _inventory_lock_consistency(
             "./agentic_flows/scratchpad.txt",
             "source of truth",
         }
-        if state and not required_state <= set(state):
+        if state and not required_state <= set(
+            state
+        ):
             findings.append(
                 Finding(
                     schema_path,
@@ -6740,7 +7506,9 @@ def _inventory_lock_consistency(
             "## Adding New Recipes",
             "[domain]_[action]_[target].yaml",
         }
-        if naming and not required_naming <= set(naming):
+        if naming and not required_naming <= set(
+            naming
+        ):
             findings.append(
                 Finding(
                     schema_path,
@@ -6774,7 +7542,9 @@ def _inventory_lock_consistency(
             "You are the Strategic Orchestrator for the FUZZYWIGG-AI ecosystem.",
             "Your role is NOT to code. Your role is to COORDINATE.",
         }
-        if roles and not required_roles <= set(roles):
+        if roles and not required_roles <= set(
+            roles
+        ):
             findings.append(
                 Finding(
                     schema_path,
@@ -6809,7 +7579,9 @@ def _inventory_lock_consistency(
             "## Conflict Resolution Matrix",
             "## Related Documentation",
         }
-        if sections and not required_sections <= set(sections):
+        if sections and not required_sections <= set(
+            sections
+        ):
             findings.append(
                 Finding(
                     schema_path,
@@ -6842,7 +7614,9 @@ def _inventory_lock_consistency(
             "## Integration with AGENTS.md",
             "[INSERT PROJECT-SPECIFIC INFO HERE]",
         }
-        if usage and not required_usage <= set(usage):
+        if usage and not required_usage <= set(
+            usage
+        ):
             findings.append(
                 Finding(
                     schema_path,
@@ -6878,7 +7652,9 @@ def _inventory_lock_consistency(
             "Never expose plaintext keys in RAM or logs",
             "Never deploy without post-quantum cryptography threat modeling",
         }
-        if constraints and not required_constraints <= set(constraints):
+        if constraints and not required_constraints <= set(
+            constraints
+        ):
             findings.append(
                 Finding(
                     schema_path,
@@ -6912,7 +7688,9 @@ def _inventory_lock_consistency(
             "Crypto operations > 500ms on target device",
             "ESCALATION TO HUMAN REQUIRED",
         }
-        if triggers and not required_triggers <= set(triggers):
+        if triggers and not required_triggers <= set(
+            triggers
+        ):
             findings.append(
                 Finding(
                     schema_path,
@@ -6948,7 +7726,9 @@ def _inventory_lock_consistency(
             "See AGENTS.md Section 22.7 (Conflict Resolution Matrix)",
             "Remember: You are not working alone",
         }
-        if related and not required_related <= set(related):
+        if related and not required_related <= set(
+            related
+        ):
             findings.append(
                 Finding(
                     schema_path,
@@ -6988,7 +7768,9 @@ def _inventory_lock_consistency(
             "### Phase 6: Iterate & Refine (Days 6-10)",
             "agentic_flows/quantum_nft_mint_orchestration.yaml",
         }
-        if phases and not required_phases <= set(phases):
+        if phases and not required_phases <= set(
+            phases
+        ):
             findings.append(
                 Finding(
                     schema_path,
@@ -7028,7 +7810,9 @@ def _inventory_lock_consistency(
             "Cirq (Python library)",
             "Goose (agent orchestration framework)",
         }
-        if tools and not required_tools <= set(tools):
+        if tools and not required_tools <= set(
+            tools
+        ):
             findings.append(
                 Finding(
                     schema_path,
@@ -7068,7 +7852,9 @@ def _inventory_lock_consistency(
             "## Common Issues & Solutions",
             "## Next Steps",
         }
-        if success and not required_success <= set(success):
+        if success and not required_success <= set(
+            success
+        ):
             findings.append(
                 Finding(
                     schema_path,
@@ -7108,7 +7894,9 @@ def _inventory_lock_consistency(
             "Use Qualtran to analyze circuit resource requirements",
             "Scratchpad is append-only, never overwrite",
         }
-        if issues and not required_issues <= set(issues):
+        if issues and not required_issues <= set(
+            issues
+        ):
             findings.append(
                 Finding(
                     schema_path,
@@ -7146,7 +7934,9 @@ def _inventory_lock_consistency(
             "Cirq simulator works locally",
             "Can I run agents in parallel?",
         }
-        if faq and not required_faq <= set(faq):
+        if faq and not required_faq <= set(
+            faq
+        ):
             findings.append(
                 Finding(
                     schema_path,
@@ -7186,7 +7976,9 @@ def _inventory_lock_consistency(
             "https://quantumai.google/cirq",
             "https://block.github.io/goose/",
         }
-        if support and not required_support <= set(support):
+        if support and not required_support <= set(
+            support
+        ):
             findings.append(
                 Finding(
                     schema_path,
@@ -7220,7 +8012,9 @@ def _inventory_lock_consistency(
             "### Week 1 Checklist",
             "### By End of Month",
         }
-        if timeline and not required_timeline <= set(timeline):
+        if timeline and not required_timeline <= set(
+            timeline
+        ):
             findings.append(
                 Finding(
                     schema_path,
@@ -7259,7 +8053,9 @@ def _inventory_lock_consistency(
             "Google Cirq (circuit construction)",
             "Goose (agent framework)",
         }
-        if technologies and not required_tech <= set(technologies):
+        if technologies and not required_tech <= set(
+            technologies
+        ):
             findings.append(
                 Finding(
                     schema_path,
@@ -7293,7 +8089,9 @@ def _inventory_lock_consistency(
             "### Step 1: Single Agent Task",
             "### Step 3: Escalation (If Conflict)",
         }
-        if workflow and not required_workflow <= set(workflow):
+        if workflow and not required_workflow <= set(
+            workflow
+        ):
             findings.append(
                 Finding(
                     schema_path,
@@ -7327,7 +8125,9 @@ def _inventory_lock_consistency(
             "Python 3.11+ (WSL2)",
             "**Total Setup Time**: ~1 hour (mostly downloads)",
         }
-        if ide and not required_ide <= set(ide):
+        if ide and not required_ide <= set(
+            ide
+        ):
             findings.append(
                 Finding(
                     schema_path,
@@ -7366,7 +8166,9 @@ def _inventory_lock_consistency(
             "## Key Innovations in Your System",
             "**Recipe-Based Orchestration**: Goose recipes enable reproducible workflows",
         }
-        if innovations and not required_innovations <= set(innovations):
+        if innovations and not required_innovations <= set(
+            innovations
+        ):
             findings.append(
                 Finding(
                     schema_path,
@@ -7438,7 +8240,9 @@ def _inventory_lock_consistency(
             "**Bug** — something broken",
             "**Agent Task** — structured work",
         }
-        if issues and not required_issues <= set(issues):
+        if issues and not required_issues <= set(
+            issues
+        ):
             findings.append(
                 Finding(
                     schema_path,
@@ -7474,7 +8278,9 @@ def _inventory_lock_consistency(
             "python scripts/validate_manifests.py",
             "ruff check scripts tests",
         }
-        if local and not required_local <= set(local):
+        if local and not required_local <= set(
+            local
+        ):
             findings.append(
                 Finding(
                     schema_path,
@@ -7514,7 +8320,9 @@ def _inventory_lock_consistency(
             "Structural changes",
             "require Andrew approval before merging",
         }
-        if governance and not required_gov <= set(governance):
+        if governance and not required_gov <= set(
+            governance
+        ):
             findings.append(
                 Finding(
                     schema_path,
@@ -7555,7 +8363,9 @@ def _inventory_lock_consistency(
             "Status: ACTIVE | Tier: 1 | Created: 2026-04-13",
             "Edit policy: Agent-editable; structural changes require Andrew approval",
         }
-        if metadata and not required_meta <= set(metadata):
+        if metadata and not required_meta <= set(
+            metadata
+        ):
             findings.append(
                 Finding(
                     schema_path,
@@ -7595,7 +8405,9 @@ def _inventory_lock_consistency(
             "Never push directly",
             "thin docs/CI/hygiene",
         }
-        if surfaces and not required_surfaces <= set(surfaces):
+        if surfaces and not required_surfaces <= set(
+            surfaces
+        ):
             findings.append(
                 Finding(
                     schema_path,
@@ -7632,15 +8444,17 @@ def _inventory_lock_consistency(
     else:
         required_ci_honesty = {
             "markdown lint, link check, actionlint",
-            "Packaging inventory v51",
+            "Packaging inventory v52",
             "refuse invented recipes",
         }
-        if ci_honesty and not required_ci_honesty <= set(ci_honesty):
+        if ci_honesty and not required_ci_honesty <= set(
+            ci_honesty
+        ):
             findings.append(
                 Finding(
                     schema_path,
                     "contributing_ci_honesty_required_phrases must include "
-                    "CI checks/Packaging inventory v51/refuse invented recipes",
+                    "CI checks/Packaging inventory v52/refuse invented recipes",
                 )
             )
 
@@ -7669,7 +8483,9 @@ def _inventory_lock_consistency(
             "Security policy applies to:",
             "potential prompt injection surface",
         }
-        if scope and not required_scope <= set(scope):
+        if scope and not required_scope <= set(
+            scope
+        ):
             findings.append(
                 Finding(
                     schema_path,
@@ -7711,7 +8527,9 @@ def _inventory_lock_consistency(
             "Expected response:",
             "GitHub @fuzzywigg",
         }
-        if reporting_channel and not required_channel <= set(reporting_channel):
+        if reporting_channel and not required_channel <= set(
+            reporting_channel
+        ):
             findings.append(
                 Finding(
                     schema_path,
@@ -7751,7 +8569,9 @@ def _inventory_lock_consistency(
             "in RAM, logs, or code",
             "updated in a future issue",
         }
-        if compliance and not required_compliance <= set(compliance):
+        if compliance and not required_compliance <= set(
+            compliance
+        ):
             findings.append(
                 Finding(
                     schema_path,
@@ -7785,7 +8605,9 @@ def _inventory_lock_consistency(
             "Status: ACTIVE | Tier: 1 | Created: 2026-04-13",
             "Edit policy: Structural changes require Andrew approval",
         }
-        if header and not required_header <= set(header):
+        if header and not required_header <= set(
+            header
+        ):
             findings.append(
                 Finding(
                     schema_path,
@@ -7819,7 +8641,9 @@ def _inventory_lock_consistency(
             "ML-KEM/FIPS 203",
             "SLH-DSA/FIPS 205",
         }
-        if fips and not required_fips <= set(fips):
+        if fips and not required_fips <= set(
+            fips
+        ):
             findings.append(
                 Finding(
                     schema_path,
@@ -7859,7 +8683,9 @@ def _inventory_lock_consistency(
             "CRYSTALS-Kyber",
             "ML-KEM (FIPS 203)",
         }
-        if non_issues and not required_non_issues <= set(non_issues):
+        if non_issues and not required_non_issues <= set(
+            non_issues
+        ):
             findings.append(
                 Finding(
                     schema_path,
@@ -7895,7 +8721,9 @@ def _inventory_lock_consistency(
             "CRYSTALS-Kyber",
             "SPHINCS+",
         }
-        if crypto and not required_crypto <= set(crypto):
+        if crypto and not required_crypto <= set(
+            crypto
+        ):
             findings.append(
                 Finding(
                     schema_path,
@@ -7933,7 +8761,9 @@ def _inventory_lock_consistency(
             "**Phase 1: Algorithm Design**",
             "**Phase 4: Orchestration Decision**",
         }
-        if handoff and not required_handoff <= set(handoff):
+        if handoff and not required_handoff <= set(
+            handoff
+        ):
             findings.append(
                 Finding(
                     schema_path,
@@ -7975,7 +8805,9 @@ def _inventory_lock_consistency(
             "**QuantumArchitectAgent escalates when**:",
             "**OrchestrationAgent escalates to user when**:",
         }
-        if esc_matrix and not required_esc <= set(esc_matrix):
+        if esc_matrix and not required_esc <= set(
+            esc_matrix
+        ):
             findings.append(
                 Finding(
                     schema_path,
@@ -8016,7 +8848,9 @@ def _inventory_lock_consistency(
             "MUST use Cirq circuits compiled for mobile constraints",
             "Cirq-sim (classical validation)",
         }
-        if on_device and not required_on_device <= set(on_device):
+        if on_device and not required_on_device <= set(
+            on_device
+        ):
             findings.append(
                 Finding(
                     schema_path,
@@ -8055,7 +8889,9 @@ def _inventory_lock_consistency(
             "State Commitment Protocol",
             "Failure Recovery",
         }
-        if multichain and not required_multichain <= set(multichain):
+        if multichain and not required_multichain <= set(
+            multichain
+        ):
             findings.append(
                 Finding(
                     schema_path,
@@ -8097,7 +8933,9 @@ def _inventory_lock_consistency(
             "🚨 ESCALATION REQUIRED",
             "Awaiting approval before proceeding.",
         }
-        if esc_format and not required_esc_format <= set(esc_format):
+        if esc_format and not required_esc_format <= set(
+            esc_format
+        ):
             findings.append(
                 Finding(
                     schema_path,
@@ -8139,7 +8977,9 @@ def _inventory_lock_consistency(
             "name: quantum_nft_mint_workflow",
             "All three agents sign off before mainnet deployment",
         }
-        if recipe_orch and not required_recipe_orch <= set(recipe_orch):
+        if recipe_orch and not required_recipe_orch <= set(
+            recipe_orch
+        ):
             findings.append(
                 Finding(
                     schema_path,
@@ -8181,7 +9021,9 @@ def _inventory_lock_consistency(
             "Checkbox state is source of truth",
             "Only append, never overwrite",
         }
-        if scratch_state and not required_scratch_state <= set(scratch_state):
+        if scratch_state and not required_scratch_state <= set(
+            scratch_state
+        ):
             findings.append(
                 Finding(
                     schema_path,
@@ -8223,7 +9065,9 @@ def _inventory_lock_consistency(
             "**Quantum Algorithm Complexity**",
             "**Final Decision Maker**: OrchestrationAgent",
         }
-        if conflict_matrix and not required_conflict_matrix <= set(conflict_matrix):
+        if conflict_matrix and not required_conflict_matrix <= set(
+            conflict_matrix
+        ):
             findings.append(
                 Finding(
                     schema_path,
@@ -8257,7 +9101,9 @@ def _inventory_lock_consistency(
             "## [Unreleased]",
             "### Added",
         }
-        if changelog_format and not required_format <= set(changelog_format):
+        if changelog_format and not required_format <= set(
+            changelog_format
+        ):
             findings.append(
                 Finding(
                     schema_path,
@@ -8335,7 +9181,9 @@ def _inventory_lock_consistency(
             "## [0.1.0] — 2025-12-13",
             "`GOOSE-RECIPES.md` — Goose YAML recipe templates",
         }
-        if changelog_release and not required_release <= set(changelog_release):
+        if changelog_release and not required_release <= set(
+            changelog_release
+        ):
             findings.append(
                 Finding(
                     schema_path,
@@ -8372,7 +9220,9 @@ def _inventory_lock_consistency(
             "## Recipe 4: Multi-Agent Orchestration (Master Recipe)",
             "**File**: `./agentic_flows/quantum_nft_mint_orchestration.yaml`",
         }
-        if goose_headers and not required_headers <= set(goose_headers):
+        if goose_headers and not required_headers <= set(
+            goose_headers
+        ):
             findings.append(
                 Finding(
                     schema_path,
@@ -8411,7 +9261,9 @@ def _inventory_lock_consistency(
             "You are QuantumArchitectAgent designing a quantum algorithm for FUZZYWIGG.",
             "You are OrchestrationAgent coordinating a complete quantum NFT mint operation.",
         }
-        if goose_instr and not required_instr <= set(goose_instr):
+        if goose_instr and not required_instr <= set(
+            goose_instr
+        ):
             findings.append(
                 Finding(
                     schema_path,
@@ -8445,7 +9297,9 @@ def _inventory_lock_consistency(
             "name: developer",
             "timeout: 600",
         }
-        if goose_ext and not required_ext <= set(goose_ext):
+        if goose_ext and not required_ext <= set(
+            goose_ext
+        ):
             findings.append(
                 Finding(
                     schema_path,
@@ -8481,7 +9335,9 @@ def _inventory_lock_consistency(
             "STEP 2: Run QuantumArchitectAgent recipe",
             "STEP 6: Make final decision",
         }
-        if orch and not required_orch <= set(orch):
+        if orch and not required_orch <= set(
+            orch
+        ):
             findings.append(
                 Finding(
                     schema_path,
@@ -8515,7 +9371,9 @@ def _inventory_lock_consistency(
             "Conflict Type 2: SECURITY",
             "Decision: 🚨 ESCALATE TO HUMAN",
         }
-        if conflicts and not required_conflicts <= set(conflicts):
+        if conflicts and not required_conflicts <= set(
+            conflicts
+        ):
             findings.append(
                 Finding(
                     schema_path,
@@ -8551,7 +9409,9 @@ def _inventory_lock_consistency(
             "PENDING_QUANTUM_DESIGN",
             "Use Google Cirq for circuit construction",
         }
-        if qtask and not required_qtask <= set(qtask):
+        if qtask and not required_qtask <= set(
+            qtask
+        ):
             findings.append(
                 Finding(
                     schema_path,
@@ -10345,6 +11205,199 @@ def validate_prompt_instantiation(root: Path) -> list[Finding]:
             )
     return findings
 
+
+def validate_prompt_quantum_hw_metrics(root: Path) -> list[Finding]:
+    rel = "AGENT-PROMPTS.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "prompts missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if 'Gate count optimized for target hardware' not in body:
+        findings.append(Finding(rel, 'missing quantum-hw-metrics Gate count lock'))
+    for phrase in PROMPT_QUANTUM_HW_METRICS_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked prompt-quantum-hw-metrics phrase: {phrase}")
+            )
+    return findings
+
+def validate_prompt_bc_metrics(root: Path) -> list[Finding]:
+    rel = "AGENT-PROMPTS.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "prompts missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if 'Multi-chain sync < 2 minutes' not in body:
+        findings.append(Finding(rel, 'missing bc-metrics Multi-chain sync lock'))
+    for phrase in PROMPT_BC_METRICS_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked prompt-bc-metrics phrase: {phrase}")
+            )
+    return findings
+
+def validate_prompt_edge_review_metrics(root: Path) -> list[Finding]:
+    rel = "AGENT-PROMPTS.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "prompts missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if 'Apple security review: PASS' not in body:
+        findings.append(Finding(rel, 'missing edge-review-metrics Apple security review lock'))
+    for phrase in PROMPT_EDGE_REVIEW_METRICS_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked prompt-edge-review-metrics phrase: {phrase}")
+            )
+    return findings
+
+def validate_prompt_orch_delivery_metrics(root: Path) -> list[Finding]:
+    rel = "AGENT-PROMPTS.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "prompts missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if 'On-time delivery' not in body:
+        findings.append(Finding(rel, 'missing orch-delivery-metrics On-time delivery lock'))
+    for phrase in PROMPT_ORCH_DELIVERY_METRICS_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked prompt-orch-delivery-metrics phrase: {phrase}")
+            )
+    return findings
+
+def validate_prompt_quantum_comms_residual(root: Path) -> list[Finding]:
+    rel = "AGENT-PROMPTS.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "prompts missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if 'Flag quantum advantage deadlines and threats' not in body:
+        findings.append(Finding(rel, 'missing quantum-comms-residual Flag quantum advantage lock'))
+    for phrase in PROMPT_QUANTUM_COMMS_RESIDUAL_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked prompt-quantum-comms-residual phrase: {phrase}")
+            )
+    return findings
+
+def validate_prompt_bc_edge_comms(root: Path) -> list[Finding]:
+    rel = "AGENT-PROMPTS.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "prompts missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if 'Explain via architecture diagrams' not in body:
+        findings.append(Finding(rel, 'missing bc-edge-comms architecture diagrams lock'))
+    for phrase in PROMPT_BC_EDGE_COMMS_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked prompt-bc-edge-comms phrase: {phrase}")
+            )
+    return findings
+
+def validate_prompt_orch_comms_residual(root: Path) -> list[Finding]:
+    rel = "AGENT-PROMPTS.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "prompts missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if 'Explain trade-off reasoning' not in body:
+        findings.append(Finding(rel, 'missing orch-comms-residual trade-off reasoning lock'))
+    for phrase in PROMPT_ORCH_COMMS_RESIDUAL_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked prompt-orch-comms-residual phrase: {phrase}")
+            )
+    return findings
+
+def validate_prompt_quantum_principles_residual(root: Path) -> list[Finding]:
+    rel = "AGENT-PROMPTS.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "prompts missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if 'Recommend testing on multiple backends' not in body:
+        findings.append(Finding(rel, 'missing quantum-principles-residual multiple backends lock'))
+    for phrase in PROMPT_QUANTUM_PRINCIPLES_RESIDUAL_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked prompt-quantum-principles-residual phrase: {phrase}")
+            )
+    return findings
+
+def validate_prompt_bc_edge_principles(root: Path) -> list[Finding]:
+    rel = "AGENT-PROMPTS.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "prompts missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if 'Validate quantum-resistant cryptographic choices' not in body:
+        findings.append(Finding(rel, 'missing bc-edge-principles quantum-resistant lock'))
+    for phrase in PROMPT_BC_EDGE_PRINCIPLES_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked prompt-bc-edge-principles phrase: {phrase}")
+            )
+    return findings
+
+def validate_prompt_escalate_closures(root: Path) -> list[Finding]:
+    rel = "AGENT-PROMPTS.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "prompts missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if 'Escalate when constraints cannot be met' not in body:
+        findings.append(Finding(rel, 'missing escalate-closures Escalate when constraints lock'))
+    for phrase in PROMPT_ESCALATE_CLOSURES_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked prompt-escalate-closures phrase: {phrase}")
+            )
+    return findings
+
+def validate_prompt_qualtran_expertise_residual(root: Path) -> list[Finding]:
+    rel = "AGENT-PROMPTS.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "prompts missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if 'Qualtran (resource analysis)' not in body:
+        findings.append(Finding(rel, 'missing qualtran-expertise-residual Qualtran resource lock'))
+    for phrase in PROMPT_QUALTRAN_EXPERTISE_RESIDUAL_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked prompt-qualtran-expertise-residual phrase: {phrase}")
+            )
+    return findings
+
+def validate_prompt_vision_matrix_residual(root: Path) -> list[Finding]:
+    rel = "AGENT-PROMPTS.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "prompts missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if '## Current Project Vision' not in body:
+        findings.append(Finding(rel, 'missing vision-matrix-residual Current Project Vision lock'))
+    for phrase in PROMPT_VISION_MATRIX_RESIDUAL_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked prompt-vision-matrix-residual phrase: {phrase}")
+            )
+    return findings
+
 def validate_changelog_initial(root: Path) -> list[Finding]:
     rel = "CHANGELOG.md"
     path = root / rel
@@ -11474,8 +12527,8 @@ def validate_contributing_ci_honesty(root: Path) -> list[Finding]:
         return [Finding(rel, "CONTRIBUTING.md missing")]
     text = path.read_text(encoding="utf-8")
     findings: list[Finding] = []
-    if "Packaging inventory v51" not in text:
-        findings.append(Finding(rel, "missing Packaging inventory v51 honesty lock"))
+    if "Packaging inventory v52" not in text:
+        findings.append(Finding(rel, "missing Packaging inventory v52 honesty lock"))
     for phrase in CONTRIBUTING_CI_HONESTY_REQUIRED_PHRASES:
         if phrase not in text:
             findings.append(
@@ -13426,6 +14479,18 @@ VALIDATORS: dict[str, ValidatorFn] = {
     "prompt-tools-detail": validate_prompt_tools_detail,
     "prompt-responsibilities-detail": validate_prompt_responsibilities_detail,
     "prompt-instantiation": validate_prompt_instantiation,
+    "prompt-quantum-hw-metrics": validate_prompt_quantum_hw_metrics,
+    "prompt-bc-metrics": validate_prompt_bc_metrics,
+    "prompt-edge-review-metrics": validate_prompt_edge_review_metrics,
+    "prompt-orch-delivery-metrics": validate_prompt_orch_delivery_metrics,
+    "prompt-quantum-comms-residual": validate_prompt_quantum_comms_residual,
+    "prompt-bc-edge-comms": validate_prompt_bc_edge_comms,
+    "prompt-orch-comms-residual": validate_prompt_orch_comms_residual,
+    "prompt-quantum-principles-residual": validate_prompt_quantum_principles_residual,
+    "prompt-bc-edge-principles": validate_prompt_bc_edge_principles,
+    "prompt-escalate-closures": validate_prompt_escalate_closures,
+    "prompt-qualtran-expertise-residual": validate_prompt_qualtran_expertise_residual,
+    "prompt-vision-matrix-residual": validate_prompt_vision_matrix_residual,
     "hydration-phase2": validate_hydration_phase2,
     "hydration-phase5": validate_hydration_phase5,
     "link-check": validate_link_check,
