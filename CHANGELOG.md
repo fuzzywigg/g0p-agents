@@ -10,6 +10,22 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- CI/markdownlint residual **tests-only** leftover deepeners after tip through
+  **#200** (prompts listform + agentic_flows leftover after #195) / **#195** /
+  **#188** / **#187** / **#186** (EXISTING six fixtures — `markdownlint` /
+  `ci-setup-python` / `ci-ruff` / `ci-pip-install` / `ci-pip-check` /
+  `ci-pytest` — no invented product / workflow / inventory bump):
+  `.markdownlint.yaml` ↔ `schemas/markdownlint.schema.json` required-key +
+  const lock parity, per-lock schema const mismatch, YAML structural + type
+  edges (root list / string consts / empty nested maps), remaining `ci.yml`
+  assertion matrix (setup-python cache/with, ruff, pip install/check, pytest
+  markers, empty/scalar steps), inventory path/schema/yaml drops, concurrent
+  races, and tip isolation against #200/#195/#188 siblings. Historic four
+  only; inventory unchanged (v52 / 196). Distinct from merged #200
+  (listform+flows), #195/#188/#186 (actionlint/link-check), #187 (docs-cross),
+  closed CONFLICTING #201/#196 (same leftover vs stale tips), and historic
+  v12/v13 setup-python/ruff/pip/pytest edges.
+
 - Prompts list-form + agentic_flows residual **tests-only** deepeners after tip
   through **#195** (actionlint leftover after #188) / **#188** / **#187** /
   **#186** / **#184** / **#181** (EXISTING nineteen fixtures — twelve
