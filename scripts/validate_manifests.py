@@ -29,6 +29,7 @@ Checks structural correctness of:
 - CHANGELOG.md Keep a Changelog format / Unreleased / 0.1.0 release locks
 - GOOSE-RECIPES.md recipe headers / instruction-agent / extension locks
 - GOOSE-RECIPES.md master orchestration / conflicts / quantum-task locks
+- GOOSE-RECIPES.md blockchain-task / edge-task / adding-recipes leftover locks
 - AGENT-PROMPTS.md constraints / escalation-triggers / related-docs locks
 - EXECUTION-SUMMARY.md IDE setup / innovations / next-48-hours locks
 - agentic_flows/scratchpad.txt coordination markers (+ allowed file set)
@@ -173,7 +174,7 @@ REQUIRED_ARCHIVE_DOCS = (
     "README.md",
 )
 
-INVENTORY_VERSION = 40
+INVENTORY_VERSION = 41
 CURSOR_ENVIRONMENT_NAME = "g0p-agents"
 DEPENDABOT_SCHEDULE_INTERVAL = "weekly"
 DEPENDABOT_DIRECTORIES: frozenset[str] = frozenset({"/"})
@@ -644,7 +645,7 @@ CONTRIBUTING_CI_HONESTY_REQUIRED_PHRASES: tuple[str, ...] = (
     "markdown lint, link check, actionlint",
     "manifest validate on Python 3.11/3.12/3.13",
     "Andrew or designated reviewer",
-    "Packaging inventory v40",
+    "Packaging inventory v41",
     "refuse invented recipes",
     "orphan on-disk YAML",
     "unknown `*Agent` tokens",
@@ -1091,6 +1092,37 @@ GOOSE_QUANTUM_TASK_REQUIRED_PHRASES: tuple[str, ...] = (
     "STEP 5: Update scratchpad",
     "Create Python file: ./quantum_circuits/[circuit_name].py",
 )
+GOOSE_BLOCKCHAIN_TASK_REQUIRED_PHRASES: tuple[str, ...] = (
+    "## Smart Contract Design Task",
+    "STEP 1: Read the quantum circuit specification",
+    "PENDING_CONTRACT_DESIGN",
+    "STEP 2: Design the contract",
+    "Create Solidity contract (0.8.19+)",
+    "STEP 3: Validate quantum-resistant cryptography",
+    "STEP 4: Estimate costs",
+    "STEP 5: Security audit",
+    "Create Solidity file: ./contracts/[contract_name].sol",
+)
+GOOSE_EDGE_TASK_REQUIRED_PHRASES: tuple[str, ...] = (
+    "## On-Device Security Implementation Task",
+    "STEP 1: Read the smart contract ABI",
+    "PENDING_EDGE_SECURITY",
+    "STEP 2: Implement on-device crypto",
+    "Use liboqs for post-quantum cryptography",
+    'STEP 3: Design data isolation ("walled garden")',
+    "STEP 4: Optimize for constraints",
+    "STEP 5: Security validation",
+    "./mobile/src/quantum/QuantumValidator.js (React Native)",
+)
+GOOSE_ADDING_RECIPES_REQUIRED_PHRASES: tuple[str, ...] = (
+    "## Adding New Recipes",
+    "When you need a new workflow:",
+    "**Create new YAML file** in `./agentic_flows/`",
+    "**Follow the structure** above (instructions, prompt, extensions)",
+    "**Add to README** with description",
+    "**Update AGENTS.md** if it defines new constraints",
+    "**Document** expected inputs/outputs",
+)
 PROMPT_ROLES_REQUIRED_PHRASES: tuple[str, ...] = (
     "## 1. QuantumArchitectAgent Prompt Template",
     "You are the Quantum Computing specialist for the FUZZYWIGG-AI ecosystem.",
@@ -1263,7 +1295,7 @@ SCRATCHPAD_STATUS_MARKERS: tuple[str, ...] = (
 SPECIALIST_AGENTS: tuple[str, ...] = DOCUMENTED_AGENTS[:-1]
 
 MIN_COVERAGE_FAIL_UNDER = 99
-MIN_VALIDATOR_COUNT = 133
+MIN_VALIDATOR_COUNT = 136
 
 
 @dataclass(frozen=True)
@@ -2301,6 +2333,30 @@ def validate_packaging_inventory(root: Path) -> list[Finding]:
     ):
         findings.append(
             _lock_mismatch(schema_path, "goose_quantum_task_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("goose_blockchain_task_required_phrases", ()))
+        != GOOSE_BLOCKCHAIN_TASK_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "goose_blockchain_task_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("goose_edge_task_required_phrases", ()))
+        != GOOSE_EDGE_TASK_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "goose_edge_task_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("goose_adding_recipes_required_phrases", ()))
+        != GOOSE_ADDING_RECIPES_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "goose_adding_recipes_required_phrases")
         )
 
 
@@ -4760,7 +4816,7 @@ def _inventory_lock_consistency(
     else:
         required_ci_honesty = {
             "markdown lint, link check, actionlint",
-            "Packaging inventory v40",
+            "Packaging inventory v41",
             "refuse invented recipes",
         }
         if ci_honesty and not required_ci_honesty <= set(ci_honesty):
@@ -4768,7 +4824,7 @@ def _inventory_lock_consistency(
                 Finding(
                     schema_path,
                     "contributing_ci_honesty_required_phrases must include "
-                    "CI checks/Packaging inventory v40/refuse invented recipes",
+                    "CI checks/Packaging inventory v41/refuse invented recipes",
                 )
             )
 
@@ -5688,6 +5744,116 @@ def _inventory_lock_consistency(
                 )
             )
 
+    btask = list(inventory.get("goose_blockchain_task_required_phrases", ()))
+    if len(btask) != len(set(btask)):
+        findings.append(
+            Finding(
+                schema_path, "goose_blockchain_task_required_phrases must be unique"
+            )
+        )
+    if not btask:
+        findings.append(
+            Finding(
+                schema_path,
+                "goose_blockchain_task_required_phrases must not be empty",
+            )
+        )
+    for phrase in btask:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "goose_blockchain_task_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_btask = {
+            "## Smart Contract Design Task",
+            "PENDING_CONTRACT_DESIGN",
+            "Create Solidity contract (0.8.19+)",
+        }
+        if btask and not required_btask <= set(btask):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "goose_blockchain_task_required_phrases must include Smart "
+                    "Contract Design Task/PENDING_CONTRACT_DESIGN/Solidity 0.8.19+",
+                )
+            )
+
+    etask = list(inventory.get("goose_edge_task_required_phrases", ()))
+    if len(etask) != len(set(etask)):
+        findings.append(
+            Finding(schema_path, "goose_edge_task_required_phrases must be unique")
+        )
+    if not etask:
+        findings.append(
+            Finding(schema_path, "goose_edge_task_required_phrases must not be empty")
+        )
+    for phrase in etask:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "goose_edge_task_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_etask = {
+            "## On-Device Security Implementation Task",
+            "PENDING_EDGE_SECURITY",
+            "Use liboqs for post-quantum cryptography",
+        }
+        if etask and not required_etask <= set(etask):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "goose_edge_task_required_phrases must include On-Device "
+                    "Security Task/PENDING_EDGE_SECURITY/liboqs",
+                )
+            )
+
+    adding = list(inventory.get("goose_adding_recipes_required_phrases", ()))
+    if len(adding) != len(set(adding)):
+        findings.append(
+            Finding(
+                schema_path, "goose_adding_recipes_required_phrases must be unique"
+            )
+        )
+    if not adding:
+        findings.append(
+            Finding(
+                schema_path, "goose_adding_recipes_required_phrases must not be empty"
+            )
+        )
+    for phrase in adding:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "goose_adding_recipes_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_adding = {
+            "## Adding New Recipes",
+            "**Create new YAML file** in `./agentic_flows/`",
+            "**Document** expected inputs/outputs",
+        }
+        if adding and not required_adding <= set(adding):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "goose_adding_recipes_required_phrases must include Adding "
+                    "New Recipes/Create YAML/Document inputs-outputs",
+                )
+            )
 
     return findings
 
@@ -7795,8 +7961,8 @@ def validate_contributing_ci_honesty(root: Path) -> list[Finding]:
         return [Finding(rel, "CONTRIBUTING.md missing")]
     text = path.read_text(encoding="utf-8")
     findings: list[Finding] = []
-    if "Packaging inventory v40" not in text:
-        findings.append(Finding(rel, "missing Packaging inventory v40 honesty lock"))
+    if "Packaging inventory v41" not in text:
+        findings.append(Finding(rel, "missing Packaging inventory v41 honesty lock"))
     for phrase in CONTRIBUTING_CI_HONESTY_REQUIRED_PHRASES:
         if phrase not in text:
             findings.append(
@@ -8060,6 +8226,59 @@ def validate_goose_quantum_task(root: Path) -> list[Finding]:
         if phrase not in body:
             findings.append(
                 Finding(rel, f"missing locked goose-quantum-task phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_goose_blockchain_task(root: Path) -> list[Finding]:
+    rel = "GOOSE-RECIPES.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "GOOSE-RECIPES.md missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## Smart Contract Design Task" not in body:
+        findings.append(Finding(rel, "missing Smart Contract Design Task section"))
+    for phrase in GOOSE_BLOCKCHAIN_TASK_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked goose-blockchain-task phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_goose_edge_task(root: Path) -> list[Finding]:
+    rel = "GOOSE-RECIPES.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "GOOSE-RECIPES.md missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## On-Device Security Implementation Task" not in body:
+        findings.append(
+            Finding(rel, "missing On-Device Security Implementation Task section")
+        )
+    for phrase in GOOSE_EDGE_TASK_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked goose-edge-task phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_goose_adding_recipes(root: Path) -> list[Finding]:
+    rel = "GOOSE-RECIPES.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "GOOSE-RECIPES.md missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## Adding New Recipes" not in body:
+        findings.append(Finding(rel, "missing Adding New Recipes section"))
+    for phrase in GOOSE_ADDING_RECIPES_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked goose-adding-recipes phrase: {phrase}")
             )
     return findings
 
@@ -9525,6 +9744,9 @@ VALIDATORS: dict[str, ValidatorFn] = {
     "goose-orchestration": validate_goose_orchestration,
     "goose-conflicts": validate_goose_conflicts,
     "goose-quantum-task": validate_goose_quantum_task,
+    "goose-blockchain-task": validate_goose_blockchain_task,
+    "goose-edge-task": validate_goose_edge_task,
+    "goose-adding-recipes": validate_goose_adding_recipes,
     "prompt-roles": validate_prompt_roles,
     "prompt-sections": validate_prompt_sections,
     "prompt-usage": validate_prompt_usage,

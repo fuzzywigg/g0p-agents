@@ -10,6 +10,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Goose recipes **v41** deepeners (post-#96 constitution v40): `goose-blockchain-task`,
+  `goose-edge-task`, `goose-adding-recipes` validators; GOOSE-RECIPES.md Smart Contract
+  Design Task STEP locks, On-Device Security Implementation Task STEP locks, and
+  Adding New Recipes workflow leftovers; consistency deepeners for
+  `goose_blockchain_task_required_phrases` / `goose_edge_task_required_phrases` /
+  `goose_adding_recipes_required_phrases`
+  (Packaging inventory 136 total; historic four only — goose recipes leftovers
+  slice, not constitution v40, hydration v40, postmortem, security v39,
+  contributing v38, implementation-guide, agent prompts, changelog, execution-summary,
+  or Dependabot)
+
 - Constitution **v40** deepeners (post-#94 security v39): `constitution-recipe-orchestration`,
   `constitution-scratchpad-state`, `constitution-conflict-matrix` validators;
   AGENTS-v2.2.md §22.5 Recipe-Based Orchestration Structure locks, §22.6 Scratchpad

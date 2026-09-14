@@ -1,5 +1,5 @@
 {
-  "version": 40,
+  "version": 41,
   "documented_agents": [
     "QuantumArchitectAgent",
     "BlockchainArchitectAgent",
@@ -329,7 +329,10 @@
     "github-agents",
     "gitignore",
     "goose",
+    "goose-adding-recipes",
+    "goose-blockchain-task",
     "goose-conflicts",
+    "goose-edge-task",
     "goose-extensions",
     "goose-howto",
     "goose-instruction-agents",
@@ -405,7 +408,7 @@
     "yaml-configs"
   ],
   "min_coverage_fail_under": 99,
-  "min_validator_count": 133,
+  "min_validator_count": 136,
   "required_paths": [
     "README.md",
     "LICENSE",
@@ -1245,7 +1248,7 @@
     "markdown lint, link check, actionlint",
     "manifest validate on Python 3.11/3.12/3.13",
     "Andrew or designated reviewer",
-    "Packaging inventory v40",
+    "Packaging inventory v41",
     "refuse invented recipes",
     "orphan on-disk YAML",
     "unknown `*Agent` tokens",
@@ -1299,5 +1302,36 @@
     "**Crypto Algorithm Choice**",
     "**Deployment Timeline**",
     "**Final Decision Maker**: OrchestrationAgent"
+  ],
+  "goose_blockchain_task_required_phrases": [
+    "## Smart Contract Design Task",
+    "STEP 1: Read the quantum circuit specification",
+    "PENDING_CONTRACT_DESIGN",
+    "STEP 2: Design the contract",
+    "Create Solidity contract (0.8.19+)",
+    "STEP 3: Validate quantum-resistant cryptography",
+    "STEP 4: Estimate costs",
+    "STEP 5: Security audit",
+    "Create Solidity file: ./contracts/[contract_name].sol"
+  ],
+  "goose_edge_task_required_phrases": [
+    "## On-Device Security Implementation Task",
+    "STEP 1: Read the smart contract ABI",
+    "PENDING_EDGE_SECURITY",
+    "STEP 2: Implement on-device crypto",
+    "Use liboqs for post-quantum cryptography",
+    "STEP 3: Design data isolation (\"walled garden\")",
+    "STEP 4: Optimize for constraints",
+    "STEP 5: Security validation",
+    "./mobile/src/quantum/QuantumValidator.js (React Native)"
+  ],
+  "goose_adding_recipes_required_phrases": [
+    "## Adding New Recipes",
+    "When you need a new workflow:",
+    "**Create new YAML file** in `./agentic_flows/`",
+    "**Follow the structure** above (instructions, prompt, extensions)",
+    "**Add to README** with description",
+    "**Update AGENTS.md** if it defines new constraints",
+    "**Document** expected inputs/outputs"
   ]
 }
