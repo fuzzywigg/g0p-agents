@@ -1,5 +1,5 @@
 {
-  "version": 42,
+  "version": 43,
   "documented_agents": [
     "QuantumArchitectAgent",
     "BlockchainArchitectAgent",
@@ -340,10 +340,15 @@
     "goose-state-machine",
     "hydration",
     "hydration-deferred",
+    "hydration-git-detail",
+    "hydration-identity-detail",
     "hydration-list-a",
     "hydration-list-b",
+    "hydration-meta",
     "hydration-phase1",
+    "hydration-phase2",
     "hydration-phase4",
+    "hydration-phase5",
     "hydration-resolved",
     "implementation-faq",
     "implementation-guide",
@@ -413,7 +418,7 @@
     "yaml-configs"
   ],
   "min_coverage_fail_under": 99,
-  "min_validator_count": 141,
+  "min_validator_count": 146,
   "required_paths": [
     "README.md",
     "LICENSE",
@@ -1253,7 +1258,7 @@
     "markdown lint, link check, actionlint",
     "manifest validate on Python 3.11/3.12/3.13",
     "Andrew or designated reviewer",
-    "Packaging inventory v42",
+    "Packaging inventory v43",
     "refuse invented recipes",
     "orphan on-disk YAML",
     "unknown `*Agent` tokens",
@@ -1399,5 +1404,40 @@
     "Which of the 4 agents (Quantum/Blockchain/Edge/Orchestration) is highest priority",
     "should g0p-agents merge into it or stay separate?",
     "Does a Notion page for g0p-agents exist?"
+  ],
+  "hydration_meta_required_phrases": [
+    "# Agent Hydration Report — g0p-agents",
+    "Status: ACTIVE | Tier: 1 | Created: 2026-04-13",
+    "Owner: copilot (hydration run) | Edit policy: Agent-editable"
+  ],
+  "hydration_identity_detail_required_phrases": [
+    "**LICENSE file absent**",
+    "No package.json, requirements.txt, pyproject.toml, Cargo.toml",
+    "No executable source code",
+    "Purpose statement is thin; no badges, no quick-start",
+    "Goose (referenced in YAML templates)"
+  ],
+  "hydration_git_detail_required_phrases": [
+    "`main` (protected), `copilot/hydrate` (this run)",
+    "2 commits total (shallow clone)",
+    "main protected (push blocked)",
+    "copilot/hydrate: no protection",
+    "Feature branches per issue",
+    "Full history"
+  ],
+  "hydration_phase2_required_phrases": [
+    "## PHASE 2: QUESTIONS",
+    "Determines if crypto recommendations are current",
+    "Determines scaffolding language for quantum_circuits/",
+    "Andrew's head",
+    "Andrew / Notion North Star",
+    "Notion Master Index",
+    "Web/docs",
+    "OQS project",
+    "Codebase read"
+  ],
+  "hydration_phase5_required_phrases": [
+    "## PHASE 5: Roadmap",
+    "See GitHub Issue: [claude] g0p-agents Roadmap — Development Timeline & Issue Tracker"
   ]
 }
