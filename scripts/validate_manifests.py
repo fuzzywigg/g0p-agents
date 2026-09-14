@@ -73,6 +73,7 @@ Checks structural correctness of:
 - Issue template frontmatter name/about locks
 - README badge phrase locks
 - README honesty / historic prompt set / contents section locks
+- README lead / contents-blurbs / bootstrap-closing leftover locks
 - CLAUDE.md quarterly-review trigger phrase locks
 - markdownlint MD025/MD033/MD024 siblings_only + MD013 tables/code_blocks locks
 - GitHub agent description lock
@@ -175,7 +176,7 @@ REQUIRED_ARCHIVE_DOCS = (
     "README.md",
 )
 
-INVENTORY_VERSION = 42
+INVENTORY_VERSION = 43
 CURSOR_ENVIRONMENT_NAME = "g0p-agents"
 DEPENDABOT_SCHEDULE_INTERVAL = "weekly"
 DEPENDABOT_DIRECTORIES: frozenset[str] = frozenset({"/"})
@@ -705,7 +706,7 @@ CONTRIBUTING_CI_HONESTY_REQUIRED_PHRASES: tuple[str, ...] = (
     "markdown lint, link check, actionlint",
     "manifest validate on Python 3.11/3.12/3.13",
     "Andrew or designated reviewer",
-    "Packaging inventory v42",
+    "Packaging inventory v43",
     "refuse invented recipes",
     "orphan on-disk YAML",
     "unknown `*Agent` tokens",
@@ -755,6 +756,30 @@ README_CONTENTS_REQUIRED_PHRASES: tuple[str, ...] = (
     ".cursor/environment.json",
     "## Manifest validation",
     "## License",
+)
+
+README_LEAD_REQUIRED_PHRASES: tuple[str, ...] = (
+    'Docs-only archive of 2025 "Quantum-Blockchain" agent prompts (v2.2, Dec 2025).',
+    '"Oracle-Style',
+    'Quantum Hive Mind" language in the historic copy below is prompt fiction.',
+    'This repository contains the "Quantum-Blockchain" agentic protocols v2.2 (Dec 2025).',
+    'architecture *on paper*',
+)
+README_BLURBS_REQUIRED_PHRASES: tuple[str, ...] = (
+    'Full system prompts for the 4 specialist agents.',
+    'YAML-based orchestration logic (Goose Framework).',
+    'Step-by-step setup for a quantum-dev environment.',
+    'Historic snapshot of the agent constitution.',
+    'Repo routing, contribution, and reporting policy.',
+)
+README_BOOTSTRAP_REQUIRED_PHRASES: tuple[str, ...] = (
+    'This is an archived reference implementation, not a live hive.',
+    'Docs-only bootstrap lives in',
+    '(`install` verifies key archive files; no `start` services).',
+    'This archive has no runtime agent code.',
+    'Schemas and the packaging inventory live under',
+    'does **not** invent specialist agents beyond the historic four',
+    'MIT — see [LICENSE](LICENSE).',
 )
 LICENSE_REQUIRED_PHRASES: tuple[str, ...] = (
     "MIT License",
@@ -1357,7 +1382,7 @@ SCRATCHPAD_STATUS_MARKERS: tuple[str, ...] = (
 SPECIALIST_AGENTS: tuple[str, ...] = DOCUMENTED_AGENTS[:-1]
 
 MIN_COVERAGE_FAIL_UNDER = 99
-MIN_VALIDATOR_COUNT = 141
+MIN_VALIDATOR_COUNT = 144
 
 
 @dataclass(frozen=True)
@@ -2369,6 +2394,26 @@ def validate_packaging_inventory(root: Path) -> list[Finding]:
         != README_CONTENTS_REQUIRED_PHRASES
     ):
         findings.append(_lock_mismatch(schema_path, "readme_contents_required_phrases"))
+
+
+    if (
+        tuple(inventory.get("readme_lead_required_phrases", ()))
+        != README_LEAD_REQUIRED_PHRASES
+    ):
+        findings.append(_lock_mismatch(schema_path, "readme_lead_required_phrases"))
+
+    if (
+        tuple(inventory.get("readme_blurbs_required_phrases", ()))
+        != README_BLURBS_REQUIRED_PHRASES
+    ):
+        findings.append(_lock_mismatch(schema_path, "readme_blurbs_required_phrases"))
+
+    if (
+        tuple(inventory.get("readme_bootstrap_required_phrases", ()))
+        != README_BOOTSTRAP_REQUIRED_PHRASES
+    ):
+        findings.append(_lock_mismatch(schema_path, "readme_bootstrap_required_phrases"))
+
 
 
     if (
@@ -4241,6 +4286,106 @@ def _inventory_lock_consistency(
             )
 
 
+
+    lead = list(inventory.get("readme_lead_required_phrases", ()))
+    if len(lead) != len(set(lead)):
+        findings.append(
+            Finding(schema_path, "readme_lead_required_phrases must be unique")
+        )
+    if not lead:
+        findings.append(
+            Finding(schema_path, "readme_lead_required_phrases must not be empty")
+        )
+    for phrase in lead:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "readme_lead_required_phrases entries must be non-empty strings",
+                )
+            )
+            break
+    else:
+        required_lead = {
+            'Docs-only archive of 2025 "Quantum-Blockchain" agent prompts (v2.2, Dec 2025).',
+            '"Oracle-Style',
+            'architecture *on paper*',
+        }
+        if lead and not required_lead <= set(lead):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "readme_lead_required_phrases must include Docs-only archive/"
+                    "Oracle-Style/architecture on paper",
+                )
+            )
+
+    blurbs = list(inventory.get("readme_blurbs_required_phrases", ()))
+    if len(blurbs) != len(set(blurbs)):
+        findings.append(
+            Finding(schema_path, "readme_blurbs_required_phrases must be unique")
+        )
+    if not blurbs:
+        findings.append(
+            Finding(schema_path, "readme_blurbs_required_phrases must not be empty")
+        )
+    for phrase in blurbs:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "readme_blurbs_required_phrases entries must be non-empty strings",
+                )
+            )
+            break
+    else:
+        required_blurbs = {
+            'Full system prompts for the 4 specialist agents.',
+            'YAML-based orchestration logic (Goose Framework).',
+            'Historic snapshot of the agent constitution.',
+        }
+        if blurbs and not required_blurbs <= set(blurbs):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "readme_blurbs_required_phrases must include Full system prompts/"
+                    "YAML-based/Historic snapshot",
+                )
+            )
+
+    bootstrap = list(inventory.get("readme_bootstrap_required_phrases", ()))
+    if len(bootstrap) != len(set(bootstrap)):
+        findings.append(
+            Finding(schema_path, "readme_bootstrap_required_phrases must be unique")
+        )
+    if not bootstrap:
+        findings.append(
+            Finding(schema_path, "readme_bootstrap_required_phrases must not be empty")
+        )
+    for phrase in bootstrap:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "readme_bootstrap_required_phrases entries must be non-empty strings",
+                )
+            )
+            break
+    else:
+        required_bootstrap = {
+            'This is an archived reference implementation, not a live hive.',
+            'Docs-only bootstrap lives in',
+            'This archive has no runtime agent code.',
+        }
+        if bootstrap and not required_bootstrap <= set(bootstrap):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "readme_bootstrap_required_phrases must include archived reference/"
+                    "Docs-only bootstrap/no runtime agent code",
+                )
+            )
+
     howto = list(inventory.get("goose_howto_required_phrases", ()))
     if len(howto) != len(set(howto)):
         findings.append(
@@ -5226,7 +5371,7 @@ def _inventory_lock_consistency(
     else:
         required_ci_honesty = {
             "markdown lint, link check, actionlint",
-            "Packaging inventory v42",
+            "Packaging inventory v43",
             "refuse invented recipes",
         }
         if ci_honesty and not required_ci_honesty <= set(ci_honesty):
@@ -5234,7 +5379,7 @@ def _inventory_lock_consistency(
                 Finding(
                     schema_path,
                     "contributing_ci_honesty_required_phrases must include "
-                    "CI checks/Packaging inventory v42/refuse invented recipes",
+                    "CI checks/Packaging inventory v43/refuse invented recipes",
                 )
             )
 
@@ -8347,8 +8492,8 @@ def validate_contributing_ci_honesty(root: Path) -> list[Finding]:
         return [Finding(rel, "CONTRIBUTING.md missing")]
     text = path.read_text(encoding="utf-8")
     findings: list[Finding] = []
-    if "Packaging inventory v42" not in text:
-        findings.append(Finding(rel, "missing Packaging inventory v42 honesty lock"))
+    if "Packaging inventory v43" not in text:
+        findings.append(Finding(rel, "missing Packaging inventory v43 honesty lock"))
     for phrase in CONTRIBUTING_CI_HONESTY_REQUIRED_PHRASES:
         if phrase not in text:
             findings.append(
@@ -8455,6 +8600,63 @@ def validate_readme_contents(root: Path) -> list[Finding]:
         if phrase not in text:
             findings.append(
                 Finding(rel, f"missing locked readme-contents phrase: {phrase}")
+            )
+    return findings
+
+
+
+
+def validate_readme_lead(root: Path) -> list[Finding]:
+    rel = "README.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "README.md missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if 'Docs-only archive of 2025 "Quantum-Blockchain" agent prompts' not in text:
+        findings.append(Finding(rel, "missing Docs-only archive lead"))
+    for phrase in README_LEAD_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(rel, f"missing locked readme-lead phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_readme_blurbs(root: Path) -> list[Finding]:
+    rel = "README.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "README.md missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## Contents" not in text:
+        findings.append(Finding(rel, "missing Contents section"))
+    for phrase in README_BLURBS_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(rel, f"missing locked readme-blurbs phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_readme_bootstrap(root: Path) -> list[Finding]:
+    rel = "README.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "README.md missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## Cloud agents" not in text:
+        findings.append(Finding(rel, "missing Cloud agents section"))
+    if "## Manifest validation" not in text:
+        findings.append(Finding(rel, "missing Manifest validation section"))
+    if "## License" not in text:
+        findings.append(Finding(rel, "missing License section"))
+    for phrase in README_BOOTSTRAP_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(rel, f"missing locked readme-bootstrap phrase: {phrase}")
             )
     return findings
 
@@ -10119,6 +10321,9 @@ VALIDATORS: dict[str, ValidatorFn] = {
     "readme-honesty": validate_readme_honesty,
     "readme-historic": validate_readme_historic,
     "readme-contents": validate_readme_contents,
+    "readme-lead": validate_readme_lead,
+    "readme-blurbs": validate_readme_blurbs,
+    "readme-bootstrap": validate_readme_bootstrap,
     "goose-howto": validate_goose_howto,
     "goose-state-machine": validate_goose_state_machine,
     "goose-naming": validate_goose_naming,
