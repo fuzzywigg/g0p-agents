@@ -1,5 +1,5 @@
 {
-  "version": 44,
+  "version": 45,
   "documented_agents": [
     "QuantumArchitectAgent",
     "BlockchainArchitectAgent",
@@ -276,7 +276,10 @@
     "bug-repro",
     "bug-template",
     "changelog",
+    "changelog-changed",
     "changelog-format",
+    "changelog-initial",
+    "changelog-preamble",
     "changelog-release",
     "changelog-unreleased",
     "ci",
@@ -297,10 +300,15 @@
     "constitution-escalation-format",
     "constitution-escalation-matrix",
     "constitution-handoff",
+    "constitution-hard-constraints",
+    "constitution-ide-stack",
+    "constitution-install-script",
     "constitution-multichain",
     "constitution-on-device",
     "constitution-recipe-orchestration",
+    "constitution-risk-tolerance",
     "constitution-scratchpad-state",
+    "constitution-vscode",
     "contributing",
     "contributing-branches",
     "contributing-ci-honesty",
@@ -421,7 +429,7 @@
     "yaml-configs"
   ],
   "min_coverage_fail_under": 99,
-  "min_validator_count": 149,
+  "min_validator_count": 157,
   "required_paths": [
     "README.md",
     "LICENSE",
@@ -1261,7 +1269,7 @@
     "markdown lint, link check, actionlint",
     "manifest validate on Python 3.11/3.12/3.13",
     "Andrew or designated reviewer",
-    "Packaging inventory v44",
+    "Packaging inventory v45",
     "refuse invented recipes",
     "orphan on-disk YAML",
     "unknown `*Agent` tokens",
@@ -1465,5 +1473,83 @@
   "hydration_phase5_required_phrases": [
     "## PHASE 5: Roadmap",
     "See GitHub Issue: [claude] g0p-agents Roadmap — Development Timeline & Issue Tracker"
+  ],
+  "constitution_ide_stack_required_phrases": [
+    "## 23. Quantum-Blockchain Development IDE Setup",
+    "### 23.1 Required Software Stack",
+    "#### Tier 1: Foundation (All Developers)",
+    "#### Tier 2: Quantum Computing",
+    "#### Tier 3: Blockchain Development",
+    "#### Tier 4: On-Device Security",
+    "#### Tier 5: Container Orchestration",
+    "Git + GitHub",
+    "VS Code + Remote WSL2 extension",
+    "Cirq (Google quantum circuits)",
+    "Qualtran (quantum algorithm abstractions)",
+    "Hardhat (smart contract environment)",
+    "React Native + Expo (cross-platform)",
+    "Docker Desktop (WSL2 backend)"
+  ],
+  "constitution_install_script_required_phrases": [
+    "### 23.2 Installation Script (WSL2 Ubuntu 22.04)",
+    "setup-quantum-blockchain-dev.sh",
+    "Setting up Quantum-Blockchain Development Environment...",
+    "source ~/quantum-blockchain-env/bin/activate",
+    "mkdir -p ~/fuzzywigg-ai/quantum_circuits",
+    "mkdir -p ~/fuzzywigg-ai/agentic_flows",
+    "pip install liboqs",
+    "✅ Quantum-Blockchain development environment ready!"
+  ],
+  "constitution_vscode_required_phrases": [
+    "### 23.3 VS Code Extensions (Required)",
+    "Install these extensions in VS Code:",
+    "ms-python.python",
+    "ms-toolsai.jupyter",
+    "JuanBlanco.solidity",
+    "Hardhat.hardhat-solidity",
+    "ms-azuretools.vscode-docker",
+    "ms-vscode-remote.remote-wsl",
+    "GitHub.copilot"
+  ],
+  "constitution_hard_constraints_required_phrases": [
+    "## 24. Hard Constraints — Quantum-Blockchain Additions",
+    "Add to Section 3 (Hard Constraints):",
+    "Agents must **NEVER**:",
+    "Design quantum algorithms without validating against known quantum-resistant properties",
+    "Deploy smart contracts without post-quantum cryptography threat modeling",
+    "Implement on-device crypto without HSM/secure enclave consideration",
+    "Claim quantum-safe without formal verification",
+    "NIST-standardized algorithms (Kyber, Dilithium, SPHINCS+)"
+  ],
+  "constitution_risk_tolerance_required_phrases": [
+    "## 25. Quarterly Risk Tolerance Review (Section 12.4.1)",
+    "### 12.4.1 Risk Tolerance Evolution Protocol",
+    "Every 90 days (or after 500+ successful transactions), conduct a formal risk tolerance review:",
+    "Success rate > 99.5% (at current tier)",
+    "Time since last critical incident > 60 days",
+    "Review incident log (postmortem.md)",
+    "Test new tier on testnet (10 transactions minimum)",
+    "If failure rate > 2% in new tier, immediately revert to previous tier."
+  ],
+  "changelog_preamble_required_phrases": [
+    "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).",
+    "https://keepachangelog.com/en/1.0.0/",
+    "All notable changes to this project will be documented in this file.",
+    "---"
+  ],
+  "changelog_changed_required_phrases": [
+    "### Changed",
+    "Inventory schema minimum version is **7**",
+    "CI validator-count gate raised to ≥34",
+    "coverage gate **99%**",
+    "Dependabot now tracks pip (`requirements-dev.txt`)",
+    "CI `pull_request` trigger targets `alpha`",
+    "`CONTRIBUTING.md` branch strategy aligned with live default branch `alpha`"
+  ],
+  "changelog_initial_required_phrases": [
+    "## [0.1.0] — 2025-12-13",
+    "`README.md` — public archive description",
+    "`IMPLEMENTATION-GUIDE.md` — step-by-step setup guide",
+    "`EXECUTION-SUMMARY.md` — implementation summary"
   ]
 }

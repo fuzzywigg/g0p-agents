@@ -60,6 +60,9 @@ Checks structural correctness of:
 - IMPLEMENTATION-GUIDE Quick Start / EXECUTION-SUMMARY specialist table /
   hydration LIST B HITL question locks (Dec 2025 archive snapshot slice)
 - docs/agent-hydration.md PHASE 1 / LIST A / PHASE 3 resolved /
+- AGENTS-v2.2.md §23 IDE stack / install / VS Code /
+  §24 hard-constraints / §25 risk-tolerance leftover locks
+- CHANGELOG.md preamble / Changed / 0.1.0 initial leftover locks
   PHASE 4 issues / LIST B deferred leftover locks
 - postmortem.md intro / Decision field / Next Steps surface locks
 - agentic_flows/scratchpad.txt intro / format-legend / task-meta locks
@@ -176,7 +179,7 @@ REQUIRED_ARCHIVE_DOCS = (
     "README.md",
 )
 
-INVENTORY_VERSION = 44
+INVENTORY_VERSION = 45
 CURSOR_ENVIRONMENT_NAME = "g0p-agents"
 DEPENDABOT_SCHEDULE_INTERVAL = "weekly"
 DEPENDABOT_DIRECTORIES: frozenset[str] = frozenset({"/"})
@@ -606,6 +609,93 @@ HYDRATION_LIST_B_REQUIRED_PHRASES: tuple[str, ...] = (
     "What is the `agents-standard` repo",
     "Is there a Notion page for g0p-agents",
 )
+
+CONSTITUTION_IDE_STACK_REQUIRED_PHRASES: tuple[str, ...] = (
+    "## 23. Quantum-Blockchain Development IDE Setup",
+    "### 23.1 Required Software Stack",
+    "#### Tier 1: Foundation (All Developers)",
+    "#### Tier 2: Quantum Computing",
+    "#### Tier 3: Blockchain Development",
+    "#### Tier 4: On-Device Security",
+    "#### Tier 5: Container Orchestration",
+    "Git + GitHub",
+    "VS Code + Remote WSL2 extension",
+    "Cirq (Google quantum circuits)",
+    "Qualtran (quantum algorithm abstractions)",
+    "Hardhat (smart contract environment)",
+    "React Native + Expo (cross-platform)",
+    "Docker Desktop (WSL2 backend)",
+)
+
+CONSTITUTION_INSTALL_SCRIPT_REQUIRED_PHRASES: tuple[str, ...] = (
+    "### 23.2 Installation Script (WSL2 Ubuntu 22.04)",
+    "setup-quantum-blockchain-dev.sh",
+    "Setting up Quantum-Blockchain Development Environment...",
+    "source ~/quantum-blockchain-env/bin/activate",
+    "mkdir -p ~/fuzzywigg-ai/quantum_circuits",
+    "mkdir -p ~/fuzzywigg-ai/agentic_flows",
+    "pip install liboqs",
+    "\u2705 Quantum-Blockchain development environment ready!",
+)
+
+CONSTITUTION_VSCODE_REQUIRED_PHRASES: tuple[str, ...] = (
+    "### 23.3 VS Code Extensions (Required)",
+    "Install these extensions in VS Code:",
+    "ms-python.python",
+    "ms-toolsai.jupyter",
+    "JuanBlanco.solidity",
+    "Hardhat.hardhat-solidity",
+    "ms-azuretools.vscode-docker",
+    "ms-vscode-remote.remote-wsl",
+    "GitHub.copilot",
+)
+
+CONSTITUTION_HARD_CONSTRAINTS_REQUIRED_PHRASES: tuple[str, ...] = (
+    "## 24. Hard Constraints \u2014 Quantum-Blockchain Additions",
+    "Add to Section 3 (Hard Constraints):",
+    "Agents must **NEVER**:",
+    "Design quantum algorithms without validating against known quantum-resistant properties",
+    "Deploy smart contracts without post-quantum cryptography threat modeling",
+    "Implement on-device crypto without HSM/secure enclave consideration",
+    "Claim quantum-safe without formal verification",
+    "NIST-standardized algorithms (Kyber, Dilithium, SPHINCS+)",
+)
+
+CONSTITUTION_RISK_TOLERANCE_REQUIRED_PHRASES: tuple[str, ...] = (
+    "## 25. Quarterly Risk Tolerance Review (Section 12.4.1)",
+    "### 12.4.1 Risk Tolerance Evolution Protocol",
+    "Every 90 days (or after 500+ successful transactions), conduct a formal risk tolerance review:",  # noqa: E501
+    "Success rate > 99.5% (at current tier)",
+    "Time since last critical incident > 60 days",
+    "Review incident log (postmortem.md)",
+    "Test new tier on testnet (10 transactions minimum)",
+    "If failure rate > 2% in new tier, immediately revert to previous tier.",
+)
+
+CHANGELOG_PREAMBLE_REQUIRED_PHRASES: tuple[str, ...] = (
+    "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).",
+    "https://keepachangelog.com/en/1.0.0/",
+    "All notable changes to this project will be documented in this file.",
+    "---",
+)
+
+CHANGELOG_CHANGED_REQUIRED_PHRASES: tuple[str, ...] = (
+    "### Changed",
+    "Inventory schema minimum version is **7**",
+    "CI validator-count gate raised to \u226534",
+    "coverage gate **99%**",
+    "Dependabot now tracks pip (`requirements-dev.txt`)",
+    "CI `pull_request` trigger targets `alpha`",
+    "`CONTRIBUTING.md` branch strategy aligned with live default branch `alpha`",
+)
+
+CHANGELOG_INITIAL_REQUIRED_PHRASES: tuple[str, ...] = (
+    "## [0.1.0] \u2014 2025-12-13",
+    "`README.md` \u2014 public archive description",
+    "`IMPLEMENTATION-GUIDE.md` \u2014 step-by-step setup guide",
+    "`EXECUTION-SUMMARY.md` \u2014 implementation summary",
+)
+
 POSTMORTEM_INTRO_REQUIRED_PHRASES: tuple[str, ...] = (
     "Decision & Incident Log",
     "Every significant decision, conflict, and resolution is logged here",
@@ -742,7 +832,7 @@ CONTRIBUTING_CI_HONESTY_REQUIRED_PHRASES: tuple[str, ...] = (
     "markdown lint, link check, actionlint",
     "manifest validate on Python 3.11/3.12/3.13",
     "Andrew or designated reviewer",
-    "Packaging inventory v44",
+    "Packaging inventory v45",
     "refuse invented recipes",
     "orphan on-disk YAML",
     "unknown `*Agent` tokens",
@@ -1418,7 +1508,7 @@ SCRATCHPAD_STATUS_MARKERS: tuple[str, ...] = (
 SPECIALIST_AGENTS: tuple[str, ...] = DOCUMENTED_AGENTS[:-1]
 
 MIN_COVERAGE_FAIL_UNDER = 99
-MIN_VALIDATOR_COUNT = 149
+MIN_VALIDATOR_COUNT = 157
 
 
 @dataclass(frozen=True)
@@ -2352,6 +2442,70 @@ def validate_packaging_inventory(root: Path) -> list[Finding]:
     ):
         findings.append(
             _lock_mismatch(schema_path, "hydration_phase5_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("constitution_ide_stack_required_phrases", ()))
+        != CONSTITUTION_IDE_STACK_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "constitution_ide_stack_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("constitution_install_script_required_phrases", ()))
+        != CONSTITUTION_INSTALL_SCRIPT_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "constitution_install_script_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("constitution_vscode_required_phrases", ()))
+        != CONSTITUTION_VSCODE_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "constitution_vscode_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("constitution_hard_constraints_required_phrases", ()))
+        != CONSTITUTION_HARD_CONSTRAINTS_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "constitution_hard_constraints_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("constitution_risk_tolerance_required_phrases", ()))
+        != CONSTITUTION_RISK_TOLERANCE_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "constitution_risk_tolerance_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("changelog_preamble_required_phrases", ()))
+        != CHANGELOG_PREAMBLE_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "changelog_preamble_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("changelog_changed_required_phrases", ()))
+        != CHANGELOG_CHANGED_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "changelog_changed_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("changelog_initial_required_phrases", ()))
+        != CHANGELOG_INITIAL_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "changelog_initial_required_phrases")
         )
 
 
@@ -3787,6 +3941,286 @@ def _inventory_lock_consistency(
                     schema_path,
                     "hydration_deferred_required_phrases must include Deferred/"
                     "archive/PikoClaw/Notion",
+                )
+            )
+
+
+    ide_stack = list(inventory.get("constitution_ide_stack_required_phrases", ()))
+    if len(ide_stack) != len(set(ide_stack)):
+        findings.append(
+            Finding(schema_path, "constitution_ide_stack_required_phrases must be unique")
+        )
+    if not ide_stack:
+        findings.append(
+            Finding(schema_path, "constitution_ide_stack_required_phrases must not be empty")
+        )
+    for phrase in ide_stack:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "constitution_ide_stack_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_ide_stack = {
+            "## 23. Quantum-Blockchain Development IDE Setup",
+            "### 23.1 Required Software Stack",
+            "#### Tier 1: Foundation (All Developers)",
+            "Cirq (Google quantum circuits)"
+        }
+        if ide_stack and not required_ide_stack <= set(ide_stack):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "constitution_ide_stack_required_phrases must include "
+                    "IDE Setup/Required Software Stack/Tier 1/Cirq",
+                )
+            )
+
+    install_script = list(inventory.get("constitution_install_script_required_phrases", ()))
+    if len(install_script) != len(set(install_script)):
+        findings.append(
+            Finding(schema_path, "constitution_install_script_required_phrases must be unique")
+        )
+    if not install_script:
+        findings.append(
+            Finding(schema_path, "constitution_install_script_required_phrases must not be empty")
+        )
+    for phrase in install_script:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "constitution_install_script_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_install_script = {
+            "### 23.2 Installation Script (WSL2 Ubuntu 22.04)",
+            "setup-quantum-blockchain-dev.sh",
+            "pip install liboqs",
+            "\u2705 Quantum-Blockchain development environment ready!"
+        }
+        if install_script and not required_install_script <= set(install_script):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "constitution_install_script_required_phrases must include "
+                    "Installation Script/setup script/liboqs/ready",
+                )
+            )
+
+    vscode_ext = list(inventory.get("constitution_vscode_required_phrases", ()))
+    if len(vscode_ext) != len(set(vscode_ext)):
+        findings.append(
+            Finding(schema_path, "constitution_vscode_required_phrases must be unique")
+        )
+    if not vscode_ext:
+        findings.append(
+            Finding(schema_path, "constitution_vscode_required_phrases must not be empty")
+        )
+    for phrase in vscode_ext:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "constitution_vscode_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_vscode_ext = {
+            "### 23.3 VS Code Extensions (Required)",
+            "ms-python.python",
+            "JuanBlanco.solidity",
+            "ms-vscode-remote.remote-wsl"
+        }
+        if vscode_ext and not required_vscode_ext <= set(vscode_ext):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "constitution_vscode_required_phrases must include VS Code Extensions/python/"
+                    "solidity/remote-wsl",
+                )
+            )
+
+    hard_constraints = list(inventory.get("constitution_hard_constraints_required_phrases", ()))
+    if len(hard_constraints) != len(set(hard_constraints)):
+        findings.append(
+            Finding(schema_path, "constitution_hard_constraints_required_phrases must be unique")
+        )
+    if not hard_constraints:
+        findings.append(
+            Finding(schema_path, "constitution_hard_constraints_required_phrases must not be empty")
+        )
+    for phrase in hard_constraints:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "constitution_hard_constraints_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_hard_constraints = {
+            "## 24. Hard Constraints \u2014 Quantum-Blockchain Additions",
+            "Agents must **NEVER**:",
+            "Claim quantum-safe without formal verification",
+            "NIST-standardized algorithms (Kyber, Dilithium, SPHINCS+)"
+        }
+        if hard_constraints and not required_hard_constraints <= set(hard_constraints):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "constitution_hard_constraints_required_phrases must include "
+                    "Hard Constraints/NEVER/formal verification/NIST",
+                )
+            )
+
+    risk_tol = list(inventory.get("constitution_risk_tolerance_required_phrases", ()))
+    if len(risk_tol) != len(set(risk_tol)):
+        findings.append(
+            Finding(schema_path, "constitution_risk_tolerance_required_phrases must be unique")
+        )
+    if not risk_tol:
+        findings.append(
+            Finding(schema_path, "constitution_risk_tolerance_required_phrases must not be empty")
+        )
+    for phrase in risk_tol:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "constitution_risk_tolerance_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_risk_tol = {
+            "## 25. Quarterly Risk Tolerance Review (Section 12.4.1)",
+            "### 12.4.1 Risk Tolerance Evolution Protocol",
+            "Success rate > 99.5% (at current tier)",
+            "If failure rate > 2% in new tier, immediately revert to previous tier."
+        }
+        if risk_tol and not required_risk_tol <= set(risk_tol):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "constitution_risk_tolerance_required_phrases must include "
+                    "Risk Tolerance/12.4.1/99.5%/revert",
+                )
+            )
+
+    cl_preamble = list(inventory.get("changelog_preamble_required_phrases", ()))
+    if len(cl_preamble) != len(set(cl_preamble)):
+        findings.append(
+            Finding(schema_path, "changelog_preamble_required_phrases must be unique")
+        )
+    if not cl_preamble:
+        findings.append(
+            Finding(schema_path, "changelog_preamble_required_phrases must not be empty")
+        )
+    for phrase in cl_preamble:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "changelog_preamble_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_cl_preamble = {
+            "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).",
+            "All notable changes to this project will be documented in this file.",
+            "---"
+        }
+        if cl_preamble and not required_cl_preamble <= set(cl_preamble):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "changelog_preamble_required_phrases must include Keep a Changelog/"
+                    "notable changes/separator",
+                )
+            )
+
+    cl_changed = list(inventory.get("changelog_changed_required_phrases", ()))
+    if len(cl_changed) != len(set(cl_changed)):
+        findings.append(
+            Finding(schema_path, "changelog_changed_required_phrases must be unique")
+        )
+    if not cl_changed:
+        findings.append(
+            Finding(schema_path, "changelog_changed_required_phrases must not be empty")
+        )
+    for phrase in cl_changed:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "changelog_changed_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_cl_changed = {
+            "### Changed",
+            "coverage gate **99%**",
+            "CI `pull_request` trigger targets `alpha`",
+            "Dependabot now tracks pip (`requirements-dev.txt`)"
+        }
+        if cl_changed and not required_cl_changed <= set(cl_changed):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "changelog_changed_required_phrases must include Changed/coverage/"
+                    "alpha/Dependabot",
+                )
+            )
+
+    cl_initial = list(inventory.get("changelog_initial_required_phrases", ()))
+    if len(cl_initial) != len(set(cl_initial)):
+        findings.append(
+            Finding(schema_path, "changelog_initial_required_phrases must be unique")
+        )
+    if not cl_initial:
+        findings.append(
+            Finding(schema_path, "changelog_initial_required_phrases must not be empty")
+        )
+    for phrase in cl_initial:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "changelog_initial_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_cl_initial = {
+            "## [0.1.0] \u2014 2025-12-13",
+            "`README.md` \u2014 public archive description",
+            "`IMPLEMENTATION-GUIDE.md` \u2014 step-by-step setup guide",
+            "`EXECUTION-SUMMARY.md` \u2014 implementation summary"
+        }
+        if cl_initial and not required_cl_initial <= set(cl_initial):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "changelog_initial_required_phrases must include "
+                    "0.1.0/README/IMPLEMENTATION-GUIDE/EXECUTION-SUMMARY",
                 )
             )
 
@@ -5633,7 +6067,7 @@ def _inventory_lock_consistency(
     else:
         required_ci_honesty = {
             "markdown lint, link check, actionlint",
-            "Packaging inventory v44",
+            "Packaging inventory v45",
             "refuse invented recipes",
         }
         if ci_honesty and not required_ci_honesty <= set(ci_honesty):
@@ -5641,7 +6075,7 @@ def _inventory_lock_consistency(
                 Finding(
                     schema_path,
                     "contributing_ci_honesty_required_phrases must include "
-                    "CI checks/Packaging inventory v44/refuse invented recipes",
+                    "CI checks/Packaging inventory v45/refuse invented recipes",
                 )
             )
 
@@ -7731,6 +8165,152 @@ def validate_hydration_identity_detail(root: Path) -> list[Finding]:
     return findings
 
 
+
+def validate_constitution_ide_stack(root: Path) -> list[Finding]:
+    rel = "AGENTS-v2.2.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "constitution missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## 23. Quantum-Blockchain Development IDE Setup" not in body:
+        findings.append(Finding(rel, "missing IDE Setup section"))
+    for phrase in CONSTITUTION_IDE_STACK_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked constitution-ide-stack phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_constitution_install_script(root: Path) -> list[Finding]:
+    rel = "AGENTS-v2.2.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "constitution missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "### 23.2 Installation Script (WSL2 Ubuntu 22.04)" not in body:
+        findings.append(Finding(rel, "missing Installation Script section"))
+    for phrase in CONSTITUTION_INSTALL_SCRIPT_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(
+                    rel,
+                    f"missing locked constitution-install-script phrase: {phrase}",
+                )
+            )
+    return findings
+
+
+def validate_constitution_vscode(root: Path) -> list[Finding]:
+    rel = "AGENTS-v2.2.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "constitution missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "### 23.3 VS Code Extensions (Required)" not in body:
+        findings.append(Finding(rel, "missing VS Code Extensions section"))
+    for phrase in CONSTITUTION_VSCODE_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked constitution-vscode phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_constitution_hard_constraints(root: Path) -> list[Finding]:
+    rel = "AGENTS-v2.2.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "constitution missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## 24. Hard Constraints — Quantum-Blockchain Additions" not in body:
+        findings.append(Finding(rel, "missing Hard Constraints section"))
+    for phrase in CONSTITUTION_HARD_CONSTRAINTS_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(
+                    rel,
+                    f"missing locked constitution-hard-constraints phrase: {phrase}",
+                )
+            )
+    return findings
+
+
+def validate_constitution_risk_tolerance(root: Path) -> list[Finding]:
+    rel = "AGENTS-v2.2.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "constitution missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## 25. Quarterly Risk Tolerance Review (Section 12.4.1)" not in body:
+        findings.append(Finding(rel, "missing Risk Tolerance Review section"))
+    for phrase in CONSTITUTION_RISK_TOLERANCE_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(
+                    rel,
+                    f"missing locked constitution-risk-tolerance phrase: {phrase}",
+                )
+            )
+    return findings
+
+
+def validate_changelog_preamble(root: Path) -> list[Finding]:
+    rel = "CHANGELOG.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "changelog missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "Keep a Changelog" not in body:
+        findings.append(Finding(rel, "missing Keep a Changelog preamble"))
+    for phrase in CHANGELOG_PREAMBLE_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked changelog-preamble phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_changelog_changed(root: Path) -> list[Finding]:
+    rel = "CHANGELOG.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "changelog missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "### Changed" not in body:
+        findings.append(Finding(rel, "missing Changed section"))
+    for phrase in CHANGELOG_CHANGED_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked changelog-changed phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_changelog_initial(root: Path) -> list[Finding]:
+    rel = "CHANGELOG.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "changelog missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## [0.1.0]" not in body:
+        findings.append(Finding(rel, "missing 0.1.0 initial release section"))
+    for phrase in CHANGELOG_INITIAL_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked changelog-initial phrase: {phrase}")
+            )
+    return findings
+
+
 def validate_hydration_git_detail(root: Path) -> list[Finding]:
     rel = "docs/agent-hydration.md"
     path = root / rel
@@ -8843,8 +9423,8 @@ def validate_contributing_ci_honesty(root: Path) -> list[Finding]:
         return [Finding(rel, "CONTRIBUTING.md missing")]
     text = path.read_text(encoding="utf-8")
     findings: list[Finding] = []
-    if "Packaging inventory v44" not in text:
-        findings.append(Finding(rel, "missing Packaging inventory v44 honesty lock"))
+    if "Packaging inventory v45" not in text:
+        findings.append(Finding(rel, "missing Packaging inventory v45 honesty lock"))
     for phrase in CONTRIBUTING_CI_HONESTY_REQUIRED_PHRASES:
         if phrase not in text:
             findings.append(
@@ -10759,6 +11339,14 @@ VALIDATORS: dict[str, ValidatorFn] = {
     "hydration-meta": validate_hydration_meta,
     "hydration-identity-detail": validate_hydration_identity_detail,
     "hydration-git-detail": validate_hydration_git_detail,
+    "constitution-ide-stack": validate_constitution_ide_stack,
+    "constitution-install-script": validate_constitution_install_script,
+    "constitution-vscode": validate_constitution_vscode,
+    "constitution-hard-constraints": validate_constitution_hard_constraints,
+    "constitution-risk-tolerance": validate_constitution_risk_tolerance,
+    "changelog-preamble": validate_changelog_preamble,
+    "changelog-changed": validate_changelog_changed,
+    "changelog-initial": validate_changelog_initial,
     "hydration-phase2": validate_hydration_phase2,
     "hydration-phase5": validate_hydration_phase5,
     "link-check": validate_link_check,
