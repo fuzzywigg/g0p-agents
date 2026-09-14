@@ -10,6 +10,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Prompt/validator residual **tests-only** deepeners for post-#141 **v52** modules
+  (EXISTING twelve only — no invented product / inventory bump): concurrent
+  validate races, empty/whitespace/header-only AGENT-PROMPTS, invalid/invented
+  v53 keys, per-phrase drop matrix, inventory mismatch matrix, and cross-isolation
+  against `prompt-metrics-detail` / `prompt-orch-metrics-detail` /
+  `prompt-communication-detail` / `prompt-principles-detail` /
+  `prompt-responsibilities-residual` / `prompt-expertise-residual` /
+  `prompt-vision-context` / `prompt-context-residual` / `prompt-monthly-detail` /
+  `prompt-docs-residual` / `prompt-matrix-resolutions` / `prompt-usage-detail`.
+  Historic four only; inventory unchanged (v52 / 196). Distinct from open #142
+  (pre-v52 / 33-module residual on tip before #141).
+
 - Prompts residual **v52 HEAVY** deepeners / **v51 leftovers continued** (post-#134 tip; distinct from closed CONFLICTING #133/#135):
   `prompt-metrics-detail`, `prompt-orch-metrics-detail`, `prompt-communication-detail`,
   `prompt-principles-detail`, `prompt-responsibilities-residual`, `prompt-expertise-residual`,
