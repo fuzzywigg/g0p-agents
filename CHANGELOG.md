@@ -10,6 +10,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Security residual **tests-only** deepeners after **#161** (EXISTING nine
+  `security-*` phrase-lock fixtures plus the live `security` packaging lock —
+  no invented product / inventory bump): concurrent validate races,
+  empty/whitespace/header-only `SECURITY.md`, invalid/invented timeout+v53 keys,
+  per-phrase drop matrix, inventory mismatch matrix, cross-isolation, and
+  historic-four packaging fixture edges. Historic four only; inventory unchanged
+  (v52 / 196). Distinct from merged #161 (hydration), merged #156 (constitution),
+  merged #151 (prompt-pre-v52), merged #147 (goose-recipe), merged #144 (v52
+  prompt residuals), and closed CONFLICTING timeout invent siblings.
+
 - Hydration residual **tests-only** deepeners after **#151** tip / post-#156
   (EXISTING eleven `hydration-*` phrase-lock fixtures plus the live `hydration`
   report lock — no invented product / inventory bump): concurrent validate races,
