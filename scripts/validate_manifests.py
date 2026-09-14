@@ -183,7 +183,7 @@ REQUIRED_ARCHIVE_DOCS = (
     "README.md",
 )
 
-INVENTORY_VERSION = 49
+INVENTORY_VERSION = 50
 CURSOR_ENVIRONMENT_NAME = "g0p-agents"
 DEPENDABOT_SCHEDULE_INTERVAL = "weekly"
 DEPENDABOT_DIRECTORIES: frozenset[str] = frozenset({"/"})
@@ -836,7 +836,7 @@ CONTRIBUTING_CI_HONESTY_REQUIRED_PHRASES: tuple[str, ...] = (
     "markdown lint, link check, actionlint",
     "manifest validate on Python 3.11/3.12/3.13",
     "Andrew or designated reviewer",
-    "Packaging inventory v49",
+    "Packaging inventory v50",
     "refuse invented recipes",
     "orphan on-disk YAML",
     "unknown `*Agent` tokens",
@@ -1049,6 +1049,36 @@ PROMPT_INTEGRATION_REQUIRED_PHRASES: tuple[str, ...] = (
     "Remember: You are not smarter than the three specialists. Your job is to "
     "listen, understand, mediate, and make calls when consensus is impossible.",
 )
+
+PROMPT_CONTEXT_REQUIRED_PHRASES: tuple[str, ...] = (
+    "## Current Project Context",
+    "[INSERT PROJECT-SPECIFIC INFO HERE]",
+    "Target quantum hardware: [Cirq-sim initially, then Google/IBM hardware]",
+    "Circuit depth limit: [2MB RAM on mobile device]",
+    "Primary blockchain: Ethereum (Sepolia testnet, mainnet)",
+    "Consensus requirement: Quantum-resistant validation required",
+    "Target devices: Android (minimum Snapdragon 8 Gen 2), iOS (minimum iPhone 12)",
+    "Crypto algorithms: CRYSTALS-Kyber (key encapsulation), CRYSTALS-Dilithium (signatures)",
+)
+
+PROMPT_CANNOT_DELEGATE_REQUIRED_PHRASES: tuple[str, ...] = (
+    "## Key Responsibilities You CANNOT Delegate",
+    "Final go/no-go decisions",
+    "Risk acceptance (acknowledging consequences)",
+    "Human escalation (when agents can't decide)",
+    "Vision articulation (Mickey 18 \u2192 technical architecture)",
+    "Stakeholder communication",
+)
+
+PROMPT_ESCALATION_AUTHORITY_REQUIRED_PHRASES: tuple[str, ...] = (
+    "## Your Escalation Authority",
+    "You MUST escalate to human if:",
+    "Two or more agents have irresolvable conflicts",
+    "Risk exceeds acceptable threshold",
+    "Timeline pressure conflicts with quality requirements",
+    "Budget constraints conflict with scope",
+)
+
 
 LICENSE_REQUIRED_PHRASES: tuple[str, ...] = (
     "MIT License",
@@ -1651,7 +1681,7 @@ SCRATCHPAD_STATUS_MARKERS: tuple[str, ...] = (
 SPECIALIST_AGENTS: tuple[str, ...] = DOCUMENTED_AGENTS[:-1]
 
 MIN_COVERAGE_FAIL_UNDER = 99
-MIN_VALIDATOR_COUNT = 169
+MIN_VALIDATOR_COUNT = 172
 
 
 @dataclass(frozen=True)
@@ -2753,6 +2783,27 @@ def validate_packaging_inventory(root: Path) -> list[Finding]:
             _lock_mismatch(schema_path, "prompt_integration_required_phrases")
         )
 
+    if (
+        tuple(inventory.get("prompt_context_required_phrases", ()))
+        != PROMPT_CONTEXT_REQUIRED_PHRASES
+    ):
+        findings.append(_lock_mismatch(schema_path, "prompt_context_required_phrases"))
+
+    if (
+        tuple(inventory.get("prompt_cannot_delegate_required_phrases", ()))
+        != PROMPT_CANNOT_DELEGATE_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "prompt_cannot_delegate_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("prompt_escalation_authority_required_phrases", ()))
+        != PROMPT_ESCALATION_AUTHORITY_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "prompt_escalation_authority_required_phrases")
+        )
 
     if (
         tuple(inventory.get("postmortem_intro_required_phrases", ()))
@@ -4951,6 +5002,129 @@ def _inventory_lock_consistency(
                 )
             )
 
+    prompt_context = list(inventory.get("prompt_context_required_phrases", ()))
+    if len(prompt_context) != len(set(prompt_context)):
+        findings.append(
+            Finding(schema_path, "prompt_context_required_phrases must be unique")
+        )
+    if not prompt_context:
+        findings.append(
+            Finding(schema_path, "prompt_context_required_phrases must not be empty")
+        )
+    for phrase in prompt_context:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_context_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_prompt_context = {
+            "## Current Project Context",
+            "[INSERT PROJECT-SPECIFIC INFO HERE]",
+            "Primary blockchain: Ethereum (Sepolia testnet, mainnet)",
+            "Target devices: Android (minimum Snapdragon 8 Gen 2), iOS (minimum iPhone 12)",
+        }
+        if prompt_context and not required_prompt_context <= set(prompt_context):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_context_required_phrases must include "
+                    "Current Project Context/INSERT/blockchain/devices",
+                )
+            )
+
+    prompt_cannot_delegate = list(
+        inventory.get("prompt_cannot_delegate_required_phrases", ())
+    )
+    if len(prompt_cannot_delegate) != len(set(prompt_cannot_delegate)):
+        findings.append(
+            Finding(
+                schema_path, "prompt_cannot_delegate_required_phrases must be unique"
+            )
+        )
+    if not prompt_cannot_delegate:
+        findings.append(
+            Finding(
+                schema_path, "prompt_cannot_delegate_required_phrases must not be empty"
+            )
+        )
+    for phrase in prompt_cannot_delegate:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_cannot_delegate_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_prompt_cannot_delegate = {
+            "## Key Responsibilities You CANNOT Delegate",
+            "Final go/no-go decisions",
+            "Risk acceptance (acknowledging consequences)",
+            "Stakeholder communication",
+        }
+        if prompt_cannot_delegate and not required_prompt_cannot_delegate <= set(
+            prompt_cannot_delegate
+        ):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_cannot_delegate_required_phrases must include "
+                    "CANNOT Delegate/go-no-go/Risk acceptance/Stakeholder",
+                )
+            )
+
+    prompt_escalation_authority = list(
+        inventory.get("prompt_escalation_authority_required_phrases", ())
+    )
+    if len(prompt_escalation_authority) != len(set(prompt_escalation_authority)):
+        findings.append(
+            Finding(
+                schema_path,
+                "prompt_escalation_authority_required_phrases must be unique",
+            )
+        )
+    if not prompt_escalation_authority:
+        findings.append(
+            Finding(
+                schema_path,
+                "prompt_escalation_authority_required_phrases must not be empty",
+            )
+        )
+    for phrase in prompt_escalation_authority:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_escalation_authority_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_prompt_escalation_authority = {
+            "## Your Escalation Authority",
+            "You MUST escalate to human if:",
+            "Two or more agents have irresolvable conflicts",
+            "Budget constraints conflict with scope",
+        }
+        if prompt_escalation_authority and not required_prompt_escalation_authority <= set(
+            prompt_escalation_authority
+        ):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_escalation_authority_required_phrases must include "
+                    "Escalation Authority/MUST escalate/irresolvable/Budget",
+                )
+            )
+
     intro = list(inventory.get("postmortem_intro_required_phrases", ()))
     if len(intro) != len(set(intro)):
         findings.append(
@@ -6794,7 +6968,7 @@ def _inventory_lock_consistency(
     else:
         required_ci_honesty = {
             "markdown lint, link check, actionlint",
-            "Packaging inventory v49",
+            "Packaging inventory v50",
             "refuse invented recipes",
         }
         if ci_honesty and not required_ci_honesty <= set(ci_honesty):
@@ -6802,7 +6976,7 @@ def _inventory_lock_consistency(
                 Finding(
                     schema_path,
                     "contributing_ci_honesty_required_phrases must include "
-                    "CI checks/Packaging inventory v49/refuse invented recipes",
+                    "CI checks/Packaging inventory v50/refuse invented recipes",
                 )
             )
 
@@ -9247,6 +9421,62 @@ def validate_prompt_integration(root: Path) -> list[Finding]:
     return findings
 
 
+def validate_prompt_context(root: Path) -> list[Finding]:
+    rel = "AGENT-PROMPTS.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "prompts missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## Current Project Context" not in body:
+        findings.append(Finding(rel, "missing Current Project Context section"))
+    for phrase in PROMPT_CONTEXT_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked prompt-context phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_prompt_cannot_delegate(root: Path) -> list[Finding]:
+    rel = "AGENT-PROMPTS.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "prompts missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## Key Responsibilities You CANNOT Delegate" not in body:
+        findings.append(
+            Finding(rel, "missing Key Responsibilities You CANNOT Delegate section")
+        )
+    for phrase in PROMPT_CANNOT_DELEGATE_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked prompt-cannot-delegate phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_prompt_escalation_authority(root: Path) -> list[Finding]:
+    rel = "AGENT-PROMPTS.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "prompts missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## Your Escalation Authority" not in body:
+        findings.append(Finding(rel, "missing Your Escalation Authority section"))
+    for phrase in PROMPT_ESCALATION_AUTHORITY_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(
+                    rel,
+                    f"missing locked prompt-escalation-authority phrase: {phrase}",
+                )
+            )
+    return findings
+
+
 def validate_changelog_initial(root: Path) -> list[Finding]:
     rel = "CHANGELOG.md"
     path = root / rel
@@ -10376,8 +10606,8 @@ def validate_contributing_ci_honesty(root: Path) -> list[Finding]:
         return [Finding(rel, "CONTRIBUTING.md missing")]
     text = path.read_text(encoding="utf-8")
     findings: list[Finding] = []
-    if "Packaging inventory v49" not in text:
-        findings.append(Finding(rel, "missing Packaging inventory v49 honesty lock"))
+    if "Packaging inventory v50" not in text:
+        findings.append(Finding(rel, "missing Packaging inventory v50 honesty lock"))
     for phrase in CONTRIBUTING_CI_HONESTY_REQUIRED_PHRASES:
         if phrase not in text:
             findings.append(
@@ -12312,6 +12542,9 @@ VALIDATORS: dict[str, ValidatorFn] = {
     "prompt-responsibilities": validate_prompt_responsibilities,
     "prompt-decision-authority": validate_prompt_decision_authority,
     "prompt-integration": validate_prompt_integration,
+    "prompt-context": validate_prompt_context,
+    "prompt-cannot-delegate": validate_prompt_cannot_delegate,
+    "prompt-escalation-authority": validate_prompt_escalation_authority,
     "hydration-phase2": validate_hydration_phase2,
     "hydration-phase5": validate_hydration_phase5,
     "link-check": validate_link_check,
