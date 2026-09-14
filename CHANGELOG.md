@@ -11,7 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 
 - Prompts listform + agentic_flows residual **tests-only** leftover deepeners after
-  tip through **#265** (Claude/routing leftover after #264) / **#264** / **#258** /
+  tip through **#270** (goose-schema leftover after #265) / **#265** / **#264** / **#258** /
   **#253** (prompts+flows after #248) / **#248** / **#242** / **#236** / **#229** /
   **#224** / **#219** / **#209** / **#208** / **#202** / **#200** (EXISTING
   nineteen fixtures — twelve list-form sibling `prompt-*` + seven agentic_flows
@@ -29,11 +29,48 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   bool/float and #242 int/null, cross isolation vs #265/#264/#258/#253/#248
   siblings with concurrent races and tip live-green. Historic four only; Packaging
   inventory unchanged (v52 / 196); no schema / validators / Dependabot bumps.
-  Distinct from merged #265 (Claude/routing niche), #264 (goose-schema niche),
-  #258 (hydration/security+handoff), #253 (fence/File-bind/first-phrase/fullwidth),
+  Distinct from merged #270 (goose-schema niche), #265 (Claude/routing niche),
+  #264 (prior goose-schema), #258 (hydration/security+handoff), #253
+  (fence/File-bind/first-phrase/fullwidth),
   #242 (ZWSP/on-disk/checkbox/inventory-types), #236/#229/#224/#219 siblings, and
   closed CONFLICTING #269 (same leftover vs pre-#265 tip) /
   #251/#243/#238/#235/#230/#221/#223 tip refills.
+
+- Goose-recipe schema leftover **tests-only** deepeners after tip through **#265**
+  (Claude/routing leftover after #264) / **#264** (goose-schema leftover after #258)
+  / **#258** (hydration/security+handoff leftover after #248) / **#253** / **#248** /
+  **#242** / **#236** / **#229** / **#224** / **#219** / **#209** / **#208** /
+  **#202** / **#200** / **#195** / **#188** / **#187** / **#186** / **#184**
+  (goose-schema tip) / **#172** (goose-schema residual suite) (EXISTING three
+  fixtures — `goose` / `recipe-agents` / `recipe-titles` plus
+  `schemas/goose-recipe.schema.json` + `GOOSE-RECIPES.md` — no invented product /
+  inventory bump): unsaturated reject leftovers beyond #264 (`name`
+  caret/bang/percent/digit/underscore/`True`, root int/bool, missing
+  `name`/`recipe`, `title` object/257, empty instructions/prompt, `prompt`
+  float/object, `version` null/int, provider/model null/object/float, settings
+  list/null/string, `recipe` string/null, extensions string/null/empty/object,
+  timeout true/neg/86401/dict, extension type null/`SSE`/padded/`streamable-http`,
+  extension name int/129, duplicate identical extensions), invent-key KeyError /
+  `run_all --only` ValueError, ACCEPT leftovers (timeout min 1 / max 86400, name
+  max 128, title min 1, ext name min 1, settings consts + type enum + uniqueItems
+  self-locks), goose-run drop / invent-run / `yml` fence alias / unquoted-**File**
+  / fifth empty fence / parse+list mapping / swapped-**File** bind leftovers,
+  on-disk invent yaml / must-live-at / historic model / missing historic extension
+  / non-mapping leftovers, title-swap exact + invent-agent + primary-missing +
+  invent-name, inventory `recipe_bindings` / `expected_recipe_names` /
+  `goose_docs_required_phrases` leftovers, CI `--list-validators` / `--only`
+  goose-trio + required manifest step-marker smoke, concurrent races, and tip
+  isolation against #265/#264/#258/#253/#248/#242/#236/#229/#224/#219 siblings.
+  Historic four only; Packaging inventory unchanged (v52 / 196 validators).
+  Distinct from merged #264 (prior goose-schema leftover after #258), merged #265
+  (Claude/routing leftover), closed CONFLICTING
+  #268/#263/#262/#261/#259/#255/#254/#249/#246/#245/#239/#234/#228/#216/#212
+  (same leftover on stale tips), #258 (hydration/security+handoff), #253
+  (prompts+flows), #248 (actionlint/linkcheck), #242 (prompts+flows), #236
+  (actionlint/linkcheck), #229 (hydration/security+handoff), #224
+  (prompts+flows), #219 (prior goose-schema leftover), #202/#200
+  (listform+flows), #184 (tip type matrix), #172 (residual suite), #147 (nine
+  goose-* phrase locks), and not a v53 invent sibling or Dependabot bump.
 
 - Claude/routing governance residual **tests-only** leftover deepeners after tip
   through **#264** (goose-schema leftover after #258) / **#258** / **#253** /
