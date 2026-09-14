@@ -10,6 +10,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Constitution **v40** deepeners (post-#94 security v39): `constitution-recipe-orchestration`,
+  `constitution-scratchpad-state`, `constitution-conflict-matrix` validators;
+  AGENTS-v2.2.md §22.5 Recipe-Based Orchestration Structure locks, §22.6 Scratchpad
+  State Machine locks, and §22.7 Conflict Resolution Matrix locks; consistency
+  deepeners for `constitution_recipe_orchestration_required_phrases` /
+  `constitution_scratchpad_state_required_phrases` /
+  `constitution_conflict_matrix_required_phrases`
+  (Packaging inventory 133 total; historic four only — constitution leftovers
+  slice, not security v39, contributing v38, goose recipes, execution-summary,
+  implementation-guide, agent prompts, changelog, or Dependabot)
+
 - Security policy **v39** deepeners (post-#92 contributing v38): `security-scope`,
   `security-reporting-channel`, `security-compliance-detail` validators; SECURITY.md
   Supported Versions scope/injection leftovers, Reporting channel/contact leftovers,
