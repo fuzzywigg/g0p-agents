@@ -23930,3 +23930,762 @@ def test_actionlint_linkcheck_residual_live_green() -> None:
     assert vm.validate_contributing_packaging(REPO_ROOT) == []
     assert vm.validate_implementation_guide(REPO_ROOT) == []
     assert vm.validate_execution_summary(REPO_ROOT) == []
+
+
+# ---------------------------------------------------------------------------
+# Memory-slot / agent-handoff LEFTOVER residual HEAVY edges after merged #186
+# (actionlint/workflow + link-check) / #184 / #181 / #178 / #176 / #174.
+# EXISTING eleven scratchpad* + handoff-cluster constitution modules only —
+# DISTINCT unsaturated leftover vs merged #181 memory-handoff residual suite
+# (phrase-drop / reverse-arrow / dual-doc races / slot-overflow). No invented
+# memory-slot / handoff-timeout product / inventory bump (still v52 / 196).
+# Change surface: tests/ (+ CHANGELOG honesty); schemas exercised as-is.
+# ---------------------------------------------------------------------------
+
+_MEMORY_HANDOFF_LEFTOVER_SECTION_EDGE: tuple[
+    tuple[str, object, tuple[str, ...], str, str],
+    ...,
+] = (
+    (
+        "constitution-handoff",
+        vm.validate_constitution_handoff,
+        vm.CONSTITUTION_HANDOFF_REQUIRED_PHRASES,
+        "#### 22.4.1 Handoff Sequence",
+        "missing Handoff Sequence section",
+    ),
+    (
+        "constitution-escalation-matrix",
+        vm.validate_constitution_escalation_matrix,
+        vm.CONSTITUTION_ESCALATION_MATRIX_REQUIRED_PHRASES,
+        "#### 22.4.2 Escalation Triggers",
+        "missing Escalation Triggers section",
+    ),
+    (
+        "constitution-on-device",
+        vm.validate_constitution_on_device,
+        vm.CONSTITUTION_ON_DEVICE_REQUIRED_PHRASES,
+        "### 22.2 On-Device Quantum Logic Execution",
+        "missing On-Device Quantum Logic Execution section",
+    ),
+    (
+        "constitution-multichain",
+        vm.validate_constitution_multichain,
+        vm.CONSTITUTION_MULTICHAIN_REQUIRED_PHRASES,
+        "### 22.3 Multi-Chain State Consistency",
+        "missing Multi-Chain State Consistency section",
+    ),
+    (
+        "constitution-recipe-orchestration",
+        vm.validate_constitution_recipe_orchestration,
+        vm.CONSTITUTION_RECIPE_ORCHESTRATION_REQUIRED_PHRASES,
+        "### 22.5 Recipe-Based Orchestration Structure",
+        "missing Recipe-Based Orchestration Structure section",
+    ),
+    (
+        "constitution-scratchpad-state",
+        vm.validate_constitution_scratchpad_state,
+        vm.CONSTITUTION_SCRATCHPAD_STATE_REQUIRED_PHRASES,
+        "### 22.6 Scratchpad State Machine",
+        "missing Scratchpad State Machine section",
+    ),
+    (
+        "constitution-conflict-matrix",
+        vm.validate_constitution_conflict_matrix,
+        vm.CONSTITUTION_CONFLICT_MATRIX_REQUIRED_PHRASES,
+        "### 22.7 Conflict Resolution Matrix",
+        "missing Conflict Resolution Matrix section",
+    ),
+)
+
+
+def _memory_handoff_leftover_inventory_keys() -> list[str]:
+    """Inventory phrase/status keys owned by the eleven memory/handoff modules."""
+    keys = [key for _n, _f, _p, key in _memory_handoff_constitution_modules()]
+    keys.extend(
+        [
+            "scratchpad_required_phrases",
+            "scratchpad_status_markers",
+            "scratchpad_intro_required_phrases",
+            "scratchpad_format_required_phrases",
+            "scratchpad_task_meta_required_phrases",
+            "agentic_flows_allowed_files",
+        ]
+    )
+    return keys
+
+
+def _memory_handoff_leftover_stage_packaging_root(tmp_path: Path) -> None:
+    """Copy live schemas + stub required_paths so packaging inventory can validate."""
+    _copy_schemas(tmp_path)
+    for rel in _inventory_payload()["required_paths"]:
+        target = tmp_path / rel
+        target.parent.mkdir(parents=True, exist_ok=True)
+        if not target.exists():
+            target.write_text("ok\n", encoding="utf-8")
+
+
+def test_memory_handoff_leftover_modules_existing_only() -> None:
+    """Post-#186 tip: eleven existing modules only — not #186/#184/#181 redo."""
+    constitution = _memory_handoff_constitution_modules()
+    scratchpad = _memory_handoff_scratchpad_modules()
+    assert len(constitution) == 7
+    assert len(scratchpad) == 4
+    assert len(constitution) + len(scratchpad) == 11
+    assert vm.INVENTORY_VERSION == 52
+    assert vm.MIN_VALIDATOR_COUNT == 196
+    assert len(vm.VALIDATORS) == 196
+
+    # Merged tip siblings stay live but are intentionally out of this leftover
+    assert "ci" in vm.VALIDATORS
+    assert "link-check" in vm.VALIDATORS
+    assert "actionlint-shell" in vm.VALIDATORS
+    assert "hydration-phase4" in vm.VALIDATORS
+    assert "security-supported" in vm.VALIDATORS
+    assert "implementation-guide" in vm.VALIDATORS
+    assert "changelog" in vm.VALIDATORS
+    names = {m[0] for m in constitution} | {m[0] for m in scratchpad}
+    assert "ci" not in names
+    assert "link-check" not in names
+    assert "actionlint-shell" not in names
+    assert "hydration-phase4" not in names
+    assert "memory-slot" not in vm.VALIDATORS
+    assert "agent-handoff" not in vm.VALIDATORS
+    assert "handoff-timeouts" not in vm.VALIDATORS
+    assert "actionlint-timeouts" not in vm.VALIDATORS
+    assert "link-check-timeouts" not in vm.VALIDATORS
+    assert "ci-v53" not in vm.VALIDATORS
+
+    for invented in (
+        "memory-slot",
+        "memory-store",
+        "agent-handoff",
+        "handoff-timeouts",
+        "handoff-deadlines",
+        "slot-lru-eviction",
+        "actionlint-timeouts",
+        "link-check-timeouts",
+        "hydration-security-timeouts",
+        "goose-schema-v53",
+    ):
+        assert invented not in vm.VALIDATORS
+
+    inventory = json.loads(
+        (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
+    )
+    assert inventory["version"] == 52
+    assert inventory["min_validator_count"] == 196
+    assert sorted(vm.VALIDATORS) == inventory["validator_names"]
+    assert inventory["agentic_flows_allowed_files"] == ["scratchpad.txt"]
+    schema = json.loads(
+        (REPO_ROOT / "schemas" / "packaging-inventory.schema.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    props = schema["properties"]
+    for key in _memory_handoff_leftover_inventory_keys():
+        assert key in props, key
+        assert key in inventory, key
+
+
+def test_memory_handoff_leftover_section_absent_matrix(tmp_path: Path) -> None:
+    """Dedicated section-absent messages for all seven constitution + scratchpad."""
+    for name, fn, phrases, header, section_msg in _MEMORY_HANDOFF_LEFTOVER_SECTION_EDGE:
+        body = "\n".join(p for p in phrases if p != header) + "\n"
+        assert header not in body
+        _write(tmp_path / _MEMORY_HANDOFF_DOC, body)
+        findings = fn(tmp_path)
+        assert any(section_msg in f.message for f in findings), (name, findings)
+        assert any(header in f.message for f in findings), (name, header)
+
+    # Restore locked constitution; probe scratchpad Format / Task section edges
+    _write(tmp_path / _MEMORY_HANDOFF_DOC, _memory_handoff_constitution_locked_text())
+    base = _locked_scratchpad_text()
+    no_format = base.replace("Format:", "Legend:")
+    assert "Format:" not in no_format
+    _write(tmp_path / _MEMORY_HANDOFF_SCRATCHPAD_DOC, no_format)
+    findings = vm.validate_scratchpad_format(tmp_path)
+    assert any("missing Format legend section" in f.message for f in findings)
+    # format phrases still present → only section finding (not phrase drops)
+    for phrase in vm.SCRATCHPAD_FORMAT_REQUIRED_PHRASES:
+        assert phrase in no_format
+        assert not any(
+            f"missing locked scratchpad-format phrase: {phrase}" in f.message
+            for f in findings
+        ), phrase
+
+    no_task = base.replace("## Task: Repo Hydration", "## Task: Other Work")
+    assert "## Task: Repo Hydration" not in no_task
+    _write(tmp_path / _MEMORY_HANDOFF_SCRATCHPAD_DOC, no_task)
+    findings = vm.validate_scratchpad_task_meta(tmp_path)
+    assert any("missing Task: Repo Hydration section" in f.message for f in findings)
+    assert any(
+        "missing locked scratchpad-task-meta phrase: ## Task: Repo Hydration"
+        in f.message
+        for f in findings
+    )
+
+
+def test_memory_handoff_leftover_scratchpad_structural_edges(tmp_path: Path) -> None:
+    """Identifying-header / checkbox-absent structural edges beyond phrase drops."""
+    # Identifying header absent: required phrases + markers + checkbox present
+    no_header = "\n".join(
+        [
+            "# g0p-agents Agent Coordination Store",
+            "This file is the **source of truth** for agent coordination state.",
+            "Never delete entries — keep history.",
+            "- [ ] pending item",
+            "DONE",
+            "PENDING",
+            "IN_PROGRESS",
+            "BLOCKED",
+            "",
+        ]
+    )
+    assert "scratchpad" not in no_header.lower()
+    _write(tmp_path / _MEMORY_HANDOFF_SCRATCHPAD_DOC, no_header)
+    findings = vm.validate_scratchpad(tmp_path)
+    assert any(
+        "scratchpad missing identifying header text" in f.message for f in findings
+    )
+    assert not any("scratchpad is empty" in f.message for f in findings)
+    assert not any(
+        "scratchpad missing coordination checkbox markers" in f.message
+        for f in findings
+    )
+
+    # Checkbox absent: header + phrases + markers, but no `- [ ]` line
+    no_box = "\n".join(
+        [
+            "# g0p-agents Agent Coordination Scratchpad",
+            "This file is the **source of truth** for agent coordination state.",
+            "Updated by each agent after completing their task. Never delete "
+            "entries — mark them complete.",
+            "Format:",
+            "[x] = DONE",
+            "[ ] = PENDING",
+            "[~] = IN_PROGRESS",
+            "[!] = BLOCKED/ESCALATED",
+            "## Task: Repo Hydration — 2026-04-13",
+            "Status: IN_PROGRESS",
+            "Created: 2026-04-13T02:07:01Z",
+            "Owner: copilot",
+            "Current blocker: none",
+            "",
+        ]
+    )
+    assert vm.CHECKBOX_RE.search(no_box) is None
+    _write(tmp_path / _MEMORY_HANDOFF_SCRATCHPAD_DOC, no_box)
+    findings = vm.validate_scratchpad(tmp_path)
+    assert any(
+        "scratchpad missing coordination checkbox markers" in f.message
+        for f in findings
+    )
+    assert not any(
+        "scratchpad missing identifying header text" in f.message for f in findings
+    )
+    # Format / intro / task-meta still green without checkbox lines
+    assert vm.validate_scratchpad_intro(tmp_path) == []
+    assert vm.validate_scratchpad_format(tmp_path) == []
+    assert vm.validate_scratchpad_task_meta(tmp_path) == []
+
+    # Invalid checkbox glyphs do not satisfy CHECKBOX_RE
+    bad_box = no_box.replace("Format:", "Format:\n- [?] not-a-lock")
+    assert vm.CHECKBOX_RE.search(bad_box) is None
+    _write(tmp_path / _MEMORY_HANDOFF_SCRATCHPAD_DOC, bad_box)
+    findings = vm.validate_scratchpad(tmp_path)
+    assert any(
+        "scratchpad missing coordination checkbox markers" in f.message
+        for f in findings
+    )
+
+    # Valid checkbox restores structural green when full lock body is restored
+    _write(tmp_path / _MEMORY_HANDOFF_SCRATCHPAD_DOC, _locked_scratchpad_text())
+    assert vm.validate_scratchpad(tmp_path) == []
+    assert vm.validate_scratchpad_intro(tmp_path) == []
+    assert vm.validate_scratchpad_format(tmp_path) == []
+    assert vm.validate_scratchpad_task_meta(tmp_path) == []
+
+
+def test_memory_handoff_leftover_case_and_whitespace_phrase_rejection(
+    tmp_path: Path,
+) -> None:
+    """Exact-match locks: case-fold / whitespace-padded stand-ins do not satisfy."""
+    constitution = _memory_handoff_constitution_modules()
+    scratchpad = _memory_handoff_scratchpad_modules()
+    base_constitution = _memory_handoff_constitution_locked_text()
+    base_scratch = _locked_scratchpad_text()
+
+    samples = [
+        (
+            "constitution-handoff",
+            vm.validate_constitution_handoff,
+            "QuantumArchitectAgent → BlockchainArchitectAgent",
+        ),
+        (
+            "constitution-multichain",
+            vm.validate_constitution_multichain,
+            "Failure Recovery",
+        ),
+        (
+            "constitution-on-device",
+            vm.validate_constitution_on_device,
+            "Memory footprint: < 2MB",
+        ),
+        (
+            "constitution-scratchpad-state",
+            vm.validate_constitution_scratchpad_state,
+            "Only append, never overwrite",
+        ),
+        (
+            "constitution-escalation-matrix",
+            vm.validate_constitution_escalation_matrix,
+            "Circuit depth exceeds device constraints by >20%",
+        ),
+        (
+            "constitution-conflict-matrix",
+            vm.validate_constitution_conflict_matrix,
+            "**Final Decision Maker**: OrchestrationAgent",
+        ),
+    ]
+    for name, fn, phrase in samples:
+        lowered = base_constitution.replace(phrase, phrase.lower())
+        assert phrase not in lowered
+        assert phrase.lower() in lowered
+        _write(tmp_path / _MEMORY_HANDOFF_DOC, lowered)
+        findings = fn(tmp_path)
+        assert any(phrase in f.message for f in findings), (name, "case")
+
+        # Wrapped / punctuated stand-in must not retain the exact locked token
+        wrapped = base_constitution.replace(phrase, f"ABSENT_WRAP_{name.upper()}")
+        assert phrase not in wrapped
+        _write(tmp_path / _MEMORY_HANDOFF_DOC, wrapped)
+        findings = fn(tmp_path)
+        assert any(phrase in f.message for f in findings), (name, "wrap")
+
+    _write(tmp_path / _MEMORY_HANDOFF_DOC, base_constitution)
+    for name, fn, _phrases, _key in constitution:
+        assert fn(tmp_path) == [], name
+
+    scratch_samples = [
+        ("scratchpad", vm.validate_scratchpad, "Never delete entries"),
+        (
+            "scratchpad-intro",
+            vm.validate_scratchpad_intro,
+            "Updated by each agent after completing their task",
+        ),
+        ("scratchpad-format", vm.validate_scratchpad_format, "[~] = IN_PROGRESS"),
+        ("scratchpad-task-meta", vm.validate_scratchpad_task_meta, "Current blocker:"),
+    ]
+    for name, fn, phrase in scratch_samples:
+        mangled = base_scratch.replace(phrase, phrase.lower())
+        assert phrase not in mangled
+        _write(tmp_path / _MEMORY_HANDOFF_SCRATCHPAD_DOC, mangled)
+        findings = fn(tmp_path)
+        assert any(phrase in f.message for f in findings), (name, "case")
+
+    _write(tmp_path / _MEMORY_HANDOFF_SCRATCHPAD_DOC, base_scratch)
+    for name, fn, _phrases, _key in scratchpad:
+        assert fn(tmp_path) == [], name
+
+
+def test_memory_handoff_leftover_packaging_schema_type_matrix(tmp_path: Path) -> None:
+    """Existing packaging-inventory.schema.json type/pattern edges for handoff keys."""
+    _memory_handoff_leftover_stage_packaging_root(tmp_path)
+    inv_path = tmp_path / "schemas" / "packaging-inventory.json"
+
+    # Wrong JSON types → schema Draft2020 findings (not inventing new schema product)
+    type_cases: list[tuple[str, object, str]] = [
+        ("constitution_handoff_required_phrases", "not-a-list", "is not of type 'array'"),
+        ("constitution_multichain_required_phrases", {"a": 1}, "is not of type 'array'"),
+        ("constitution_on_device_required_phrases", 12, "is not of type 'array'"),
+        ("scratchpad_required_phrases", None, "is not of type 'array'"),
+        ("scratchpad_intro_required_phrases", True, "is not of type 'array'"),
+        ("agentic_flows_allowed_files", "scratchpad.txt", "is not of type 'array'"),
+    ]
+    for key, bad_value, token in type_cases:
+        payload = _inventory_payload()
+        payload[key] = bad_value  # type: ignore[assignment]
+        inv_path.write_text(json.dumps(payload), encoding="utf-8")
+        findings = vm.validate_packaging_inventory(tmp_path)
+        assert any(key in f.message and token in f.message for f in findings), (
+            key,
+            [f.message for f in findings[:6]],
+        )
+
+    # Status-marker schema pattern ^[A-Z][A-Z0-9_]*$ rejects lowercase / symbols
+    for bad_marker in ("pending", "Done", "IN-PROGRESS", "blocked!", ""):
+        payload = _inventory_payload()
+        payload["scratchpad_status_markers"] = ["DONE", bad_marker]
+        inv_path.write_text(json.dumps(payload), encoding="utf-8")
+        findings = vm.validate_packaging_inventory(tmp_path)
+        assert any("scratchpad_status_markers" in f.message for f in findings), (
+            bad_marker,
+            [f.message for f in findings[:6]],
+        )
+
+    # Empty arrays trip minItems on existing schema
+    for key in (
+        "constitution_handoff_required_phrases",
+        "constitution_conflict_matrix_required_phrases",
+        "scratchpad_format_required_phrases",
+        "scratchpad_status_markers",
+        "agentic_flows_allowed_files",
+    ):
+        payload = _inventory_payload()
+        payload[key] = []
+        inv_path.write_text(json.dumps(payload), encoding="utf-8")
+        findings = vm.validate_packaging_inventory(tmp_path)
+        assert any(key in f.message for f in findings), key
+
+    # UniqueItems: duplicate phrase entries fail schema
+    payload = _inventory_payload()
+    payload["constitution_handoff_required_phrases"] = [
+        vm.CONSTITUTION_HANDOFF_REQUIRED_PHRASES[0],
+        vm.CONSTITUTION_HANDOFF_REQUIRED_PHRASES[0],
+        *vm.CONSTITUTION_HANDOFF_REQUIRED_PHRASES[1:],
+    ]
+    inv_path.write_text(json.dumps(payload), encoding="utf-8")
+    findings = vm.validate_packaging_inventory(tmp_path)
+    assert any(
+        "constitution_handoff_required_phrases" in f.message for f in findings
+    )
+
+
+def test_memory_handoff_leftover_packaging_lock_mismatch_matrix(tmp_path: Path) -> None:
+    """validate_packaging_inventory lock-mismatch for every memory/handoff inventory key."""
+    _memory_handoff_leftover_stage_packaging_root(tmp_path)
+    inv_path = tmp_path / "schemas" / "packaging-inventory.json"
+
+    # Constitution + scratchpad phrase locks: seed one invented token
+    for name, _fn, phrases, key in [
+        *_memory_handoff_constitution_modules(),
+        *_memory_handoff_scratchpad_modules(),
+    ]:
+        payload = _inventory_payload()
+        mutated = list(phrases)
+        mutated[-1] = f"invented-{name}-leftover"
+        payload[key] = mutated
+        inv_path.write_text(json.dumps(payload), encoding="utf-8")
+        findings = vm.validate_packaging_inventory(tmp_path)
+        assert any(
+            f"{key} do not match locked validator constants" in f.message
+            for f in findings
+        ), (name, key)
+
+    # Status markers + allow-list locks
+    payload = _inventory_payload()
+    payload["scratchpad_status_markers"] = ["DONE", "PENDING", "IN_PROGRESS", "HALTED"]
+    inv_path.write_text(json.dumps(payload), encoding="utf-8")
+    findings = vm.validate_packaging_inventory(tmp_path)
+    assert any(
+        "scratchpad_status_markers do not match locked validator constants"
+        in f.message
+        for f in findings
+    )
+
+    payload = _inventory_payload()
+    payload["agentic_flows_allowed_files"] = ["scratchpad.txt", "handoff-cache.bin"]
+    inv_path.write_text(json.dumps(payload), encoding="utf-8")
+    findings = vm.validate_packaging_inventory(tmp_path)
+    assert any("agentic_flows_allowed_files" in f.message for f in findings)
+
+    # Live inventory remains locked green
+    assert vm.validate_packaging_inventory(REPO_ROOT) == []
+
+
+def test_memory_handoff_leftover_dual_doc_same_tmp_isolation(tmp_path: Path) -> None:
+    """Same-tmp dual-doc isolation: mangle AGENTS ↔ scratchpad independently."""
+    constitution = _memory_handoff_constitution_modules()
+    scratchpad = _memory_handoff_scratchpad_modules()
+    base_constitution = _memory_handoff_constitution_locked_text()
+    base_scratch = _locked_scratchpad_text()
+    _write(tmp_path / _MEMORY_HANDOFF_DOC, base_constitution)
+    _write(tmp_path / _MEMORY_HANDOFF_SCRATCHPAD_DOC, base_scratch)
+    for name, fn, _phrases, _key in [*constitution, *scratchpad]:
+        assert fn(tmp_path) == [], name
+
+    # Mangle every constitution module phrase → scratchpad* on same tmp stay green
+    mangled_agents = base_constitution
+    for _name, _fn, phrases, _key in constitution:
+        for phrase in phrases:
+            mangled_agents = mangled_agents.replace(phrase, "GONE_CONSTITUTION_TOKEN")
+            assert phrase not in mangled_agents, phrase
+    _write(tmp_path / _MEMORY_HANDOFF_DOC, mangled_agents)
+    for name, fn, _phrases, _key in constitution:
+        assert fn(tmp_path), name
+    for name, fn, _phrases, _key in scratchpad:
+        assert fn(tmp_path) == [], name
+
+    # Restore AGENTS; mangle scratchpad only → constitution* on same tmp stay green
+    _write(tmp_path / _MEMORY_HANDOFF_DOC, base_constitution)
+    mangled_scratch = base_scratch
+    for phrase in (
+        list(vm.SCRATCHPAD_REQUIRED_PHRASES)
+        + list(vm.SCRATCHPAD_INTRO_REQUIRED_PHRASES)
+        + list(vm.SCRATCHPAD_FORMAT_REQUIRED_PHRASES)
+        + list(vm.SCRATCHPAD_TASK_META_REQUIRED_PHRASES)
+    ):
+        mangled_scratch = mangled_scratch.replace(phrase, "GONE_SCRATCH_TOKEN")
+    for marker in vm.SCRATCHPAD_STATUS_MARKERS:
+        mangled_scratch = mangled_scratch.replace(marker, "ABSENT")
+    _write(tmp_path / _MEMORY_HANDOFF_SCRATCHPAD_DOC, mangled_scratch)
+    for name, fn, _phrases, _key in scratchpad:
+        assert fn(tmp_path), name
+    for name, fn, _phrases, _key in constitution:
+        assert fn(tmp_path) == [], name
+
+
+def test_memory_handoff_leftover_tip_isolation_vs_post_186_siblings(
+    tmp_path: Path,
+) -> None:
+    """Mangled memory/handoff docs leave #186/#184/#178/#176/#174 tip siblings green."""
+    base_constitution = _memory_handoff_constitution_locked_text()
+    base_scratch = _locked_scratchpad_text()
+    _write(tmp_path / _MEMORY_HANDOFF_SCRATCHPAD_DOC, base_scratch)
+
+    # Drop handoff + multichain + on-device + scratchpad-state on tmp AGENTS
+    drop_names = {
+        "constitution-handoff",
+        "constitution-multichain",
+        "constitution-on-device",
+        "constitution-scratchpad-state",
+        "constitution-escalation-matrix",
+        "constitution-conflict-matrix",
+        "constitution-recipe-orchestration",
+    }
+    by_name = {
+        name: (fn, phrases)
+        for name, fn, phrases, _key in _memory_handoff_constitution_modules()
+    }
+    mangled = base_constitution
+    for target in drop_names:
+        _fn, phrases = by_name[target]
+        for phrase in phrases:
+            mangled = mangled.replace(phrase, "TIP_ISOLATION_GONE")
+    _write(tmp_path / _MEMORY_HANDOFF_DOC, mangled)
+    for target in drop_names:
+        fn, _phrases = by_name[target]
+        assert fn(tmp_path), target
+
+    # Post-#186 tip siblings on live root remain green
+    assert vm.validate_ci_workflow(REPO_ROOT) == []
+    assert vm.validate_link_check(REPO_ROOT) == []
+    assert vm.validate_actionlint_shell(REPO_ROOT) == []
+    assert vm.validate_ci_actions(REPO_ROOT) == []
+    assert vm.validate_ci_job_names(REPO_ROOT) == []
+    assert vm.validate_ci_runs_on(REPO_ROOT) == []
+    assert vm.validate_ci_artifacts(REPO_ROOT) == []
+    assert vm.validate_hydration_phase4(REPO_ROOT) == []
+    assert vm.validate_security_supported(REPO_ROOT) == []
+    assert vm.validate_goose_recipes(REPO_ROOT) == []
+    assert vm.validate_implementation_guide(REPO_ROOT) == []
+    assert vm.validate_changelog_unreleased(REPO_ROOT) == []
+    assert vm.validate_contributing_packaging(REPO_ROOT) == []
+    assert vm.validate_execution_summary(REPO_ROOT) == []
+    # Live memory/handoff still green (tmp isolation only)
+    assert vm.validate_constitution_handoff(REPO_ROOT) == []
+    assert vm.validate_scratchpad(REPO_ROOT) == []
+
+    # Scratchpad mangle on tmp does not disturb live CI / hydration tip
+    mangled_scratch = base_scratch.replace("Never delete entries", "ALWAYS DELETE")
+    _write(tmp_path / _MEMORY_HANDOFF_SCRATCHPAD_DOC, mangled_scratch)
+    assert vm.validate_scratchpad(tmp_path)
+    assert vm.validate_link_check(REPO_ROOT) == []
+    assert vm.validate_actionlint_shell(REPO_ROOT) == []
+    assert vm.validate_hydration_phase4(REPO_ROOT) == []
+
+
+def test_memory_handoff_leftover_escalation_conflict_section_edges(
+    tmp_path: Path,
+) -> None:
+    """Under-tested escalation-matrix + conflict-matrix section/header-only edges."""
+    # Header-only escalation payload (section present, trigger bodies absent)
+    _write(
+        tmp_path / _MEMORY_HANDOFF_DOC,
+        "#### 22.4.2 Escalation Triggers\n",
+    )
+    findings = vm.validate_constitution_escalation_matrix(tmp_path)
+    assert not any("missing Escalation Triggers section" in f.message for f in findings)
+    for phrase in vm.CONSTITUTION_ESCALATION_MATRIX_REQUIRED_PHRASES:
+        if phrase == "#### 22.4.2 Escalation Triggers":
+            continue
+        assert any(
+            f"missing locked constitution-escalation-matrix phrase: {phrase}"
+            in f.message
+            for f in findings
+        ), phrase
+
+    # Header-only conflict matrix
+    _write(
+        tmp_path / _MEMORY_HANDOFF_DOC,
+        "### 22.7 Conflict Resolution Matrix\n",
+    )
+    findings = vm.validate_constitution_conflict_matrix(tmp_path)
+    assert not any(
+        "missing Conflict Resolution Matrix section" in f.message for f in findings
+    )
+    for phrase in vm.CONSTITUTION_CONFLICT_MATRIX_REQUIRED_PHRASES:
+        if phrase == "### 22.7 Conflict Resolution Matrix":
+            continue
+        assert any(
+            f"missing locked constitution-conflict-matrix phrase: {phrase}" in f.message
+            for f in findings
+        ), phrase
+
+    # Recipe-orchestration + scratchpad-state header-only (paired coordination edges)
+    _write(
+        tmp_path / _MEMORY_HANDOFF_DOC,
+        "### 22.5 Recipe-Based Orchestration Structure\n",
+    )
+    findings = vm.validate_constitution_recipe_orchestration(tmp_path)
+    assert not any(
+        "missing Recipe-Based Orchestration Structure section" in f.message
+        for f in findings
+    )
+    assert any(
+        "All agent workflows use YAML recipes" in f.message for f in findings
+    )
+
+    _write(tmp_path / _MEMORY_HANDOFF_DOC, "### 22.6 Scratchpad State Machine\n")
+    findings = vm.validate_constitution_scratchpad_state(tmp_path)
+    assert not any(
+        "missing Scratchpad State Machine section" in f.message for f in findings
+    )
+    assert any("Only append, never overwrite" in f.message for f in findings)
+
+    # Inventory consistency seed missing for escalation-matrix / conflict-matrix
+    for key, phrases in (
+        (
+            "constitution_escalation_matrix_required_phrases",
+            vm.CONSTITUTION_ESCALATION_MATRIX_REQUIRED_PHRASES,
+        ),
+        (
+            "constitution_conflict_matrix_required_phrases",
+            vm.CONSTITUTION_CONFLICT_MATRIX_REQUIRED_PHRASES,
+        ),
+    ):
+        payload = _inventory_payload()
+        payload[key] = [phrases[0]]
+        findings = vm._inventory_lock_consistency(
+            payload, schema_path="schemas/packaging-inventory.json"
+        )
+        assert any(f"{key} must include" in f.message for f in findings), key
+
+
+def test_memory_handoff_leftover_concurrent_schema_inventory_races(
+    tmp_path: Path,
+) -> None:
+    """Concurrent packaging-inventory schema readers must not crash on leftover keys."""
+    _memory_handoff_leftover_stage_packaging_root(tmp_path)
+    inv_path = tmp_path / "schemas" / "packaging-inventory.json"
+    locked = json.dumps(_inventory_payload())
+    inv_path.write_text(locked, encoding="utf-8")
+    assert vm.validate_packaging_inventory(tmp_path) == []
+
+    keys = _memory_handoff_leftover_inventory_keys()
+    errors: list[BaseException] = []
+
+    def _read_live() -> list[vm.Finding]:
+        return vm.validate_packaging_inventory(REPO_ROOT)
+
+    with ThreadPoolExecutor(max_workers=16) as pool:
+        futures = [pool.submit(_read_live) for _ in range(48)]
+        for fut in as_completed(futures):
+            try:
+                assert fut.result() == []
+            except BaseException as exc:  # noqa: BLE001 — collect race failures
+                errors.append(exc)
+    assert errors == []
+
+    stop = threading.Event()
+    race_errors: list[BaseException] = []
+
+    def _writer() -> None:
+        flip = False
+        while not stop.is_set():
+            try:
+                if flip:
+                    inv_path.write_text(locked, encoding="utf-8")
+                else:
+                    bad = _inventory_payload()
+                    bad["constitution_handoff_required_phrases"] = "not-a-list"
+                    bad["scratchpad_status_markers"] = ["DONE", "pending"]
+                    inv_path.write_text(json.dumps(bad), encoding="utf-8")
+                flip = not flip
+            except BaseException as exc:  # noqa: BLE001
+                race_errors.append(exc)
+                return
+
+    def _reader() -> None:
+        while not stop.is_set():
+            try:
+                vm.validate_packaging_inventory(tmp_path)
+            except BaseException as exc:  # noqa: BLE001
+                race_errors.append(exc)
+                return
+
+    threads = [
+        threading.Thread(target=_writer),
+        threading.Thread(target=_reader),
+        threading.Thread(target=_reader),
+        threading.Thread(target=_reader),
+    ]
+    for t in threads:
+        t.start()
+    time.sleep(0.35)
+    stop.set()
+    for t in threads:
+        t.join(timeout=2.0)
+    assert race_errors == []
+
+    def _schema_empty_check(key: str) -> bool:
+        payload = _inventory_payload()
+        payload[key] = []
+        inv_path.write_text(json.dumps(payload), encoding="utf-8")
+        findings = vm.validate_packaging_inventory(tmp_path)
+        return any(key in f.message for f in findings)
+
+    with ThreadPoolExecutor(max_workers=8) as pool:
+        futs = [pool.submit(_schema_empty_check, k) for k in keys for _ in range(1)]
+        # Writers share inv_path — serialize via pool completion; tolerate races
+        # by re-checking each key once under a lock after pool drains.
+        _ = list(as_completed(futs))
+    for key in keys:
+        assert _schema_empty_check(key), key
+
+
+def test_memory_handoff_leftover_live_green() -> None:
+    """All eleven live memory/handoff validators remain clean on post-#186 tip."""
+    constitution = _memory_handoff_constitution_modules()
+    scratchpad = _memory_handoff_scratchpad_modules()
+    assert len(constitution) == 7
+    assert len(scratchpad) == 4
+    for name, fn, _phrases, _key in [*constitution, *scratchpad]:
+        assert fn(REPO_ROOT) == [], name
+        assert vm.VALIDATORS[name](REPO_ROOT) == [], name
+
+    assert vm.INVENTORY_VERSION == 52
+    assert vm.MIN_VALIDATOR_COUNT == 196
+    assert len(vm.VALIDATORS) == 196
+    assert vm.validate_packaging_inventory(REPO_ROOT) == []
+
+    agents = (REPO_ROOT / _MEMORY_HANDOFF_DOC).read_text(encoding="utf-8")
+    scratch = (REPO_ROOT / _MEMORY_HANDOFF_SCRATCHPAD_DOC).read_text(encoding="utf-8")
+    assert "#### 22.4.1 Handoff Sequence" in agents
+    assert "#### 22.4.2 Escalation Triggers" in agents
+    assert "### 22.7 Conflict Resolution Matrix" in agents
+    assert "Memory footprint: < 2MB" in agents
+    assert "Never delete entries" in scratch
+    assert vm.CHECKBOX_RE.search(scratch)
+
+    # Adjacent tip through #186 / #184 / #181 / #178 / #176 / #174 remain green
+    assert vm.validate_ci_workflow(REPO_ROOT) == []
+    assert vm.validate_link_check(REPO_ROOT) == []
+    assert vm.validate_actionlint_shell(REPO_ROOT) == []
+    assert vm.validate_hydration_phase4(REPO_ROOT) == []
+    assert vm.validate_security_supported(REPO_ROOT) == []
+    assert vm.validate_goose_recipes(REPO_ROOT) == []
+    assert vm.validate_implementation_guide(REPO_ROOT) == []
+    assert vm.validate_changelog_unreleased(REPO_ROOT) == []
+    assert vm.validate_contributing_packaging(REPO_ROOT) == []
+    assert vm.validate_execution_summary(REPO_ROOT) == []

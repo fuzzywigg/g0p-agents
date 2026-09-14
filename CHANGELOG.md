@@ -10,6 +10,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Memory-slot / agent-handoff leftover residual **tests-only** deepeners after tip
+  through **#186** (actionlint/workflow + link-check) / **#184** / **#181** /
+  **#178** / **#176** / **#174** (EXISTING eleven coordination modules — four
+  `scratchpad*` + seven handoff-cluster `constitution-*` — no invented
+  memory-slot / handoff-timeout product / inventory bump): section-absent matrix
+  for all seven constitution section messages + Format/Task scratchpad sections,
+  identifying-header / checkbox-absent structural edges, case-fold + wrapped
+  phrase rejection, packaging-inventory.schema.json type/pattern/minItems/
+  uniqueItems matrix, packaging lock-mismatch matrix via
+  `validate_packaging_inventory`, same-tmp dual-doc AGENTS↔scratchpad isolation,
+  tip isolation against #186/#184/#178/#176/#174 siblings, escalation/conflict
+  header-only edges, and concurrent packaging-inventory schema races. Historic
+  four only; inventory unchanged (v52 / 196). Distinct from merged #181
+  (memory-handoff residual suite), #186 (actionlint/link-check), #184
+  (hydration↔security + goose-schema), #178 (implementation), #176 (changelog),
+  #174 (contributing), and closed CONFLICTING #183/#179/#177/#173 memory-handoff
+  tip refills.
+
 - Actionlint/workflow + link-check residual **tests-only** deepeners after tip
   through **#184** (hydration↔security + goose-schema) / **#181** / **#178** /
   **#176** / **#174** / post-#172 (EXISTING seven CI fixtures —
