@@ -11,17 +11,32 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 
 - Hydration↔security cross + goose-schema tip residual **tests-only** deepeners after
-  tip through **#176** / **#174** / post-#172 (EXISTING `hydration-phase4` + ten
+  tip through **#178** / **#176** / **#174** / post-#172 (EXISTING `hydration-phase4` + ten
   `security` / `security-*` + `goose` / `recipe-agents` / `recipe-titles` /
   `goose-recipe.schema.json` edges — no invented product / inventory bump):
   hydration↔security cross-doc isolation (`Add SECURITY.md` lock), goose-schema tip
   JSON Schema type/missing matrix beyond #172, goose↔security doc mangling isolation,
   concurrent paired-doc races, invalid/invented tip sibling keys, and tip isolation
-  against #176 changelog / #174 contributing / open #178 implementation siblings.
-  Historic four only; inventory unchanged (v52 / 196). Distinct from merged #176
-  (changelog), #174 (contributing), #172 (goose-schema+security residual suite),
-  #166 (execution↔goose cross), #161 (hydration residual suite), open #178
-  (implementation), and closed CONFLICTING #173/#177 memory-slot tip refills.
+  against #178 implementation / #176 changelog / #174 contributing siblings.
+  Historic four only; inventory unchanged (v52 / 196). Distinct from merged #178
+  (implementation), #176 (changelog), #174 (contributing), #172 (goose-schema+security
+  residual suite), #166 (execution↔goose cross), #161 (hydration residual suite),
+  and closed CONFLICTING #173/#177 memory-slot tip refills.
+
+- Implementation residual **tests-only** deepeners after tip through **#176**
+  (EXISTING eight `implementation-*` phrase-lock validators — historic #101
+  leftover sibling; no invented product / inventory bump): concurrent validate
+  races, empty/whitespace/header-only `IMPLEMENTATION-GUIDE.md`,
+  invalid/invented implementation-timeout keys, per-phrase drop matrix,
+  inventory mismatch matrix, and cross-isolation against
+  `implementation-guide` / `implementation-quickstart` /
+  `implementation-phases` / `implementation-tools` /
+  `implementation-success` / `implementation-issues` /
+  `implementation-faq` / `implementation-support`. Historic four only;
+  inventory unchanged (v52 / 196). Distinct from merged #176 (changelog),
+  #174 (contributing), #172 (goose-schema+security), #166 (execution),
+  #161 (hydration), #156 (constitution), #151 (prompt-pre-v52),
+  #147 (goose-recipe), and closed CONFLICTING #177 memory-slot tip refill.
 
 - Changelog residual **tests-only** deepeners after tip through **#174** / post-#172
   (EXISTING seven `changelog` / `changelog-*` phrase-lock validators — constitution's
