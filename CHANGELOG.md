@@ -19,11 +19,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   beyond #208 (name float/dollar/plus, empty settings/recipe objects, version
   bool/list, instructions int, title float, prompt int, model bool, provider
   object, timeout null, extension name null/bool, extension type list/case,
-  recipe list), ACCEPT + deep schema-file self-locks (title/ext-name bounds,
+  recipe list), ACCEPT and deep schema-file self-locks (title/ext-name bounds,
   mixed transports, pattern/const/enum/timeout mins), live fenced YAML→schema
-  + historic round-trip, `GOOSE-RECIPES.md` extra-**File** / `.yml`-**File** /
-  info-string / indented-closer leftovers, on-disk parse + historic provider +
-  non-yaml allow-list leftovers, title-type / incomplete-agent skip /
+  and historic round-trip, `GOOSE-RECIPES.md` extra-**File** / `.yml`-**File** /
+  info-string / indented-closer leftovers, on-disk parse and historic provider
+  and non-yaml allow-list leftovers, title-type / incomplete-agent skip /
   `recipe_primary_agents` inventory leftovers, concurrent races, and tip
   isolation against #208/#202/#200/#195 siblings. Historic four only; Packaging
   inventory unchanged (v52 / 196 validators). Distinct from merged #208
