@@ -37330,7 +37330,7 @@ def test_actionlint_linkcheck_after270_run_only_and_inventory_null_bool(
 def test_actionlint_linkcheck_after270_cross_isolation_vs_270_siblings(
     tmp_path: Path,
 ) -> None:
-    """Tip isolation after #270: local CI fails; #270/#265/#264/#258/#253/#248 siblings stay green."""
+    """Tip isolation after #270: local CI fails; tip siblings stay green."""
     base = _actionlint_linkcheck_locked_ci_yaml()
 
     fail_false = base.replace("          fail: true\n", "          fail: false\n")
