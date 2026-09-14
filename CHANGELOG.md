@@ -10,6 +10,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Implementation guide **v35** deepeners (post-#81): `implementation-issues`,
+  `implementation-faq`, `implementation-support` validators; IMPLEMENTATION-GUIDE.md
+  Common Issues 1–5 / Qualtran / rollups / classical-fallback / scratchpad
+  append-only locks, FAQ quantum-computer / LLM / AGENTS.md / parallel /
+  quality locks, and Support & Resources docs / Cirq / Hardhat / Goose URL
+  locks; consistency deepeners for `implementation_issues_required_phrases` /
+  `implementation_faq_required_phrases` /
+  `implementation_support_required_phrases` (118 total; historic four only —
+  implementation guide slice, not agent prompts, Dependabot, goose recipes,
+  changelog, hydration, constitution, security policy, contributing,
+  execution-summary, README honesty, PR-template, issue-template, scratchpad,
+  postmortem, archive snapshot, or routing/identity)
+
 - Agent prompts **v34** deepeners (post-#80): `prompt-constraints`,
   `prompt-triggers`, `prompt-related-docs` validators; AGENT-PROMPTS.md
   never-violate constraint locks across specialists, escalation-trigger /

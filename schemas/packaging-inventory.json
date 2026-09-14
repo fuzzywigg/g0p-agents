@@ -1,5 +1,5 @@
 {
-  "version": 34,
+  "version": 35,
   "documented_agents": [
     "QuantumArchitectAgent",
     "BlockchainArchitectAgent",
@@ -325,10 +325,13 @@
     "goose-state-machine",
     "hydration",
     "hydration-list-b",
+    "implementation-faq",
     "implementation-guide",
+    "implementation-issues",
     "implementation-phases",
     "implementation-quickstart",
     "implementation-success",
+    "implementation-support",
     "implementation-tools",
     "inventory",
     "issue-metadata",
@@ -387,7 +390,7 @@
     "yaml-configs"
   ],
   "min_coverage_fail_under": 99,
-  "min_validator_count": 115,
+  "min_validator_count": 118,
   "required_paths": [
     "README.md",
     "LICENSE",
@@ -937,6 +940,39 @@
     "## Next Steps",
     "postmortem.md has first entry",
     "Deployment to Sepolia testnet"
+  ],
+  "implementation_issues_required_phrases": [
+    "### Issue 1: \"Cirq is too slow for mobile\"",
+    "Use Qualtran to analyze circuit resource requirements",
+    "### Issue 2: \"Smart contract gas cost exceeds budget\"",
+    "Consider rollups (Arbitrum, Optimism)",
+    "### Issue 3: \"Mobile device can't run quantum circuit\"",
+    "Implement classical simulation fallback",
+    "### Issue 4: \"Agents can't reach consensus on design\"",
+    "OrchestrationAgent escalates to you",
+    "### Issue 5: \"Scratchpad gets out of sync\"",
+    "Scratchpad is append-only, never overwrite"
+  ],
+  "implementation_faq_required_phrases": [
+    "## FAQ",
+    "**Q: Do I need a real quantum computer to start?**",
+    "Cirq simulator works locally",
+    "**Q: Can I use different LLMs for each agent?**",
+    "**Q: How often should I update AGENTS.md?**",
+    "Quarterly risk tolerance review",
+    "**Q: What if an agent makes a mistake?**",
+    "**Q: Can I run agents in parallel?**",
+    "**Q: How do I measure agent quality?**"
+  ],
+  "implementation_support_required_phrases": [
+    "## Support & Resources",
+    "AGENTS.md v2.2 (your constitution)",
+    "AGENT-PROMPTS.md (specialist prompts)",
+    "GOOSE-RECIPES.md (Goose recipe templates)",
+    "TEAM-ANALYSIS.md (team structure reference)",
+    "https://quantumai.google/cirq",
+    "https://hardhat.org/",
+    "https://block.github.io/goose/"
   ],
   "execution_timeline_required_phrases": [
     "## Implementation Timeline",

@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/fuzzywigg/g0p-agents/schemas/packaging-inventory.schema.json",
   "title": "Archive packaging inventory",
-  "description": "Locked packaging paths and historic agent/recipe inventory for this docs-only archive (v33).",
+  "description": "Locked packaging paths and historic agent/recipe inventory for this docs-only archive (v35).",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -90,10 +90,13 @@
     "historic_recipe_version",
     "hydration_list_b_required_phrases",
     "hydration_required_sections",
+    "implementation_faq_required_phrases",
     "implementation_guide_required_phrases",
+    "implementation_issues_required_phrases",
     "implementation_phases_required_phrases",
     "implementation_quickstart_required_phrases",
     "implementation_success_required_phrases",
+    "implementation_support_required_phrases",
     "implementation_tools_required_phrases",
     "issue_agent_task_headings",
     "issue_bug_report_headings",
@@ -1377,6 +1380,33 @@
       }
     },
     "implementation_success_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "implementation_issues_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "implementation_faq_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "implementation_support_required_phrases": {
       "type": "array",
       "minItems": 1,
       "uniqueItems": true,

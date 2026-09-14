@@ -166,7 +166,7 @@ REQUIRED_ARCHIVE_DOCS = (
     "README.md",
 )
 
-INVENTORY_VERSION = 34
+INVENTORY_VERSION = 35
 CURSOR_ENVIRONMENT_NAME = "g0p-agents"
 DEPENDABOT_SCHEDULE_INTERVAL = "weekly"
 DEPENDABOT_DIRECTORIES: frozenset[str] = frozenset({"/"})
@@ -1043,6 +1043,39 @@ IMPLEMENTATION_SUCCESS_REQUIRED_PHRASES: tuple[str, ...] = (
     "postmortem.md has first entry",
     "Deployment to Sepolia testnet",
 )
+IMPLEMENTATION_ISSUES_REQUIRED_PHRASES: tuple[str, ...] = (
+    '### Issue 1: "Cirq is too slow for mobile"',
+    "Use Qualtran to analyze circuit resource requirements",
+    '### Issue 2: "Smart contract gas cost exceeds budget"',
+    "Consider rollups (Arbitrum, Optimism)",
+    '### Issue 3: "Mobile device can\'t run quantum circuit"',
+    "Implement classical simulation fallback",
+    '### Issue 4: "Agents can\'t reach consensus on design"',
+    "OrchestrationAgent escalates to you",
+    '### Issue 5: "Scratchpad gets out of sync"',
+    "Scratchpad is append-only, never overwrite",
+)
+IMPLEMENTATION_FAQ_REQUIRED_PHRASES: tuple[str, ...] = (
+    "## FAQ",
+    "**Q: Do I need a real quantum computer to start?**",
+    "Cirq simulator works locally",
+    "**Q: Can I use different LLMs for each agent?**",
+    "**Q: How often should I update AGENTS.md?**",
+    "Quarterly risk tolerance review",
+    "**Q: What if an agent makes a mistake?**",
+    "**Q: Can I run agents in parallel?**",
+    "**Q: How do I measure agent quality?**",
+)
+IMPLEMENTATION_SUPPORT_REQUIRED_PHRASES: tuple[str, ...] = (
+    "## Support & Resources",
+    "AGENTS.md v2.2 (your constitution)",
+    "AGENT-PROMPTS.md (specialist prompts)",
+    "GOOSE-RECIPES.md (Goose recipe templates)",
+    "TEAM-ANALYSIS.md (team structure reference)",
+    "https://quantumai.google/cirq",
+    "https://hardhat.org/",
+    "https://block.github.io/goose/",
+)
 
 
 EXECUTION_TIMELINE_REQUIRED_PHRASES: tuple[str, ...] = (
@@ -1083,7 +1116,7 @@ SCRATCHPAD_STATUS_MARKERS: tuple[str, ...] = (
 SPECIALIST_AGENTS: tuple[str, ...] = DOCUMENTED_AGENTS[:-1]
 
 MIN_COVERAGE_FAIL_UNDER = 99
-MIN_VALIDATOR_COUNT = 115
+MIN_VALIDATOR_COUNT = 118
 
 
 @dataclass(frozen=True)
@@ -2082,6 +2115,30 @@ def validate_packaging_inventory(root: Path) -> list[Finding]:
     ):
         findings.append(
             _lock_mismatch(schema_path, "implementation_success_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("implementation_issues_required_phrases", ()))
+        != IMPLEMENTATION_ISSUES_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "implementation_issues_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("implementation_faq_required_phrases", ()))
+        != IMPLEMENTATION_FAQ_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "implementation_faq_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("implementation_support_required_phrases", ()))
+        != IMPLEMENTATION_SUPPORT_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "implementation_support_required_phrases")
         )
 
     if (
@@ -3989,6 +4046,124 @@ def _inventory_lock_consistency(
                     schema_path,
                     "implementation_success_required_phrases must include Success "
                     "Criteria/Week 1/Common Issues/Next Steps",
+                )
+            )
+
+    issues = list(inventory.get("implementation_issues_required_phrases", ()))
+    if len(issues) != len(set(issues)):
+        findings.append(
+            Finding(
+                schema_path, "implementation_issues_required_phrases must be unique"
+            )
+        )
+    if not issues:
+        findings.append(
+            Finding(
+                schema_path,
+                "implementation_issues_required_phrases must not be empty",
+            )
+        )
+    for phrase in issues:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "implementation_issues_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_issues = {
+            '### Issue 1: "Cirq is too slow for mobile"',
+            '### Issue 5: "Scratchpad gets out of sync"',
+            "Scratchpad is append-only, never overwrite",
+            "Use Qualtran to analyze circuit resource requirements",
+        }
+        if issues and not required_issues <= set(issues):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "implementation_issues_required_phrases must include Issue 1/"
+                    "Issue 5/Qualtran/append-only scratchpad",
+                )
+            )
+
+    faq = list(inventory.get("implementation_faq_required_phrases", ()))
+    if len(faq) != len(set(faq)):
+        findings.append(
+            Finding(schema_path, "implementation_faq_required_phrases must be unique")
+        )
+    if not faq:
+        findings.append(
+            Finding(
+                schema_path,
+                "implementation_faq_required_phrases must not be empty",
+            )
+        )
+    for phrase in faq:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "implementation_faq_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_faq = {
+            "## FAQ",
+            "**Q: Do I need a real quantum computer to start?**",
+            "Cirq simulator works locally",
+            "**Q: How do I measure agent quality?**",
+        }
+        if faq and not required_faq <= set(faq):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "implementation_faq_required_phrases must include FAQ/"
+                    "quantum computer/Cirq simulator/agent quality",
+                )
+            )
+
+    support = list(inventory.get("implementation_support_required_phrases", ()))
+    if len(support) != len(set(support)):
+        findings.append(
+            Finding(
+                schema_path, "implementation_support_required_phrases must be unique"
+            )
+        )
+    if not support:
+        findings.append(
+            Finding(
+                schema_path,
+                "implementation_support_required_phrases must not be empty",
+            )
+        )
+    for phrase in support:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "implementation_support_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_support = {
+            "## Support & Resources",
+            "AGENTS.md v2.2 (your constitution)",
+            "GOOSE-RECIPES.md (Goose recipe templates)",
+            "https://quantumai.google/cirq",
+        }
+        if support and not required_support <= set(support):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "implementation_support_required_phrases must include Support/"
+                    "AGENTS.md/GOOSE-RECIPES/Cirq URL",
                 )
             )
 
@@ -6920,6 +7095,57 @@ def validate_implementation_success(root: Path) -> list[Finding]:
     return findings
 
 
+def validate_implementation_issues(root: Path) -> list[Finding]:
+    rel = "IMPLEMENTATION-GUIDE.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "IMPLEMENTATION-GUIDE.md missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if '### Issue 1: "Cirq is too slow for mobile"' not in text:
+        findings.append(Finding(rel, "missing Cirq-too-slow common issue"))
+    for phrase in IMPLEMENTATION_ISSUES_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(rel, f"missing locked implementation-issues phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_implementation_faq(root: Path) -> list[Finding]:
+    rel = "IMPLEMENTATION-GUIDE.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "IMPLEMENTATION-GUIDE.md missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "**Q: Do I need a real quantum computer to start?**" not in text:
+        findings.append(Finding(rel, "missing real-quantum-computer FAQ lock"))
+    for phrase in IMPLEMENTATION_FAQ_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(rel, f"missing locked implementation-faq phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_implementation_support(root: Path) -> list[Finding]:
+    rel = "IMPLEMENTATION-GUIDE.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "IMPLEMENTATION-GUIDE.md missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## Support & Resources" not in text:
+        findings.append(Finding(rel, "missing Support & Resources section"))
+    for phrase in IMPLEMENTATION_SUPPORT_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(rel, f"missing locked implementation-support phrase: {phrase}")
+            )
+    return findings
+
+
 def validate_execution_timeline(root: Path) -> list[Finding]:
     rel = "EXECUTION-SUMMARY.md"
     path = root / rel
@@ -8165,6 +8391,9 @@ VALIDATORS: dict[str, ValidatorFn] = {
     "implementation-phases": validate_implementation_phases,
     "implementation-tools": validate_implementation_tools,
     "implementation-success": validate_implementation_success,
+    "implementation-issues": validate_implementation_issues,
+    "implementation-faq": validate_implementation_faq,
+    "implementation-support": validate_implementation_support,
     "execution-timeline": validate_execution_timeline,
     "execution-technologies": validate_execution_technologies,
     "execution-workflow": validate_execution_workflow,
