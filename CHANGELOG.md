@@ -10,6 +10,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Prompts list-form + agentic_flows residual **tests-only** deepeners after tip
+  through **#195** (actionlint leftover after #188) / **#188** / **#187** /
+  **#186** / **#184** / **#181** (EXISTING nineteen fixtures — twelve
+  list-form sibling `prompt-*` + seven agentic_flows `goose` /
+  `recipe-agents` / `recipe-titles` / `scratchpad*` — no invented v53
+  list-form product / inventory bump): invent-key rejection for closed
+  CONFLICTING #153/#159/#164 list-form names, empty/whitespace/header-only
+  AGENT-PROMPTS + scratchpad, per-phrase drop matrices, inventory mismatch
+  matrix, agentic_flows allow-list / path / binding edges beyond #181/#147,
+  prompts↔flows cross-isolation, concurrent dual-surface races, and tip
+  isolation against #195/#188/#187/#186 siblings. Historic four only;
+  inventory unchanged (v52 / 196). Distinct from closed CONFLICTING
+  #194/#193/#190/#153/#159/#164, open #198 (agentic_flows-only leftover),
+  merged #195/#188 (actionlint leftovers), #187 (docs-cross), #151
+  (prompt-pre-v52), #144 (v52 prompt residuals), #181 (memory-handoff),
+  and #147 (goose-recipe).
+
 - Actionlint/workflow + link-check residual **tests-only** leftover deepeners
   after tip through **#188** (actionlint/workflow + link-check leftover) /
   **#187** (docs-cross) / **#186** / **#184** / **#181** / **#178** /
