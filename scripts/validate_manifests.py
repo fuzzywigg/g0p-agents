@@ -10,6 +10,7 @@ Checks structural correctness of:
 - Prompt fence headers + escalation markers for historic four agents
 - AGENTS-v2.2.md constitution headings for documented agents only
 - AGENTS-v2.2.md constitution crypto / handoff / escalation-matrix locks
+- AGENTS-v2.2.md §22.2 on-device / §22.3 multichain / §22.4.3 escalation-format locks
 - CLAUDE.md routing surfaces (packaging surfaces; not specialist agents)
 - SECURITY.md / CONTRIBUTING.md packaging honesty locks
 - Agent-task / bug / feature issue template headings
@@ -51,6 +52,7 @@ Checks structural correctness of:
 - SECURITY.md Supported Versions / Reporting / Standards domain locks
 - SECURITY.md header / FIPS standards-row / Known Non-Issues rename locks
 - AGENTS-v2.2.md §22.1 crypto / §22.4.1 handoff / §22.4.2 escalation-matrix locks
+- AGENTS-v2.2.md §22.2 on-device / §22.3 multichain / §22.4.3 escalation-format locks
 - IMPLEMENTATION-GUIDE Quick Start / EXECUTION-SUMMARY specialist table /
   hydration LIST B HITL question locks (Dec 2025 archive snapshot slice)
 - postmortem.md intro / Decision field / Next Steps surface locks
@@ -167,7 +169,7 @@ REQUIRED_ARCHIVE_DOCS = (
     "README.md",
 )
 
-INVENTORY_VERSION = 35
+INVENTORY_VERSION = 36
 CURSOR_ENVIRONMENT_NAME = "g0p-agents"
 DEPENDABOT_SCHEDULE_INTERVAL = "weekly"
 DEPENDABOT_DIRECTORIES: frozenset[str] = frozenset({"/"})
@@ -394,6 +396,34 @@ CONSTITUTION_ESCALATION_MATRIX_REQUIRED_PHRASES: tuple[str, ...] = (
     "**EdgeSecurityAgent escalates when**:",
     "Crypto operations > 500ms",
     "**OrchestrationAgent escalates to user when**:",
+)
+
+CONSTITUTION_ON_DEVICE_REQUIRED_PHRASES: tuple[str, ...] = (
+    "### 22.2 On-Device Quantum Logic Execution",
+    "MUST use Cirq circuits compiled for mobile constraints",
+    "MUST have deterministic fallback to classical simulation (Qualtran)",
+    "MUST NOT block UI thread",
+    "Circuit execution: < 500ms",
+    "Memory footprint: < 2MB",
+    "Cirq-sim (classical validation)",
+)
+CONSTITUTION_MULTICHAIN_REQUIRED_PHRASES: tuple[str, ...] = (
+    "### 22.3 Multi-Chain State Consistency",
+    "State Commitment Protocol",
+    "Operation state committed to blockchain (hash)",
+    "Result cryptographically signed (post-quantum signature)",
+    "Failure Recovery",
+    "Maximum pending duration: 24 hours",
+    "Rollback MUST be executable by user without third-party approval",
+)
+CONSTITUTION_ESCALATION_FORMAT_REQUIRED_PHRASES: tuple[str, ...] = (
+    "#### 22.4.3 Escalation Format (All Agents)",
+    "🚨 ESCALATION REQUIRED",
+    "From Agent: [Agent Name]",
+    "Mode: [Transformative/Operational]",
+    "Conflict: [What constraint am I hitting?]",
+    "Recommendation: [How should we resolve this?]",
+    "Awaiting approval before proceeding.",
 )
 IMPLEMENTATION_QUICKSTART_REQUIRED_PHRASES: tuple[str, ...] = (
     "## Quick Start (30 minutes)",
@@ -1118,7 +1148,7 @@ SCRATCHPAD_STATUS_MARKERS: tuple[str, ...] = (
 SPECIALIST_AGENTS: tuple[str, ...] = DOCUMENTED_AGENTS[:-1]
 
 MIN_COVERAGE_FAIL_UNDER = 99
-MIN_VALIDATOR_COUNT = 118
+MIN_VALIDATOR_COUNT = 121
 
 
 @dataclass(frozen=True)
@@ -1842,6 +1872,33 @@ def validate_packaging_inventory(root: Path) -> list[Finding]:
             )
         )
 
+
+
+    if (
+        tuple(inventory.get("constitution_on_device_required_phrases", ()))
+        != CONSTITUTION_ON_DEVICE_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "constitution_on_device_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("constitution_multichain_required_phrases", ()))
+        != CONSTITUTION_MULTICHAIN_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "constitution_multichain_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("constitution_escalation_format_required_phrases", ()))
+        != CONSTITUTION_ESCALATION_FORMAT_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(
+                schema_path, "constitution_escalation_format_required_phrases"
+            )
+        )
 
     if (
         tuple(inventory.get("changelog_format_required_phrases", ()))
@@ -4602,6 +4659,127 @@ def _inventory_lock_consistency(
             )
 
 
+    on_device = list(inventory.get("constitution_on_device_required_phrases", ()))
+    if len(on_device) != len(set(on_device)):
+        findings.append(
+            Finding(
+                schema_path, "constitution_on_device_required_phrases must be unique"
+            )
+        )
+    if not on_device:
+        findings.append(
+            Finding(
+                schema_path,
+                "constitution_on_device_required_phrases must not be empty",
+            )
+        )
+    for phrase in on_device:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "constitution_on_device_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_on_device = {
+            "### 22.2 On-Device Quantum Logic Execution",
+            "MUST use Cirq circuits compiled for mobile constraints",
+            "Cirq-sim (classical validation)",
+        }
+        if on_device and not required_on_device <= set(on_device):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "constitution_on_device_required_phrases must include "
+                    "22.2/Cirq/Cirq-sim",
+                )
+            )
+
+    multichain = list(inventory.get("constitution_multichain_required_phrases", ()))
+    if len(multichain) != len(set(multichain)):
+        findings.append(
+            Finding(
+                schema_path, "constitution_multichain_required_phrases must be unique"
+            )
+        )
+    if not multichain:
+        findings.append(
+            Finding(
+                schema_path,
+                "constitution_multichain_required_phrases must not be empty",
+            )
+        )
+    for phrase in multichain:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "constitution_multichain_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_multichain = {
+            "### 22.3 Multi-Chain State Consistency",
+            "State Commitment Protocol",
+            "Failure Recovery",
+        }
+        if multichain and not required_multichain <= set(multichain):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "constitution_multichain_required_phrases must include "
+                    "22.3/State Commitment/Failure Recovery",
+                )
+            )
+
+    esc_format = list(
+        inventory.get("constitution_escalation_format_required_phrases", ())
+    )
+    if len(esc_format) != len(set(esc_format)):
+        findings.append(
+            Finding(
+                schema_path,
+                "constitution_escalation_format_required_phrases must be unique",
+            )
+        )
+    if not esc_format:
+        findings.append(
+            Finding(
+                schema_path,
+                "constitution_escalation_format_required_phrases must not be empty",
+            )
+        )
+    for phrase in esc_format:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "constitution_escalation_format_required_phrases entries "
+                    "must be non-empty strings",
+                )
+            )
+            break
+    else:
+        required_esc_format = {
+            "#### 22.4.3 Escalation Format (All Agents)",
+            "🚨 ESCALATION REQUIRED",
+            "Awaiting approval before proceeding.",
+        }
+        if esc_format and not required_esc_format <= set(esc_format):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "constitution_escalation_format_required_phrases must include "
+                    "22.4.3/ESCALATION REQUIRED/Awaiting approval",
+                )
+            )
+
+
     changelog_format = list(inventory.get("changelog_format_required_phrases", ()))
     if len(changelog_format) != len(set(changelog_format)):
         findings.append(
@@ -5609,6 +5787,63 @@ def validate_constitution_escalation_matrix(root: Path) -> list[Finding]:
     return findings
 
 
+
+
+
+def validate_constitution_on_device(root: Path) -> list[Finding]:
+    rel = "AGENTS-v2.2.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "constitution missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "### 22.2 On-Device Quantum Logic Execution" not in text:
+        findings.append(
+            Finding(rel, "missing On-Device Quantum Logic Execution section")
+        )
+    for phrase in CONSTITUTION_ON_DEVICE_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(rel, f"missing locked constitution-on-device phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_constitution_multichain(root: Path) -> list[Finding]:
+    rel = "AGENTS-v2.2.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "constitution missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "### 22.3 Multi-Chain State Consistency" not in text:
+        findings.append(Finding(rel, "missing Multi-Chain State Consistency section"))
+    for phrase in CONSTITUTION_MULTICHAIN_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(rel, f"missing locked constitution-multichain phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_constitution_escalation_format(root: Path) -> list[Finding]:
+    rel = "AGENTS-v2.2.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "constitution missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "#### 22.4.3 Escalation Format (All Agents)" not in text:
+        findings.append(Finding(rel, "missing Escalation Format section"))
+    for phrase in CONSTITUTION_ESCALATION_FORMAT_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(
+                    rel,
+                    f"missing locked constitution-escalation-format phrase: {phrase}",
+                )
+            )
+    return findings
 
 def validate_changelog_format(root: Path) -> list[Finding]:
     rel = "CHANGELOG.md"
@@ -8341,6 +8576,9 @@ VALIDATORS: dict[str, ValidatorFn] = {
     "constitution-crypto": validate_constitution_crypto,
     "constitution-handoff": validate_constitution_handoff,
     "constitution-escalation-matrix": validate_constitution_escalation_matrix,
+    "constitution-on-device": validate_constitution_on_device,
+    "constitution-multichain": validate_constitution_multichain,
+    "constitution-escalation-format": validate_constitution_escalation_format,
     "routing": validate_routing_surfaces,
     "environment": validate_cursor_environment,
     "github-agents": validate_github_agents,

@@ -10,6 +10,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Constitution **v36** deepeners (post-#84): `constitution-on-device`,
+  `constitution-multichain`, `constitution-escalation-format` validators;
+  AGENTS-v2.2.md §22.2 On-Device Quantum Logic Execution locks, §22.3
+  Multi-Chain State Consistency locks, and §22.4.3 Escalation Format locks;
+  consistency deepeners for `constitution_on_device_required_phrases` /
+  `constitution_multichain_required_phrases` /
+  `constitution_escalation_format_required_phrases`
+  (121 total; historic four only — constitution leftovers slice, not
+  execution-summary, hydration, implementation-guide, contributing, security
+  policy, agent prompts, goose recipes, changelog, Dependabot, README honesty,
+  PR-template, issue-template, scratchpad, postmortem, archive snapshot, or
+  routing/identity)
+
+
 - Execution-summary **v35** deepeners (post-#81): `execution-ide`,
   `execution-innovations`, `execution-next48` validators; EXECUTION-SUMMARY.md
   IDE & Software Setup locks, What Makes This Different / Key Innovations locks,
