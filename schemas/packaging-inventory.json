@@ -1,5 +1,5 @@
 {
-  "version": 52,
+  "version": 53,
   "documented_agents": [
     "QuantumArchitectAgent",
     "BlockchainArchitectAgent",
@@ -386,7 +386,9 @@
     "pr-routing",
     "pr-summary",
     "pr-template",
+    "prompt-bc-resp-numbered",
     "prompt-cannot-delegate",
+    "prompt-cannot-delegate-numbered",
     "prompt-communication",
     "prompt-communication-detail",
     "prompt-constraints",
@@ -395,26 +397,34 @@
     "prompt-context-detail",
     "prompt-context-residual",
     "prompt-decision-authority",
+    "prompt-decision-bullets",
     "prompt-docs-residual",
+    "prompt-edge-resp-numbered",
     "prompt-escalation-authority",
     "prompt-escalation-format",
     "prompt-escalation-identity",
+    "prompt-example-steps",
     "prompt-expertise",
     "prompt-expertise-detail",
     "prompt-expertise-residual",
     "prompt-human-fields",
     "prompt-instantiation",
     "prompt-integration",
+    "prompt-living-bullets",
     "prompt-living-docs",
     "prompt-matrix-resolutions",
+    "prompt-matrix-rows",
     "prompt-metrics",
     "prompt-metrics-detail",
     "prompt-monthly",
+    "prompt-monthly-checkboxes",
     "prompt-monthly-detail",
     "prompt-orch-metrics-detail",
+    "prompt-orch-resp-numbered",
     "prompt-orchestration-matrix",
     "prompt-principles",
     "prompt-principles-detail",
+    "prompt-quantum-resp-numbered",
     "prompt-related-docs",
     "prompt-related-health",
     "prompt-responsibilities",
@@ -430,6 +440,8 @@
     "prompt-usage",
     "prompt-usage-detail",
     "prompt-usage-example",
+    "prompt-usage-numbered",
+    "prompt-user-input",
     "prompt-vision-context",
     "prompts",
     "pyproject",
@@ -468,7 +480,7 @@
     "yaml-configs"
   ],
   "min_coverage_fail_under": 99,
-  "min_validator_count": 196,
+  "min_validator_count": 208,
   "required_paths": [
     "README.md",
     "LICENSE",
@@ -1308,7 +1320,7 @@
     "markdown lint, link check, actionlint",
     "manifest validate on Python 3.11/3.12/3.13",
     "Andrew or designated reviewer",
-    "Packaging inventory v52",
+    "Packaging inventory v53",
     "refuse invented recipes",
     "orphan on-disk YAML",
     "unknown `*Agent` tokens",
@@ -1930,5 +1942,88 @@
     "(Claude, GPT, Gemini, etc.)",
     "**Copy the relevant prompt template** (above)",
     "Check Cirq optimization, validate quantum-safety, provide gate count and error rate estimates. Use the scratchpad to track progress."
+  ],
+  "prompt_matrix_rows_required_phrases": [
+    "| **Algorithm Complexity** (Quantum says \"too complex\", Blockchain says \"necessary\") | Weigh risk tolerance. Choose testnet approach to validate. |",
+    "| **Gas Cost** (Blockchain says \"over budget\", On-Device says \"can't afford\") | Redesign contract interface or reduce scope. |",
+    "| **Crypto Algorithm** (On-Device says \"RSA too slow\", Quantum says \"must be RSA\") | Use hybrid (post-quantum + RSA), implement staged migration. |",
+    "| **Timeline** (All agents say \"2 weeks\", business needs \"2 days\") | Reduce scope, increase risk, escalate to stakeholder. |"
+  ],
+  "prompt_monthly_checkboxes_required_phrases": [
+    "- [ ] Review all recent decisions in postmortem.md",
+    "- [ ] Check agent success metrics (are they meeting targets?)",
+    "- [ ] Identify any emerging conflicts (before they escalate)",
+    "- [ ] Update risk register (quarterly, minimum)",
+    "- [ ] Communicate progress to stakeholder"
+  ],
+  "prompt_usage_numbered_required_phrases": [
+    "1. **Copy the relevant prompt template** (above)",
+    "2. **Fill in the [INSERT PROJECT-SPECIFIC INFO HERE] sections**",
+    "3. **Paste into the LLM's system prompt** (Claude, GPT, Gemini, etc.)",
+    "4. **Provide the agent with access to**:",
+    "5. **Run the agent** on a specific recipe/task"
+  ],
+  "prompt_example_steps_required_phrases": [
+    "1. Reads ./agentic_flows/scratchpad.txt (finds pending quantum mint task)",
+    "2. Designs Cirq circuit for factorization",
+    "3. Optimizes for mobile constraints (2MB RAM max)",
+    "4. Validates using CRYSTALS-Kyber (NIST post-quantum standard)",
+    "5. Updates scratchpad with gate count, depth, error rate",
+    "6. Either approves (moves to BlockchainArchitectAgent) or escalates"
+  ],
+  "prompt_living_bullets_required_phrases": [
+    "These prompts are **living documents**. Update them whenever:",
+    "- AGENTS.md constraints change",
+    "- A new escalation pattern emerges",
+    "- Risk tolerance thresholds change (quarterly)",
+    "- New tools become available"
+  ],
+  "prompt_quantum_resp_numbered_required_phrases": [
+    "1. Design quantum algorithms for cryptographic operations",
+    "2. Optimize Cirq circuits for target hardware",
+    "3. Validate quantum-safe properties (post-quantum crypto)",
+    "4. Simulate quantum timelines and collective consciousness models (your \"Mickey 18\" concept)",
+    "5. Provide hardware requirement estimates",
+    "6. Escalate when constraints cannot be met"
+  ],
+  "prompt_bc_resp_numbered_required_phrases": [
+    "1. Design multi-chain smart contract architecture",
+    "2. Implement quantum-resistant consensus logic",
+    "3. Define cross-chain state synchronization protocols",
+    "4. Audit contracts for quantum vulnerabilities",
+    "5. Estimate gas costs and optimization opportunities",
+    "6. Escalate when security or performance constraints cannot be met"
+  ],
+  "prompt_edge_resp_numbered_required_phrases": [
+    "1. Implement quantum-safe cryptography on Android/iOS",
+    "2. Design data isolation (\"walled garden\") architecture",
+    "3. Manage secure key lifecycle (storage, rotation, deletion)",
+    "4. Optimize for mobile constraints (battery, memory, CPU)",
+    "5. Validate health data privacy architecture (HIPAA, GDPR)",
+    "6. Escalate when device constraints cannot be met"
+  ],
+  "prompt_orch_resp_numbered_required_phrases": [
+    "1. Collect outputs from all three specialist agents",
+    "2. Identify conflicts (if any)",
+    "3. Make final go/no-go decision",
+    "4. Escalate unsolvable conflicts to human",
+    "5. Log all decisions in postmortem.md",
+    "6. Update AGENTS.md risk tolerance (quarterly)"
+  ],
+  "prompt_user_input_required_phrases": [
+    "User Input: \"Review the proposed factorization circuit for our NFT mint operation. Check Cirq optimization, validate quantum-safety, provide gate count and error rate estimates. Use the scratchpad to track progress.\""
+  ],
+  "prompt_cannot_delegate_numbered_required_phrases": [
+    "1. Final go/no-go decisions",
+    "2. Risk acceptance (acknowledging consequences)",
+    "3. Human escalation (when agents can't decide)",
+    "4. Vision articulation (Mickey 18 \u2192 technical architecture)",
+    "5. Stakeholder communication"
+  ],
+  "prompt_decision_bullets_required_phrases": [
+    "- Trade-offs between security, performance, and usability",
+    "- Prioritization (what gets built first)",
+    "- Risk acceptance (can we deploy with this vulnerability?)",
+    "- Timeline adjustments (can we ship on schedule?)"
   ]
 }

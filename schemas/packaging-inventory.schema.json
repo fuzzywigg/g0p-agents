@@ -165,6 +165,8 @@
     "pr_routing_required_fields",
     "pr_summary_required_phrases",
     "pr_template_headings",
+    "prompt_bc_resp_numbered_required_phrases",
+    "prompt_cannot_delegate_numbered_required_phrases",
     "prompt_cannot_delegate_required_phrases",
     "prompt_communication_detail_required_phrases",
     "prompt_communication_required_phrases",
@@ -174,26 +176,34 @@
     "prompt_context_required_phrases",
     "prompt_context_residual_required_phrases",
     "prompt_decision_authority_required_phrases",
+    "prompt_decision_bullets_required_phrases",
     "prompt_docs_residual_required_phrases",
+    "prompt_edge_resp_numbered_required_phrases",
     "prompt_escalation_authority_required_phrases",
     "prompt_escalation_format_required_phrases",
     "prompt_escalation_identity_required_phrases",
+    "prompt_example_steps_required_phrases",
     "prompt_expertise_detail_required_phrases",
     "prompt_expertise_required_phrases",
     "prompt_expertise_residual_required_phrases",
     "prompt_human_fields_required_phrases",
     "prompt_instantiation_required_phrases",
     "prompt_integration_required_phrases",
+    "prompt_living_bullets_required_phrases",
     "prompt_living_docs_required_phrases",
     "prompt_matrix_resolutions_required_phrases",
+    "prompt_matrix_rows_required_phrases",
     "prompt_metrics_detail_required_phrases",
     "prompt_metrics_required_phrases",
+    "prompt_monthly_checkboxes_required_phrases",
     "prompt_monthly_detail_required_phrases",
     "prompt_monthly_required_phrases",
     "prompt_orch_metrics_detail_required_phrases",
+    "prompt_orch_resp_numbered_required_phrases",
     "prompt_orchestration_matrix_required_phrases",
     "prompt_principles_detail_required_phrases",
     "prompt_principles_required_phrases",
+    "prompt_quantum_resp_numbered_required_phrases",
     "prompt_related_docs_required_phrases",
     "prompt_related_health_required_phrases",
     "prompt_responsibilities_detail_required_phrases",
@@ -209,7 +219,9 @@
     "prompt_triggers_required_phrases",
     "prompt_usage_detail_required_phrases",
     "prompt_usage_example_required_phrases",
+    "prompt_usage_numbered_required_phrases",
     "prompt_usage_required_phrases",
+    "prompt_user_input_required_phrases",
     "prompt_vision_context_required_phrases",
     "pyproject_description",
     "pyproject_license_text",
@@ -2376,6 +2388,114 @@
       }
     },
     "prompt_usage_detail_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "prompt_matrix_rows_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "prompt_monthly_checkboxes_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "prompt_usage_numbered_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "prompt_example_steps_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "prompt_living_bullets_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "prompt_quantum_resp_numbered_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "prompt_bc_resp_numbered_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "prompt_edge_resp_numbered_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "prompt_orch_resp_numbered_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "prompt_user_input_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "prompt_cannot_delegate_numbered_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "prompt_decision_bullets_required_phrases": {
       "type": "array",
       "minItems": 1,
       "uniqueItems": true,
