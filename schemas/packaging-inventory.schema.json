@@ -47,6 +47,7 @@
     "claude_required_sections",
     "constitution_conflict_matrix_required_phrases",
     "constitution_crypto_required_phrases",
+    "constitution_deadline_detail_required_phrases",
     "constitution_escalation_format_required_phrases",
     "constitution_escalation_matrix_required_phrases",
     "constitution_handoff_required_phrases",
@@ -100,6 +101,7 @@
     "github_agent_name",
     "gitignore_required_patterns",
     "goose_conflicts_required_phrases",
+    "goose_deadline_detail_required_phrases",
     "goose_docs_required_phrases",
     "goose_extensions_required_phrases",
     "goose_howto_required_phrases",
@@ -109,6 +111,7 @@
     "goose_quantum_task_required_phrases",
     "goose_recipe_headers_required_phrases",
     "goose_state_machine_required_phrases",
+    "goose_timeout_detail_required_phrases",
     "historic_goose_settings",
     "historic_recipe_version",
     "hydration_deferred_required_phrases",
@@ -130,6 +133,7 @@
     "implementation_quickstart_required_phrases",
     "implementation_success_required_phrases",
     "implementation_support_required_phrases",
+    "implementation_timeout_detail_required_phrases",
     "implementation_tools_required_phrases",
     "issue_agent_task_headings",
     "issue_bug_report_headings",
@@ -2376,6 +2380,42 @@
       }
     },
     "prompt_usage_detail_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "goose_timeout_detail_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "goose_deadline_detail_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "constitution_deadline_detail_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "implementation_timeout_detail_required_phrases": {
       "type": "array",
       "minItems": 1,
       "uniqueItems": true,
