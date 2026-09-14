@@ -10,6 +10,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- CI/markdownlint residual **tests-only** leftover deepeners after tip through
+  **#188** (actionlint/workflow leftover) / **#187** (docs-cross) / **#186** /
+  **#184** / **#181** / **#178** (EXISTING six fixtures — `markdownlint` /
+  `ci-setup-python` / `ci-ruff` / `ci-pip-install` / `ci-pip-check` /
+  `ci-pytest` — no invented product / workflow / inventory bump):
+  `.markdownlint.yaml` ↔ `schemas/markdownlint.schema.json` required-key +
+  const lock parity, per-lock schema const mismatch, YAML structural edges,
+  remaining `ci.yml` assertion matrix (setup-python cache/with, ruff, pip
+  install/check, pytest markers), inventory mismatch, concurrent races, and
+  tip isolation against #188/#187/#186 siblings. Historic four only;
+  inventory unchanged (v52 / 196). Distinct from merged #188/#186
+  (actionlint/link-check), #187 (docs-cross), #184 (hydration↔security +
+  goose-schema), and historic v12/v13 setup-python/ruff/pip/pytest edges.
+
 - Actionlint/workflow + link-check residual **tests-only** leftover deepeners
   after tip through **#187** (docs-cross) / **#186** (actionlint/workflow +
   link-check) / **#184** / **#181** / **#178** / **#176** / **#174**
