@@ -1,5 +1,5 @@
 {
-  "version": 39,
+  "version": 40,
   "documented_agents": [
     "QuantumArchitectAgent",
     "BlockchainArchitectAgent",
@@ -292,12 +292,15 @@
     "claude",
     "claude-metadata",
     "constitution",
+    "constitution-conflict-matrix",
     "constitution-crypto",
     "constitution-escalation-format",
     "constitution-escalation-matrix",
     "constitution-handoff",
     "constitution-multichain",
     "constitution-on-device",
+    "constitution-recipe-orchestration",
+    "constitution-scratchpad-state",
     "contributing",
     "contributing-branches",
     "contributing-ci-honesty",
@@ -402,7 +405,7 @@
     "yaml-configs"
   ],
   "min_coverage_fail_under": 99,
-  "min_validator_count": 130,
+  "min_validator_count": 133,
   "required_paths": [
     "README.md",
     "LICENSE",
@@ -1242,7 +1245,7 @@
     "markdown lint, link check, actionlint",
     "manifest validate on Python 3.11/3.12/3.13",
     "Andrew or designated reviewer",
-    "Packaging inventory v39",
+    "Packaging inventory v40",
     "refuse invented recipes",
     "orphan on-disk YAML",
     "unknown `*Agent` tokens",
@@ -1269,5 +1272,32 @@
     "in RAM, logs, or code",
     "AGENTS-v2.2.md references",
     "updated in a future issue"
+  ],
+  "constitution_recipe_orchestration_required_phrases": [
+    "### 22.5 Recipe-Based Orchestration Structure",
+    "All agent workflows use YAML recipes in `./agentic_flows/` directory.",
+    "#### Example: NFT Mint with Quantum Validation",
+    "name: quantum_nft_mint_workflow",
+    "Execute NFT Mint with Quantum Validation",
+    "QuantumArchitectAgent validates cryptographic randomness",
+    "All three agents sign off before mainnet deployment"
+  ],
+  "constitution_scratchpad_state_required_phrases": [
+    "### 22.6 Scratchpad State Machine",
+    "All agent coordination state lives in `./agentic_flows/scratchpad.txt`",
+    "Checkbox state is source of truth",
+    "Only append, never overwrite",
+    "Each agent owns its section",
+    "Deadline must be set before work begins",
+    "If deadline passes without completion \u2192 escalate to user"
+  ],
+  "constitution_conflict_matrix_required_phrases": [
+    "### 22.7 Conflict Resolution Matrix",
+    "When agents disagree on a design decision",
+    "**Quantum Algorithm Complexity**",
+    "**Smart Contract Gas Cost**",
+    "**Crypto Algorithm Choice**",
+    "**Deployment Timeline**",
+    "**Final Decision Maker**: OrchestrationAgent"
   ]
 }
