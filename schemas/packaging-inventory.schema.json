@@ -9,7 +9,10 @@
     "agent_token_scan_docs",
     "agentic_flows_allowed_files",
     "bug_repro_required_phrases",
+    "changelog_changed_required_phrases",
     "changelog_format_required_phrases",
+    "changelog_initial_required_phrases",
+    "changelog_preamble_required_phrases",
     "changelog_release_required_phrases",
     "changelog_required_phrases",
     "changelog_unreleased_required_phrases",
@@ -47,11 +50,16 @@
     "constitution_escalation_format_required_phrases",
     "constitution_escalation_matrix_required_phrases",
     "constitution_handoff_required_phrases",
+    "constitution_hard_constraints_required_phrases",
     "constitution_heading_prefix",
+    "constitution_ide_stack_required_phrases",
+    "constitution_install_script_required_phrases",
     "constitution_multichain_required_phrases",
     "constitution_on_device_required_phrases",
     "constitution_recipe_orchestration_required_phrases",
+    "constitution_risk_tolerance_required_phrases",
     "constitution_scratchpad_state_required_phrases",
+    "constitution_vscode_required_phrases",
     "contributing_branch_required_phrases",
     "contributing_branch_surfaces",
     "contributing_ci_honesty_required_phrases",
@@ -1906,6 +1914,78 @@
       }
     },
     "hydration_phase5_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "constitution_ide_stack_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "constitution_install_script_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "constitution_vscode_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "constitution_hard_constraints_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "constitution_risk_tolerance_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "changelog_preamble_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "changelog_changed_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "changelog_initial_required_phrases": {
       "type": "array",
       "minItems": 1,
       "uniqueItems": true,

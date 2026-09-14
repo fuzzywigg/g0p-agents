@@ -10,6 +10,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Constitution + changelog residual **v45** deepeners (post-#115 hydration v44 / #111 README v43):
+  `constitution-ide-stack`, `constitution-install-script`, `constitution-vscode`,
+  `constitution-hard-constraints`, `constitution-risk-tolerance`, `changelog-preamble`,
+  `changelog-changed`, `changelog-initial` validators; AGENTS-v2.2.md §23 IDE stack /
+  install / VS Code leftovers, §24 hard-constraints / §25 risk-tolerance leftovers, and
+  CHANGELOG.md preamble / Changed / 0.1.0 leftovers; consistency deepeners for the
+  matching `*_required_phrases` inventory keys
+  (Packaging inventory 157 total; historic four only — constitution/changelog residuals
+  slice, not hydration v44, README v43, implementation-guide v41, prompts, security,
+  contributing, goose recipes, execution-summary, or Dependabot)
+
 - Hydration report **v44** deepeners (post-#111 README v43; NEW after #108
   CONFLICTING closed): `hydration-meta`, `hydration-identity-detail`,
   `hydration-git-detail`, `hydration-phase2`, `hydration-phase5` validators;
