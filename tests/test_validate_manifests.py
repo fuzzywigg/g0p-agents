@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import sys
+import tempfile
 import threading
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -18820,4 +18821,453 @@ def test_hydration_residual_live_green() -> None:
     assert vm.validate_prompt_orchestration_matrix(REPO_ROOT) == []
     assert vm.validate_goose_howto(REPO_ROOT) == []
     assert vm.validate_constitution_crypto(REPO_ROOT) == []
+    assert vm.validate_scratchpad(REPO_ROOT) == []
+
+
+# ---------------------------------------------------------------------------
+# Changelog residual HEAVY edges after tip through #161.
+# EXISTING seven changelog / changelog-* phrase-lock validators — constitution's
+# historic Keep-a-Changelog lock sibling (#116). Tests-only; no invented product /
+# inventory bump. Distinct from merged #156 (constitution), #161 (hydration),
+# #151 (prompt-pre-v52), #147 (goose-recipe), #144 (v52 prompts), open execution
+# residual drafts, and closed CONFLICTING #150/#158 invent/security siblings.
+# ---------------------------------------------------------------------------
+
+_CHANGELOG_RESIDUAL_NAMES: tuple[str, ...] = (
+    "changelog",
+    "changelog-format",
+    "changelog-unreleased",
+    "changelog-release",
+    "changelog-preamble",
+    "changelog-changed",
+    "changelog-initial",
+)
+
+
+def _changelog_residual_modules() -> list[tuple[str, object, tuple[str, ...], str]]:
+    """Map the seven existing changelog phrase-lock validators."""
+    modules: list[tuple[str, object, tuple[str, ...], str]] = []
+    for name in _CHANGELOG_RESIDUAL_NAMES:
+        if name == "changelog":
+            modules.append(
+                (
+                    name,
+                    vm.validate_changelog_packaging,
+                    vm.CHANGELOG_REQUIRED_PHRASES,
+                    "changelog_required_phrases",
+                )
+            )
+            continue
+        suffix = name.removeprefix("changelog-").replace("-", "_")
+        modules.append(
+            (
+                name,
+                getattr(vm, f"validate_{name.replace('-', '_')}"),
+                getattr(vm, f"CHANGELOG_{suffix.upper()}_REQUIRED_PHRASES"),
+                f"changelog_{suffix}_required_phrases",
+            )
+        )
+    return modules
+
+
+def _changelog_residual_locked_text() -> str:
+    """Union of locked phrases for the seven changelog residual validators."""
+    lines: list[str] = []
+    seen: set[str] = set()
+    ordered: list[str] = []
+    for _name, _fn, phrases, _key in _changelog_residual_modules():
+        ordered.extend(phrases)
+    for phrase in sorted(ordered, key=len, reverse=True):
+        if phrase not in seen:
+            seen.add(phrase)
+            lines.append(phrase)
+    return "\n".join(lines) + "\n"
+
+
+def _changelog_packaging_inventory_findings(**overrides: object) -> list[vm.Finding]:
+    """Write a temp packaging inventory with overrides and validate it."""
+    with tempfile.TemporaryDirectory(prefix="changelog-residual-inv-") as raw:
+        root = Path(raw)
+        _copy_schemas(root)
+        payload = _inventory_payload()
+        payload.update(overrides)
+        for rel in payload["required_paths"]:
+            target = root / rel
+            target.parent.mkdir(parents=True, exist_ok=True)
+            if not target.exists():
+                target.write_text("ok\n", encoding="utf-8")
+        (root / "schemas" / "packaging-inventory.json").write_text(
+            json.dumps(payload),
+            encoding="utf-8",
+        )
+        return vm.validate_packaging_inventory(root)
+
+
+def test_changelog_residual_modules_existing_only() -> None:
+    """Slice targets seven existing changelog modules — not tip #156/#161 siblings."""
+    modules = _changelog_residual_modules()
+    assert len(modules) == 7
+    assert vm.INVENTORY_VERSION == 52
+    assert vm.MIN_VALIDATOR_COUNT == 196
+    assert len(vm.VALIDATORS) == 196
+
+    # Adjacent leftover slices stay live but are intentionally excluded
+    assert "constitution-crypto" in vm.VALIDATORS
+    assert "hydration-list-b" in vm.VALIDATORS
+    assert "prompt-orchestration-matrix" in vm.VALIDATORS
+    assert "goose-howto" in vm.VALIDATORS
+    assert "constitution-crypto" not in {m[0] for m in modules}
+    assert "hydration-list-b" not in {m[0] for m in modules}
+
+    for invented in (
+        "changelog-timeouts",
+        "changelog-deadlines",
+        "changelog-dependabot-detail",
+        "changelog-coverage-detail",
+        "constitution-deadlines",
+        "hydration-timeouts",
+        "execution-timeouts",
+        "goose-timeouts",
+        "prompt-v53-invented",
+    ):
+        assert invented not in vm.VALIDATORS
+
+    inventory = json.loads(
+        (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
+    )
+    assert inventory["version"] == 52
+    assert inventory["min_validator_count"] == 196
+    assert sorted(vm.VALIDATORS) == inventory["validator_names"]
+
+    for name, _fn, phrases, inv_key in modules:
+        assert name in vm.VALIDATORS
+        assert name in inventory["validator_names"]
+        assert inv_key in inventory
+        assert inventory[inv_key] == list(phrases)
+        assert len(phrases) >= 2
+
+
+def test_changelog_residual_empty_maps_and_empty_doc(tmp_path: Path) -> None:
+    """Empty / whitespace / header-only CHANGELOG + empty changelog phrase maps."""
+    modules = _changelog_residual_modules()
+    for name, fn, _phrases, _key in modules:
+        findings = fn(tmp_path)
+        assert any("missing" in f.message for f in findings), name
+
+    _write(tmp_path / "CHANGELOG.md", "\n\t  \n")
+    for name, fn, phrases, _key in modules:
+        findings = fn(tmp_path)
+        assert findings, name
+        assert any(
+            phrase in f.message or "missing" in f.message
+            for f in findings
+            for phrase in phrases[:1]
+        ) or any("missing" in f.message for f in findings)
+
+    _write(tmp_path / "CHANGELOG.md", "# Changelog\n")
+    for name, fn, phrases, _key in modules:
+        findings = fn(tmp_path)
+        phrase_hits = [f for f in findings if any(p in f.message for p in phrases)]
+        assert phrase_hits or any("missing" in f.message for f in findings), name
+
+    for _name, _fn, _phrases, key in modules:
+        if key == "changelog_required_phrases":
+            findings = _changelog_packaging_inventory_findings(**{key: []})
+            assert any(
+                "changelog_required_phrases" in f.message
+                and "should be non-empty" in f.message
+                for f in findings
+            ), key
+            continue
+        payload = _inventory_payload()
+        payload[key] = []
+        findings = vm._inventory_lock_consistency(
+            payload, schema_path="schemas/packaging-inventory.json"
+        )
+        assert any(f"{key} must not be empty" in f.message for f in findings), key
+
+
+def test_changelog_residual_invalid_keys(tmp_path: Path) -> None:
+    """Reject invented changelog/timeout/v53 keys; live changelog names stay selectable."""
+    with pytest.raises(KeyError):
+        _ = vm.VALIDATORS["changelog-timeouts"]
+    with pytest.raises(KeyError):
+        _ = vm.VALIDATORS["changelog-dependabot-detail"]
+    with pytest.raises(ValueError, match="unknown validator"):
+        vm.run_all_validations(REPO_ROOT, only=["changelog-deadlines"])
+    with pytest.raises(ValueError, match="unknown validator"):
+        vm.run_all_validations(REPO_ROOT, only=["changelog-coverage-detail"])
+
+    findings = vm.run_all_validations(
+        REPO_ROOT,
+        only=[
+            "changelog",
+            "changelog-preamble",
+            "changelog-format",
+            "changelog-unreleased",
+            "constitution-crypto",
+            "hydration-list-b",
+        ],
+    )
+    assert findings == []
+
+    _copy_schemas(tmp_path)
+    for rel in _inventory_payload()["required_paths"]:
+        target = tmp_path / rel
+        target.parent.mkdir(parents=True, exist_ok=True)
+        if not target.exists():
+            target.write_text("ok\n", encoding="utf-8")
+
+    bad = _inventory_payload()
+    bad["invented_changelog_residual_map"] = {"slot": "x"}
+    (tmp_path / "schemas" / "packaging-inventory.json").write_text(
+        json.dumps(bad),
+        encoding="utf-8",
+    )
+    findings = vm.validate_packaging_inventory(tmp_path)
+    assert findings
+
+    bad2 = _inventory_payload()
+    bad2["changelog_preamble_required_phrases"] = "not-a-list"
+    (tmp_path / "schemas" / "packaging-inventory.json").write_text(
+        json.dumps(bad2),
+        encoding="utf-8",
+    )
+    findings = vm.validate_packaging_inventory(tmp_path)
+    assert findings
+
+
+def test_changelog_residual_per_phrase_drop_matrix(tmp_path: Path) -> None:
+    """Drop each locked phrase independently across all seven changelog modules."""
+    base = _changelog_residual_locked_text()
+    _write(tmp_path / "CHANGELOG.md", base)
+    modules = _changelog_residual_modules()
+    for name, fn, _phrases, _key in modules:
+        assert fn(tmp_path) == [], name
+
+    for name, fn, phrases, _key in modules:
+        for phrase in phrases:
+            mangled = base.replace(phrase, "ABSENT_PHRASE_TOKEN")
+            assert phrase not in mangled, (name, phrase)
+            _write(tmp_path / "CHANGELOG.md", mangled)
+            findings = fn(tmp_path)
+            assert any(phrase in f.message for f in findings), (name, phrase)
+
+    _write(tmp_path / "CHANGELOG.md", base)
+    for name, fn, _phrases, _key in modules:
+        assert fn(tmp_path) == [], name
+
+
+def test_changelog_residual_inventory_mismatch_matrix() -> None:
+    """Empty / dup / blank / seed mismatches for every changelog_* inventory key."""
+    modules = _changelog_residual_modules()
+    for _name, _fn, phrases, key in modules:
+        if key == "changelog_required_phrases":
+            findings = _changelog_packaging_inventory_findings(**{key: []})
+            assert any(
+                "changelog_required_phrases" in f.message
+                and "should be non-empty" in f.message
+                for f in findings
+            ), key
+
+            findings = _changelog_packaging_inventory_findings(
+                **{key: [phrases[0], phrases[0], *phrases[1:]]}
+            )
+            assert any(
+                "changelog_required_phrases" in f.message
+                and "non-unique" in f.message
+                for f in findings
+            ), key
+
+            findings = _changelog_packaging_inventory_findings(**{key: ["ok", "  "]})
+            assert any(
+                "changelog_required_phrases" in f.message
+                and "do not match" in f.message
+                for f in findings
+            ), key
+
+            findings = _changelog_packaging_inventory_findings(**{key: [phrases[0]]})
+            assert any(
+                "changelog_required_phrases" in f.message
+                and "do not match" in f.message
+                for f in findings
+            ), key
+            continue
+
+        payload = _inventory_payload()
+        payload[key] = []
+        findings = vm._inventory_lock_consistency(
+            payload, schema_path="schemas/packaging-inventory.json"
+        )
+        assert any(f"{key} must not be empty" in f.message for f in findings), key
+
+        payload = _inventory_payload()
+        payload[key] = [phrases[0], phrases[0], *phrases[1:]]
+        findings = vm._inventory_lock_consistency(
+            payload, schema_path="schemas/packaging-inventory.json"
+        )
+        assert any(f"{key} must be unique" in f.message for f in findings), key
+
+        payload = _inventory_payload()
+        payload[key] = ["ok", "  "]
+        findings = vm._inventory_lock_consistency(
+            payload, schema_path="schemas/packaging-inventory.json"
+        )
+        assert any(
+            f"{key} entries must be non-empty strings" in f.message for f in findings
+        ), key
+
+        payload = _inventory_payload()
+        payload[key] = [phrases[0]]
+        findings = vm._inventory_lock_consistency(
+            payload, schema_path="schemas/packaging-inventory.json"
+        )
+        assert any(f"{key} must include" in f.message for f in findings), key
+
+
+def test_changelog_residual_concurrent_validate_races(tmp_path: Path) -> None:
+    """Concurrent readers/writers against CHANGELOG.md must not crash."""
+    modules = _changelog_residual_modules()
+    live_fns = [fn for _name, fn, _phrases, _key in modules]
+
+    def _read_live() -> list[vm.Finding]:
+        out: list[vm.Finding] = []
+        for fn in live_fns:
+            out.extend(fn(REPO_ROOT))
+        return out
+
+    errors: list[BaseException] = []
+    with ThreadPoolExecutor(max_workers=16) as pool:
+        futures = [pool.submit(_read_live) for _ in range(48)]
+        for fut in as_completed(futures):
+            try:
+                assert fut.result() == []
+            except BaseException as exc:  # noqa: BLE001 — collect race failures
+                errors.append(exc)
+    assert errors == []
+
+    locked = _changelog_residual_locked_text()
+    path = tmp_path / "CHANGELOG.md"
+    _write(path, locked)
+    for name, fn, _phrases, _key in modules:
+        assert fn(tmp_path) == [], name
+
+    stop = threading.Event()
+    race_errors: list[BaseException] = []
+
+    def _writer() -> None:
+        flip = False
+        while not stop.is_set():
+            try:
+                if flip:
+                    path.write_text(locked, encoding="utf-8")
+                else:
+                    path.write_text("\n", encoding="utf-8")
+                flip = not flip
+            except BaseException as exc:  # noqa: BLE001
+                race_errors.append(exc)
+                return
+
+    def _reader() -> None:
+        while not stop.is_set():
+            try:
+                for fn in live_fns:
+                    fn(tmp_path)
+            except BaseException as exc:  # noqa: BLE001
+                race_errors.append(exc)
+                return
+
+    threads = [
+        threading.Thread(target=_writer),
+        threading.Thread(target=_reader),
+        threading.Thread(target=_reader),
+        threading.Thread(target=_reader),
+    ]
+    for t in threads:
+        t.start()
+    time.sleep(0.35)
+    stop.set()
+    for t in threads:
+        t.join(timeout=2.0)
+    assert race_errors == []
+
+    def _empty_map_check(key: str) -> bool:
+        if key == "changelog_required_phrases":
+            findings = _changelog_packaging_inventory_findings(**{key: []})
+            return any(
+                "changelog_required_phrases" in f.message
+                and "should be non-empty" in f.message
+                for f in findings
+            )
+        payload = _inventory_payload()
+        payload[key] = []
+        findings = vm._inventory_lock_consistency(
+            payload, schema_path="schemas/packaging-inventory.json"
+        )
+        return any(f"{key} must not be empty" in f.message for f in findings)
+
+    keys = [key for _n, _f, _p, key in modules]
+    with ThreadPoolExecutor(max_workers=8) as pool:
+        futs = [pool.submit(_empty_map_check, k) for k in keys for _ in range(2)]
+        assert all(fut.result() for fut in as_completed(futs))
+
+
+def test_changelog_residual_cross_isolation(tmp_path: Path) -> None:
+    """Dropping one changelog module's phrases must not falsely green that module."""
+    base = _changelog_residual_locked_text()
+    modules = _changelog_residual_modules()
+    targets = [
+        "changelog",
+        "changelog-format",
+        "changelog-unreleased",
+        "changelog-release",
+        "changelog-preamble",
+        "changelog-changed",
+        "changelog-initial",
+    ]
+    by_name = {name: (fn, phrases) for name, fn, phrases, _key in modules}
+    for target in targets:
+        fn, phrases = by_name[target]
+        mangled = base
+        for phrase in phrases:
+            mangled = mangled.replace(phrase, "GONE_PHRASE_TOKEN")
+            assert phrase not in mangled, (target, phrase)
+        _write(tmp_path / "CHANGELOG.md", mangled)
+        findings = fn(tmp_path)
+        assert findings, target
+        assert any(p in f.message for f in findings for p in phrases), target
+        other = "changelog-initial" if target == "changelog-format" else "changelog-format"
+        assert by_name[other][0](REPO_ROOT) == []
+        assert vm.validate_constitution_crypto(REPO_ROOT) == []
+        assert vm.validate_hydration_list_b(REPO_ROOT) == []
+        assert vm.validate_goose_howto(REPO_ROOT) == []
+        assert vm.validate_prompt_orchestration_matrix(REPO_ROOT) == []
+
+
+def test_changelog_residual_live_green() -> None:
+    """All seven live changelog residual validators remain clean; inventory v52/196."""
+    modules = _changelog_residual_modules()
+    assert len(modules) == 7
+    for name, fn, _phrases, _key in modules:
+        assert fn(REPO_ROOT) == [], name
+        assert vm.VALIDATORS[name](REPO_ROOT) == [], name
+
+    assert vm.INVENTORY_VERSION == 52
+    assert vm.MIN_VALIDATOR_COUNT == 196
+    assert len(vm.VALIDATORS) == 196
+    body = (REPO_ROOT / "CHANGELOG.md").read_text(encoding="utf-8")
+    assert "# Changelog" in body
+    assert "## [Unreleased]" in body
+    assert "## [0.1.0] — 2025-12-13" in body
+    assert "Packaging inventory v52" in (
+        REPO_ROOT / "CONTRIBUTING.md"
+    ).read_text(encoding="utf-8")
+    assert "inventory v52 locks" in (REPO_ROOT / "README.md").read_text(
+        encoding="utf-8"
+    )
+    # Adjacent tip siblings through #161 remain green alongside this residual
+    assert vm.validate_constitution_crypto(REPO_ROOT) == []
+    assert vm.validate_hydration_list_b(REPO_ROOT) == []
+    assert vm.validate_goose_howto(REPO_ROOT) == []
+    assert vm.validate_prompt_orchestration_matrix(REPO_ROOT) == []
     assert vm.validate_scratchpad(REPO_ROOT) == []

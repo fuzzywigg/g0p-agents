@@ -10,6 +10,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Changelog residual **tests-only** deepeners after tip through **#161** (EXISTING
+  seven `changelog` / `changelog-*` phrase-lock validators — constitution's historic
+  Keep-a-Changelog lock sibling from #116; no invented product / inventory bump):
+  concurrent validate races, empty/whitespace/header-only `CHANGELOG.md`,
+  invalid/invented changelog-timeout keys, per-phrase drop matrix, inventory
+  mismatch matrix, and cross-isolation against `changelog` / `changelog-format` /
+  `changelog-unreleased` / `changelog-release` / `changelog-preamble` /
+  `changelog-changed` / `changelog-initial`. Historic four only; inventory
+  unchanged (v52 / 196). Distinct from merged #156 (constitution), merged #161
+  (hydration), merged #151 (prompt-pre-v52), merged #147 (goose-recipe), open
+  execution residual drafts, and closed CONFLICTING #150/#158 invent/security
+  siblings.
+
 - Hydration residual **tests-only** deepeners after **#151** tip / post-#156
   (EXISTING eleven `hydration-*` phrase-lock fixtures plus the live `hydration`
   report lock — no invented product / inventory bump): concurrent validate races,
