@@ -10,6 +10,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Goose/orch residual **tests-only** deepeners after #144 tip (EXISTING eleven
+  goose-* / `constitution-recipe-orchestration` / `prompt-orchestration-matrix`
+  fixtures only — no invented product / inventory bump): concurrent validate
+  races, empty/whitespace/header-only GOOSE-RECIPES / AGENTS / AGENT-PROMPTS,
+  invalid/invented timeout+v53 keys (`goose-timeouts` / `goose-deadlines` /
+  `constitution-deadlines` / `implementation-timeouts`), per-phrase drop matrix,
+  inventory mismatch matrix, and cross-isolation. Historic four only; inventory
+  unchanged (v52 / 196). Distinct from closed CONFLICTING #143/#145/#146 timeout
+  PRs and merged #144 v52 prompt residual edges.
+
 - Prompt/validator residual **tests-only** deepeners for post-#141 **v52** modules
   (EXISTING twelve only — no invented product / inventory bump): concurrent
   validate races, empty/whitespace/header-only AGENT-PROMPTS, invalid/invented
