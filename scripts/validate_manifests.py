@@ -25,6 +25,7 @@ Checks structural correctness of:
 - CHANGELOG / postmortem / .gitignore / CLAUDE negative-constraint locks
 - CHANGELOG.md Keep a Changelog format / Unreleased / 0.1.0 release locks
 - GOOSE-RECIPES.md recipe headers / instruction-agent / extension locks
+- AGENT-PROMPTS.md constraints / escalation-triggers / related-docs locks
 - agentic_flows/scratchpad.txt coordination markers (+ allowed file set)
 - pyproject.toml validation tooling keys (+ coverage / requires-python / ruff)
 - CI workflow job/step/matrix/concurrency/permissions/artifact-if presence
@@ -165,7 +166,7 @@ REQUIRED_ARCHIVE_DOCS = (
     "README.md",
 )
 
-INVENTORY_VERSION = 33
+INVENTORY_VERSION = 34
 CURSOR_ENVIRONMENT_NAME = "g0p-agents"
 DEPENDABOT_SCHEDULE_INTERVAL = "weekly"
 DEPENDABOT_DIRECTORIES: frozenset[str] = frozenset({"/"})
@@ -977,6 +978,36 @@ PROMPT_USAGE_REQUIRED_PHRASES: tuple[str, ...] = (
     "These prompts are **living documents**",
     "Risk tolerance thresholds change (quarterly)",
 )
+PROMPT_CONSTRAINTS_REQUIRED_PHRASES: tuple[str, ...] = (
+    "Never claim quantum-safety without formal verification",
+    "Never design algorithms without NIST-standardized post-quantum validation",
+    "Never deploy without post-quantum cryptography threat modeling",
+    "Never skip security audit before mainnet deployment",
+    "Never expose plaintext keys in RAM or logs",
+    "Never block UI thread for crypto operations (async/background only)",
+    "Never implement on-device crypto without HSM/secure enclave consideration",
+    "Always include fallback to classical simulation",
+)
+PROMPT_TRIGGERS_REQUIRED_PHRASES: tuple[str, ...] = (
+    "Circuit depth exceeds device constraints by >20%",
+    "Error rate > 2% (unacceptable for security-critical ops)",
+    "Security audit finds critical vulnerability",
+    "Gas cost exceeds 10M (Ethereum network limit)",
+    "Crypto operations > 500ms on target device",
+    "Device memory < 2MB for circuit state",
+    "## When You Escalate to Human",
+    "ESCALATION TO HUMAN REQUIRED",
+)
+PROMPT_RELATED_DOCS_REQUIRED_PHRASES: tuple[str, ...] = (
+    "See AGENTS.md Section 22 (Quantum-Blockchain Integration Standards)",
+    "See AGENTS.md Section 22.4 (Agent Coordination Protocol)",
+    "See AGENTS.md Section 22.5 (Recipe-Based Orchestration)",
+    "See AGENTS.md Section 12.4 (Smart Contract Approval Matrix)",
+    "See AGENTS.md Section 22.2 (On-Device Quantum Logic Execution)",
+    "See AGENTS.md Section 22.7 (Conflict Resolution Matrix)",
+    "Remember: You are not working alone",
+    "Remember: You are the last line of defense before user devices",
+)
 
 IMPLEMENTATION_PHASES_REQUIRED_PHRASES: tuple[str, ...] = (
     "## Full Implementation (1-2 weeks)",
@@ -1052,7 +1083,7 @@ SCRATCHPAD_STATUS_MARKERS: tuple[str, ...] = (
 SPECIALIST_AGENTS: tuple[str, ...] = DOCUMENTED_AGENTS[:-1]
 
 MIN_COVERAGE_FAIL_UNDER = 99
-MIN_VALIDATOR_COUNT = 112
+MIN_VALIDATOR_COUNT = 115
 
 
 @dataclass(frozen=True)
@@ -2006,6 +2037,28 @@ def validate_packaging_inventory(root: Path) -> list[Finding]:
         != PROMPT_USAGE_REQUIRED_PHRASES
     ):
         findings.append(_lock_mismatch(schema_path, "prompt_usage_required_phrases"))
+
+    if (
+        tuple(inventory.get("prompt_constraints_required_phrases", ()))
+        != PROMPT_CONSTRAINTS_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "prompt_constraints_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("prompt_triggers_required_phrases", ()))
+        != PROMPT_TRIGGERS_REQUIRED_PHRASES
+    ):
+        findings.append(_lock_mismatch(schema_path, "prompt_triggers_required_phrases"))
+
+    if (
+        tuple(inventory.get("prompt_related_docs_required_phrases", ()))
+        != PROMPT_RELATED_DOCS_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "prompt_related_docs_required_phrases")
+        )
 
     if (
         tuple(inventory.get("implementation_phases_required_phrases", ()))
@@ -3710,6 +3763,112 @@ def _inventory_lock_consistency(
                     schema_path,
                     "prompt_usage_required_phrases must include Usage Instructions/"
                     "Integration with AGENTS.md/INSERT PROJECT-SPECIFIC",
+                )
+            )
+
+    constraints = list(inventory.get("prompt_constraints_required_phrases", ()))
+    if len(constraints) != len(set(constraints)):
+        findings.append(
+            Finding(schema_path, "prompt_constraints_required_phrases must be unique")
+        )
+    if not constraints:
+        findings.append(
+            Finding(
+                schema_path, "prompt_constraints_required_phrases must not be empty"
+            )
+        )
+    for phrase in constraints:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_constraints_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_constraints = {
+            "Never claim quantum-safety without formal verification",
+            "Never expose plaintext keys in RAM or logs",
+            "Never deploy without post-quantum cryptography threat modeling",
+        }
+        if constraints and not required_constraints <= set(constraints):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_constraints_required_phrases must include quantum-safety/"
+                    "plaintext keys/post-quantum deploy",
+                )
+            )
+
+    triggers = list(inventory.get("prompt_triggers_required_phrases", ()))
+    if len(triggers) != len(set(triggers)):
+        findings.append(
+            Finding(schema_path, "prompt_triggers_required_phrases must be unique")
+        )
+    if not triggers:
+        findings.append(
+            Finding(schema_path, "prompt_triggers_required_phrases must not be empty")
+        )
+    for phrase in triggers:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_triggers_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_triggers = {
+            "Circuit depth exceeds device constraints by >20%",
+            "Crypto operations > 500ms on target device",
+            "ESCALATION TO HUMAN REQUIRED",
+        }
+        if triggers and not required_triggers <= set(triggers):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_triggers_required_phrases must include circuit depth/"
+                    "crypto 500ms/ESCALATION TO HUMAN",
+                )
+            )
+
+    related = list(inventory.get("prompt_related_docs_required_phrases", ()))
+    if len(related) != len(set(related)):
+        findings.append(
+            Finding(schema_path, "prompt_related_docs_required_phrases must be unique")
+        )
+    if not related:
+        findings.append(
+            Finding(
+                schema_path, "prompt_related_docs_required_phrases must not be empty"
+            )
+        )
+    for phrase in related:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_related_docs_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_related = {
+            "See AGENTS.md Section 22 (Quantum-Blockchain Integration Standards)",
+            "See AGENTS.md Section 22.7 (Conflict Resolution Matrix)",
+            "Remember: You are not working alone",
+        }
+        if related and not required_related <= set(related):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_related_docs_required_phrases must include Section 22/"
+                    "22.7/Remember not working alone",
                 )
             )
 
@@ -6651,6 +6810,56 @@ def validate_prompt_usage(root: Path) -> list[Finding]:
     return findings
 
 
+def validate_prompt_constraints(root: Path) -> list[Finding]:
+    rel = "AGENT-PROMPTS.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "AGENT-PROMPTS.md missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "Never claim quantum-safety without formal verification" not in text:
+        findings.append(Finding(rel, "missing quantum-safety constraint"))
+    for phrase in PROMPT_CONSTRAINTS_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(rel, f"missing locked prompt-constraints phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_prompt_triggers(root: Path) -> list[Finding]:
+    rel = "AGENT-PROMPTS.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "AGENT-PROMPTS.md missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "Circuit depth exceeds device constraints by >20%" not in text:
+        findings.append(Finding(rel, "missing circuit-depth escalation trigger"))
+    for phrase in PROMPT_TRIGGERS_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(rel, f"missing locked prompt-triggers phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_prompt_related_docs(root: Path) -> list[Finding]:
+    rel = "AGENT-PROMPTS.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "AGENT-PROMPTS.md missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "See AGENTS.md Section 22 (Quantum-Blockchain Integration Standards)" not in text:
+        findings.append(Finding(rel, "missing AGENTS.md Section 22 related-docs lock"))
+    for phrase in PROMPT_RELATED_DOCS_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(rel, f"missing locked prompt-related-docs phrase: {phrase}")
+            )
+    return findings
+
 
 def validate_implementation_phases(root: Path) -> list[Finding]:
     rel = "IMPLEMENTATION-GUIDE.md"
@@ -7950,6 +8159,9 @@ VALIDATORS: dict[str, ValidatorFn] = {
     "prompt-roles": validate_prompt_roles,
     "prompt-sections": validate_prompt_sections,
     "prompt-usage": validate_prompt_usage,
+    "prompt-constraints": validate_prompt_constraints,
+    "prompt-triggers": validate_prompt_triggers,
+    "prompt-related-docs": validate_prompt_related_docs,
     "implementation-phases": validate_implementation_phases,
     "implementation-tools": validate_implementation_tools,
     "implementation-success": validate_implementation_success,
