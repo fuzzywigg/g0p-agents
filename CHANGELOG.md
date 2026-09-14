@@ -10,6 +10,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Actionlint/workflow + link-check residual **tests-only** deepeners after tip
+  through **#184** (hydration↔security + goose-schema) / **#181** / **#178** /
+  **#176** / **#174** / post-#172 (EXISTING seven CI fixtures —
+  `ci` / `ci-actions` / `link-check` / `actionlint-shell` / `ci-job-names` /
+  `ci-runs-on` / `ci-artifacts` — no invented product / inventory bump):
+  workflow structural edges beyond v10/v11 (orphan jobs, PR-branch,
+  concurrency cancel, permissions, fail-fast, string lychee `fail`, mixed
+  actionlint shells), per-lock mangle matrix, inventory mismatch matrix,
+  concurrent `ci.yml` races, invalid/invented tip sibling keys, and tip
+  isolation against #184/#181/#178/#176/#174 siblings. Historic four only;
+  inventory unchanged (v52 / 196). Distinct from merged #184 (hydration↔
+  security + goose-schema), #181 (memory-handoff), #178 (implementation),
+  #176 (changelog), #174 (contributing), #172 (goose-schema+security), #166
+  (execution), and historic v10/v11 link-check/actionlint edge suites.
+
 - Hydration↔security cross + goose-schema tip residual **tests-only** deepeners
   after tip through **#181** (memory-handoff) / **#178** / **#176** / **#174** /
   post-#172 (EXISTING `hydration-phase4` + ten `security` / `security-*` +
