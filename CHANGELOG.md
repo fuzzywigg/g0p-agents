@@ -19,11 +19,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   empty `with`, missing keys), dual-lychee conflict edges, markdown-lint
   globs/config + setup-python cache isolation, inventory mismatch matrix,
   concurrent `ci.yml` validate races, invalid/invented link-check tip sibling
-  keys, and cross-isolation against `actionlint-shell` / #184 hydration↔security
-  + goose-schema / #181 memory-handoff / #178 implementation / #176 changelog /
-  #174 contributing siblings. Historic four only; inventory unchanged
-  (v52 / 196). Distinct from merged #184 (hydration↔security + goose-schema tip),
-  #181/#178/#176/#174/#172/#166/#161, and v10 link-check edge suite.
+  keys, and cross-isolation against `actionlint-shell` / merged #184
+  hydration↔security and goose-schema / #181 memory-handoff / #178
+  implementation / #176 changelog / #174 contributing siblings. Historic four
+  only; inventory unchanged (v52 / 196). Distinct from merged #184
+  (hydration↔security + goose-schema tip), #181/#178/#176/#174/#172/#166/#161,
+  and v10 link-check edge suite.
 
 - Hydration↔security cross + goose-schema tip residual **tests-only** deepeners
   after tip through **#181** (memory-handoff) / **#178** / **#176** / **#174** /
