@@ -10,6 +10,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Prompts residual **v53 HEAVY** deepeners / **v52 list-form leftovers** (post-#141/#144/#147 tip):
+  `prompt-matrix-rows`, `prompt-monthly-checkboxes`, `prompt-usage-numbered`,
+  `prompt-example-steps`, `prompt-living-bullets`, `prompt-quantum-resp-numbered`,
+  `prompt-bc-resp-numbered`, `prompt-edge-resp-numbered`, `prompt-orch-resp-numbered`,
+  `prompt-user-input`, `prompt-cannot-delegate-numbered`, `prompt-decision-bullets`
+  validators; AGENT-PROMPTS.md leftover locks across full matrix rows / checkbox forms /
+  numbered usage+example steps / living-doc bullets / numbered responsibilities /
+  User Input / numbered cannot-delegate / decision-authority bullets; consistency deepeners
+  for matching `*_required_phrases` inventory keys
+  (Packaging inventory 208 total; historic four only — prompts v53 residual lock slice #3
+  list-form, not v52 #141 phrase residuals, not #144/#147 tests-only residual edges, not
+  memory-slot #134, not constitution/changelog/hydration/README/security/contributing/
+  goose/postmortem, or Dependabot)
+
 - Goose-recipe residual **tests-only** deepeners after **#144** (EXISTING nine
   `goose-*` phrase-lock validators only — no invented product / inventory bump):
   concurrent validate races, empty/whitespace/header-only GOOSE-RECIPES,
@@ -30,7 +44,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `prompt-responsibilities-residual` / `prompt-expertise-residual` /
   `prompt-vision-context` / `prompt-context-residual` / `prompt-monthly-detail` /
   `prompt-docs-residual` / `prompt-matrix-resolutions` / `prompt-usage-detail`.
-  Historic four only; inventory unchanged (v52 / 196). Distinct from open #142
+  Historic four only; inventory was v52 / 196 at land; superseded inventory gate by
+  v53 list-form residual below when merged. Distinct from closed #142
   (pre-v52 / 33-module residual on tip before #141).
 
 - Prompts residual **v52 HEAVY** deepeners / **v51 leftovers continued** (post-#134 tip; distinct from closed CONFLICTING #133/#135):

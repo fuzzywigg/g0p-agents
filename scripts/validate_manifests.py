@@ -76,6 +76,10 @@ Checks structural correctness of:
 - AGENT-PROMPTS.md principles-detail / responsibilities-residual / expertise-residual leftover locks
 - AGENT-PROMPTS.md vision-context / context-residual / monthly-detail leftover locks
 - AGENT-PROMPTS.md docs-residual / matrix-resolutions / usage-detail leftover locks
+- AGENT-PROMPTS.md matrix-rows / monthly-checkboxes / usage-numbered leftover locks
+- AGENT-PROMPTS.md example-steps / living-bullets / quantum-resp-numbered leftover locks
+- AGENT-PROMPTS.md bc/edge/orch-resp-numbered / user-input leftover locks
+- AGENT-PROMPTS.md cannot-delegate-numbered / decision-bullets leftover locks
   PHASE 4 issues / LIST B deferred leftover locks
 - postmortem.md intro / Decision field / Next Steps surface locks
 - agentic_flows/scratchpad.txt intro / format-legend / task-meta locks
@@ -192,7 +196,7 @@ REQUIRED_ARCHIVE_DOCS = (
     "README.md",
 )
 
-INVENTORY_VERSION = 52
+INVENTORY_VERSION = 53
 CURSOR_ENVIRONMENT_NAME = "g0p-agents"
 DEPENDABOT_SCHEDULE_INTERVAL = "weekly"
 DEPENDABOT_DIRECTORIES: frozenset[str] = frozenset({"/"})
@@ -845,7 +849,7 @@ CONTRIBUTING_CI_HONESTY_REQUIRED_PHRASES: tuple[str, ...] = (
     "markdown lint, link check, actionlint",
     "manifest validate on Python 3.11/3.12/3.13",
     "Andrew or designated reviewer",
-    "Packaging inventory v52",
+    "Packaging inventory v53",
     "refuse invented recipes",
     "orphan on-disk YAML",
     "unknown `*Agent` tokens",
@@ -1314,6 +1318,109 @@ PROMPT_USAGE_DETAIL_REQUIRED_PHRASES: tuple[str, ...] = (
     'Check Cirq optimization, validate quantum-safety, provide gate count '
     'and error rate estimates. Use the scratchpad to track progress.',
 )
+
+PROMPT_MATRIX_ROWS_REQUIRED_PHRASES: tuple[str, ...] = (
+    '| **Algorithm Complexity** (Quantum says "too complex", Blockchain says "necessary") | '
+    'Weigh risk tolerance. Choose testnet approach to validate. |',
+    '| **Gas Cost** (Blockchain says "over budget", On-Device says "can\'t afford") | '
+    'Redesign contract interface or reduce scope. |',
+    '| **Crypto Algorithm** (On-Device says "RSA too slow", Quantum says "must be RSA") | '
+    'Use hybrid (post-quantum + RSA), implement staged migration. |',
+    '| **Timeline** (All agents say "2 weeks", business needs "2 days") | Reduce scope, '
+    'increase risk, escalate to stakeholder. |',
+)
+
+PROMPT_MONTHLY_CHECKBOXES_REQUIRED_PHRASES: tuple[str, ...] = (
+    '- [ ] Review all recent decisions in postmortem.md',
+    '- [ ] Check agent success metrics (are they meeting targets?)',
+    '- [ ] Identify any emerging conflicts (before they escalate)',
+    '- [ ] Update risk register (quarterly, minimum)',
+    '- [ ] Communicate progress to stakeholder',
+)
+
+PROMPT_USAGE_NUMBERED_REQUIRED_PHRASES: tuple[str, ...] = (
+    '1. **Copy the relevant prompt template** (above)',
+    '2. **Fill in the [INSERT PROJECT-SPECIFIC INFO HERE] sections**',
+    "3. **Paste into the LLM's system prompt** (Claude, GPT, Gemini, etc.)",
+    '4. **Provide the agent with access to**:',
+    '5. **Run the agent** on a specific recipe/task',
+)
+
+PROMPT_EXAMPLE_STEPS_REQUIRED_PHRASES: tuple[str, ...] = (
+    '1. Reads ./agentic_flows/scratchpad.txt (finds pending quantum mint task)',
+    '2. Designs Cirq circuit for factorization',
+    '3. Optimizes for mobile constraints (2MB RAM max)',
+    '4. Validates using CRYSTALS-Kyber (NIST post-quantum standard)',
+    '5. Updates scratchpad with gate count, depth, error rate',
+    '6. Either approves (moves to BlockchainArchitectAgent) or escalates',
+)
+
+PROMPT_LIVING_BULLETS_REQUIRED_PHRASES: tuple[str, ...] = (
+    'These prompts are **living documents**. Update them whenever:',
+    '- AGENTS.md constraints change',
+    '- A new escalation pattern emerges',
+    '- Risk tolerance thresholds change (quarterly)',
+    '- New tools become available',
+)
+
+PROMPT_QUANTUM_RESP_NUMBERED_REQUIRED_PHRASES: tuple[str, ...] = (
+    '1. Design quantum algorithms for cryptographic operations',
+    '2. Optimize Cirq circuits for target hardware',
+    '3. Validate quantum-safe properties (post-quantum crypto)',
+    '4. Simulate quantum timelines and collective consciousness models (your "Mickey 18" '
+    'concept)',
+    '5. Provide hardware requirement estimates',
+    '6. Escalate when constraints cannot be met',
+)
+
+PROMPT_BC_RESP_NUMBERED_REQUIRED_PHRASES: tuple[str, ...] = (
+    '1. Design multi-chain smart contract architecture',
+    '2. Implement quantum-resistant consensus logic',
+    '3. Define cross-chain state synchronization protocols',
+    '4. Audit contracts for quantum vulnerabilities',
+    '5. Estimate gas costs and optimization opportunities',
+    '6. Escalate when security or performance constraints cannot be met',
+)
+
+PROMPT_EDGE_RESP_NUMBERED_REQUIRED_PHRASES: tuple[str, ...] = (
+    '1. Implement quantum-safe cryptography on Android/iOS',
+    '2. Design data isolation ("walled garden") architecture',
+    '3. Manage secure key lifecycle (storage, rotation, deletion)',
+    '4. Optimize for mobile constraints (battery, memory, CPU)',
+    '5. Validate health data privacy architecture (HIPAA, GDPR)',
+    '6. Escalate when device constraints cannot be met',
+)
+
+PROMPT_ORCH_RESP_NUMBERED_REQUIRED_PHRASES: tuple[str, ...] = (
+    '1. Collect outputs from all three specialist agents',
+    '2. Identify conflicts (if any)',
+    '3. Make final go/no-go decision',
+    '4. Escalate unsolvable conflicts to human',
+    '5. Log all decisions in postmortem.md',
+    '6. Update AGENTS.md risk tolerance (quarterly)',
+)
+
+PROMPT_USER_INPUT_REQUIRED_PHRASES: tuple[str, ...] = (
+    'User Input: "Review the proposed factorization circuit for our NFT mint operation. '
+    'Check Cirq optimization, validate quantum-safety, provide gate count and error rate '
+    'estimates. Use the scratchpad to track progress."',
+)
+
+PROMPT_CANNOT_DELEGATE_NUMBERED_REQUIRED_PHRASES: tuple[str, ...] = (
+    '1. Final go/no-go decisions',
+    '2. Risk acceptance (acknowledging consequences)',
+    "3. Human escalation (when agents can't decide)",
+    '4. Vision articulation (Mickey 18 → technical architecture)',
+    '5. Stakeholder communication',
+)
+
+PROMPT_DECISION_BULLETS_REQUIRED_PHRASES: tuple[str, ...] = (
+    '- Trade-offs between security, performance, and usability',
+    '- Prioritization (what gets built first)',
+    '- Risk acceptance (can we deploy with this vulnerability?)',
+    '- Timeline adjustments (can we ship on schedule?)',
+)
+
 
 
 
@@ -1919,7 +2026,7 @@ SCRATCHPAD_STATUS_MARKERS: tuple[str, ...] = (
 SPECIALIST_AGENTS: tuple[str, ...] = DOCUMENTED_AGENTS[:-1]
 
 MIN_COVERAGE_FAIL_UNDER = 99
-MIN_VALIDATOR_COUNT = 196
+MIN_VALIDATOR_COUNT = 208
 
 
 @dataclass(frozen=True)
@@ -3233,6 +3340,102 @@ def validate_packaging_inventory(root: Path) -> list[Finding]:
     ):
         findings.append(
             _lock_mismatch(schema_path, "prompt_usage_detail_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("prompt_matrix_rows_required_phrases", ()))
+        != PROMPT_MATRIX_ROWS_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "prompt_matrix_rows_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("prompt_monthly_checkboxes_required_phrases", ()))
+        != PROMPT_MONTHLY_CHECKBOXES_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "prompt_monthly_checkboxes_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("prompt_usage_numbered_required_phrases", ()))
+        != PROMPT_USAGE_NUMBERED_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "prompt_usage_numbered_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("prompt_example_steps_required_phrases", ()))
+        != PROMPT_EXAMPLE_STEPS_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "prompt_example_steps_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("prompt_living_bullets_required_phrases", ()))
+        != PROMPT_LIVING_BULLETS_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "prompt_living_bullets_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("prompt_quantum_resp_numbered_required_phrases", ()))
+        != PROMPT_QUANTUM_RESP_NUMBERED_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "prompt_quantum_resp_numbered_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("prompt_bc_resp_numbered_required_phrases", ()))
+        != PROMPT_BC_RESP_NUMBERED_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "prompt_bc_resp_numbered_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("prompt_edge_resp_numbered_required_phrases", ()))
+        != PROMPT_EDGE_RESP_NUMBERED_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "prompt_edge_resp_numbered_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("prompt_orch_resp_numbered_required_phrases", ()))
+        != PROMPT_ORCH_RESP_NUMBERED_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "prompt_orch_resp_numbered_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("prompt_user_input_required_phrases", ()))
+        != PROMPT_USER_INPUT_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "prompt_user_input_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("prompt_cannot_delegate_numbered_required_phrases", ()))
+        != PROMPT_CANNOT_DELEGATE_NUMBERED_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "prompt_cannot_delegate_numbered_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("prompt_decision_bullets_required_phrases", ()))
+        != PROMPT_DECISION_BULLETS_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "prompt_decision_bullets_required_phrases")
         )
 
     if (
@@ -6398,6 +6601,515 @@ def _inventory_lock_consistency(
                 )
             )
 
+    prompt_matrix_rows = list(
+        inventory.get("prompt_matrix_rows_required_phrases", ())
+    )
+    if len(prompt_matrix_rows) != len(set(prompt_matrix_rows)):
+        findings.append(
+            Finding(schema_path, "prompt_matrix_rows_required_phrases must be unique")
+        )
+    if not prompt_matrix_rows:
+        findings.append(
+            Finding(
+                schema_path,
+                "prompt_matrix_rows_required_phrases must not be empty",
+            )
+        )
+    for phrase in prompt_matrix_rows:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_matrix_rows_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_prompt_matrix_rows = {
+            '| **Algorithm Complexity** (Quantum says "too complex", Blockchain says '
+            '"necessary") | Weigh risk tolerance. Choose testnet approach to validate. |',
+            '| **Gas Cost** (Blockchain says "over budget", On-Device says "can\'t afford") | '
+            'Redesign contract interface or reduce scope. |',
+            '| **Crypto Algorithm** (On-Device says "RSA too slow", Quantum says "must be RSA") '
+            '| Use hybrid (post-quantum + RSA), implement staged migration. |',
+            '| **Timeline** (All agents say "2 weeks", business needs "2 days") | Reduce scope, '
+            'increase risk, escalate to stakeholder. |',
+        }
+        if prompt_matrix_rows and not required_prompt_matrix_rows <= set(
+            prompt_matrix_rows
+        ):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_matrix_rows_required_phrases must include "
+                    "Algorithm Complexity/Gas Cost/Crypto Algorithm/Timeline rows",
+                )
+            )
+
+    prompt_monthly_checkboxes = list(
+        inventory.get("prompt_monthly_checkboxes_required_phrases", ())
+    )
+    if len(prompt_monthly_checkboxes) != len(set(prompt_monthly_checkboxes)):
+        findings.append(
+            Finding(schema_path, "prompt_monthly_checkboxes_required_phrases must be unique")
+        )
+    if not prompt_monthly_checkboxes:
+        findings.append(
+            Finding(
+                schema_path,
+                "prompt_monthly_checkboxes_required_phrases must not be empty",
+            )
+        )
+    for phrase in prompt_monthly_checkboxes:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_monthly_checkboxes_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_prompt_monthly_checkboxes = {
+            '- [ ] Review all recent decisions in postmortem.md',
+            '- [ ] Check agent success metrics (are they meeting targets?)',
+            '- [ ] Identify any emerging conflicts (before they escalate)',
+            '- [ ] Update risk register (quarterly, minimum)',
+        }
+        if prompt_monthly_checkboxes and not required_prompt_monthly_checkboxes <= set(
+            prompt_monthly_checkboxes
+        ):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_monthly_checkboxes_required_phrases must include "
+                    "checkbox Review/Check/Identify/Update/Communicate",
+                )
+            )
+
+    prompt_usage_numbered = list(
+        inventory.get("prompt_usage_numbered_required_phrases", ())
+    )
+    if len(prompt_usage_numbered) != len(set(prompt_usage_numbered)):
+        findings.append(
+            Finding(schema_path, "prompt_usage_numbered_required_phrases must be unique")
+        )
+    if not prompt_usage_numbered:
+        findings.append(
+            Finding(
+                schema_path,
+                "prompt_usage_numbered_required_phrases must not be empty",
+            )
+        )
+    for phrase in prompt_usage_numbered:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_usage_numbered_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_prompt_usage_numbered = {
+            '1. **Copy the relevant prompt template** (above)',
+            '2. **Fill in the [INSERT PROJECT-SPECIFIC INFO HERE] sections**',
+            "3. **Paste into the LLM's system prompt** (Claude, GPT, Gemini, etc.)",
+            '4. **Provide the agent with access to**:',
+        }
+        if prompt_usage_numbered and not required_prompt_usage_numbered <= set(
+            prompt_usage_numbered
+        ):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_usage_numbered_required_phrases must include "
+                    "Copy/Fill/Paste/Provide/Run numbered steps",
+                )
+            )
+
+    prompt_example_steps = list(
+        inventory.get("prompt_example_steps_required_phrases", ())
+    )
+    if len(prompt_example_steps) != len(set(prompt_example_steps)):
+        findings.append(
+            Finding(schema_path, "prompt_example_steps_required_phrases must be unique")
+        )
+    if not prompt_example_steps:
+        findings.append(
+            Finding(
+                schema_path,
+                "prompt_example_steps_required_phrases must not be empty",
+            )
+        )
+    for phrase in prompt_example_steps:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_example_steps_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_prompt_example_steps = {
+            '1. Reads ./agentic_flows/scratchpad.txt (finds pending quantum mint task)',
+            '2. Designs Cirq circuit for factorization',
+            '3. Optimizes for mobile constraints (2MB RAM max)',
+            '4. Validates using CRYSTALS-Kyber (NIST post-quantum standard)',
+        }
+        if prompt_example_steps and not required_prompt_example_steps <= set(
+            prompt_example_steps
+        ):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_example_steps_required_phrases must include "
+                    "Reads scratchpad/Designs Cirq/Optimizes/Validates/Updates/approves",
+                )
+            )
+
+    prompt_living_bullets = list(
+        inventory.get("prompt_living_bullets_required_phrases", ())
+    )
+    if len(prompt_living_bullets) != len(set(prompt_living_bullets)):
+        findings.append(
+            Finding(schema_path, "prompt_living_bullets_required_phrases must be unique")
+        )
+    if not prompt_living_bullets:
+        findings.append(
+            Finding(
+                schema_path,
+                "prompt_living_bullets_required_phrases must not be empty",
+            )
+        )
+    for phrase in prompt_living_bullets:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_living_bullets_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_prompt_living_bullets = {
+            'These prompts are **living documents**. Update them whenever:',
+            '- AGENTS.md constraints change',
+            '- A new escalation pattern emerges',
+            '- Risk tolerance thresholds change (quarterly)',
+        }
+        if prompt_living_bullets and not required_prompt_living_bullets <= set(
+            prompt_living_bullets
+        ):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_living_bullets_required_phrases must include "
+                    "Update them whenever/constraints change/escalation pattern/tools",
+                )
+            )
+
+    prompt_quantum_resp_numbered = list(
+        inventory.get("prompt_quantum_resp_numbered_required_phrases", ())
+    )
+    if len(prompt_quantum_resp_numbered) != len(set(prompt_quantum_resp_numbered)):
+        findings.append(
+            Finding(schema_path, "prompt_quantum_resp_numbered_required_phrases must be unique")
+        )
+    if not prompt_quantum_resp_numbered:
+        findings.append(
+            Finding(
+                schema_path,
+                "prompt_quantum_resp_numbered_required_phrases must not be empty",
+            )
+        )
+    for phrase in prompt_quantum_resp_numbered:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_quantum_resp_numbered_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_prompt_quantum_resp_numbered = {
+            '1. Design quantum algorithms for cryptographic operations',
+            '2. Optimize Cirq circuits for target hardware',
+            '3. Validate quantum-safe properties (post-quantum crypto)',
+            '4. Simulate quantum timelines and collective consciousness models (your "Mickey '
+            '18" concept)',
+        }
+        if prompt_quantum_resp_numbered and not required_prompt_quantum_resp_numbered <= set(
+            prompt_quantum_resp_numbered
+        ):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_quantum_resp_numbered_required_phrases must include "
+                    "Design quantum/Optimize Cirq/Validate/Mickey 18/Escalate",
+                )
+            )
+
+    prompt_bc_resp_numbered = list(
+        inventory.get("prompt_bc_resp_numbered_required_phrases", ())
+    )
+    if len(prompt_bc_resp_numbered) != len(set(prompt_bc_resp_numbered)):
+        findings.append(
+            Finding(schema_path, "prompt_bc_resp_numbered_required_phrases must be unique")
+        )
+    if not prompt_bc_resp_numbered:
+        findings.append(
+            Finding(
+                schema_path,
+                "prompt_bc_resp_numbered_required_phrases must not be empty",
+            )
+        )
+    for phrase in prompt_bc_resp_numbered:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_bc_resp_numbered_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_prompt_bc_resp_numbered = {
+            '1. Design multi-chain smart contract architecture',
+            '2. Implement quantum-resistant consensus logic',
+            '3. Define cross-chain state synchronization protocols',
+            '4. Audit contracts for quantum vulnerabilities',
+        }
+        if prompt_bc_resp_numbered and not required_prompt_bc_resp_numbered <= set(
+            prompt_bc_resp_numbered
+        ):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_bc_resp_numbered_required_phrases must include "
+                    "Design multi-chain/Implement/Define/Audit/Estimate gas/Escalate",
+                )
+            )
+
+    prompt_edge_resp_numbered = list(
+        inventory.get("prompt_edge_resp_numbered_required_phrases", ())
+    )
+    if len(prompt_edge_resp_numbered) != len(set(prompt_edge_resp_numbered)):
+        findings.append(
+            Finding(schema_path, "prompt_edge_resp_numbered_required_phrases must be unique")
+        )
+    if not prompt_edge_resp_numbered:
+        findings.append(
+            Finding(
+                schema_path,
+                "prompt_edge_resp_numbered_required_phrases must not be empty",
+            )
+        )
+    for phrase in prompt_edge_resp_numbered:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_edge_resp_numbered_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_prompt_edge_resp_numbered = {
+            '1. Implement quantum-safe cryptography on Android/iOS',
+            '2. Design data isolation ("walled garden") architecture',
+            '3. Manage secure key lifecycle (storage, rotation, deletion)',
+            '4. Optimize for mobile constraints (battery, memory, CPU)',
+        }
+        if prompt_edge_resp_numbered and not required_prompt_edge_resp_numbered <= set(
+            prompt_edge_resp_numbered
+        ):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_edge_resp_numbered_required_phrases must include "
+                    "Implement Android/iOS/walled garden/key lifecycle/HIPAA/Escalate",
+                )
+            )
+
+    prompt_orch_resp_numbered = list(
+        inventory.get("prompt_orch_resp_numbered_required_phrases", ())
+    )
+    if len(prompt_orch_resp_numbered) != len(set(prompt_orch_resp_numbered)):
+        findings.append(
+            Finding(schema_path, "prompt_orch_resp_numbered_required_phrases must be unique")
+        )
+    if not prompt_orch_resp_numbered:
+        findings.append(
+            Finding(
+                schema_path,
+                "prompt_orch_resp_numbered_required_phrases must not be empty",
+            )
+        )
+    for phrase in prompt_orch_resp_numbered:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_orch_resp_numbered_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_prompt_orch_resp_numbered = {
+            '1. Collect outputs from all three specialist agents',
+            '2. Identify conflicts (if any)',
+            '3. Make final go/no-go decision',
+            '4. Escalate unsolvable conflicts to human',
+        }
+        if prompt_orch_resp_numbered and not required_prompt_orch_resp_numbered <= set(
+            prompt_orch_resp_numbered
+        ):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_orch_resp_numbered_required_phrases must include "
+                    "Collect outputs/Identify conflicts/go-no-go/Log/risk tolerance",
+                )
+            )
+
+    prompt_user_input = list(
+        inventory.get("prompt_user_input_required_phrases", ())
+    )
+    if len(prompt_user_input) != len(set(prompt_user_input)):
+        findings.append(
+            Finding(schema_path, "prompt_user_input_required_phrases must be unique")
+        )
+    if not prompt_user_input:
+        findings.append(
+            Finding(
+                schema_path,
+                "prompt_user_input_required_phrases must not be empty",
+            )
+        )
+    for phrase in prompt_user_input:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_user_input_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_prompt_user_input = {
+            'User Input: "Review the proposed factorization circuit for our NFT mint operation. '
+            'Check Cirq optimization, validate quantum-safety, provide gate count and error '
+            'rate estimates. Use the scratchpad to track progress."',
+        }
+        if prompt_user_input and not required_prompt_user_input <= set(
+            prompt_user_input
+        ):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_user_input_required_phrases must include "
+                    "User Input/factorization circuit/Cirq optimization",
+                )
+            )
+
+    prompt_cannot_delegate_numbered = list(
+        inventory.get("prompt_cannot_delegate_numbered_required_phrases", ())
+    )
+    if len(prompt_cannot_delegate_numbered) != len(set(prompt_cannot_delegate_numbered)):
+        findings.append(
+            Finding(schema_path, "prompt_cannot_delegate_numbered_required_phrases must be unique")
+        )
+    if not prompt_cannot_delegate_numbered:
+        findings.append(
+            Finding(
+                schema_path,
+                "prompt_cannot_delegate_numbered_required_phrases must not be empty",
+            )
+        )
+    for phrase in prompt_cannot_delegate_numbered:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_cannot_delegate_numbered_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_prompt_cannot_delegate_numbered = {
+            '1. Final go/no-go decisions',
+            '2. Risk acceptance (acknowledging consequences)',
+            "3. Human escalation (when agents can't decide)",
+            '4. Vision articulation (Mickey 18 → technical architecture)',
+        }
+        if prompt_cannot_delegate_numbered and not required_prompt_cannot_delegate_numbered <= set(
+            prompt_cannot_delegate_numbered
+        ):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_cannot_delegate_numbered_required_phrases must include "
+                    "Final go-no-go/Risk acceptance/Human escalation/Vision/Stakeholder",
+                )
+            )
+
+    prompt_decision_bullets = list(
+        inventory.get("prompt_decision_bullets_required_phrases", ())
+    )
+    if len(prompt_decision_bullets) != len(set(prompt_decision_bullets)):
+        findings.append(
+            Finding(schema_path, "prompt_decision_bullets_required_phrases must be unique")
+        )
+    if not prompt_decision_bullets:
+        findings.append(
+            Finding(
+                schema_path,
+                "prompt_decision_bullets_required_phrases must not be empty",
+            )
+        )
+    for phrase in prompt_decision_bullets:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_decision_bullets_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_prompt_decision_bullets = {
+            '- Trade-offs between security, performance, and usability',
+            '- Prioritization (what gets built first)',
+            '- Risk acceptance (can we deploy with this vulnerability?)',
+            '- Timeline adjustments (can we ship on schedule?)',
+        }
+        if prompt_decision_bullets and not required_prompt_decision_bullets <= set(
+            prompt_decision_bullets
+        ):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_decision_bullets_required_phrases must include "
+                    "Trade-offs/Prioritization/Risk acceptance/Timeline adjustments",
+                )
+            )
+
+
     intro = list(inventory.get("postmortem_intro_required_phrases", ()))
     if len(intro) != len(set(intro)):
         findings.append(
@@ -8241,7 +8953,7 @@ def _inventory_lock_consistency(
     else:
         required_ci_honesty = {
             "markdown lint, link check, actionlint",
-            "Packaging inventory v52",
+            "Packaging inventory v53",
             "refuse invented recipes",
         }
         if ci_honesty and not required_ci_honesty <= set(ci_honesty):
@@ -8249,7 +8961,7 @@ def _inventory_lock_consistency(
                 Finding(
                     schema_path,
                     "contributing_ci_honesty_required_phrases must include "
-                    "CI checks/Packaging inventory v52/refuse invented recipes",
+                    "CI checks/Packaging inventory v53/refuse invented recipes",
                 )
             )
 
@@ -11161,6 +11873,270 @@ def validate_prompt_usage_detail(root: Path) -> list[Finding]:
     return findings
 
 
+def validate_prompt_matrix_rows(root: Path) -> list[Finding]:
+    rel = "AGENT-PROMPTS.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "prompts missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if '| **Algorithm Complexity**' not in body:
+        findings.append(
+            Finding(rel, 'missing matrix-rows Algorithm Complexity lock')
+        )
+    for phrase in PROMPT_MATRIX_ROWS_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(
+                    rel,
+                    f"missing locked prompt-matrix-rows phrase: {phrase}",
+                )
+            )
+    return findings
+
+
+def validate_prompt_monthly_checkboxes(root: Path) -> list[Finding]:
+    rel = "AGENT-PROMPTS.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "prompts missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if '- [ ] Review all recent decisions in postmortem.md' not in body:
+        findings.append(
+            Finding(rel, 'missing monthly-checkboxes Review postmortem lock')
+        )
+    for phrase in PROMPT_MONTHLY_CHECKBOXES_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(
+                    rel,
+                    f"missing locked prompt-monthly-checkboxes phrase: {phrase}",
+                )
+            )
+    return findings
+
+
+def validate_prompt_usage_numbered(root: Path) -> list[Finding]:
+    rel = "AGENT-PROMPTS.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "prompts missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if '1. **Copy the relevant prompt template** (above)' not in body:
+        findings.append(
+            Finding(rel, 'missing usage-numbered Copy template lock')
+        )
+    for phrase in PROMPT_USAGE_NUMBERED_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(
+                    rel,
+                    f"missing locked prompt-usage-numbered phrase: {phrase}",
+                )
+            )
+    return findings
+
+
+def validate_prompt_example_steps(root: Path) -> list[Finding]:
+    rel = "AGENT-PROMPTS.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "prompts missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if '1. Reads ./agentic_flows/scratchpad.txt (finds pending quantum mint task)' not in body:
+        findings.append(
+            Finding(rel, 'missing example-steps Reads scratchpad lock')
+        )
+    for phrase in PROMPT_EXAMPLE_STEPS_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(
+                    rel,
+                    f"missing locked prompt-example-steps phrase: {phrase}",
+                )
+            )
+    return findings
+
+
+def validate_prompt_living_bullets(root: Path) -> list[Finding]:
+    rel = "AGENT-PROMPTS.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "prompts missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if 'These prompts are **living documents**. Update them whenever:' not in body:
+        findings.append(
+            Finding(rel, 'missing living-bullets Update them whenever lock')
+        )
+    for phrase in PROMPT_LIVING_BULLETS_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(
+                    rel,
+                    f"missing locked prompt-living-bullets phrase: {phrase}",
+                )
+            )
+    return findings
+
+
+def validate_prompt_quantum_resp_numbered(root: Path) -> list[Finding]:
+    rel = "AGENT-PROMPTS.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "prompts missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if '1. Design quantum algorithms for cryptographic operations' not in body:
+        findings.append(
+            Finding(rel, 'missing quantum-resp-numbered Design quantum lock')
+        )
+    for phrase in PROMPT_QUANTUM_RESP_NUMBERED_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(
+                    rel,
+                    f"missing locked prompt-quantum-resp-numbered phrase: {phrase}",
+                )
+            )
+    return findings
+
+
+def validate_prompt_bc_resp_numbered(root: Path) -> list[Finding]:
+    rel = "AGENT-PROMPTS.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "prompts missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if '1. Design multi-chain smart contract architecture' not in body:
+        findings.append(
+            Finding(rel, 'missing bc-resp-numbered Design multi-chain lock')
+        )
+    for phrase in PROMPT_BC_RESP_NUMBERED_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(
+                    rel,
+                    f"missing locked prompt-bc-resp-numbered phrase: {phrase}",
+                )
+            )
+    return findings
+
+
+def validate_prompt_edge_resp_numbered(root: Path) -> list[Finding]:
+    rel = "AGENT-PROMPTS.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "prompts missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if '1. Implement quantum-safe cryptography on Android/iOS' not in body:
+        findings.append(
+            Finding(rel, 'missing edge-resp-numbered Implement quantum-safe lock')
+        )
+    for phrase in PROMPT_EDGE_RESP_NUMBERED_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(
+                    rel,
+                    f"missing locked prompt-edge-resp-numbered phrase: {phrase}",
+                )
+            )
+    return findings
+
+
+def validate_prompt_orch_resp_numbered(root: Path) -> list[Finding]:
+    rel = "AGENT-PROMPTS.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "prompts missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if '1. Collect outputs from all three specialist agents' not in body:
+        findings.append(
+            Finding(rel, 'missing orch-resp-numbered Collect outputs lock')
+        )
+    for phrase in PROMPT_ORCH_RESP_NUMBERED_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(
+                    rel,
+                    f"missing locked prompt-orch-resp-numbered phrase: {phrase}",
+                )
+            )
+    return findings
+
+
+def validate_prompt_user_input(root: Path) -> list[Finding]:
+    rel = "AGENT-PROMPTS.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "prompts missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if 'User Input: "Review the proposed factorization circuit' not in body:
+        findings.append(
+            Finding(rel, 'missing user-input Review factorization lock')
+        )
+    for phrase in PROMPT_USER_INPUT_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(
+                    rel,
+                    f"missing locked prompt-user-input phrase: {phrase}",
+                )
+            )
+    return findings
+
+
+def validate_prompt_cannot_delegate_numbered(root: Path) -> list[Finding]:
+    rel = "AGENT-PROMPTS.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "prompts missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if '1. Final go/no-go decisions' not in body:
+        findings.append(
+            Finding(rel, 'missing cannot-delegate-numbered Final go/no-go lock')
+        )
+    for phrase in PROMPT_CANNOT_DELEGATE_NUMBERED_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(
+                    rel,
+                    f"missing locked prompt-cannot-delegate-numbered phrase: {phrase}",
+                )
+            )
+    return findings
+
+
+def validate_prompt_decision_bullets(root: Path) -> list[Finding]:
+    rel = "AGENT-PROMPTS.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "prompts missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if '- Trade-offs between security, performance, and usability' not in body:
+        findings.append(
+            Finding(rel, 'missing decision-bullets Trade-offs lock')
+        )
+    for phrase in PROMPT_DECISION_BULLETS_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(
+                    rel,
+                    f"missing locked prompt-decision-bullets phrase: {phrase}",
+                )
+            )
+    return findings
+
+
 def validate_changelog_initial(root: Path) -> list[Finding]:
     rel = "CHANGELOG.md"
     path = root / rel
@@ -12290,8 +13266,8 @@ def validate_contributing_ci_honesty(root: Path) -> list[Finding]:
         return [Finding(rel, "CONTRIBUTING.md missing")]
     text = path.read_text(encoding="utf-8")
     findings: list[Finding] = []
-    if "Packaging inventory v52" not in text:
-        findings.append(Finding(rel, "missing Packaging inventory v52 honesty lock"))
+    if "Packaging inventory v53" not in text:
+        findings.append(Finding(rel, "missing Packaging inventory v53 honesty lock"))
     for phrase in CONTRIBUTING_CI_HONESTY_REQUIRED_PHRASES:
         if phrase not in text:
             findings.append(
@@ -14254,6 +15230,18 @@ VALIDATORS: dict[str, ValidatorFn] = {
     "prompt-docs-residual": validate_prompt_docs_residual,
     "prompt-matrix-resolutions": validate_prompt_matrix_resolutions,
     "prompt-usage-detail": validate_prompt_usage_detail,
+    "prompt-matrix-rows": validate_prompt_matrix_rows,
+    "prompt-monthly-checkboxes": validate_prompt_monthly_checkboxes,
+    "prompt-usage-numbered": validate_prompt_usage_numbered,
+    "prompt-example-steps": validate_prompt_example_steps,
+    "prompt-living-bullets": validate_prompt_living_bullets,
+    "prompt-quantum-resp-numbered": validate_prompt_quantum_resp_numbered,
+    "prompt-bc-resp-numbered": validate_prompt_bc_resp_numbered,
+    "prompt-edge-resp-numbered": validate_prompt_edge_resp_numbered,
+    "prompt-orch-resp-numbered": validate_prompt_orch_resp_numbered,
+    "prompt-user-input": validate_prompt_user_input,
+    "prompt-cannot-delegate-numbered": validate_prompt_cannot_delegate_numbered,
+    "prompt-decision-bullets": validate_prompt_decision_bullets,
     "hydration-phase2": validate_hydration_phase2,
     "hydration-phase5": validate_hydration_phase5,
     "link-check": validate_link_check,
