@@ -65,6 +65,7 @@ Checks structural correctness of:
 - CHANGELOG.md preamble / Changed / 0.1.0 initial leftover locks
 - AGENT-PROMPTS.md expertise / principles / metrics leftover locks
 - AGENT-PROMPTS.md tools / communication / escalation-identity leftover locks
+- AGENT-PROMPTS.md orchestration-matrix / monthly / usage-example leftover locks
   PHASE 4 issues / LIST B deferred leftover locks
 - postmortem.md intro / Decision field / Next Steps surface locks
 - agentic_flows/scratchpad.txt intro / format-legend / task-meta locks
@@ -181,7 +182,7 @@ REQUIRED_ARCHIVE_DOCS = (
     "README.md",
 )
 
-INVENTORY_VERSION = 47
+INVENTORY_VERSION = 48
 CURSOR_ENVIRONMENT_NAME = "g0p-agents"
 DEPENDABOT_SCHEDULE_INTERVAL = "weekly"
 DEPENDABOT_DIRECTORIES: frozenset[str] = frozenset({"/"})
@@ -834,7 +835,7 @@ CONTRIBUTING_CI_HONESTY_REQUIRED_PHRASES: tuple[str, ...] = (
     "markdown lint, link check, actionlint",
     "manifest validate on Python 3.11/3.12/3.13",
     "Andrew or designated reviewer",
-    "Packaging inventory v47",
+    "Packaging inventory v48",
     "refuse invented recipes",
     "orphan on-disk YAML",
     "unknown `*Agent` tokens",
@@ -981,6 +982,45 @@ PROMPT_ESCALATION_IDENTITY_REQUIRED_PHRASES: tuple[str, ...] = (
     "Remember: You are the last line of defense before user devices. Your "
     "implementation determines whether the entire system is actually secure "
     "or just theoretically secure.",
+)
+
+PROMPT_ORCHESTRATION_MATRIX_REQUIRED_PHRASES: tuple[str, ...] = (
+    "## Conflict Resolution Matrix",
+    "| Conflict Type | How You Resolve It |",
+    '**Algorithm Complexity** (Quantum says "too complex", Blockchain says "necessary")',
+    '**Gas Cost** (Blockchain says "over budget", On-Device says "can\'t afford")',
+    '**Crypto Algorithm** (On-Device says "RSA too slow", Quantum says "must be RSA")',
+    '**Timeline** (All agents say "2 weeks", business needs "2 days")',
+    "Weigh risk tolerance. Choose testnet approach to validate.",
+    "Redesign contract interface or reduce scope.",
+    "Use hybrid (post-quantum + RSA), implement staged migration.",
+    "Reduce scope, increase risk, escalate to stakeholder.",
+)
+
+PROMPT_MONTHLY_REQUIRED_PHRASES: tuple[str, ...] = (
+    "## Your Monthly Checklist",
+    "## Current Project Vision",
+    "Review all recent decisions in postmortem.md",
+    "Check agent success metrics (are they meeting targets?)",
+    "Identify any emerging conflicts (before they escalate)",
+    "Update risk register (quarterly, minimum)",
+    "Communicate progress to stakeholder",
+    "Ultimate Goal: Build quantum-safe, multi-chain NFT ecosystem with on-device security",
+    "Risk Tolerance: ALPHA-STAGE (conservative, threshold increases with success)",
+)
+
+PROMPT_USAGE_EXAMPLE_REQUIRED_PHRASES: tuple[str, ...] = (
+    "### Example: Instantiate QuantumArchitectAgent",
+    'User Input: "Review the proposed factorization circuit for our NFT mint operation. '
+    'Check Cirq optimization, validate quantum-safety, provide gate count and error '
+    'rate estimates. Use the scratchpad to track progress."',
+    "Reads ./agentic_flows/scratchpad.txt (finds pending quantum mint task)",
+    "Designs Cirq circuit for factorization",
+    "Optimizes for mobile constraints (2MB RAM max)",
+    "Validates using CRYSTALS-Kyber (NIST post-quantum standard)",
+    "Output: Updated scratchpad + Cirq circuit file",
+    "Keep prompts synchronized with AGENTS.md Section 22 "
+    "(Quantum-Blockchain Integration Standards).",
 )
 
 LICENSE_REQUIRED_PHRASES: tuple[str, ...] = (
@@ -1584,7 +1624,7 @@ SCRATCHPAD_STATUS_MARKERS: tuple[str, ...] = (
 SPECIALIST_AGENTS: tuple[str, ...] = DOCUMENTED_AGENTS[:-1]
 
 MIN_COVERAGE_FAIL_UNDER = 99
-MIN_VALIDATOR_COUNT = 163
+MIN_VALIDATOR_COUNT = 166
 
 
 @dataclass(frozen=True)
@@ -2632,6 +2672,33 @@ def validate_packaging_inventory(root: Path) -> list[Finding]:
             _lock_mismatch(
                 schema_path, "prompt_escalation_identity_required_phrases"
             )
+        )
+
+
+    if (
+        tuple(inventory.get("prompt_orchestration_matrix_required_phrases", ()))
+        != PROMPT_ORCHESTRATION_MATRIX_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(
+                schema_path, "prompt_orchestration_matrix_required_phrases"
+            )
+        )
+
+    if (
+        tuple(inventory.get("prompt_monthly_required_phrases", ()))
+        != PROMPT_MONTHLY_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "prompt_monthly_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("prompt_usage_example_required_phrases", ()))
+        != PROMPT_USAGE_EXAMPLE_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "prompt_usage_example_required_phrases")
         )
 
 
@@ -4579,6 +4646,135 @@ def _inventory_lock_consistency(
                 )
             )
 
+    prompt_orchestration_matrix = list(
+        inventory.get("prompt_orchestration_matrix_required_phrases", ())
+    )
+    if len(prompt_orchestration_matrix) != len(set(prompt_orchestration_matrix)):
+        findings.append(
+            Finding(
+                schema_path,
+                "prompt_orchestration_matrix_required_phrases must be unique",
+            )
+        )
+    if not prompt_orchestration_matrix:
+        findings.append(
+            Finding(
+                schema_path,
+                "prompt_orchestration_matrix_required_phrases must not be empty",
+            )
+        )
+    for phrase in prompt_orchestration_matrix:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_orchestration_matrix_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_prompt_orchestration_matrix = {
+            "## Conflict Resolution Matrix",
+            "| Conflict Type | How You Resolve It |",
+            '**Algorithm Complexity** (Quantum says "too complex", '
+            'Blockchain says "necessary")',
+            "Weigh risk tolerance. Choose testnet approach to validate.",
+        }
+        if (
+            prompt_orchestration_matrix
+            and not required_prompt_orchestration_matrix
+            <= set(prompt_orchestration_matrix)
+        ):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_orchestration_matrix_required_phrases must include "
+                    "Matrix/Conflict Type/Algorithm Complexity/testnet",
+                )
+            )
+
+    prompt_monthly = list(inventory.get("prompt_monthly_required_phrases", ()))
+    if len(prompt_monthly) != len(set(prompt_monthly)):
+        findings.append(
+            Finding(schema_path, "prompt_monthly_required_phrases must be unique")
+        )
+    if not prompt_monthly:
+        findings.append(
+            Finding(schema_path, "prompt_monthly_required_phrases must not be empty")
+        )
+    for phrase in prompt_monthly:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_monthly_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_prompt_monthly = {
+            "## Your Monthly Checklist",
+            "## Current Project Vision",
+            "Review all recent decisions in postmortem.md",
+            "Risk Tolerance: ALPHA-STAGE (conservative, threshold increases "
+            "with success)",
+        }
+        if prompt_monthly and not required_prompt_monthly <= set(prompt_monthly):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_monthly_required_phrases must include "
+                    "Checklist/Vision/postmortem/ALPHA-STAGE",
+                )
+            )
+
+    prompt_usage_example = list(
+        inventory.get("prompt_usage_example_required_phrases", ())
+    )
+    if len(prompt_usage_example) != len(set(prompt_usage_example)):
+        findings.append(
+            Finding(
+                schema_path, "prompt_usage_example_required_phrases must be unique"
+            )
+        )
+    if not prompt_usage_example:
+        findings.append(
+            Finding(
+                schema_path,
+                "prompt_usage_example_required_phrases must not be empty",
+            )
+        )
+    for phrase in prompt_usage_example:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_usage_example_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_prompt_usage_example = {
+            "### Example: Instantiate QuantumArchitectAgent",
+            "Designs Cirq circuit for factorization",
+            "Validates using CRYSTALS-Kyber (NIST post-quantum standard)",
+            "Output: Updated scratchpad + Cirq circuit file",
+        }
+        if (
+            prompt_usage_example
+            and not required_prompt_usage_example <= set(prompt_usage_example)
+        ):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_usage_example_required_phrases must include "
+                    "Example/Cirq/CRYSTALS-Kyber/Output",
+                )
+            )
+
     intro = list(inventory.get("postmortem_intro_required_phrases", ()))
     if len(intro) != len(set(intro)):
         findings.append(
@@ -6422,7 +6618,7 @@ def _inventory_lock_consistency(
     else:
         required_ci_honesty = {
             "markdown lint, link check, actionlint",
-            "Packaging inventory v47",
+            "Packaging inventory v48",
             "refuse invented recipes",
         }
         if ci_honesty and not required_ci_honesty <= set(ci_honesty):
@@ -6430,7 +6626,7 @@ def _inventory_lock_consistency(
                 Finding(
                     schema_path,
                     "contributing_ci_honesty_required_phrases must include "
-                    "CI checks/Packaging inventory v47/refuse invented recipes",
+                    "CI checks/Packaging inventory v48/refuse invented recipes",
                 )
             )
 
@@ -8757,6 +8953,65 @@ def validate_prompt_escalation_identity(root: Path) -> list[Finding]:
     return findings
 
 
+
+def validate_prompt_orchestration_matrix(root: Path) -> list[Finding]:
+    rel = "AGENT-PROMPTS.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "prompts missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## Conflict Resolution Matrix" not in body:
+        findings.append(Finding(rel, "missing Conflict Resolution Matrix section"))
+    for phrase in PROMPT_ORCHESTRATION_MATRIX_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(
+                    rel,
+                    f"missing locked prompt-orchestration-matrix phrase: {phrase}",
+                )
+            )
+    return findings
+
+
+def validate_prompt_monthly(root: Path) -> list[Finding]:
+    rel = "AGENT-PROMPTS.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "prompts missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## Your Monthly Checklist" not in body:
+        findings.append(Finding(rel, "missing Your Monthly Checklist section"))
+    for phrase in PROMPT_MONTHLY_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked prompt-monthly phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_prompt_usage_example(root: Path) -> list[Finding]:
+    rel = "AGENT-PROMPTS.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "prompts missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "### Example: Instantiate QuantumArchitectAgent" not in body:
+        findings.append(
+            Finding(rel, "missing Example Instantiate QuantumArchitectAgent section")
+        )
+    for phrase in PROMPT_USAGE_EXAMPLE_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(
+                    rel, f"missing locked prompt-usage-example phrase: {phrase}"
+                )
+            )
+    return findings
+
+
 def validate_changelog_initial(root: Path) -> list[Finding]:
     rel = "CHANGELOG.md"
     path = root / rel
@@ -9886,8 +10141,8 @@ def validate_contributing_ci_honesty(root: Path) -> list[Finding]:
         return [Finding(rel, "CONTRIBUTING.md missing")]
     text = path.read_text(encoding="utf-8")
     findings: list[Finding] = []
-    if "Packaging inventory v47" not in text:
-        findings.append(Finding(rel, "missing Packaging inventory v47 honesty lock"))
+    if "Packaging inventory v48" not in text:
+        findings.append(Finding(rel, "missing Packaging inventory v48 honesty lock"))
     for phrase in CONTRIBUTING_CI_HONESTY_REQUIRED_PHRASES:
         if phrase not in text:
             findings.append(
@@ -11816,6 +12071,9 @@ VALIDATORS: dict[str, ValidatorFn] = {
     "prompt-tools": validate_prompt_tools,
     "prompt-communication": validate_prompt_communication,
     "prompt-escalation-identity": validate_prompt_escalation_identity,
+    "prompt-orchestration-matrix": validate_prompt_orchestration_matrix,
+    "prompt-monthly": validate_prompt_monthly,
+    "prompt-usage-example": validate_prompt_usage_example,
     "hydration-phase2": validate_hydration_phase2,
     "hydration-phase5": validate_hydration_phase5,
     "link-check": validate_link_check,
