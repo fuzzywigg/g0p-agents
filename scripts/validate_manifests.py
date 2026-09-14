@@ -67,6 +67,9 @@ Checks structural correctness of:
 - AGENT-PROMPTS.md tools / communication / escalation-identity leftover locks
 - AGENT-PROMPTS.md orchestration-matrix / monthly / usage-example leftover locks
 - AGENT-PROMPTS.md responsibilities / decision-authority / integration leftover locks
+- AGENT-PROMPTS.md context / cannot-delegate / escalation-authority leftover locks
+- AGENT-PROMPTS.md specialist-intros / template-headers / constraints-residual /
+  triggers-residual / related-docs-residual / instantiation leftover locks
   PHASE 4 issues / LIST B deferred leftover locks
 - postmortem.md intro / Decision field / Next Steps surface locks
 - agentic_flows/scratchpad.txt intro / format-legend / task-meta locks
@@ -183,7 +186,7 @@ REQUIRED_ARCHIVE_DOCS = (
     "README.md",
 )
 
-INVENTORY_VERSION = 50
+INVENTORY_VERSION = 51
 CURSOR_ENVIRONMENT_NAME = "g0p-agents"
 DEPENDABOT_SCHEDULE_INTERVAL = "weekly"
 DEPENDABOT_DIRECTORIES: frozenset[str] = frozenset({"/"})
@@ -836,7 +839,7 @@ CONTRIBUTING_CI_HONESTY_REQUIRED_PHRASES: tuple[str, ...] = (
     "markdown lint, link check, actionlint",
     "manifest validate on Python 3.11/3.12/3.13",
     "Andrew or designated reviewer",
-    "Packaging inventory v50",
+    "Packaging inventory v51",
     "refuse invented recipes",
     "orphan on-disk YAML",
     "unknown `*Agent` tokens",
@@ -1079,6 +1082,68 @@ PROMPT_ESCALATION_AUTHORITY_REQUIRED_PHRASES: tuple[str, ...] = (
     "Budget constraints conflict with scope",
 )
 
+PROMPT_SPECIALIST_INTROS_REQUIRED_PHRASES: tuple[str, ...] = (
+    "You are the Quantum Computing specialist for the FUZZYWIGG-AI ecosystem.",
+    "You are the Blockchain Development specialist for the FUZZYWIGG-AI ecosystem.",
+    "You are the On-Device Security specialist for the FUZZYWIGG-AI ecosystem.",
+    "You are the Strategic Orchestrator for the FUZZYWIGG-AI ecosystem.",
+)
+
+PROMPT_TEMPLATE_HEADERS_REQUIRED_PHRASES: tuple[str, ...] = (
+    "## 1. QuantumArchitectAgent Prompt Template",
+    "## 2. BlockchainArchitectAgent Prompt Template",
+    "## 3. EdgeSecurityAgent Prompt Template",
+    "## 4. OrchestrationAgent Prompt Template",
+    "## Usage Instructions",
+    "### For Each Agent Instantiation",
+    "### Example: Instantiate QuantumArchitectAgent",
+)
+
+PROMPT_CONSTRAINTS_RESIDUAL_REQUIRED_PHRASES: tuple[str, ...] = (
+    "## Key Constraints (NEVER VIOLATE)",
+    "Never optimize beyond device constraints (memory, runtime)",
+    "Always provide error rate estimates",
+    "Never allow critical vulnerabilities (Slither must pass)",
+    "Always validate multi-chain state consistency",
+    "Always provide gas cost estimates",
+    "Never claim security without passing Apple/Google security review",
+    "Always validate data isolation (no leaks to system logs)",
+)
+
+PROMPT_TRIGGERS_RESIDUAL_REQUIRED_PHRASES: tuple[str, ...] = (
+    "## Escalation Triggers (STOP and Request Input)",
+    "Quantum advantage deadline < 6 months and algorithm not quantum-safe",
+    "Conflict with BlockchainArchitectAgent on performance requirements",
+    "Multi-chain sync time > 10 minutes",
+    "Battery drain > 2% per transaction",
+    "Conflict with QuantumArchitectAgent on circuit complexity",
+    "Conflict with EdgeSecurityAgent on API design",
+    "Conflict with BlockchainArchitectAgent on API design",
+)
+
+PROMPT_RELATED_DOCS_RESIDUAL_REQUIRED_PHRASES: tuple[str, ...] = (
+    "## Related Documentation",
+    "See AGENTS.md Section 5.3 (Knowledge & Health Agents)",
+    "See AGENTS.md Section 5.3.1 (Health Data Privacy Roadmap)",
+    "See AGENTS.md Section 22.3 (Multi-Chain State Consistency)",
+    "See postmortem.md (incident log)",
+    "See AGENTS.md Section 12.4.1 (Risk Tolerance Review)",
+    (
+        "Keep prompts synchronized with AGENTS.md Section 22 "
+        "(Quantum-Blockchain Integration Standards)."
+    ),
+)
+
+PROMPT_INSTANTIATION_REQUIRED_PHRASES: tuple[str, ...] = (
+    "**Copy the relevant prompt template** (above)",
+    "**Fill in the [INSERT PROJECT-SPECIFIC INFO HERE] sections**",
+    "**Provide the agent with access to**:",
+    "AGENTS.md (the constitution)",
+    "Current scratchpad.txt (state machine)",
+    "Task.md (current sprint)",
+    "**Run the agent** on a specific recipe/task",
+    "System Prompt: [Copy QuantumArchitectAgent Prompt Template]",
+)
 
 LICENSE_REQUIRED_PHRASES: tuple[str, ...] = (
     "MIT License",
@@ -1681,7 +1746,7 @@ SCRATCHPAD_STATUS_MARKERS: tuple[str, ...] = (
 SPECIALIST_AGENTS: tuple[str, ...] = DOCUMENTED_AGENTS[:-1]
 
 MIN_COVERAGE_FAIL_UNDER = 99
-MIN_VALIDATOR_COUNT = 172
+MIN_VALIDATOR_COUNT = 178
 
 
 @dataclass(frozen=True)
@@ -2804,6 +2869,46 @@ def validate_packaging_inventory(root: Path) -> list[Finding]:
         findings.append(
             _lock_mismatch(schema_path, "prompt_escalation_authority_required_phrases")
         )
+
+    if (
+        tuple(inventory.get("prompt_specialist_intros_required_phrases", ()))
+        != PROMPT_SPECIALIST_INTROS_REQUIRED_PHRASES
+    ):
+        findings.append(_lock_mismatch(schema_path, "prompt_specialist_intros_required_phrases"))
+
+    if (
+        tuple(inventory.get("prompt_template_headers_required_phrases", ()))
+        != PROMPT_TEMPLATE_HEADERS_REQUIRED_PHRASES
+    ):
+        findings.append(_lock_mismatch(schema_path, "prompt_template_headers_required_phrases"))
+
+    if (
+        tuple(inventory.get("prompt_constraints_residual_required_phrases", ()))
+        != PROMPT_CONSTRAINTS_RESIDUAL_REQUIRED_PHRASES
+    ):
+        findings.append(_lock_mismatch(schema_path, "prompt_constraints_residual_required_phrases"))
+
+    if (
+        tuple(inventory.get("prompt_triggers_residual_required_phrases", ()))
+        != PROMPT_TRIGGERS_RESIDUAL_REQUIRED_PHRASES
+    ):
+        findings.append(_lock_mismatch(schema_path, "prompt_triggers_residual_required_phrases"))
+
+    if (
+        tuple(inventory.get("prompt_related_docs_residual_required_phrases", ()))
+        != PROMPT_RELATED_DOCS_RESIDUAL_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(
+                schema_path, "prompt_related_docs_residual_required_phrases"
+            )
+        )
+
+    if (
+        tuple(inventory.get("prompt_instantiation_required_phrases", ()))
+        != PROMPT_INSTANTIATION_REQUIRED_PHRASES
+    ):
+        findings.append(_lock_mismatch(schema_path, "prompt_instantiation_required_phrases"))
 
     if (
         tuple(inventory.get("postmortem_intro_required_phrases", ()))
@@ -5125,6 +5230,276 @@ def _inventory_lock_consistency(
                 )
             )
 
+    p_specialist_intros = list(
+        inventory.get("prompt_specialist_intros_required_phrases", ())
+    )
+    if len(p_specialist_intros) != len(set(p_specialist_intros)):
+        findings.append(
+            Finding(
+                schema_path,
+                "prompt_specialist_intros_required_phrases must be unique",
+            )
+        )
+    if not p_specialist_intros:
+        findings.append(
+            Finding(
+                schema_path,
+                "prompt_specialist_intros_required_phrases must not be empty",
+            )
+        )
+    for phrase in p_specialist_intros:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_specialist_intros_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_p_specialist_intros = {
+            "You are the Quantum Computing specialist for the FUZZYWIGG-AI ecosystem.",
+            "You are the Blockchain Development specialist for the "
+            "FUZZYWIGG-AI ecosystem.",
+            "You are the On-Device Security specialist for the FUZZYWIGG-AI ecosystem.",
+            "You are the Strategic Orchestrator for the FUZZYWIGG-AI ecosystem.",
+        }
+        if p_specialist_intros and not required_p_specialist_intros <= set(
+            p_specialist_intros
+        ):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_specialist_intros_required_phrases must include "
+                    "Quantum/Blockchain/On-Device/Orchestrator specialist intros",
+                )
+            )
+
+    p_template_headers = list(
+        inventory.get("prompt_template_headers_required_phrases", ())
+    )
+    if len(p_template_headers) != len(set(p_template_headers)):
+        findings.append(
+            Finding(
+                schema_path,
+                "prompt_template_headers_required_phrases must be unique",
+            )
+        )
+    if not p_template_headers:
+        findings.append(
+            Finding(
+                schema_path,
+                "prompt_template_headers_required_phrases must not be empty",
+            )
+        )
+    for phrase in p_template_headers:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_template_headers_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_p_template_headers = {
+            "## 1. QuantumArchitectAgent Prompt Template",
+            "## 4. OrchestrationAgent Prompt Template",
+            "## Usage Instructions",
+            "### For Each Agent Instantiation",
+        }
+        if p_template_headers and not required_p_template_headers <= set(
+            p_template_headers
+        ):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_template_headers_required_phrases must include "
+                    "template headers/Usage Instructions/For Each Agent Instantiation",
+                )
+            )
+
+    p_constraints_residual = list(
+        inventory.get("prompt_constraints_residual_required_phrases", ())
+    )
+    if len(p_constraints_residual) != len(set(p_constraints_residual)):
+        findings.append(
+            Finding(
+                schema_path,
+                "prompt_constraints_residual_required_phrases must be unique",
+            )
+        )
+    if not p_constraints_residual:
+        findings.append(
+            Finding(
+                schema_path,
+                "prompt_constraints_residual_required_phrases must not be empty",
+            )
+        )
+    for phrase in p_constraints_residual:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_constraints_residual_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_p_constraints_residual = {
+            "## Key Constraints (NEVER VIOLATE)",
+            "Never optimize beyond device constraints (memory, runtime)",
+            "Never allow critical vulnerabilities (Slither must pass)",
+            "Always validate data isolation (no leaks to system logs)",
+        }
+        if p_constraints_residual and not required_p_constraints_residual <= set(
+            p_constraints_residual
+        ):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_constraints_residual_required_phrases must include "
+                    "Key Constraints/optimize/Slither/data isolation",
+                )
+            )
+
+    p_triggers_residual = list(
+        inventory.get("prompt_triggers_residual_required_phrases", ())
+    )
+    if len(p_triggers_residual) != len(set(p_triggers_residual)):
+        findings.append(
+            Finding(
+                schema_path,
+                "prompt_triggers_residual_required_phrases must be unique",
+            )
+        )
+    if not p_triggers_residual:
+        findings.append(
+            Finding(
+                schema_path,
+                "prompt_triggers_residual_required_phrases must not be empty",
+            )
+        )
+    for phrase in p_triggers_residual:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_triggers_residual_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_p_triggers_residual = {
+            "## Escalation Triggers (STOP and Request Input)",
+            "Quantum advantage deadline < 6 months and algorithm not quantum-safe",
+            "Multi-chain sync time > 10 minutes",
+            "Battery drain > 2% per transaction",
+        }
+        if p_triggers_residual and not required_p_triggers_residual <= set(
+            p_triggers_residual
+        ):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_triggers_residual_required_phrases must include "
+                    "Escalation Triggers/quantum advantage/multi-chain sync/"
+                    "battery drain",
+                )
+            )
+
+    p_related_docs_residual = list(
+        inventory.get("prompt_related_docs_residual_required_phrases", ())
+    )
+    if len(p_related_docs_residual) != len(set(p_related_docs_residual)):
+        findings.append(
+            Finding(
+                schema_path,
+                "prompt_related_docs_residual_required_phrases must be unique",
+            )
+        )
+    if not p_related_docs_residual:
+        findings.append(
+            Finding(
+                schema_path,
+                "prompt_related_docs_residual_required_phrases must not be empty",
+            )
+        )
+    for phrase in p_related_docs_residual:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_related_docs_residual_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_p_related_docs_residual = {
+            "## Related Documentation",
+            "See AGENTS.md Section 5.3 (Knowledge & Health Agents)",
+            "See AGENTS.md Section 22.3 (Multi-Chain State Consistency)",
+            "See AGENTS.md Section 12.4.1 (Risk Tolerance Review)",
+        }
+        if p_related_docs_residual and not required_p_related_docs_residual <= set(
+            p_related_docs_residual
+        ):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_related_docs_residual_required_phrases must include "
+                    "Related Documentation/5.3/22.3/12.4.1",
+                )
+            )
+
+    p_instantiation = list(
+        inventory.get("prompt_instantiation_required_phrases", ())
+    )
+    if len(p_instantiation) != len(set(p_instantiation)):
+        findings.append(
+            Finding(
+                schema_path,
+                "prompt_instantiation_required_phrases must be unique",
+            )
+        )
+    if not p_instantiation:
+        findings.append(
+            Finding(
+                schema_path,
+                "prompt_instantiation_required_phrases must not be empty",
+            )
+        )
+    for phrase in p_instantiation:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_instantiation_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_p_instantiation = {
+            "**Copy the relevant prompt template** (above)",
+            "**Provide the agent with access to**:",
+            "Task.md (current sprint)",
+            "System Prompt: [Copy QuantumArchitectAgent Prompt Template]",
+        }
+        if p_instantiation and not required_p_instantiation <= set(p_instantiation):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_instantiation_required_phrases must include "
+                    "Copy template/access to/Task.md/System Prompt copy",
+                )
+            )
+
     intro = list(inventory.get("postmortem_intro_required_phrases", ()))
     if len(intro) != len(set(intro)):
         findings.append(
@@ -6968,7 +7343,7 @@ def _inventory_lock_consistency(
     else:
         required_ci_honesty = {
             "markdown lint, link check, actionlint",
-            "Packaging inventory v50",
+            "Packaging inventory v51",
             "refuse invented recipes",
         }
         if ci_honesty and not required_ci_honesty <= set(ci_honesty):
@@ -6976,7 +7351,7 @@ def _inventory_lock_consistency(
                 Finding(
                     schema_path,
                     "contributing_ci_honesty_required_phrases must include "
-                    "CI checks/Packaging inventory v50/refuse invented recipes",
+                    "CI checks/Packaging inventory v51/refuse invented recipes",
                 )
             )
 
@@ -9477,6 +9852,107 @@ def validate_prompt_escalation_authority(root: Path) -> list[Finding]:
     return findings
 
 
+def validate_prompt_specialist_intros(root: Path) -> list[Finding]:
+    rel = "AGENT-PROMPTS.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "prompts missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    for phrase in PROMPT_SPECIALIST_INTROS_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked prompt-specialist-intros phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_prompt_template_headers(root: Path) -> list[Finding]:
+    rel = "AGENT-PROMPTS.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "prompts missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## 1. QuantumArchitectAgent Prompt Template" not in body:
+        findings.append(Finding(rel, "missing QuantumArchitectAgent Prompt Template header"))
+    for phrase in PROMPT_TEMPLATE_HEADERS_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked prompt-template-headers phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_prompt_constraints_residual(root: Path) -> list[Finding]:
+    rel = "AGENT-PROMPTS.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "prompts missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## Key Constraints (NEVER VIOLATE)" not in body:
+        findings.append(Finding(rel, "missing Key Constraints (NEVER VIOLATE) section"))
+    for phrase in PROMPT_CONSTRAINTS_RESIDUAL_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked prompt-constraints-residual phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_prompt_triggers_residual(root: Path) -> list[Finding]:
+    rel = "AGENT-PROMPTS.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "prompts missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## Escalation Triggers (STOP and Request Input)" not in body:
+        findings.append(Finding(rel, "missing Escalation Triggers section"))
+    for phrase in PROMPT_TRIGGERS_RESIDUAL_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked prompt-triggers-residual phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_prompt_related_docs_residual(root: Path) -> list[Finding]:
+    rel = "AGENT-PROMPTS.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "prompts missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## Related Documentation" not in body:
+        findings.append(Finding(rel, "missing Related Documentation section"))
+    for phrase in PROMPT_RELATED_DOCS_RESIDUAL_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked prompt-related-docs-residual phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_prompt_instantiation(root: Path) -> list[Finding]:
+    rel = "AGENT-PROMPTS.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "prompts missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## Usage Instructions" not in body:
+        findings.append(Finding(rel, "missing Usage Instructions section"))
+    for phrase in PROMPT_INSTANTIATION_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked prompt-instantiation phrase: {phrase}")
+            )
+    return findings
+
+
+
 def validate_changelog_initial(root: Path) -> list[Finding]:
     rel = "CHANGELOG.md"
     path = root / rel
@@ -10606,8 +11082,8 @@ def validate_contributing_ci_honesty(root: Path) -> list[Finding]:
         return [Finding(rel, "CONTRIBUTING.md missing")]
     text = path.read_text(encoding="utf-8")
     findings: list[Finding] = []
-    if "Packaging inventory v50" not in text:
-        findings.append(Finding(rel, "missing Packaging inventory v50 honesty lock"))
+    if "Packaging inventory v51" not in text:
+        findings.append(Finding(rel, "missing Packaging inventory v51 honesty lock"))
     for phrase in CONTRIBUTING_CI_HONESTY_REQUIRED_PHRASES:
         if phrase not in text:
             findings.append(
@@ -12545,6 +13021,12 @@ VALIDATORS: dict[str, ValidatorFn] = {
     "prompt-context": validate_prompt_context,
     "prompt-cannot-delegate": validate_prompt_cannot_delegate,
     "prompt-escalation-authority": validate_prompt_escalation_authority,
+    "prompt-specialist-intros": validate_prompt_specialist_intros,
+    "prompt-template-headers": validate_prompt_template_headers,
+    "prompt-constraints-residual": validate_prompt_constraints_residual,
+    "prompt-triggers-residual": validate_prompt_triggers_residual,
+    "prompt-related-docs-residual": validate_prompt_related_docs_residual,
+    "prompt-instantiation": validate_prompt_instantiation,
     "hydration-phase2": validate_hydration_phase2,
     "hydration-phase5": validate_hydration_phase5,
     "link-check": validate_link_check,
