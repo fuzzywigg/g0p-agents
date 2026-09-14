@@ -21808,7 +21808,7 @@ def _memory_handoff_constitution_locked_text() -> str:
 
 
 def test_memory_handoff_residual_modules_existing_only() -> None:
-    """Slice targets eleven existing memory/handoff modules — not #156/#161/#166/#172/#174/#176/#178."""
+    """Eleven existing memory/handoff modules — not #156/#161/#166/#172/#174/#176/#178."""
     constitution = _memory_handoff_constitution_modules()
     scratchpad = _memory_handoff_scratchpad_modules()
     assert len(constitution) == 7
