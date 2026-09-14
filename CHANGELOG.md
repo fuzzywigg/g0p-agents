@@ -10,6 +10,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Contributing **v36** deepeners (post-#84): `contributing-metadata`,
+  `contributing-surfaces`, `contributing-ci-honesty` validators; CONTRIBUTING.md
+  title/Status/Edit-policy locks, agent-surface duty / branch-purpose leftovers,
+  and PR CI-gate / packaging-inventory honesty leftovers; consistency deepeners
+  for `contributing_metadata_required_phrases` /
+  `contributing_surfaces_required_phrases` /
+  `contributing_ci_honesty_required_phrases` (121 total; historic four only —
+  contributing slice leftovers, not execution-summary, implementation-guide,
+  goose recipes, constitution, agent prompts, security policy, Dependabot,
+  hydration, changelog, README honesty, PR-template, issue-template, scratchpad,
+  postmortem, archive snapshot, or routing/identity)
+
 - Execution-summary **v35** deepeners (post-#81): `execution-ide`,
   `execution-innovations`, `execution-next48` validators; EXECUTION-SUMMARY.md
   IDE & Software Setup locks, What Makes This Different / Key Innovations locks,

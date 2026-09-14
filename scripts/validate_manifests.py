@@ -27,6 +27,7 @@ Checks structural correctness of:
 - GOOSE-RECIPES.md recipe headers / instruction-agent / extension locks
 - AGENT-PROMPTS.md constraints / escalation-triggers / related-docs locks
 - EXECUTION-SUMMARY.md IDE setup / innovations / next-48-hours locks
+- CONTRIBUTING.md metadata / surface-duty / CI-honesty leftover locks
 - agentic_flows/scratchpad.txt coordination markers (+ allowed file set)
 - pyproject.toml validation tooling keys (+ coverage / requires-python / ruff)
 - CI workflow job/step/matrix/concurrency/permissions/artifact-if presence
@@ -167,7 +168,7 @@ REQUIRED_ARCHIVE_DOCS = (
     "README.md",
 )
 
-INVENTORY_VERSION = 35
+INVENTORY_VERSION = 36
 CURSOR_ENVIRONMENT_NAME = "g0p-agents"
 DEPENDABOT_SCHEDULE_INTERVAL = "weekly"
 DEPENDABOT_DIRECTORIES: frozenset[str] = frozenset({"/"})
@@ -537,6 +538,34 @@ CONTRIBUTING_GOVERNANCE_REQUIRED_PHRASES: tuple[str, ...] = (
     "regardless of CI status",
     "See [CLAUDE.md](CLAUDE.md)",
     "agent routing matrix and negative constraints",
+)
+CONTRIBUTING_METADATA_REQUIRED_PHRASES: tuple[str, ...] = (
+    "# Contributing to g0p-agents",
+    "Status: ACTIVE | Tier: 1 | Created: 2026-04-13",
+    "Edit policy: Agent-editable; structural changes require Andrew approval",
+)
+CONTRIBUTING_SURFACES_REQUIRED_PHRASES: tuple[str, ...] = (
+    "copilot, geryon, claude-cowork, browser-claude, playwright",
+    "automated contributions via structured issues and PRs",
+    "architectural decisions, branch protection changes, licensing, financial decisions",
+    "invited contributors working on PikoClaw or related projects",
+    "Never push directly",
+    "CI fixes, single-file edits",
+    "multi-file scaffolding, deep code changes",
+    "docs, Notion-linked content",
+    "thin docs/CI/hygiene",
+)
+CONTRIBUTING_CI_HONESTY_REQUIRED_PHRASES: tuple[str, ...] = (
+    "Reference the issue number in the PR title when one exists",
+    "Fix #12: Add LICENSE file",
+    "markdown lint, link check, actionlint",
+    "manifest validate on Python 3.11/3.12/3.13",
+    "Andrew or designated reviewer",
+    "Packaging inventory v36",
+    "refuse invented recipes",
+    "orphan on-disk YAML",
+    "unknown `*Agent` tokens",
+    "`AGENT-PROMPTS.md` / `GOOSE-RECIPES.md` / `AGENTS-v2.2.md`",
 )
 PR_SUMMARY_REQUIRED_PHRASES: tuple[str, ...] = (
     "# Summary",
@@ -1118,7 +1147,7 @@ SCRATCHPAD_STATUS_MARKERS: tuple[str, ...] = (
 SPECIALIST_AGENTS: tuple[str, ...] = DOCUMENTED_AGENTS[:-1]
 
 MIN_COVERAGE_FAIL_UNDER = 99
-MIN_VALIDATOR_COUNT = 118
+MIN_VALIDATOR_COUNT = 121
 
 
 @dataclass(frozen=True)
@@ -2187,6 +2216,30 @@ def validate_packaging_inventory(root: Path) -> list[Finding]:
     ):
         findings.append(
             _lock_mismatch(schema_path, "contributing_governance_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("contributing_metadata_required_phrases", ()))
+        != CONTRIBUTING_METADATA_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "contributing_metadata_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("contributing_surfaces_required_phrases", ()))
+        != CONTRIBUTING_SURFACES_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "contributing_surfaces_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("contributing_ci_honesty_required_phrases", ()))
+        != CONTRIBUTING_CI_HONESTY_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "contributing_ci_honesty_required_phrases")
         )
 
     expected_validator_names = tuple(sorted(VALIDATORS))
@@ -4374,6 +4427,126 @@ def _inventory_lock_consistency(
                     schema_path,
                     "contributing_governance_required_phrases must include "
                     "Governance/Structural changes/Andrew approval",
+                )
+            )
+
+    metadata = list(inventory.get("contributing_metadata_required_phrases", ()))
+    if len(metadata) != len(set(metadata)):
+        findings.append(
+            Finding(
+                schema_path,
+                "contributing_metadata_required_phrases must be unique",
+            )
+        )
+    if not metadata:
+        findings.append(
+            Finding(
+                schema_path,
+                "contributing_metadata_required_phrases must not be empty",
+            )
+        )
+    for phrase in metadata:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "contributing_metadata_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_meta = {
+            "# Contributing to g0p-agents",
+            "Status: ACTIVE | Tier: 1 | Created: 2026-04-13",
+            "Edit policy: Agent-editable; structural changes require Andrew approval",
+        }
+        if metadata and not required_meta <= set(metadata):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "contributing_metadata_required_phrases must include "
+                    "title/Status/Edit policy",
+                )
+            )
+
+    surfaces = list(inventory.get("contributing_surfaces_required_phrases", ()))
+    if len(surfaces) != len(set(surfaces)):
+        findings.append(
+            Finding(
+                schema_path,
+                "contributing_surfaces_required_phrases must be unique",
+            )
+        )
+    if not surfaces:
+        findings.append(
+            Finding(
+                schema_path,
+                "contributing_surfaces_required_phrases must not be empty",
+            )
+        )
+    for phrase in surfaces:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "contributing_surfaces_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_surfaces = {
+            "copilot, geryon, claude-cowork, browser-claude, playwright",
+            "Never push directly",
+            "thin docs/CI/hygiene",
+        }
+        if surfaces and not required_surfaces <= set(surfaces):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "contributing_surfaces_required_phrases must include "
+                    "surface list/Never push/cursor hygiene",
+                )
+            )
+
+    ci_honesty = list(inventory.get("contributing_ci_honesty_required_phrases", ()))
+    if len(ci_honesty) != len(set(ci_honesty)):
+        findings.append(
+            Finding(
+                schema_path,
+                "contributing_ci_honesty_required_phrases must be unique",
+            )
+        )
+    if not ci_honesty:
+        findings.append(
+            Finding(
+                schema_path,
+                "contributing_ci_honesty_required_phrases must not be empty",
+            )
+        )
+    for phrase in ci_honesty:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "contributing_ci_honesty_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_ci_honesty = {
+            "markdown lint, link check, actionlint",
+            "Packaging inventory v36",
+            "refuse invented recipes",
+        }
+        if ci_honesty and not required_ci_honesty <= set(ci_honesty):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "contributing_ci_honesty_required_phrases must include "
+                    "CI checks/Packaging inventory v36/refuse invented recipes",
                 )
             )
 
@@ -6715,6 +6888,59 @@ def validate_contributing_governance(root: Path) -> list[Finding]:
     return findings
 
 
+def validate_contributing_metadata(root: Path) -> list[Finding]:
+    rel = "CONTRIBUTING.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "CONTRIBUTING.md missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "# Contributing to g0p-agents" not in text:
+        findings.append(Finding(rel, "missing Contributing title"))
+    for phrase in CONTRIBUTING_METADATA_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(rel, f"missing locked contributing-metadata phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_contributing_surfaces(root: Path) -> list[Finding]:
+    rel = "CONTRIBUTING.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "CONTRIBUTING.md missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "Agent surfaces" not in text:
+        findings.append(Finding(rel, "missing Agent surfaces duty list"))
+    for phrase in CONTRIBUTING_SURFACES_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(rel, f"missing locked contributing-surfaces phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_contributing_ci_honesty(root: Path) -> list[Finding]:
+    rel = "CONTRIBUTING.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "CONTRIBUTING.md missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "Packaging inventory v36" not in text:
+        findings.append(Finding(rel, "missing Packaging inventory v36 honesty lock"))
+    for phrase in CONTRIBUTING_CI_HONESTY_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(
+                    rel, f"missing locked contributing-ci-honesty phrase: {phrase}"
+                )
+            )
+    return findings
+
+
 def validate_pr_summary(root: Path) -> list[Finding]:
     rel = ".github/pull_request_template.md"
     path = root / rel
@@ -8396,6 +8622,9 @@ VALIDATORS: dict[str, ValidatorFn] = {
     "contributing-issues": validate_contributing_issues,
     "contributing-local": validate_contributing_local,
     "contributing-governance": validate_contributing_governance,
+    "contributing-metadata": validate_contributing_metadata,
+    "contributing-surfaces": validate_contributing_surfaces,
+    "contributing-ci-honesty": validate_contributing_ci_honesty,
     "scratchpad": validate_scratchpad,
     "scratchpad-intro": validate_scratchpad_intro,
     "scratchpad-format": validate_scratchpad_format,
