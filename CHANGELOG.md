@@ -11,6 +11,25 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 
 - CI/markdownlint residual **tests-only** leftover deepeners after tip through
+  **#289** (CI/markdownlint leftover after #279) / **#279** / **#270** / **#265** /
+  **#264** / **#258** / **#253** / **#248** (EXISTING six fixtures —
+  `markdownlint` / `ci-setup-python` / `ci-ruff` / `ci-pip-install` /
+  `ci-pip-check` / `ci-pytest` — no invented product / workflow / inventory bump):
+  tip-after-#289 HEAVY deepeners beyond merged #289 after-#279 set — hair/thin/
+  punctuation/Ogham lookalikes, exact dual pip-check+setup-cache Findings, schema
+  MD024.siblings_only const mangle, MD013 null + MD025/MD033 string leftovers,
+  all-pytest-marker lookalike drops, inventory ruff/pip/setup-python type
+  leftovers, simultaneous MD013.tables+code_blocks exact drops, setup-python uses
+  drop exact, ruff+pip-check dual exact, isolation vs #289 CI/markdownlint /
+  #279/#270/#265/#264/#258/#253/#248 siblings, `--only` subset vs siblings,
+  quintuple-surface concurrent races, live-green. Historic four only; inventory
+  unchanged (v52 / 196). Distinct from merged #289/#279 (CI/markdownlint), #270
+  (goose-schema leftover), #265 (Claude/routing), #264/#258/#253/#248 siblings,
+  closed CONFLICTING #288/#286/#276/#275/#267/#257/#250/#240/#237/#233/#220/#214/
+  #210/#204/#201/#196 (same leftover vs stale tips), and historic v12/v13
+  setup-python/ruff/pip/pytest edges.
+
+- CI/markdownlint residual **tests-only** leftover deepeners after tip through
   **#279** (CI/markdownlint leftover after #270) / **#270** (goose-schema leftover
   after #265) / **#265** / **#264** / **#258** / **#253** / **#248** / **#242** /
   **#236** / **#229** / **#224** / **#219** / **#209** / **#208** / **#202** /
