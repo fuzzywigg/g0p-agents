@@ -10,6 +10,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Implementation residual **tests-only** deepeners after tip through **#176**
+  (EXISTING eight `implementation-*` phrase-lock validators — historic #101
+  leftover sibling; no invented product / inventory bump): concurrent validate
+  races, empty/whitespace/header-only `IMPLEMENTATION-GUIDE.md`,
+  invalid/invented implementation-timeout keys, per-phrase drop matrix,
+  inventory mismatch matrix, and cross-isolation against
+  `implementation-guide` / `implementation-quickstart` /
+  `implementation-phases` / `implementation-tools` /
+  `implementation-success` / `implementation-issues` /
+  `implementation-faq` / `implementation-support`. Historic four only;
+  inventory unchanged (v52 / 196). Distinct from merged #176 (changelog),
+  #174 (contributing), #172 (goose-schema+security), #166 (execution),
+  #161 (hydration), #156 (constitution), #151 (prompt-pre-v52),
+  #147 (goose-recipe), and closed CONFLICTING #177 memory-slot tip refill.
+
 - Changelog residual **tests-only** deepeners after tip through **#174** / post-#172
   (EXISTING seven `changelog` / `changelog-*` phrase-lock validators — constitution's
   historic Keep-a-Changelog lock sibling from #116; no invented product / inventory bump):
