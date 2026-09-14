@@ -16998,7 +16998,7 @@ def _v52_prompt_locked_text() -> str:
 
 
 def test_prompt_v52_residual_modules_existing_only() -> None:
-    """Slice targets the twelve post-#141 v52 modules — no invented v53 sibling."""
+    """Slice targets the twelve post-#141 v52 modules — no invented prompt v54 sibling."""
     modules = _v52_prompt_residual_modules()
     assert len(modules) == 12
     assert vm.INVENTORY_VERSION == 53
@@ -17006,7 +17006,7 @@ def test_prompt_v52_residual_modules_existing_only() -> None:
     assert len(vm.VALIDATORS) == 200
 
     for invented in (
-        "prompt-v53-invented",
+        "prompt-v54-invented",
         "prompt-interpolation",
         "prompt-checklist-detail",
         "prompt-escalate-when",
@@ -17273,7 +17273,7 @@ def test_prompt_v52_residual_cross_isolation(tmp_path: Path) -> None:
 
 
 def test_prompt_v52_residual_live_green() -> None:
-    """All twelve live v52 residual prompt validators remain clean; inventory v52/196."""
+    """All twelve live v52 residual prompt validators remain clean on tip inventory."""
     modules = _v52_prompt_residual_modules()
     assert len(modules) == 12
     for name, fn, _phrases, _key in modules:
@@ -17764,7 +17764,13 @@ def test_v53_orchestration_timeout_edge_cases(tmp_path: Path) -> None:
 
     _write(
         tmp_path / "GOOSE-RECIPES.md",
-        "\n".join([*vm.GOOSE_TIMEOUT_DETAIL_REQUIRED_PHRASES, *vm.GOOSE_DEADLINE_DETAIL_REQUIRED_PHRASES, ""]),
+        "\n".join(
+            [
+                *vm.GOOSE_TIMEOUT_DETAIL_REQUIRED_PHRASES,
+                *vm.GOOSE_DEADLINE_DETAIL_REQUIRED_PHRASES,
+                "",
+            ]
+        ),
     )
     _write(
         tmp_path / "AGENTS-v2.2.md",
