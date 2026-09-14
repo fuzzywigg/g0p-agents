@@ -10,6 +10,33 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Prompts listform + agentic_flows residual **tests-only** leftover deepeners
+  after tip through **#289** (CI/markdownlint leftover after #279) / **#279** /
+  **#270** / **#265** / **#264** / **#258** / **#253** (prompts+flows after
+  #248) / **#248** / **#242** / **#236** / **#229** / **#224** / **#219** /
+  **#209** / **#208** / **#202** / **#200** (EXISTING nineteen fixtures — twelve
+  list-form sibling `prompt-*` + seven agentic_flows `goose` /
+  `recipe-agents` / `recipe-titles` / `scratchpad*` — no invented v53 list-form
+  product / inventory bump; not markdownlint niche): exact fence-count leftovers
+  for found 0 / 2 / 5 beyond #253 found-1, historic version/provider/model/
+  extension exact Findings + documented `recipe YAML must be a mapping`,
+  word-joiner / NEL / vertical-tab / soft-hyphen / figure-space lookalikes
+  beyond #253 fullwidth/tab, per-module last-phrase + middle-phrase exact drop
+  matrix for all twelve listform + scratchpad* (≠ #253 first-phrase),
+  empty/whitespace scratchpad exact + empty AGENT-PROMPTS section-lock shapes
+  across all twelve, Orchestration missing BlockchainArchitectAgent /
+  OrchestrationAgent exact (≠ #253 Quantum/Edge), CI `--list-validators` /
+  `--only` nineteen + required Manifest Validate step-marker smoke, inventory
+  empty-list leftovers beyond #253 bool/float and #242 int/null, cross
+  isolation vs #289/#279/#270/#265/#264/#258/#253/#248 siblings + concurrent
+  races + tip live-green. Historic four only; Packaging inventory unchanged
+  (v52 / 196); no schema / validators / Dependabot bumps. Distinct from merged
+  #289/#279 (CI/markdownlint), #270 (goose-schema), #265 (Claude/routing),
+  #264/#258/#253/#248 siblings, closed CONFLICTING
+  #291/#290/#284/#272/#269/#251/#243/#238/#235/#230/#221/#223 (same leftover vs
+  stale tips), and not a v53 invent sibling. Fresh tip-after-#289 suite (not a
+  pre-#289 rebase lineage).
+
 - CI/markdownlint residual **tests-only** leftover deepeners after tip through
   **#279** (CI/markdownlint leftover after #270) / **#270** (goose-schema leftover
   after #265) / **#265** / **#264** / **#258** / **#253** / **#248** / **#242** /
