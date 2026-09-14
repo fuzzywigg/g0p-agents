@@ -1,5 +1,5 @@
 {
-  "version": 45,
+  "version": 46,
   "documented_agents": [
     "QuantumArchitectAgent",
     "BlockchainArchitectAgent",
@@ -378,7 +378,10 @@
     "markdownlint",
     "negative-constraints",
     "postmortem",
+    "postmortem-blocked",
+    "postmortem-decision",
     "postmortem-fields",
+    "postmortem-files",
     "postmortem-intro",
     "postmortem-next-steps",
     "pr-acceptance",
@@ -387,11 +390,16 @@
     "pr-summary",
     "pr-template",
     "prompt-constraints",
+    "prompt-decision",
+    "prompt-expertise",
+    "prompt-monthly",
+    "prompt-orchestration-matrix",
     "prompt-related-docs",
     "prompt-roles",
     "prompt-sections",
     "prompt-triggers",
     "prompt-usage",
+    "prompt-usage-example",
     "prompts",
     "pyproject",
     "quarterly-review",
@@ -429,7 +437,7 @@
     "yaml-configs"
   ],
   "min_coverage_fail_under": 99,
-  "min_validator_count": 157,
+  "min_validator_count": 165,
   "required_paths": [
     "README.md",
     "LICENSE",
@@ -1269,7 +1277,7 @@
     "markdown lint, link check, actionlint",
     "manifest validate on Python 3.11/3.12/3.13",
     "Andrew or designated reviewer",
-    "Packaging inventory v45",
+    "Packaging inventory v46",
     "refuse invented recipes",
     "orphan on-disk YAML",
     "unknown `*Agent` tokens",
@@ -1551,5 +1559,74 @@
     "`README.md` — public archive description",
     "`IMPLEMENTATION-GUIDE.md` — step-by-step setup guide",
     "`EXECUTION-SUMMARY.md` — implementation summary"
+  ],
+  "prompt_expertise_required_phrases": [
+    "# Agent Prompt Templates",
+    "## FUZZYWIGG-AI Quantum-Blockchain System",
+    "## Your Expertise",
+    "Quantum algorithm design (Shor's, Grover's, VQE, custom)",
+    "IBM Quantum Experience (real hardware validation)",
+    "Google Cirq (circuit construction, simulation)",
+    "Qualtran (resource analysis)",
+    "Post-quantum cryptography validation"
+  ],
+  "prompt_decision_required_phrases": [
+    "## Decision Making Principles",
+    "Prioritize quantum-safety over performance",
+    "Recommend testing on multiple backends",
+    "Validate circuit correctness before integration",
+    "Estimate gate count, depth, and error rates",
+    "Circuit depth < 50 gates (if possible)",
+    "Error rate < 1% on simulator"
+  ],
+  "prompt_orchestration_matrix_required_phrases": [
+    "## Your Escalation Authority",
+    "| Conflict Type | How You Resolve It |",
+    "**Algorithm Complexity** (Quantum says \"too complex\", Blockchain says \"necessary\")",
+    "**Gas Cost** (Blockchain says \"over budget\", On-Device says \"can't afford\")",
+    "**Crypto Algorithm** (On-Device says \"RSA too slow\", Quantum says \"must be RSA\")",
+    "**Timeline** (All agents say \"2 weeks\", business needs \"2 days\")",
+    "## Key Responsibilities You CANNOT Delegate",
+    "Final go/no-go decisions"
+  ],
+  "prompt_monthly_required_phrases": [
+    "## Your Monthly Checklist",
+    "Review all recent decisions in postmortem.md",
+    "Check agent success metrics (are they meeting targets?)",
+    "Identify any emerging conflicts (before they escalate)",
+    "Ultimate Goal: Build quantum-safe, multi-chain NFT ecosystem with on-device security",
+    "Risk Tolerance: ALPHA-STAGE (conservative, threshold increases with success)",
+    "Vision articulation (Mickey 18 → technical architecture)"
+  ],
+  "prompt_usage_example_required_phrases": [
+    "Paste into the LLM's system prompt",
+    "Review the proposed factorization circuit for our NFT mint operation",
+    "Designs Cirq circuit for factorization",
+    "Optimizes for mobile constraints (2MB RAM max)",
+    "Validates using CRYSTALS-Kyber (NIST post-quantum standard)",
+    "Either approves (moves to BlockchainArchitectAgent) or escalates",
+    "Output: Updated scratchpad + Cirq circuit file"
+  ],
+  "postmortem_decision_required_phrases": [
+    "## Decision: Repo Hydration — 2026-04-13",
+    "PROCEED WITH DOCUMENTATION HYDRATION; defer code scaffolding",
+    "copilot (hydration run)",
+    "Hydration protocol executed per agent_instructions.",
+    "LOW — documentation changes only, no code deployed",
+    "Questions B1–B5 require Andrew input before scaffolding"
+  ],
+  "postmortem_files_required_phrases": [
+    "**Files Created**:",
+    ".github/ISSUE_TEMPLATE/{bug_report,feature_request,agent_task}.md",
+    ".github/pull_request_template.md",
+    ".github/workflows/ci.yml",
+    "docs/agent-hydration.md",
+    "agentic_flows/scratchpad.txt",
+    "postmortem.md (this file)",
+    ".markdownlint.yaml"
+  ],
+  "postmortem_blocked_required_phrases": [
+    "GitHub issue creation (gh CLI auth scope insufficient); Notion update (requires claude-cowork surface)",
+    "**Blocked**:"
   ]
 }

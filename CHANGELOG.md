@@ -10,6 +10,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Prompts + postmortem residual **v46** deepeners (post-#116 constitution+changelog v45):
+  `prompt-expertise`, `prompt-decision`, `prompt-orchestration-matrix`, `prompt-monthly`,
+  `prompt-usage-example`, `postmortem-decision`, `postmortem-files`, `postmortem-blocked`
+  validators; AGENT-PROMPTS.md expertise / decision / orchestration-matrix / monthly /
+  usage-example leftovers and postmortem.md decision-body / files-created / blocked
+  leftovers; consistency deepeners for the matching `*_required_phrases` inventory keys
+  (Packaging inventory 165 total; historic four only — prompts/postmortem residuals
+  slice, not constitution v45, changelog v45, hydration v44, README v43, security,
+  contributing, goose recipes, execution-summary, or Dependabot)
+
 - Constitution + changelog residual **v45** deepeners (post-#115 hydration v44 / #111 README v43):
   `constitution-ide-stack`, `constitution-install-script`, `constitution-vscode`,
   `constitution-hard-constraints`, `constitution-risk-tolerance`, `changelog-preamble`,

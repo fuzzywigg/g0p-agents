@@ -30,6 +30,8 @@ Checks structural correctness of:
 - GOOSE-RECIPES.md recipe headers / instruction-agent / extension locks
 - GOOSE-RECIPES.md master orchestration / conflicts / quantum-task locks
 - AGENT-PROMPTS.md constraints / escalation-triggers / related-docs locks
+- AGENT-PROMPTS.md expertise / decision / orchestration-matrix / monthly /
+  usage-example leftover locks
 - EXECUTION-SUMMARY.md IDE setup / innovations / next-48-hours locks
 - agentic_flows/scratchpad.txt coordination markers (+ allowed file set)
 - pyproject.toml validation tooling keys (+ coverage / requires-python / ruff)
@@ -65,6 +67,7 @@ Checks structural correctness of:
 - CHANGELOG.md preamble / Changed / 0.1.0 initial leftover locks
   PHASE 4 issues / LIST B deferred leftover locks
 - postmortem.md intro / Decision field / Next Steps surface locks
+- postmortem.md decision-body / files-created / blocked leftover locks
 - agentic_flows/scratchpad.txt intro / format-legend / task-meta locks
 - GitHub issue template metadata / routing-field / bug-repro locks
 - pyproject project name + version/license/description/readme +
@@ -179,7 +182,7 @@ REQUIRED_ARCHIVE_DOCS = (
     "README.md",
 )
 
-INVENTORY_VERSION = 45
+INVENTORY_VERSION = 46
 CURSOR_ENVIRONMENT_NAME = "g0p-agents"
 DEPENDABOT_SCHEDULE_INTERVAL = "weekly"
 DEPENDABOT_DIRECTORIES: frozenset[str] = frozenset({"/"})
@@ -719,6 +722,29 @@ POSTMORTEM_NEXT_STEPS_REQUIRED_PHRASES: tuple[str, ...] = (
     "claude-cowork creates/updates Notion page under Active Sprint Work",
     "geryon scaffolds agentic_flows/ once B1 is answered",
 )
+
+POSTMORTEM_DECISION_REQUIRED_PHRASES: tuple[str, ...] = (
+    "## Decision: Repo Hydration \u2014 2026-04-13",
+    "PROCEED WITH DOCUMENTATION HYDRATION; defer code scaffolding",
+    "copilot (hydration run)",
+    "Hydration protocol executed per agent_instructions.",
+    "LOW \u2014 documentation changes only, no code deployed",
+    "Questions B1\u2013B5 require Andrew input before scaffolding",
+)
+POSTMORTEM_FILES_REQUIRED_PHRASES: tuple[str, ...] = (
+    "**Files Created**:",
+    ".github/ISSUE_TEMPLATE/{bug_report,feature_request,agent_task}.md",
+    ".github/pull_request_template.md",
+    ".github/workflows/ci.yml",
+    "docs/agent-hydration.md",
+    "agentic_flows/scratchpad.txt",
+    "postmortem.md (this file)",
+    ".markdownlint.yaml",
+)
+POSTMORTEM_BLOCKED_REQUIRED_PHRASES: tuple[str, ...] = (
+    "GitHub issue creation (gh CLI auth scope insufficient); Notion update (requires claude-cowork surface)",  # noqa: E501
+    "**Blocked**:",
+)
 SCRATCHPAD_INTRO_REQUIRED_PHRASES: tuple[str, ...] = (
     "Agent Coordination Scratchpad",
     "Updated by each agent after completing their task",
@@ -832,7 +858,7 @@ CONTRIBUTING_CI_HONESTY_REQUIRED_PHRASES: tuple[str, ...] = (
     "markdown lint, link check, actionlint",
     "manifest validate on Python 3.11/3.12/3.13",
     "Andrew or designated reviewer",
-    "Packaging inventory v45",
+    "Packaging inventory v46",
     "refuse invented recipes",
     "orphan on-disk YAML",
     "unknown `*Agent` tokens",
@@ -1367,6 +1393,54 @@ PROMPT_RELATED_DOCS_REQUIRED_PHRASES: tuple[str, ...] = (
     "Remember: You are the last line of defense before user devices",
 )
 
+PROMPT_EXPERTISE_REQUIRED_PHRASES: tuple[str, ...] = (
+    "# Agent Prompt Templates",
+    "## FUZZYWIGG-AI Quantum-Blockchain System",
+    "## Your Expertise",
+    "Quantum algorithm design (Shor's, Grover's, VQE, custom)",
+    "IBM Quantum Experience (real hardware validation)",
+    "Google Cirq (circuit construction, simulation)",
+    "Qualtran (resource analysis)",
+    "Post-quantum cryptography validation",
+)
+PROMPT_DECISION_REQUIRED_PHRASES: tuple[str, ...] = (
+    "## Decision Making Principles",
+    "Prioritize quantum-safety over performance",
+    "Recommend testing on multiple backends",
+    "Validate circuit correctness before integration",
+    "Estimate gate count, depth, and error rates",
+    "Circuit depth < 50 gates (if possible)",
+    "Error rate < 1% on simulator",
+)
+PROMPT_ORCHESTRATION_MATRIX_REQUIRED_PHRASES: tuple[str, ...] = (
+    "## Your Escalation Authority",
+    "| Conflict Type | How You Resolve It |",
+    '**Algorithm Complexity** (Quantum says "too complex", Blockchain says "necessary")',
+    '**Gas Cost** (Blockchain says "over budget", On-Device says "can\'t afford")',
+    '**Crypto Algorithm** (On-Device says "RSA too slow", Quantum says "must be RSA")',
+    '**Timeline** (All agents say "2 weeks", business needs "2 days")',
+    "## Key Responsibilities You CANNOT Delegate",
+    "Final go/no-go decisions",
+)
+PROMPT_MONTHLY_REQUIRED_PHRASES: tuple[str, ...] = (
+    "## Your Monthly Checklist",
+    "Review all recent decisions in postmortem.md",
+    "Check agent success metrics (are they meeting targets?)",
+    "Identify any emerging conflicts (before they escalate)",
+    "Ultimate Goal: Build quantum-safe, multi-chain NFT ecosystem with on-device security",
+    "Risk Tolerance: ALPHA-STAGE (conservative, threshold increases with success)",
+    "Vision articulation (Mickey 18 \u2192 technical architecture)",
+)
+PROMPT_USAGE_EXAMPLE_REQUIRED_PHRASES: tuple[str, ...] = (
+    "Paste into the LLM's system prompt",
+    "Review the proposed factorization circuit for our NFT mint operation",
+    "Designs Cirq circuit for factorization",
+    "Optimizes for mobile constraints (2MB RAM max)",
+    "Validates using CRYSTALS-Kyber (NIST post-quantum standard)",
+    "Either approves (moves to BlockchainArchitectAgent) or escalates",
+    "Output: Updated scratchpad + Cirq circuit file",
+)
+
 IMPLEMENTATION_PHASES_REQUIRED_PHRASES: tuple[str, ...] = (
     "## Full Implementation (1-2 weeks)",
     "### Phase 1: Infrastructure (Days 1-2)",
@@ -1508,7 +1582,7 @@ SCRATCHPAD_STATUS_MARKERS: tuple[str, ...] = (
 SPECIALIST_AGENTS: tuple[str, ...] = DOCUMENTED_AGENTS[:-1]
 
 MIN_COVERAGE_FAIL_UNDER = 99
-MIN_VALIDATOR_COUNT = 157
+MIN_VALIDATOR_COUNT = 165
 
 
 @dataclass(frozen=True)
@@ -2506,6 +2580,72 @@ def validate_packaging_inventory(root: Path) -> list[Finding]:
     ):
         findings.append(
             _lock_mismatch(schema_path, "changelog_initial_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("prompt_expertise_required_phrases", ()))
+        != PROMPT_EXPERTISE_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "prompt_expertise_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("prompt_decision_required_phrases", ()))
+        != PROMPT_DECISION_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "prompt_decision_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("prompt_orchestration_matrix_required_phrases", ()))
+        != PROMPT_ORCHESTRATION_MATRIX_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(
+                schema_path, "prompt_orchestration_matrix_required_phrases"
+            )
+        )
+
+    if (
+        tuple(inventory.get("prompt_monthly_required_phrases", ()))
+        != PROMPT_MONTHLY_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "prompt_monthly_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("prompt_usage_example_required_phrases", ()))
+        != PROMPT_USAGE_EXAMPLE_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "prompt_usage_example_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("postmortem_decision_required_phrases", ()))
+        != POSTMORTEM_DECISION_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "postmortem_decision_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("postmortem_files_required_phrases", ()))
+        != POSTMORTEM_FILES_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "postmortem_files_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("postmortem_blocked_required_phrases", ()))
+        != POSTMORTEM_BLOCKED_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "postmortem_blocked_required_phrases")
         )
 
 
@@ -4221,6 +4361,282 @@ def _inventory_lock_consistency(
                     schema_path,
                     "changelog_initial_required_phrases must include "
                     "0.1.0/README/IMPLEMENTATION-GUIDE/EXECUTION-SUMMARY",
+                )
+            )
+
+
+    pexpert = list(inventory.get("prompt_expertise_required_phrases", ()))
+    if len(pexpert) != len(set(pexpert)):
+        findings.append(
+            Finding(schema_path, "prompt_expertise_required_phrases must be unique")
+        )
+    if not pexpert:
+        findings.append(
+            Finding(schema_path, "prompt_expertise_required_phrases must not be empty")
+        )
+    for phrase in pexpert:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_expertise_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_pexpert = {
+            '# Agent Prompt Templates',
+            '## Your Expertise',
+            'IBM Quantum Experience (real hardware validation)'
+        }
+        if pexpert and not required_pexpert <= set(pexpert):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_expertise_required_phrases must include "
+                    "Agent Prompt Templates/Your Expertise/IBM Quantum",
+                )
+            )
+
+    pdecision = list(inventory.get("prompt_decision_required_phrases", ()))
+    if len(pdecision) != len(set(pdecision)):
+        findings.append(
+            Finding(schema_path, "prompt_decision_required_phrases must be unique")
+        )
+    if not pdecision:
+        findings.append(
+            Finding(schema_path, "prompt_decision_required_phrases must not be empty")
+        )
+    for phrase in pdecision:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_decision_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_pdecision = {
+            '## Decision Making Principles',
+            'Circuit depth < 50 gates (if possible)',
+            'Prioritize quantum-safety over performance'
+        }
+        if pdecision and not required_pdecision <= set(pdecision):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_decision_required_phrases must include "
+                    "Decision Making/quantum-safety/circuit depth",
+                )
+            )
+
+    porch = list(inventory.get("prompt_orchestration_matrix_required_phrases", ()))
+    if len(porch) != len(set(porch)):
+        findings.append(
+            Finding(schema_path, "prompt_orchestration_matrix_required_phrases must be unique")
+        )
+    if not porch:
+        findings.append(
+            Finding(schema_path, "prompt_orchestration_matrix_required_phrases must not be empty")
+        )
+    for phrase in porch:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_orchestration_matrix_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_porch = {
+            '## Key Responsibilities You CANNOT Delegate',
+            '## Your Escalation Authority',
+            '| Conflict Type | How You Resolve It |'
+        }
+        if porch and not required_porch <= set(porch):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_orchestration_matrix_required_phrases must include "
+                    "Escalation Authority/Conflict Type/CANNOT Delegate",
+                )
+            )
+
+    pmonthly = list(inventory.get("prompt_monthly_required_phrases", ()))
+    if len(pmonthly) != len(set(pmonthly)):
+        findings.append(
+            Finding(schema_path, "prompt_monthly_required_phrases must be unique")
+        )
+    if not pmonthly:
+        findings.append(
+            Finding(schema_path, "prompt_monthly_required_phrases must not be empty")
+        )
+    for phrase in pmonthly:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_monthly_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_pmonthly = {
+            '## Your Monthly Checklist',
+            'Review all recent decisions in postmortem.md',
+            'Ultimate Goal: Build quantum-safe, multi-chain NFT ecosystem with on-device security'
+        }
+        if pmonthly and not required_pmonthly <= set(pmonthly):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_monthly_required_phrases must include "
+                    "Monthly Checklist/Ultimate Goal/postmortem review",
+                )
+            )
+
+    pusage = list(inventory.get("prompt_usage_example_required_phrases", ()))
+    if len(pusage) != len(set(pusage)):
+        findings.append(
+            Finding(schema_path, "prompt_usage_example_required_phrases must be unique")
+        )
+    if not pusage:
+        findings.append(
+            Finding(schema_path, "prompt_usage_example_required_phrases must not be empty")
+        )
+    for phrase in pusage:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_usage_example_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_pusage = {
+            'Designs Cirq circuit for factorization',
+            "Paste into the LLM's system prompt",
+            'Validates using CRYSTALS-Kyber (NIST post-quantum standard)'
+        }
+        if pusage and not required_pusage <= set(pusage):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_usage_example_required_phrases must include "
+                    "Paste system prompt/Cirq circuit/CRYSTALS-Kyber",
+                )
+            )
+
+    pmdec = list(inventory.get("postmortem_decision_required_phrases", ()))
+    if len(pmdec) != len(set(pmdec)):
+        findings.append(
+            Finding(schema_path, "postmortem_decision_required_phrases must be unique")
+        )
+    if not pmdec:
+        findings.append(
+            Finding(schema_path, "postmortem_decision_required_phrases must not be empty")
+        )
+    for phrase in pmdec:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "postmortem_decision_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_pmdec = {
+            '## Decision: Repo Hydration — 2026-04-13',
+            'PROCEED WITH DOCUMENTATION HYDRATION; defer code scaffolding',
+            'copilot (hydration run)'
+        }
+        if pmdec and not required_pmdec <= set(pmdec):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "postmortem_decision_required_phrases must include "
+                    "Repo Hydration decision/PROCEED/copilot",
+                )
+            )
+
+    pmfiles = list(inventory.get("postmortem_files_required_phrases", ()))
+    if len(pmfiles) != len(set(pmfiles)):
+        findings.append(
+            Finding(schema_path, "postmortem_files_required_phrases must be unique")
+        )
+    if not pmfiles:
+        findings.append(
+            Finding(schema_path, "postmortem_files_required_phrases must not be empty")
+        )
+    for phrase in pmfiles:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "postmortem_files_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_pmfiles = {
+            "**Files Created**:",
+            ".github/pull_request_template.md",
+            "docs/agent-hydration.md",
+            "postmortem.md (this file)",
+        }
+        if pmfiles and not required_pmfiles <= set(pmfiles):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "postmortem_files_required_phrases must include "
+                    "Files Created/PR template/hydration/postmortem file",
+                )
+            )
+
+    pmblocked = list(inventory.get("postmortem_blocked_required_phrases", ()))
+    if len(pmblocked) != len(set(pmblocked)):
+        findings.append(
+            Finding(schema_path, "postmortem_blocked_required_phrases must be unique")
+        )
+    if not pmblocked:
+        findings.append(
+            Finding(schema_path, "postmortem_blocked_required_phrases must not be empty")
+        )
+    for phrase in pmblocked:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "postmortem_blocked_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_pmblocked = {
+            "**Blocked**:",
+            (
+                "GitHub issue creation (gh CLI auth scope insufficient); "
+                "Notion update (requires claude-cowork surface)"
+            ),
+        }
+        if pmblocked and not required_pmblocked <= set(pmblocked):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "postmortem_blocked_required_phrases must include "
+                    "Blocked/gh CLI/Notion",
                 )
             )
 
@@ -6067,7 +6483,7 @@ def _inventory_lock_consistency(
     else:
         required_ci_honesty = {
             "markdown lint, link check, actionlint",
-            "Packaging inventory v45",
+            "Packaging inventory v46",
             "refuse invented recipes",
         }
         if ci_honesty and not required_ci_honesty <= set(ci_honesty):
@@ -6075,7 +6491,7 @@ def _inventory_lock_consistency(
                 Finding(
                     schema_path,
                     "contributing_ci_honesty_required_phrases must include "
-                    "CI checks/Packaging inventory v45/refuse invented recipes",
+                    "CI checks/Packaging inventory v46/refuse invented recipes",
                 )
             )
 
@@ -8311,6 +8727,145 @@ def validate_changelog_initial(root: Path) -> list[Finding]:
     return findings
 
 
+def validate_prompt_expertise(root: Path) -> list[Finding]:
+    rel = "AGENT-PROMPTS.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "agent prompts missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "# Agent Prompt Templates" not in body:
+        findings.append(Finding(rel, "missing Agent Prompt Templates header"))
+    for phrase in PROMPT_EXPERTISE_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked prompt-expertise phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_prompt_decision(root: Path) -> list[Finding]:
+    rel = "AGENT-PROMPTS.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "agent prompts missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## Decision Making Principles" not in body:
+        findings.append(Finding(rel, "missing Decision Making Principles section"))
+    for phrase in PROMPT_DECISION_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked prompt-decision phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_prompt_orchestration_matrix(root: Path) -> list[Finding]:
+    rel = "AGENT-PROMPTS.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "agent prompts missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## Your Escalation Authority" not in body:
+        findings.append(Finding(rel, "missing Escalation Authority section"))
+    for phrase in PROMPT_ORCHESTRATION_MATRIX_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(
+                    rel,
+                    f"missing locked prompt-orchestration-matrix phrase: {phrase}",
+                )
+            )
+    return findings
+
+
+def validate_prompt_monthly(root: Path) -> list[Finding]:
+    rel = "AGENT-PROMPTS.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "agent prompts missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## Your Monthly Checklist" not in body:
+        findings.append(Finding(rel, "missing Monthly Checklist section"))
+    for phrase in PROMPT_MONTHLY_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked prompt-monthly phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_prompt_usage_example(root: Path) -> list[Finding]:
+    rel = "AGENT-PROMPTS.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "agent prompts missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "Paste into the LLM's system prompt" not in body:
+        findings.append(Finding(rel, "missing usage example paste step"))
+    for phrase in PROMPT_USAGE_EXAMPLE_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked prompt-usage-example phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_postmortem_decision(root: Path) -> list[Finding]:
+    rel = "postmortem.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "postmortem missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## Decision: Repo Hydration" not in body:
+        findings.append(Finding(rel, "missing Repo Hydration decision section"))
+    for phrase in POSTMORTEM_DECISION_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked postmortem-decision phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_postmortem_files(root: Path) -> list[Finding]:
+    rel = "postmortem.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "postmortem missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "**Files Created**:" not in body:
+        findings.append(Finding(rel, "missing Files Created field"))
+    for phrase in POSTMORTEM_FILES_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked postmortem-files phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_postmortem_blocked(root: Path) -> list[Finding]:
+    rel = "postmortem.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "postmortem missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "**Blocked**:" not in body:
+        findings.append(Finding(rel, "missing Blocked field"))
+    for phrase in POSTMORTEM_BLOCKED_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked postmortem-blocked phrase: {phrase}")
+            )
+    return findings
+
+
 def validate_hydration_git_detail(root: Path) -> list[Finding]:
     rel = "docs/agent-hydration.md"
     path = root / rel
@@ -9423,8 +9978,8 @@ def validate_contributing_ci_honesty(root: Path) -> list[Finding]:
         return [Finding(rel, "CONTRIBUTING.md missing")]
     text = path.read_text(encoding="utf-8")
     findings: list[Finding] = []
-    if "Packaging inventory v45" not in text:
-        findings.append(Finding(rel, "missing Packaging inventory v45 honesty lock"))
+    if "Packaging inventory v46" not in text:
+        findings.append(Finding(rel, "missing Packaging inventory v46 honesty lock"))
     for phrase in CONTRIBUTING_CI_HONESTY_REQUIRED_PHRASES:
         if phrase not in text:
             findings.append(
@@ -11270,6 +11825,11 @@ VALIDATORS: dict[str, ValidatorFn] = {
     "prompt-constraints": validate_prompt_constraints,
     "prompt-triggers": validate_prompt_triggers,
     "prompt-related-docs": validate_prompt_related_docs,
+    "prompt-expertise": validate_prompt_expertise,
+    "prompt-decision": validate_prompt_decision,
+    "prompt-orchestration-matrix": validate_prompt_orchestration_matrix,
+    "prompt-monthly": validate_prompt_monthly,
+    "prompt-usage-example": validate_prompt_usage_example,
     "implementation-phases": validate_implementation_phases,
     "implementation-tools": validate_implementation_tools,
     "implementation-success": validate_implementation_success,
@@ -11360,6 +11920,9 @@ VALIDATORS: dict[str, ValidatorFn] = {
     "postmortem-intro": validate_postmortem_intro,
     "postmortem-fields": validate_postmortem_fields,
     "postmortem-next-steps": validate_postmortem_next_steps,
+    "postmortem-decision": validate_postmortem_decision,
+    "postmortem-files": validate_postmortem_files,
+    "postmortem-blocked": validate_postmortem_blocked,
     "gitignore": validate_gitignore_packaging,
     "negative-constraints": validate_negative_constraints,
     "claude": validate_claude_packaging,

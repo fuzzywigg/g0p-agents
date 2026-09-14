@@ -38,7 +38,7 @@ Docs-only bootstrap lives in [`.cursor/environment.json`](.cursor/environment.js
 
 This archive has no runtime agent code. CI still enforces structural checks on
 documented packaging (Goose recipes, Cursor env, GitHub agent/issue frontmatter,
-Dependabot, markdownlint, scratchpad, pyproject tooling, inventory v45 locks
+Dependabot, markdownlint, scratchpad, pyproject tooling, inventory v46 locks
 (coverage gate 99%), PR/license/requirements/security/contributing/changelog/
 postmortem/gitignore/hydration/execution-summary/implementation-guide/claude/
 recipe-titles/ci-actions/issue-names/readme-badges/quarterly-review/link-check/
@@ -52,7 +52,8 @@ changelog-format/changelog-unreleased/changelog-release/
 constitution-crypto/constitution-handoff/constitution-escalation-matrix/
 constitution-on-device/constitution-multichain/constitution-escalation-format/
 implementation-quickstart/execution-specialists/hydration-list-b/hydration-phase1/hydration-list-a/hydration-resolved/hydration-phase4/hydration-deferred/hydration-meta/hydration-identity-detail/hydration-git-detail/constitution-ide-stack/constitution-install-script/constitution-vscode/constitution-hard-constraints/constitution-risk-tolerance/changelog-preamble/changelog-changed/changelog-initial/hydration-phase2/hydration-phase5/
-postmortem-intro/postmortem-fields/postmortem-next-steps/
+prompt-expertise/prompt-decision/prompt-orchestration-matrix/prompt-monthly/prompt-usage-example/
+postmortem-intro/postmortem-fields/postmortem-next-steps/postmortem-decision/postmortem-files/postmortem-blocked/
 scratchpad-intro/scratchpad-format/scratchpad-task-meta/
 issue-metadata/issue-routing/bug-repro/
 contributing-who/contributing-branches/contributing-pr/
