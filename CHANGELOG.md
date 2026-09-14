@@ -10,6 +10,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Goose-recipe schema leftover **tests-only** deepeners after tip through **#200**
+  (prompts listform + agentic_flows leftover) / **#195** / **#188** / **#187** /
+  **#186** / **#184** (goose-schema tip) / **#172** (goose-schema residual suite)
+  (EXISTING three fixtures — `goose` / `recipe-agents` / `recipe-titles` plus
+  `schemas/goose-recipe.schema.json` + `GOOSE-RECIPES.md` — no invented product /
+  inventory bump): root/name type + pattern leftovers beyond #172/#184 matrices,
+  settings/version/title/prompt type leftovers, extension item-shape leftovers
+  (missing type / non-object items / optional timeout green), `GOOSE-RECIPES.md`
+  parse/mapping/unquoted-**File**/single-run/extra-run leftovers, titles/agents
+  phrase + on-disk `.yml`/list mapping leftovers, inventory lock leftovers
+  (`historic_recipe_version` / swapped bindings / extension_name), schema-file
+  `$schema`/`$id`/root residuals, concurrent races, and tip isolation against
+  #200/#195/#184 siblings. Historic four only; Packaging inventory unchanged
+  (v52 / 196 validators). Distinct from merged #200 (listform+flows mixed
+  leftover), #184 (goose-schema tip type matrix), #172 (goose-schema residual
+  suite), #147 (nine goose-* phrase locks), and not a v53 invent sibling,
+  contributing/goose-howto leftover, or Dependabot bump.
+
 - Prompts list-form + agentic_flows residual **tests-only** deepeners after tip
   through **#195** (actionlint leftover after #188) / **#188** / **#187** /
   **#186** / **#184** / **#181** (EXISTING nineteen fixtures — twelve
