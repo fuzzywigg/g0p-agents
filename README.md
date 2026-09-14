@@ -38,7 +38,7 @@ Docs-only bootstrap lives in [`.cursor/environment.json`](.cursor/environment.js
 
 This archive has no runtime agent code. CI still enforces structural checks on
 documented packaging (Goose recipes, Cursor env, GitHub agent/issue frontmatter,
-Dependabot, markdownlint, scratchpad, pyproject tooling, inventory v51 locks
+Dependabot, markdownlint, scratchpad, pyproject tooling, inventory v52 locks
 (coverage gate 99%), PR/license/requirements/security/contributing/changelog/
 postmortem/gitignore/hydration/execution-summary/implementation-guide/claude/
 recipe-titles/ci-actions/issue-names/readme-badges/quarterly-review/link-check/
@@ -50,7 +50,7 @@ security-supported/security-reporting/security-standards/
 security-header/security-fips/security-known-non-issues/
 changelog-format/changelog-unreleased/changelog-release/
 constitution-crypto/constitution-handoff/constitution-escalation-matrix/
-constitution-on-device/constitution-multichain/constitution-escalation-format/
+constitution-on-device/constitution-multichain/constitution-escalation-format/constitution-deadlines/
 implementation-quickstart/execution-specialists/hydration-list-b/hydration-phase1/hydration-list-a/hydration-resolved/hydration-phase4/hydration-deferred/hydration-meta/hydration-identity-detail/hydration-git-detail/constitution-ide-stack/constitution-install-script/constitution-vscode/constitution-hard-constraints/constitution-risk-tolerance/changelog-preamble/changelog-changed/changelog-initial/prompt-expertise/prompt-principles/prompt-metrics/prompt-context/prompt-cannot-delegate/prompt-escalation-authority/prompt-role-blurbs/prompt-escalation-format/prompt-living-docs/prompt-constraints-detail/prompt-triggers-detail/prompt-human-fields/prompt-context-detail/prompt-expertise-detail/prompt-related-health/prompt-tools-detail/prompt-responsibilities-detail/prompt-instantiation/hydration-phase2/hydration-phase5/
 postmortem-intro/postmortem-fields/postmortem-next-steps/
 scratchpad-intro/scratchpad-format/scratchpad-task-meta/
@@ -61,9 +61,9 @@ contributing-metadata/contributing-surfaces/contributing-ci-honesty/
 pr-summary/pr-acceptance/pr-notes/
 readme-honesty/readme-historic/readme-contents/
 readme-lead/readme-blurbs/readme-bootstrap/
-goose-howto/goose-state-machine/goose-naming/goose-recipe-headers/goose-instruction-agents/goose-extensions/goose-orchestration/goose-conflicts/goose-quantum-task,
+goose-howto/goose-state-machine/goose-naming/goose-recipe-headers/goose-instruction-agents/goose-extensions/goose-timeouts/goose-deadlines/goose-orchestration/goose-conflicts/goose-quantum-task,
 prompt-roles/prompt-sections/prompt-usage,
-implementation-phases/implementation-tools/implementation-success/
+implementation-phases/implementation-tools/implementation-success/implementation-timeouts/
 execution-timeline/execution-technologies/execution-workflow/execution-ide/execution-innovations/execution-next48, constitution
 and routing and negative-constraint surfaces,
 bug/feature/agent-task template headings and name/about locks, prompt
