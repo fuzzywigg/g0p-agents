@@ -63,6 +63,7 @@ Checks structural correctness of:
 - AGENTS-v2.2.md §23 IDE stack / install / VS Code /
   §24 hard-constraints / §25 risk-tolerance leftover locks
 - CHANGELOG.md preamble / Changed / 0.1.0 initial leftover locks
+- AGENT-PROMPTS.md expertise / principles / metrics leftover locks
   PHASE 4 issues / LIST B deferred leftover locks
 - postmortem.md intro / Decision field / Next Steps surface locks
 - agentic_flows/scratchpad.txt intro / format-legend / task-meta locks
@@ -179,7 +180,7 @@ REQUIRED_ARCHIVE_DOCS = (
     "README.md",
 )
 
-INVENTORY_VERSION = 45
+INVENTORY_VERSION = 46
 CURSOR_ENVIRONMENT_NAME = "g0p-agents"
 DEPENDABOT_SCHEDULE_INTERVAL = "weekly"
 DEPENDABOT_DIRECTORIES: frozenset[str] = frozenset({"/"})
@@ -832,7 +833,7 @@ CONTRIBUTING_CI_HONESTY_REQUIRED_PHRASES: tuple[str, ...] = (
     "markdown lint, link check, actionlint",
     "manifest validate on Python 3.11/3.12/3.13",
     "Andrew or designated reviewer",
-    "Packaging inventory v45",
+    "Packaging inventory v46",
     "refuse invented recipes",
     "orphan on-disk YAML",
     "unknown `*Agent` tokens",
@@ -907,6 +908,41 @@ README_BOOTSTRAP_REQUIRED_PHRASES: tuple[str, ...] = (
     'does **not** invent specialist agents beyond the historic four',
     'MIT — see [LICENSE](LICENSE).',
 )
+
+PROMPT_EXPERTISE_REQUIRED_PHRASES: tuple[str, ...] = (
+    "## Your Expertise",
+    "Quantum mechanics (gates, superposition, entanglement)",
+    "Quantum algorithm design (Shor's, Grover's, VQE, custom)",
+    "Distributed ledger architecture",
+    "Smart contract design patterns (ERC-20, ERC-721, ERC-1155)",
+    "Android/iOS development (Kotlin, Swift)",
+    "Hardware security modules (HSM, Secure Enclave)",
+    "Post-quantum cryptography (classical + quantum-resistant)",
+)
+
+PROMPT_PRINCIPLES_REQUIRED_PHRASES: tuple[str, ...] = (
+    "## Decision Making Principles",
+    "Prioritize quantum-safety over performance",
+    "Balance security with usability",
+    "Prioritize multi-chain resilience",
+    "Prioritize user security and privacy",
+    "Recommend constraint-based designs (work within device limits)",
+    "Recommend staged rollouts (testnet \u2192 staging \u2192 mainnet)",
+    "Flag performance issues early (don't wait for integration testing)",
+)
+
+PROMPT_METRICS_REQUIRED_PHRASES: tuple[str, ...] = (
+    "## Success Metrics",
+    "Circuit depth < 50 gates (if possible)",
+    "Error rate < 1% on simulator",
+    "0 critical vulnerabilities (Slither pass)",
+    "< 2500 gas per operation",
+    "Crypto operations < 500ms on Snapdragon 8 Gen 3 (or specified device)",
+    "Data isolation 100% (no log leaks)",
+    "Zero critical security incidents",
+    "Quarterly risk tolerance review completed",
+)
+
 LICENSE_REQUIRED_PHRASES: tuple[str, ...] = (
     "MIT License",
     "Permission is hereby granted",
@@ -1508,7 +1544,7 @@ SCRATCHPAD_STATUS_MARKERS: tuple[str, ...] = (
 SPECIALIST_AGENTS: tuple[str, ...] = DOCUMENTED_AGENTS[:-1]
 
 MIN_COVERAGE_FAIL_UNDER = 99
-MIN_VALIDATOR_COUNT = 157
+MIN_VALIDATOR_COUNT = 160
 
 
 @dataclass(frozen=True)
@@ -2506,6 +2542,30 @@ def validate_packaging_inventory(root: Path) -> list[Finding]:
     ):
         findings.append(
             _lock_mismatch(schema_path, "changelog_initial_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("prompt_expertise_required_phrases", ()))
+        != PROMPT_EXPERTISE_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "prompt_expertise_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("prompt_principles_required_phrases", ()))
+        != PROMPT_PRINCIPLES_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "prompt_principles_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("prompt_metrics_required_phrases", ()))
+        != PROMPT_METRICS_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "prompt_metrics_required_phrases")
         )
 
 
@@ -4221,6 +4281,111 @@ def _inventory_lock_consistency(
                     schema_path,
                     "changelog_initial_required_phrases must include "
                     "0.1.0/README/IMPLEMENTATION-GUIDE/EXECUTION-SUMMARY",
+                )
+            )
+
+
+    prompt_expertise = list(inventory.get("prompt_expertise_required_phrases", ()))
+    if len(prompt_expertise) != len(set(prompt_expertise)):
+        findings.append(
+            Finding(schema_path, "prompt_expertise_required_phrases must be unique")
+        )
+    if not prompt_expertise:
+        findings.append(
+            Finding(schema_path, "prompt_expertise_required_phrases must not be empty")
+        )
+    for phrase in prompt_expertise:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_expertise_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_prompt_expertise = {
+            "## Your Expertise",
+            "Quantum mechanics (gates, superposition, entanglement)",
+            "Distributed ledger architecture",
+            "Hardware security modules (HSM, Secure Enclave)"
+        }
+        if prompt_expertise and not required_prompt_expertise <= set(prompt_expertise):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_expertise_required_phrases must include Expertise/quantum/ledger/HSM",
+                )
+            )
+
+    prompt_principles = list(inventory.get("prompt_principles_required_phrases", ()))
+    if len(prompt_principles) != len(set(prompt_principles)):
+        findings.append(
+            Finding(schema_path, "prompt_principles_required_phrases must be unique")
+        )
+    if not prompt_principles:
+        findings.append(
+            Finding(schema_path, "prompt_principles_required_phrases must not be empty")
+        )
+    for phrase in prompt_principles:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_principles_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_prompt_principles = {
+            "## Decision Making Principles",
+            "Prioritize quantum-safety over performance",
+            "Prioritize user security and privacy",
+            "Recommend staged rollouts (testnet \u2192 staging \u2192 mainnet)"
+        }
+        if prompt_principles and not required_prompt_principles <= set(prompt_principles):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_principles_required_phrases must include "
+                    "Principles/quantum-safety/privacy/staged rollouts",
+                )
+            )
+
+    prompt_metrics = list(inventory.get("prompt_metrics_required_phrases", ()))
+    if len(prompt_metrics) != len(set(prompt_metrics)):
+        findings.append(
+            Finding(schema_path, "prompt_metrics_required_phrases must be unique")
+        )
+    if not prompt_metrics:
+        findings.append(
+            Finding(schema_path, "prompt_metrics_required_phrases must not be empty")
+        )
+    for phrase in prompt_metrics:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_metrics_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_prompt_metrics = {
+            "## Success Metrics",
+            "Circuit depth < 50 gates (if possible)",
+            "0 critical vulnerabilities (Slither pass)",
+            "Crypto operations < 500ms on Snapdragon 8 Gen 3 (or specified device)"
+        }
+        if prompt_metrics and not required_prompt_metrics <= set(prompt_metrics):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_metrics_required_phrases must include "
+                    "Metrics/circuit depth/Slither/Snapdragon",
                 )
             )
 
@@ -6067,7 +6232,7 @@ def _inventory_lock_consistency(
     else:
         required_ci_honesty = {
             "markdown lint, link check, actionlint",
-            "Packaging inventory v45",
+            "Packaging inventory v46",
             "refuse invented recipes",
         }
         if ci_honesty and not required_ci_honesty <= set(ci_honesty):
@@ -6075,7 +6240,7 @@ def _inventory_lock_consistency(
                 Finding(
                     schema_path,
                     "contributing_ci_honesty_required_phrases must include "
-                    "CI checks/Packaging inventory v45/refuse invented recipes",
+                    "CI checks/Packaging inventory v46/refuse invented recipes",
                 )
             )
 
@@ -8294,6 +8459,58 @@ def validate_changelog_changed(root: Path) -> list[Finding]:
     return findings
 
 
+
+def validate_prompt_expertise(root: Path) -> list[Finding]:
+    rel = "AGENT-PROMPTS.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "prompts missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## Your Expertise" not in body:
+        findings.append(Finding(rel, "missing Your Expertise section"))
+    for phrase in PROMPT_EXPERTISE_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked prompt-expertise phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_prompt_principles(root: Path) -> list[Finding]:
+    rel = "AGENT-PROMPTS.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "prompts missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## Decision Making Principles" not in body:
+        findings.append(Finding(rel, "missing Decision Making Principles section"))
+    for phrase in PROMPT_PRINCIPLES_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked prompt-principles phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_prompt_metrics(root: Path) -> list[Finding]:
+    rel = "AGENT-PROMPTS.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "prompts missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## Success Metrics" not in body:
+        findings.append(Finding(rel, "missing Success Metrics section"))
+    for phrase in PROMPT_METRICS_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked prompt-metrics phrase: {phrase}")
+            )
+    return findings
+
+
 def validate_changelog_initial(root: Path) -> list[Finding]:
     rel = "CHANGELOG.md"
     path = root / rel
@@ -9423,8 +9640,8 @@ def validate_contributing_ci_honesty(root: Path) -> list[Finding]:
         return [Finding(rel, "CONTRIBUTING.md missing")]
     text = path.read_text(encoding="utf-8")
     findings: list[Finding] = []
-    if "Packaging inventory v45" not in text:
-        findings.append(Finding(rel, "missing Packaging inventory v45 honesty lock"))
+    if "Packaging inventory v46" not in text:
+        findings.append(Finding(rel, "missing Packaging inventory v46 honesty lock"))
     for phrase in CONTRIBUTING_CI_HONESTY_REQUIRED_PHRASES:
         if phrase not in text:
             findings.append(
@@ -11347,6 +11564,9 @@ VALIDATORS: dict[str, ValidatorFn] = {
     "changelog-preamble": validate_changelog_preamble,
     "changelog-changed": validate_changelog_changed,
     "changelog-initial": validate_changelog_initial,
+    "prompt-expertise": validate_prompt_expertise,
+    "prompt-principles": validate_prompt_principles,
+    "prompt-metrics": validate_prompt_metrics,
     "hydration-phase2": validate_hydration_phase2,
     "hydration-phase5": validate_hydration_phase5,
     "link-check": validate_link_check,
