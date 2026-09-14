@@ -10,6 +10,27 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Actionlint/workflow + link-check residual **tests-only** leftover deepeners
+  after tip through **#187** (docs-cross) / **#186** (actionlint/workflow +
+  link-check) / **#184** / **#181** / **#178** / **#176** / **#174**
+  (EXISTING seven CI fixtures — `ci` / `ci-actions` / `link-check` /
+  `actionlint-shell` / `ci-job-names` / `ci-runs-on` / `ci-artifacts` — no
+  invented product / inventory bump): YAML parse errors across the seven,
+  missing `concurrency.group`, scalar `pull_request`, missing permissions
+  mapping, matrix python-version single/wrong/absent, per-marker
+  `REQUIRED_MANIFEST_STEP_MARKERS` drop, lychee/`markdownlint` missing
+  `with:` + globs/config/cache lock-not-found (≠ wrong values), integer
+  lychee `fail`, actionlint non-dict steps + shell-absent/id-absent
+  explicit msgs, per-pin/per-marker `ci-actions` matrix, all four job
+  display names + all four `runs-on`, unexpected extra artifact + upload
+  `with:` missing, `run_all --only` subset + inventory type mismatches,
+  and tip isolation against #187/#186/#184/#181 siblings. Historic four
+  only; inventory unchanged (v52 / 196). Distinct from merged #187
+  (docs-cross tip), #186 (prior actionlint/link-check residual suite),
+  #184 (hydration↔security + goose-schema), #181 (memory-handoff), #178
+  (implementation), #176 (changelog), #174 (contributing), and historic
+  v10/v11 link-check/actionlint edge suites.
+
 - Docs-cross tip residual **tests-only** deepeners after tip through **#186**
   (actionlint/workflow + link-check) / **#184** / **#181** / **#178** /
   **#176** / **#174** / **#166** / **#147** (EXISTING contributing /
