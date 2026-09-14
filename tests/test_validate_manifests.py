@@ -16998,15 +16998,15 @@ def _v52_prompt_locked_text() -> str:
 
 
 def test_prompt_v52_residual_modules_existing_only() -> None:
-    """Slice targets the twelve post-#141 v52 modules — no invented v53 sibling."""
+    """Slice targets the twelve post-#141 v52 modules — no invented prompt v54 sibling."""
     modules = _v52_prompt_residual_modules()
     assert len(modules) == 12
-    assert vm.INVENTORY_VERSION == 52
-    assert vm.MIN_VALIDATOR_COUNT == 196
-    assert len(vm.VALIDATORS) == 196
+    assert vm.INVENTORY_VERSION == 53
+    assert vm.MIN_VALIDATOR_COUNT == 200
+    assert len(vm.VALIDATORS) == 200
 
     for invented in (
-        "prompt-v53-invented",
+        "prompt-v54-invented",
         "prompt-interpolation",
         "prompt-checklist-detail",
         "prompt-escalate-when",
@@ -17018,8 +17018,8 @@ def test_prompt_v52_residual_modules_existing_only() -> None:
     inventory = json.loads(
         (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
     )
-    assert inventory["version"] == 52
-    assert inventory["min_validator_count"] == 196
+    assert inventory["version"] == 53
+    assert inventory["min_validator_count"] == 200
     assert sorted(vm.VALIDATORS) == inventory["validator_names"]
 
     for name, _fn, phrases, inv_key in modules:
@@ -17273,23 +17273,23 @@ def test_prompt_v52_residual_cross_isolation(tmp_path: Path) -> None:
 
 
 def test_prompt_v52_residual_live_green() -> None:
-    """All twelve live v52 residual prompt validators remain clean; inventory v52/196."""
+    """All twelve live v52 residual prompt validators remain clean on tip inventory."""
     modules = _v52_prompt_residual_modules()
     assert len(modules) == 12
     for name, fn, _phrases, _key in modules:
         assert fn(REPO_ROOT) == [], name
         assert vm.VALIDATORS[name](REPO_ROOT) == [], name
 
-    assert vm.INVENTORY_VERSION == 52
-    assert vm.MIN_VALIDATOR_COUNT == 196
-    assert len(vm.VALIDATORS) == 196
+    assert vm.INVENTORY_VERSION == 53
+    assert vm.MIN_VALIDATOR_COUNT == 200
+    assert len(vm.VALIDATORS) == 200
     body = (REPO_ROOT / "AGENT-PROMPTS.md").read_text(encoding="utf-8")
     assert "# Agent Prompt Templates" in body
     assert "System Prompt" in body
-    assert "Packaging inventory v52" in (
+    assert "Packaging inventory v53" in (
         REPO_ROOT / "CONTRIBUTING.md"
     ).read_text(encoding="utf-8")
-    assert "inventory v52 locks" in (REPO_ROOT / "README.md").read_text(
+    assert "inventory v53 locks" in (REPO_ROOT / "README.md").read_text(
         encoding="utf-8"
     )
     # Adjacent slices remain green alongside this residual
@@ -17374,7 +17374,13 @@ def test_v53_orchestration_timeout_edge_cases(tmp_path: Path) -> None:
 
     _write(
         tmp_path / "GOOSE-RECIPES.md",
-        "\n".join([*vm.GOOSE_TIMEOUT_DETAIL_REQUIRED_PHRASES, *vm.GOOSE_DEADLINE_DETAIL_REQUIRED_PHRASES, ""]),
+        "\n".join(
+            [
+                *vm.GOOSE_TIMEOUT_DETAIL_REQUIRED_PHRASES,
+                *vm.GOOSE_DEADLINE_DETAIL_REQUIRED_PHRASES,
+                "",
+            ]
+        ),
     )
     _write(
         tmp_path / "AGENTS-v2.2.md",
