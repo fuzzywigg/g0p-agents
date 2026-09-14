@@ -1,5 +1,5 @@
 {
-  "version": 34,
+  "version": 35,
   "documented_agents": [
     "QuantumArchitectAgent",
     "BlockchainArchitectAgent",
@@ -252,11 +252,11 @@
   "hydration_required_sections": [
     "## PHASE 1: FINDINGS REPORT",
     "## PHASE 2: QUESTIONS",
-    "### LIST B \u2014 Requires Andrew (HITL)",
+    "### LIST B — Requires Andrew (HITL)",
     "## PHASE 3: RESOLVED (LIST A)",
     "## PHASE 4: ISSUES GENERATED",
     "## PHASE 5: Roadmap",
-    "## LIST B \u2014 Deferred to Andrew"
+    "## LIST B — Deferred to Andrew"
   ],
   "execution_summary_required_phrases": [
     "EXECUTION SUMMARY",
@@ -307,6 +307,9 @@
     "environment",
     "escalation-format",
     "escalation-usage",
+    "execution-ide",
+    "execution-innovations",
+    "execution-next48",
     "execution-specialists",
     "execution-summary",
     "execution-technologies",
@@ -387,7 +390,7 @@
     "yaml-configs"
   ],
   "min_coverage_fail_under": 99,
-  "min_validator_count": 115,
+  "min_validator_count": 118,
   "required_paths": [
     "README.md",
     "LICENSE",
@@ -508,7 +511,7 @@
     "Notion Master Index sync",
     "postmortem.md incident review"
   ],
-  "ci_workflow_name": "CI \u2014 Lint, Links & Manifests",
+  "ci_workflow_name": "CI — Lint, Links & Manifests",
   "ci_required_text_markers": [
     "download-actionlint.bash",
     "actionlint",
@@ -636,7 +639,7 @@
   ],
   "routing_matrix_rationale_phrases": [
     "Single-repo, syntax-level work",
-    "Deep coding, long-running, 60\u201390 min",
+    "Deep coding, long-running, 60–90 min",
     "Cross-system state, Notion truth",
     "UI-only settings",
     "Test automation",
@@ -706,7 +709,7 @@
     "YAML recipes, Docker Compose"
   ],
   "hydration_list_b_required_phrases": [
-    "### LIST B \u2014 Requires Andrew (HITL)",
+    "### LIST B — Requires Andrew (HITL)",
     "Is g0p-agents meant to be activated into a runnable codebase",
     "What is PikoClaw exactly",
     "Should actual Solidity, Python (Cirq), and React Native code be implemented",
@@ -731,7 +734,7 @@
     "**Next Steps**:"
   ],
   "postmortem_next_steps_required_phrases": [
-    "Andrew answers LIST B (B1\u2013B5) in docs/agent-hydration.md",
+    "Andrew answers LIST B (B1–B5) in docs/agent-hydration.md",
     "browser-claude or claude-cowork creates GitHub issues",
     "claude-cowork creates/updates Notion page under Active Sprint Work",
     "geryon scaffolds agentic_flows/ once B1 is answered"
@@ -961,14 +964,14 @@
     "### Step 1: Single Agent Task",
     "### Step 2: Multi-Agent Workflow",
     "### Step 3: Escalation (If Conflict)",
-    "Agents Disagree \u2192 OrchestrationAgent Reviews"
+    "Agents Disagree → OrchestrationAgent Reviews"
   ],
   "contributing_issues_required_phrases": [
     "## Issue Reporting",
     "Use the appropriate issue template",
-    "**Bug** \u2014 something broken",
-    "**Feature** \u2014 new capability needed",
-    "**Agent Task** \u2014 structured work",
+    "**Bug** — something broken",
+    "**Feature** — new capability needed",
+    "**Agent Task** — structured work",
     "metadata header defined in CLAUDE.md"
   ],
   "contributing_local_required_phrases": [
@@ -1028,7 +1031,7 @@
     "**Phase 2: Contract Design**",
     "**Phase 3: Implementation**",
     "**Phase 4: Orchestration Decision**",
-    "QuantumArchitectAgent \u2192 BlockchainArchitectAgent",
+    "QuantumArchitectAgent → BlockchainArchitectAgent",
     "Logs decision in postmortem.md"
   ],
   "constitution_escalation_matrix_required_phrases": [
@@ -1057,10 +1060,10 @@
   ],
   "changelog_release_required_phrases": [
     "### Changed",
-    "## [0.1.0] \u2014 2025-12-13",
-    "`AGENTS-v2.2.md` \u2014 agent constitution",
-    "`AGENT-PROMPTS.md` \u2014 specialist agent system prompts (4 agents)",
-    "`GOOSE-RECIPES.md` \u2014 Goose YAML recipe templates"
+    "## [0.1.0] — 2025-12-13",
+    "`AGENTS-v2.2.md` — agent constitution",
+    "`AGENT-PROMPTS.md` — specialist agent system prompts (4 agents)",
+    "`GOOSE-RECIPES.md` — Goose YAML recipe templates"
   ],
   "goose_recipe_headers_required_phrases": [
     "## Recipe 1: Quantum Algorithm Design",
@@ -1113,5 +1116,37 @@
     "See AGENTS.md Section 22.7 (Conflict Resolution Matrix)",
     "Remember: You are not working alone",
     "Remember: You are the last line of defense before user devices"
+  ],
+  "execution_ide_required_phrases": [
+    "## IDE & Software Setup",
+    "**Required** (Days 1-2):",
+    "Python 3.11+ (WSL2)",
+    "Node.js 20.x LTS (WSL2)",
+    "Docker Desktop (WSL2 backend)",
+    "VS Code + extensions",
+    "**Libraries** (install via setup script):",
+    "Cirq + Qualtran",
+    "**Total Setup Time**: ~1 hour (mostly downloads)"
+  ],
+  "execution_innovations_required_phrases": [
+    "## What Makes This Different",
+    "### Traditional Approach",
+    "### Your Agentic Approach",
+    "## Key Innovations in Your System",
+    "**Quantum-Blockchain Bridge**: First formal protocol for integrating quantum algorithms into blockchain",
+    "**Recipe-Based Orchestration**: Goose recipes enable reproducible workflows",
+    "**Scratchpad State Machine**: Checkbox-based coordination (simple but effective)",
+    "**Quarterly Risk Tolerance Review**: Formal process for increasing confidence over time",
+    "**postmortem.md Incident Log**: Every decision and failure documented"
+  ],
+  "execution_next48_required_phrases": [
+    "## Success Indicators",
+    "## Common Pitfalls (Avoid These)",
+    "## Next 48 Hours",
+    "### Today (2025-12-13)",
+    "### Tomorrow (2025-12-14)",
+    "### Day After (2025-12-15)",
+    "Instantiate first agent (QuantumArchitectAgent)",
+    "Create first Goose recipe (copy from templates)"
   ]
 }

@@ -10,6 +10,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Execution-summary **v35** deepeners (post-#81): `execution-ide`,
+  `execution-innovations`, `execution-next48` validators; EXECUTION-SUMMARY.md
+  IDE & Software Setup locks, What Makes This Different / Key Innovations locks,
+  and Success Indicators / Common Pitfalls / Next 48 Hours locks; consistency
+  deepeners for `execution_ide_required_phrases` /
+  `execution_innovations_required_phrases` / `execution_next48_required_phrases`
+  (118 total; historic four only — execution-summary slice, not agent prompts,
+  hydration/goose/constitution/security v34 bundle, Dependabot, changelog,
+  contributing, implementation guide, README honesty, PR-template,
+  issue-template, scratchpad, postmortem, archive snapshot, or routing/identity)
+
 - Agent prompts **v34** deepeners (post-#80): `prompt-constraints`,
   `prompt-triggers`, `prompt-related-docs` validators; AGENT-PROMPTS.md
   never-violate constraint locks across specialists, escalation-trigger /
