@@ -10,6 +10,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Implementation-guide **v41** deepeners (post-#96 constitution v40): `implementation-common-issues`,
+  `implementation-faq`, `implementation-support` validators; IMPLEMENTATION-GUIDE.md
+  Common Issues & Solutions Issue 1–5 leftovers, FAQ Q&A leftovers, and Next Steps /
+  Support & Resources / footer leftovers; consistency deepeners for
+  `implementation_common_issues_required_phrases` /
+  `implementation_faq_required_phrases` /
+  `implementation_support_required_phrases`
+  (Packaging inventory 136 total; historic four only — implementation-guide leftovers
+  slice, not constitution v40, security v39, contributing v38, hydration, goose recipes,
+  execution-summary, agent prompts, changelog, or Dependabot)
+
 - Constitution **v40** deepeners (post-#94 security v39): `constitution-recipe-orchestration`,
   `constitution-scratchpad-state`, `constitution-conflict-matrix` validators;
   AGENTS-v2.2.md §22.5 Recipe-Based Orchestration Structure locks, §22.6 Scratchpad
