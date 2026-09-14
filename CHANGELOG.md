@@ -23,7 +23,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   PR-template, issue-template, scratchpad, postmortem, archive snapshot, or
   routing/identity)
 
-
 - Execution-summary **v35** deepeners (post-#81): `execution-ide`,
   `execution-innovations`, `execution-next48` validators; EXECUTION-SUMMARY.md
   IDE & Software Setup locks, What Makes This Different / Key Innovations locks,
