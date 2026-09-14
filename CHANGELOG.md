@@ -11,6 +11,25 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 
 - Actionlint/workflow + link-check residual **tests-only** leftover deepeners
+  after tip through **#188** (actionlint/workflow + link-check leftover) /
+  **#187** (docs-cross) / **#186** / **#184** / **#181** / **#178** /
+  **#176** / **#174** (EXISTING seven CI fixtures — `ci` / `ci-actions` /
+  `link-check` / `actionlint-shell` / `ci-job-names` / `ci-runs-on` /
+  `ci-artifacts` — no invented product / inventory bump): `pull_request.branches`
+  as a scalar (not a list), non-string `concurrency.group`, non-mapping
+  `strategy.matrix` + matrix missing `python-version`, `permissions.contents`
+  write on all four jobs, markdownlint missing `with:` on locked yaml,
+  setup-python uses-dropped / `with:`-absent cache lock-not-found, scalar
+  `steps` on link-check/actionlint, per-job drop from live yaml, jobs empty
+  mapping, `ci-actions` name-absent, upload `if:` key absent + path type
+  (mapping/int/empty) + upload step deleted, incomplete inventory lists +
+  int/empty leftover locks, `run_all --only` isolation, and tip isolation
+  against #188/#187/#186 siblings. Historic four only; inventory unchanged
+  (v52 / 196). Distinct from merged #188 (prior leftover suite), #187
+  (docs-cross tip), #186 (residual suite), #184 (hydration↔security +
+  goose-schema), and historic v10/v11 link-check/actionlint edge suites.
+
+- Actionlint/workflow + link-check residual **tests-only** leftover deepeners
   after tip through **#187** (docs-cross) / **#186** (actionlint/workflow +
   link-check) / **#184** / **#181** / **#178** / **#176** / **#174**
   (EXISTING seven CI fixtures — `ci` / `ci-actions` / `link-check` /
