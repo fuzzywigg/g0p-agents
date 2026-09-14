@@ -10,6 +10,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Prompts residual **v46** deepeners / **v43 leftovers** (post-#116 constitution+changelog v45):
+  `prompt-expertise`, `prompt-principles`, `prompt-metrics` validators; AGENT-PROMPTS.md
+  Expertise / Decision Making Principles / Success Metrics leftovers; consistency deepeners
+  for matching `*_required_phrases` inventory keys
+  (Packaging inventory 160 total; historic four only — prompts v43 leftovers slice, not
+  constitution/changelog v45, hydration v43/v44, README v43, implementation-guide, security,
+  contributing, goose recipes, or Dependabot)
+
 - Constitution + changelog residual **v45** deepeners (post-#115 hydration v44 / #111 README v43):
   `constitution-ide-stack`, `constitution-install-script`, `constitution-vscode`,
   `constitution-hard-constraints`, `constitution-risk-tolerance`, `changelog-preamble`,

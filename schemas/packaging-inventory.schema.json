@@ -166,6 +166,9 @@
     "pr_summary_required_phrases",
     "pr_template_headings",
     "prompt_constraints_required_phrases",
+    "prompt_expertise_required_phrases",
+    "prompt_metrics_required_phrases",
+    "prompt_principles_required_phrases",
     "prompt_related_docs_required_phrases",
     "prompt_roles_required_phrases",
     "prompt_sections_required_phrases",
@@ -1986,6 +1989,33 @@
       }
     },
     "changelog_initial_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "prompt_expertise_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "prompt_principles_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "prompt_metrics_required_phrases": {
       "type": "array",
       "minItems": 1,
       "uniqueItems": true,
