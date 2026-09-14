@@ -10,6 +10,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Orchestration-timeout **v53** leftover deepeners (post-#141/#144 tip; distinct from
+  open #147 goose-recipe residual edges and closed CONFLICTING #143/#145/#146):
+  `goose-timeout-detail`, `goose-deadline-detail`, `constitution-deadline-detail`,
+  `implementation-timeout-detail` validators; GOOSE-RECIPES.md nested/master timeout +
+  deadline-inheritance leftovers, AGENTS-v2.2.md nested-checkbox / Quality vs.
+  Deadline leftovers, IMPLEMENTATION-GUIDE.md Adjust timeouts / deadline leftovers;
+  consistency deepeners for matching `*_required_phrases` inventory keys; schema
+  zero-timeout underflow + CI concurrent-abort cancel-in-progress deepeners
+  (Packaging inventory 200 total; historic four only — orchestration-timeout leftovers
+  slice, not prompts v52 residuals/#144 edges, goose-recipe #147 edges, memory-slot,
+  constitution/changelog, hydration, README, security, contributing, or Dependabot)
+
 - Prompt/validator residual **tests-only** deepeners for post-#141 **v52** modules
   (EXISTING twelve only — no invented product / inventory bump): concurrent
   validate races, empty/whitespace/header-only AGENT-PROMPTS, invalid/invented
