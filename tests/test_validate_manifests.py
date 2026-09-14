@@ -22584,3 +22584,618 @@ def test_memory_handoff_residual_live_green() -> None:
     assert vm.validate_changelog_packaging(REPO_ROOT) == []
     assert vm.validate_implementation_guide(REPO_ROOT) == []
     assert vm.validate_prompt_orchestration_matrix(REPO_ROOT) == []
+
+
+# ---------------------------------------------------------------------------
+# Link-check residual HEAVY fixtures after #181 (memory-handoff) / #178 / #176 /
+# #174 / post-#172. EXISTING `link-check` module + inventory locks only —
+# distinct leftover vs open MERGEABLE #184 (hydration↔security + goose-schema
+# tip), merged #181/#178/#176/#174/#172/#166/#161, and the v10 link-check edge
+# suite. No invented product / inventory bump (still v52 / 196).
+# ---------------------------------------------------------------------------
+
+_LINK_CHECK_RESIDUAL_CI = Path(".github") / "workflows" / "ci.yml"
+_LINK_CHECK_RESIDUAL_INV_KEYS: tuple[str, ...] = (
+    "ci_link_check_args",
+    "ci_link_check_fail",
+    "ci_markdown_lint_globs",
+    "ci_markdown_lint_config",
+    "ci_cache_dependency_path",
+)
+
+
+def _link_check_residual_workflow(**job_overrides: object) -> dict:
+    """Minimal locked CI workflow that keeps link-check (+ siblings) green."""
+    jobs: dict = {
+        "markdown-lint": {
+            "name": vm.CI_JOB_DISPLAY_NAMES["markdown-lint"],
+            "runs-on": vm.CI_RUNS_ON,
+            "steps": [
+                {
+                    "uses": "DavidAnson/markdownlint-cli2-action@v24",
+                    "with": {
+                        "globs": vm.CI_MARKDOWN_LINT_GLOBS,
+                        "config": vm.CI_MARKDOWN_LINT_CONFIG,
+                    },
+                }
+            ],
+        },
+        "link-check": {
+            "name": vm.CI_JOB_DISPLAY_NAMES["link-check"],
+            "runs-on": vm.CI_RUNS_ON,
+            "steps": [
+                {
+                    "uses": "lycheeverse/lychee-action@v2",
+                    "with": {
+                        "args": vm.CI_LINK_CHECK_ARGS,
+                        "fail": vm.CI_LINK_CHECK_FAIL,
+                    },
+                }
+            ],
+        },
+        "actionlint": {
+            "name": vm.CI_JOB_DISPLAY_NAMES["actionlint"],
+            "runs-on": vm.CI_RUNS_ON,
+            "steps": [
+                {
+                    "id": vm.CI_ACTIONLINT_STEP_ID,
+                    "run": "echo download",
+                    "shell": vm.CI_ACTIONLINT_SHELL,
+                },
+                {
+                    "run": "./actionlint -color",
+                    "shell": vm.CI_ACTIONLINT_SHELL,
+                },
+            ],
+        },
+        "manifest-validate": {
+            "name": vm.CI_JOB_DISPLAY_NAMES["manifest-validate"],
+            "runs-on": vm.CI_RUNS_ON,
+            "steps": [
+                {
+                    "uses": "actions/setup-python@v7",
+                    "with": {
+                        "python-version": "3.12",
+                        "cache": "pip",
+                        "cache-dependency-path": vm.CI_CACHE_DEPENDENCY_PATH,
+                    },
+                }
+            ],
+        },
+    }
+    jobs.update(job_overrides)
+    return {
+        "name": vm.CI_WORKFLOW_NAME,
+        "on": "push",
+        "jobs": jobs,
+    }
+
+
+def _write_link_check_residual_ci(tmp_path: Path, workflow: dict) -> None:
+    _write(
+        tmp_path / _LINK_CHECK_RESIDUAL_CI,
+        yaml.dump(workflow, sort_keys=False),
+    )
+
+
+def test_link_check_residual_modules_existing_only() -> None:
+    """Slice targets existing link-check + inventory fixture locks after #181."""
+    assert vm.INVENTORY_VERSION == 52
+    assert vm.MIN_VALIDATOR_COUNT == 196
+    assert len(vm.VALIDATORS) == 196
+    assert "link-check" in vm.VALIDATORS
+    assert "actionlint-shell" in vm.VALIDATORS  # adjacent, not this slice
+    assert "ci-job-names" in vm.VALIDATORS
+
+    for invented in (
+        "link-check-timeouts",
+        "link-check-deadlines",
+        "lychee-timeouts",
+        "lychee-args-v53",
+        "markdown-lint-timeouts",
+        "hydration-security-timeouts",
+        "goose-schema-v53",
+        "memory-slot",
+        "handoff-timeouts",
+        "implementation-timeouts",
+    ):
+        assert invented not in vm.VALIDATORS
+
+    inventory = json.loads(
+        (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
+    )
+    assert inventory["version"] == 52
+    assert inventory["min_validator_count"] == 196
+    assert sorted(vm.VALIDATORS) == inventory["validator_names"]
+    assert inventory["ci_link_check_args"] == vm.CI_LINK_CHECK_ARGS
+    assert inventory["ci_link_check_fail"] is vm.CI_LINK_CHECK_FAIL
+    assert inventory["ci_markdown_lint_globs"] == vm.CI_MARKDOWN_LINT_GLOBS
+    assert inventory["ci_markdown_lint_config"] == vm.CI_MARKDOWN_LINT_CONFIG
+    assert inventory["ci_cache_dependency_path"] == vm.CI_CACHE_DEPENDENCY_PATH
+    assert "link-check" in inventory["ci_job_display_names"]
+    assert inventory["ci_job_display_names"]["link-check"] == "Link Check"
+
+    # #184 / #181 / #178 / #176 / #174 niches stay registered but excluded
+    for name in (
+        "hydration-phase4",
+        "security",
+        "goose",
+        "constitution-handoff",
+        "scratchpad",
+        "implementation-guide",
+        "changelog",
+        "contributing",
+    ):
+        assert name in vm.VALIDATORS
+        assert name != "link-check"
+
+
+def test_link_check_residual_invalid_keys(tmp_path: Path) -> None:
+    """Reject invented link-check / lychee tip sibling keys; live name stays."""
+    with pytest.raises(KeyError):
+        _ = vm.VALIDATORS["link-check-timeouts"]
+    with pytest.raises(KeyError):
+        _ = vm.VALIDATORS["lychee-timeouts"]
+    with pytest.raises(KeyError):
+        _ = vm.VALIDATORS["hydration-security-timeouts"]
+    with pytest.raises(ValueError, match="unknown validator"):
+        vm.run_all_validations(REPO_ROOT, only=["link-check-timeouts"])
+    with pytest.raises(ValueError, match="unknown validator"):
+        vm.run_all_validations(REPO_ROOT, only=["lychee-args-v53"])
+    with pytest.raises(ValueError, match="unknown validator"):
+        vm.run_all_validations(REPO_ROOT, only=["memory-slot"])
+
+    findings = vm.run_all_validations(
+        REPO_ROOT,
+        only=[
+            "link-check",
+            "actionlint-shell",
+            "ci-job-names",
+            "constitution-handoff",
+            "implementation-guide",
+            "changelog",
+            "contributing",
+        ],
+    )
+    assert findings == []
+
+    _copy_schemas(tmp_path)
+    for rel in _inventory_payload()["required_paths"]:
+        target = tmp_path / rel
+        target.parent.mkdir(parents=True, exist_ok=True)
+        if not target.exists():
+            target.write_text("ok\n", encoding="utf-8")
+
+    bad = _inventory_payload()
+    bad["invented_link_check_residual_map"] = {"lychee": "timeout"}
+    (tmp_path / "schemas" / "packaging-inventory.json").write_text(
+        json.dumps(bad),
+        encoding="utf-8",
+    )
+    assert vm.validate_packaging_inventory(tmp_path)
+
+
+def test_link_check_residual_type_missing_matrix(tmp_path: Path) -> None:
+    """HEAVY lychee args/fail type + missing edges beyond the v10 suite."""
+    healthy = _link_check_residual_workflow()
+    _write_link_check_residual_ci(tmp_path, healthy)
+    assert vm.validate_link_check(tmp_path) == []
+    assert vm.validate_actionlint_shell(tmp_path) == []
+    assert vm.validate_ci_job_names(tmp_path) == []
+
+    cases: list[tuple[str, object, object | None]] = [
+        ("fail_str_true", vm.CI_LINK_CHECK_ARGS, "true"),
+        ("fail_str_false", vm.CI_LINK_CHECK_ARGS, "false"),
+        ("fail_int_one", vm.CI_LINK_CHECK_ARGS, 1),
+        ("fail_int_zero", vm.CI_LINK_CHECK_ARGS, 0),
+        ("fail_null", vm.CI_LINK_CHECK_ARGS, None),
+        ("args_null", None, vm.CI_LINK_CHECK_FAIL),
+        ("args_bool", True, vm.CI_LINK_CHECK_FAIL),
+        ("args_int", 42, vm.CI_LINK_CHECK_FAIL),
+        ("args_list", ["--verbose", "--no-progress", "**/*.md"], vm.CI_LINK_CHECK_FAIL),
+        ("args_empty", "", vm.CI_LINK_CHECK_FAIL),
+        ("args_wrong", "--quiet", vm.CI_LINK_CHECK_FAIL),
+        ("fail_false", vm.CI_LINK_CHECK_ARGS, False),
+    ]
+    for label, args, fail in cases:
+        workflow = _link_check_residual_workflow()
+        with_block: dict = {}
+        if args is not None or label.startswith("args_"):
+            with_block["args"] = args
+        if fail is not None or label.startswith("fail_"):
+            with_block["fail"] = fail
+        if label == "fail_null":
+            with_block["fail"] = None
+        if label == "args_null":
+            with_block["args"] = None
+        workflow["jobs"]["link-check"]["steps"] = [
+            {"uses": "lycheeverse/lychee-action@v2", "with": with_block}
+        ]
+        _write_link_check_residual_ci(tmp_path, workflow)
+        findings = vm.validate_link_check(tmp_path)
+        assert findings, label
+        assert any(
+            "link-check args" in f.message
+            or "link-check fail" in f.message
+            or "lychee args lock not found" in f.message
+            or "lychee fail lock not found" in f.message
+            for f in findings
+        ), (label, [f.message for f in findings])
+        # Adjacent actionlint fixture stays green when only lychee with: is mangled
+        assert vm.validate_actionlint_shell(tmp_path) == [], label
+
+    # empty with: mapping
+    workflow = _link_check_residual_workflow()
+    workflow["jobs"]["link-check"]["steps"] = [
+        {"uses": "lycheeverse/lychee-action@v2", "with": {}}
+    ]
+    _write_link_check_residual_ci(tmp_path, workflow)
+    findings = vm.validate_link_check(tmp_path)
+    assert any("lychee args lock not found" in f.message for f in findings)
+    assert any("lychee fail lock not found" in f.message for f in findings)
+
+    # missing with: entirely
+    workflow = _link_check_residual_workflow()
+    workflow["jobs"]["link-check"]["steps"] = [
+        {"uses": "lycheeverse/lychee-action@v2"}
+    ]
+    _write_link_check_residual_ci(tmp_path, workflow)
+    findings = vm.validate_link_check(tmp_path)
+    assert any("lychee-action step missing with" in f.message for f in findings)
+
+    # missing fail key only (args locked)
+    workflow = _link_check_residual_workflow()
+    workflow["jobs"]["link-check"]["steps"] = [
+        {
+            "uses": "lycheeverse/lychee-action@v2",
+            "with": {"args": vm.CI_LINK_CHECK_ARGS},
+        }
+    ]
+    _write_link_check_residual_ci(tmp_path, workflow)
+    findings = vm.validate_link_check(tmp_path)
+    assert any("fail" in f.message for f in findings)
+    assert not any("args must be" in f.message for f in findings)
+
+    # missing args key only (fail locked)
+    workflow = _link_check_residual_workflow()
+    workflow["jobs"]["link-check"]["steps"] = [
+        {
+            "uses": "lycheeverse/lychee-action@v2",
+            "with": {"fail": vm.CI_LINK_CHECK_FAIL},
+        }
+    ]
+    _write_link_check_residual_ci(tmp_path, workflow)
+    findings = vm.validate_link_check(tmp_path)
+    assert any("args" in f.message for f in findings)
+    assert not any("fail must be" in f.message for f in findings)
+
+
+def test_link_check_residual_dual_lychee_and_step_edges(tmp_path: Path) -> None:
+    """Dual lychee steps + non-lychee noise + non-mapping step edges."""
+    # Dual lychee: first locked, second conflicts — residual conflict findings.
+    workflow = _link_check_residual_workflow()
+    workflow["jobs"]["link-check"]["steps"] = [
+        {
+            "uses": "lycheeverse/lychee-action@v2",
+            "with": {
+                "args": vm.CI_LINK_CHECK_ARGS,
+                "fail": vm.CI_LINK_CHECK_FAIL,
+            },
+        },
+        {
+            "uses": "lycheeverse/lychee-action@v2",
+            "with": {"args": "--quiet", "fail": False},
+        },
+    ]
+    _write_link_check_residual_ci(tmp_path, workflow)
+    findings = vm.validate_link_check(tmp_path)
+    assert any("link-check args must be" in f.message for f in findings)
+    assert any("link-check fail must be" in f.message for f in findings)
+
+    # Non-lychee steps ignored; locked lychee still green.
+    workflow = _link_check_residual_workflow()
+    workflow["jobs"]["link-check"]["steps"] = [
+        "not-a-mapping-step",
+        {"run": "echo noise"},
+        {
+            "uses": "actions/checkout@v7",
+        },
+        {
+            "uses": "lycheeverse/lychee-action@v2",
+            "with": {
+                "args": vm.CI_LINK_CHECK_ARGS,
+                "fail": vm.CI_LINK_CHECK_FAIL,
+            },
+        },
+    ]
+    _write_link_check_residual_ci(tmp_path, workflow)
+    assert vm.validate_link_check(tmp_path) == []
+
+    # Only non-lychee steps — args/fail locks not found.
+    workflow = _link_check_residual_workflow()
+    workflow["jobs"]["link-check"]["steps"] = [
+        {"run": "echo no-lychee"},
+        {"uses": "actions/checkout@v7"},
+    ]
+    _write_link_check_residual_ci(tmp_path, workflow)
+    findings = vm.validate_link_check(tmp_path)
+    assert any("lychee args lock not found" in f.message for f in findings)
+    assert any("lychee fail lock not found" in f.message for f in findings)
+
+    # Uses substring match still engages lychee locks.
+    workflow = _link_check_residual_workflow()
+    workflow["jobs"]["link-check"]["steps"] = [
+        {
+            "uses": "org/lychee-action/nested@v9",
+            "with": {"args": "--wrong", "fail": False},
+        }
+    ]
+    _write_link_check_residual_ci(tmp_path, workflow)
+    findings = vm.validate_link_check(tmp_path)
+    assert any("link-check args must be" in f.message for f in findings)
+    assert any("link-check fail must be" in f.message for f in findings)
+
+
+def test_link_check_residual_markdown_cache_isolation(tmp_path: Path) -> None:
+    """Isolate markdown-lint globs/config + setup-python cache vs lychee locks."""
+    healthy = _link_check_residual_workflow()
+    _write_link_check_residual_ci(tmp_path, healthy)
+    assert vm.validate_link_check(tmp_path) == []
+
+    # Wrong markdown globs only — lychee stays locked; markdown finding fires.
+    workflow = _link_check_residual_workflow()
+    workflow["jobs"]["markdown-lint"]["steps"] = [
+        {
+            "uses": "DavidAnson/markdownlint-cli2-action@v24",
+            "with": {
+                "globs": "*.md",
+                "config": vm.CI_MARKDOWN_LINT_CONFIG,
+            },
+        }
+    ]
+    _write_link_check_residual_ci(tmp_path, workflow)
+    findings = vm.validate_link_check(tmp_path)
+    assert any("markdown-lint globs must be" in f.message for f in findings)
+    assert not any("link-check args must be" in f.message for f in findings)
+    assert not any("link-check fail must be" in f.message for f in findings)
+
+    # Wrong markdown config only.
+    workflow = _link_check_residual_workflow()
+    workflow["jobs"]["markdown-lint"]["steps"] = [
+        {
+            "uses": "DavidAnson/markdownlint-cli2-action@v24",
+            "with": {
+                "globs": vm.CI_MARKDOWN_LINT_GLOBS,
+                "config": "wrong.yaml",
+            },
+        }
+    ]
+    _write_link_check_residual_ci(tmp_path, workflow)
+    findings = vm.validate_link_check(tmp_path)
+    assert any("markdown-lint config must be" in f.message for f in findings)
+    assert not any("link-check args must be" in f.message for f in findings)
+
+    # Wrong cache-dependency-path only.
+    workflow = _link_check_residual_workflow()
+    workflow["jobs"]["manifest-validate"]["steps"] = [
+        {
+            "uses": "actions/setup-python@v7",
+            "with": {
+                "python-version": "3.12",
+                "cache": "pip",
+                "cache-dependency-path": "wrong.txt",
+            },
+        }
+    ]
+    _write_link_check_residual_ci(tmp_path, workflow)
+    findings = vm.validate_link_check(tmp_path)
+    assert any("cache-dependency-path must be" in f.message for f in findings)
+    assert not any("link-check args must be" in f.message for f in findings)
+    assert not any("markdown-lint globs must be" in f.message for f in findings)
+
+    # Drop markdown-lint job — link-check lychee can still be locked.
+    workflow = _link_check_residual_workflow()
+    del workflow["jobs"]["markdown-lint"]
+    _write_link_check_residual_ci(tmp_path, workflow)
+    findings = vm.validate_link_check(tmp_path)
+    assert any("missing markdown-lint job" in f.message for f in findings)
+    assert not any("link-check args must be" in f.message for f in findings)
+    assert not any("lychee args lock not found" in f.message for f in findings)
+
+
+def test_link_check_residual_inventory_mismatch_matrix(tmp_path: Path) -> None:
+    """Inventory mismatch / blank edges for link-check fixture keys."""
+    inventory = json.loads(
+        (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
+    )
+
+    # Consistency gate only for ci_link_check_args (blank / non-string).
+    blank_args = dict(inventory)
+    blank_args["ci_link_check_args"] = "   "
+    findings = vm._inventory_lock_consistency(
+        blank_args, schema_path="schemas/packaging-inventory.json"
+    )
+    assert any(
+        "ci_link_check_args must be a non-empty string" in f.message for f in findings
+    )
+
+    non_str_args = dict(inventory)
+    non_str_args["ci_link_check_args"] = ["--verbose"]
+    findings = vm._inventory_lock_consistency(
+        non_str_args, schema_path="schemas/packaging-inventory.json"
+    )
+    assert any(
+        "ci_link_check_args must be a non-empty string" in f.message for f in findings
+    )
+
+    empty_args = dict(inventory)
+    empty_args["ci_link_check_args"] = ""
+    findings = vm._inventory_lock_consistency(
+        empty_args, schema_path="schemas/packaging-inventory.json"
+    )
+    assert any(
+        "ci_link_check_args must be a non-empty string" in f.message for f in findings
+    )
+
+    # Lock-mismatch matrix for all five link-check fixture inventory keys.
+    _copy_schemas(tmp_path)
+    for rel in _inventory_payload()["required_paths"]:
+        target = tmp_path / rel
+        target.parent.mkdir(parents=True, exist_ok=True)
+        if not target.exists():
+            target.write_text("ok\n", encoding="utf-8")
+
+    for key, wrong in (
+        ("ci_link_check_args", "--quiet"),
+        ("ci_link_check_fail", False),
+        ("ci_link_check_fail", "true"),
+        ("ci_markdown_lint_globs", "*.md"),
+        ("ci_markdown_lint_globs", ""),
+        ("ci_markdown_lint_config", "wrong.yaml"),
+        ("ci_markdown_lint_config", " "),
+        ("ci_cache_dependency_path", "wrong.txt"),
+        ("ci_cache_dependency_path", ""),
+    ):
+        payload = _inventory_payload(**{key: wrong})
+        (tmp_path / "schemas" / "packaging-inventory.json").write_text(
+            json.dumps(payload),
+            encoding="utf-8",
+        )
+        findings = vm.validate_packaging_inventory(tmp_path)
+        assert any(key in f.message for f in findings), (key, wrong)
+
+
+def test_link_check_residual_concurrent_validate_races(tmp_path: Path) -> None:
+    """Concurrent readers/writers on ci.yml keep link-check findings coherent."""
+    healthy = _link_check_residual_workflow()
+    broken = _link_check_residual_workflow()
+    broken["jobs"]["link-check"]["steps"] = [
+        {
+            "uses": "lycheeverse/lychee-action@v2",
+            "with": {"args": "--quiet", "fail": False},
+        }
+    ]
+    path = tmp_path / _LINK_CHECK_RESIDUAL_CI
+    _write_link_check_residual_ci(tmp_path, healthy)
+    barrier = threading.Barrier(8)
+    results: list[tuple[str, int]] = []
+    lock = threading.Lock()
+
+    def reader(label: str) -> None:
+        barrier.wait()
+        for _ in range(20):
+            findings = vm.validate_link_check(tmp_path)
+            with lock:
+                results.append((label, len(findings)))
+
+    def writer(payload: dict, label: str) -> None:
+        barrier.wait()
+        for _ in range(20):
+            _write(path, yaml.dump(payload, sort_keys=False))
+            with lock:
+                results.append((label, -1))
+
+    threads = [
+        threading.Thread(target=reader, args=("r1",)),
+        threading.Thread(target=reader, args=("r2",)),
+        threading.Thread(target=reader, args=("r3",)),
+        threading.Thread(target=reader, args=("r4",)),
+        threading.Thread(target=writer, args=(healthy, "w_ok")),
+        threading.Thread(target=writer, args=(broken, "w_bad")),
+        threading.Thread(target=writer, args=(healthy, "w_ok2")),
+        threading.Thread(target=writer, args=(broken, "w_bad2")),
+    ]
+    for thread in threads:
+        thread.start()
+    for thread in threads:
+        thread.join()
+
+    assert results
+    # After races settle on a final write, validator still returns a list.
+    final = vm.validate_link_check(tmp_path)
+    assert isinstance(final, list)
+
+
+def test_link_check_residual_cross_isolation_vs_siblings(tmp_path: Path) -> None:
+    """Mangle link-check only — actionlint + tip siblings stay green on live repo."""
+    healthy = _link_check_residual_workflow()
+    _write_link_check_residual_ci(tmp_path, healthy)
+    assert vm.validate_link_check(tmp_path) == []
+    assert vm.validate_actionlint_shell(tmp_path) == []
+    assert vm.validate_ci_runs_on(tmp_path) == []
+    assert vm.validate_ci_job_names(tmp_path) == []
+
+    # Mangle lychee only.
+    mangled = _link_check_residual_workflow()
+    mangled["jobs"]["link-check"]["steps"] = [
+        {
+            "uses": "lycheeverse/lychee-action@v2",
+            "with": {"args": "--quiet", "fail": False},
+        }
+    ]
+    _write_link_check_residual_ci(tmp_path, mangled)
+    assert vm.validate_link_check(tmp_path)
+    assert vm.validate_actionlint_shell(tmp_path) == []
+    assert vm.validate_ci_runs_on(tmp_path) == []
+    # Display names still locked.
+    assert vm.validate_ci_job_names(tmp_path) == []
+
+    # Mangle actionlint shell only — link-check stays green.
+    mangled_al = _link_check_residual_workflow()
+    mangled_al["jobs"]["actionlint"]["steps"] = [
+        {"id": "wrong", "run": "echo hi", "shell": "pwsh"}
+    ]
+    _write_link_check_residual_ci(tmp_path, mangled_al)
+    assert vm.validate_link_check(tmp_path) == []
+    assert vm.validate_actionlint_shell(tmp_path)
+
+    # Live tip siblings outside this niche remain green (#181/#178/#176/#174).
+    assert vm.validate_link_check(REPO_ROOT) == []
+    assert vm.validate_actionlint_shell(REPO_ROOT) == []
+    assert vm.validate_constitution_handoff(REPO_ROOT) == []
+    assert vm.validate_scratchpad(REPO_ROOT) == []
+    assert vm.validate_implementation_guide(REPO_ROOT) == []
+    assert vm.validate_changelog_packaging(REPO_ROOT) == []
+    assert vm.validate_contributing_packaging(REPO_ROOT) == []
+    assert vm.validate_hydration_phase4(REPO_ROOT) == []
+    assert vm.validate_security_packaging(REPO_ROOT) == []
+    assert vm.validate_goose_recipes(REPO_ROOT) == []
+
+
+def test_link_check_residual_live_green() -> None:
+    """Live link-check fixture + inventory locks remain clean; v52 / 196."""
+    assert vm.validate_link_check(REPO_ROOT) == []
+    assert vm.VALIDATORS["link-check"](REPO_ROOT) == []
+    assert vm.validate_ci_job_names(REPO_ROOT) == []
+    assert vm.validate_actionlint_shell(REPO_ROOT) == []
+
+    assert vm.INVENTORY_VERSION == 52
+    assert vm.MIN_VALIDATOR_COUNT == 196
+    assert len(vm.VALIDATORS) == 196
+    assert vm.CI_LINK_CHECK_ARGS == "--verbose --no-progress '**/*.md'"
+    assert vm.CI_LINK_CHECK_FAIL is True
+    assert vm.CI_MARKDOWN_LINT_GLOBS == "**/*.md"
+    assert vm.CI_MARKDOWN_LINT_CONFIG == ".markdownlint.yaml"
+    assert vm.CI_CACHE_DEPENDENCY_PATH == "requirements-dev.txt"
+
+    inventory = json.loads(
+        (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
+    )
+    assert inventory["version"] == 52
+    for key in _LINK_CHECK_RESIDUAL_INV_KEYS:
+        assert key in inventory
+
+    ci_text = (REPO_ROOT / _LINK_CHECK_RESIDUAL_CI).read_text(encoding="utf-8")
+    assert "lychee-action" in ci_text
+    assert vm.CI_LINK_CHECK_ARGS in ci_text
+    assert "fail: true" in ci_text
+    assert "link-check:" in ci_text
+
+    # Adjacent niches (#184/#181/#178/#176/#174) stay green on tip.
+    assert vm.validate_hydration_phase4(REPO_ROOT) == []
+    assert vm.validate_security_header(REPO_ROOT) == []
+    assert vm.validate_constitution_handoff(REPO_ROOT) == []
+    assert vm.validate_implementation_guide(REPO_ROOT) == []
+    assert vm.validate_changelog_packaging(REPO_ROOT) == []
+    assert vm.validate_contributing_packaging(REPO_ROOT) == []
+    assert vm.validate_execution_summary(REPO_ROOT) == []

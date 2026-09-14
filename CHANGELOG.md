@@ -10,6 +10,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Link-check residual **tests-only** deepeners after tip through **#181**
+  (memory-handoff) / **#178** / **#176** / **#174** / post-#172 (EXISTING
+  `link-check` workflow fixture + inventory `ci_link_check_*` /
+  `ci_markdown_lint_*` / `ci_cache_dependency_path` locks — no invented
+  product / inventory bump): lychee type/missing matrix beyond v10 (string/
+  int/bool/null/list args+fail, empty `with`, missing keys), dual-lychee
+  conflict edges, markdown-lint globs/config + setup-python cache isolation,
+  inventory mismatch matrix, concurrent `ci.yml` validate races,
+  invalid/invented link-check tip sibling keys, and cross-isolation against
+  `actionlint-shell` / #181 memory-handoff / #178 implementation / #176
+  changelog / #174 contributing siblings. Historic four only; inventory
+  unchanged (v52 / 196). Distinct from open MERGEABLE #184
+  (hydration↔security + goose-schema tip), merged #181/#178/#176/#174/#172/
+  #166/#161, and v10 link-check edge suite.
+
 - Memory-slot / agent-handoff residual **tests-only** deepeners after tip through
   **#178** (implementation) / post-#176/#174/#172/#166/#161 (EXISTING eleven
   coordination modules — four `scratchpad*` + seven handoff-cluster
