@@ -1,5 +1,5 @@
 {
-  "version": 48,
+  "version": 49,
   "documented_agents": [
     "QuantumArchitectAgent",
     "BlockchainArchitectAgent",
@@ -386,6 +386,7 @@
     "pr-routing",
     "pr-summary",
     "pr-template",
+    "prompt-authority",
     "prompt-communication",
     "prompt-constraints",
     "prompt-escalation-identity",
@@ -394,7 +395,9 @@
     "prompt-monthly",
     "prompt-orchestration-matrix",
     "prompt-principles",
+    "prompt-project-context",
     "prompt-related-docs",
+    "prompt-responsibilities",
     "prompt-roles",
     "prompt-sections",
     "prompt-tools",
@@ -438,7 +441,7 @@
     "yaml-configs"
   ],
   "min_coverage_fail_under": 99,
-  "min_validator_count": 166,
+  "min_validator_count": 169,
   "required_paths": [
     "README.md",
     "LICENSE",
@@ -1278,7 +1281,7 @@
     "markdown lint, link check, actionlint",
     "manifest validate on Python 3.11/3.12/3.13",
     "Andrew or designated reviewer",
-    "Packaging inventory v48",
+    "Packaging inventory v49",
     "refuse invented recipes",
     "orphan on-disk YAML",
     "unknown `*Agent` tokens",
@@ -1655,5 +1658,36 @@
     "Validates using CRYSTALS-Kyber (NIST post-quantum standard)",
     "Output: Updated scratchpad + Cirq circuit file",
     "Keep prompts synchronized with AGENTS.md Section 22 (Quantum-Blockchain Integration Standards)."
+  ],
+  "prompt_responsibilities_required_phrases": [
+    "## Core Responsibilities",
+    "1. Design quantum algorithms for cryptographic operations",
+    "2. Optimize Cirq circuits for target hardware",
+    "1. Design multi-chain smart contract architecture",
+    "2. Implement quantum-resistant consensus logic",
+    "1. Implement quantum-safe cryptography on Android/iOS",
+    "2. Design data isolation (\"walled garden\") architecture",
+    "1. Collect outputs from all three specialist agents",
+    "3. Make final go/no-go decision"
+  ],
+  "prompt_project_context_required_phrases": [
+    "## Current Project Context",
+    "- Target quantum hardware: [Cirq-sim initially, then Google/IBM hardware]",
+    "- Primary blockchain: Ethereum (Sepolia testnet, mainnet)",
+    "- Token standards: ERC-20 (if applicable), ERC-721 (NFT)",
+    "- Target devices: Android (minimum Snapdragon 8 Gen 2), iOS (minimum iPhone 12)",
+    "- Crypto algorithms: CRYSTALS-Kyber (key encapsulation), CRYSTALS-Dilithium (signatures)",
+    "- HIPAA compliance required: [YES / NO]",
+    "- GDPR compliance required: [YES / NO]"
+  ],
+  "prompt_authority_required_phrases": [
+    "## Your Decision Authority",
+    "## Your Escalation Authority",
+    "- Trade-offs between security, performance, and usability",
+    "- Risk acceptance (can we deploy with this vulnerability?)",
+    "- Two or more agents have irresolvable conflicts",
+    "## Key Responsibilities You CANNOT Delegate",
+    "1. Final go/no-go decisions",
+    "4. Vision articulation (Mickey 18 → technical architecture)"
   ]
 }
