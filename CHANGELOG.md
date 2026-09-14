@@ -10,6 +10,32 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Goose-recipe schema leftover **tests-only** deepeners after tip through **#209**
+  (hydration/security+handoff leftover after #208) / **#208** / **#202** /
+  **#200** / **#195** / **#188** / **#187** / **#186** / **#184** (goose-schema
+  tip) / **#172** (goose-schema residual suite) (EXISTING three fixtures —
+  `goose` / `recipe-agents` / `recipe-titles` plus
+  `schemas/goose-recipe.schema.json` + `GOOSE-RECIPES.md` — no invented product
+  / inventory bump): unsaturated reject leftovers (`timeout` null, name
+  float/dollar, empty settings/recipe objects, version bool/list, model bool,
+  instructions int, extension type `Builtin`), ACCEPT leftovers (extension name
+  max 128, title min, mixed transports, deep schema self-locks for
+  const/enum/minLength), live fenced YAML→schema round-trip, on-disk
+  parse/historic-settings/`must live at` leftovers, **File** without `./` +
+  `goose run` `.yml` path leftovers, recipe-titles missing-doc message
+  asymmetry, non-string fence name / wrong-title exact / recipe non-dict agent
+  skip / primary-in-title green, inventory `recipe_primary_agents` /
+  `expected_recipe_names` leftovers, schema-file missing `$id` + JSON parse
+  residuals, CI workflow smoke that still lists/runs the goose trio, concurrent
+  races, and tip isolation against #209/#208/#202/#200/#195 siblings. Historic
+  four only; Packaging inventory unchanged (v52 / 196 validators). Distinct from
+  merged #209 (hydration/security+handoff), #208 (prior goose-schema leftover
+  suite), closed CONFLICTING #212 (same leftover on pre-#209 tip — tip relaunch
+  here), closed CONFLICTING #197 (schema-only leftover tip-burned in #208/#212
+  lineage), #202/#200 (listform+flows), #184 (tip type matrix), #172 (residual
+  suite), #147 (nine goose-* phrase locks), and not a v53 invent sibling or
+  Dependabot bump.
+
 - Hydration↔security + memory-slot/agent-handoff residual **tests-only** leftover
   deepeners after tip through **#208** (goose-schema leftover after #200) /
   **#202** / **#200** / **#195** / **#188** / **#187** / **#186** / **#184** /
