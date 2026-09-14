@@ -10,6 +10,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Memory-slot / agent-handoff residual **tests-only** deepeners after **#161** tip /
+  post-#166/#172/#174/#176 (EXISTING eleven coordination modules — four `scratchpad*` +
+  seven handoff-cluster `constitution-*` — no invented memory-slot / handoff-timeout
+  product / inventory bump): concurrent dual-doc races, empty/whitespace/header-only
+  AGENTS + scratchpad, invalid/invented memory-slot+handoff+goose/security keys,
+  per-phrase drop matrix, inventory mismatch matrix, failed rollback / reverse-
+  arrow edges, slot-overflow allow-list rejection, and cross-isolation.
+  Historic four only; inventory unchanged (v52 / 196). Distinct from merged #134
+  (memory-slot basics), merged #156 (constitution), merged #161 (hydration),
+  merged #166 (execution), merged #172 (goose-schema+security), merged #174
+  (contributing), merged #176 (changelog), and closed CONFLICTING #136
+  (agent-handoff) / #173 tip refill.
+
 - Changelog residual **tests-only** deepeners after tip through **#174** / post-#172
   (EXISTING seven `changelog` / `changelog-*` phrase-lock validators — constitution's
   historic Keep-a-Changelog lock sibling from #116; no invented product / inventory bump):
