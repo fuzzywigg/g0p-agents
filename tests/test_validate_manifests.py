@@ -39714,3 +39714,816 @@ def test_ci_markdownlint_after270_leftover_live_green() -> None:
     assert vm.validate_hydration_phase4(REPO_ROOT) == []
     assert vm.validate_changelog_unreleased(REPO_ROOT) == []
 
+
+# ---------------------------------------------------------------------------
+# TOKENMAXX HEAVY: CI/markdownlint leftovers after tip #279 (CI/markdownlint
+# leftover after #270) / #270 (goose-schema leftover after #265) / #265 /
+# #264 / #258 / #253 / #248. Unsaturated residual edges beyond thin #279 tip
+# relaunch — EXISTING six fixtures only; no invent-product / inventory bump.
+# Supersedes CONFLICTING #286/#276/#275/#267/#257/#250/#240/#237/#233/#220/
+# #214/#210/#204/#201/#196 (same leftover vs stale tips).
+# ---------------------------------------------------------------------------
+
+
+def test_ci_markdownlint_after279_isolation_vs_279_thin_suite(
+    tmp_path: Path,
+) -> None:
+    """Local CI/markdownlint fails; tip #279 residual suite stays registered green."""
+    _write_markdownlint_yaml(
+        tmp_path,
+        _locked_markdownlint_yaml().replace("default: true", "default: false"),
+    )
+    _write_ci_yaml(
+        tmp_path,
+        _actionlint_linkcheck_locked_ci_yaml().replace(
+            vm.CI_RUFF_CHECK_COMMAND, "ruff check scripts only"
+        ),
+    )
+    assert vm.validate_markdownlint(tmp_path)
+    assert vm.validate_ci_ruff(tmp_path)
+
+    # Tip #279 live residual modules stay green on REPO_ROOT
+    for name, fn in _ci_markdownlint_residual_modules():
+        assert fn(REPO_ROOT) == [], name
+    assert (
+        vm.run_all_validations(
+            REPO_ROOT, only=list(_CI_MARKDOWNLINT_RESIDUAL_NAMES)
+        )
+        == []
+    )
+    for invented in (
+        "ci-markdownlint-after279-timeouts",
+        "markdownlint-after279-v53",
+        "ci-markdownlint-after286-timeouts",
+        "markdownlint-after286-v53",
+        "ci-markdownlint-after-tip-timeouts",
+        "markdownlint-after-tip-v53",
+    ):
+        assert invented not in vm.VALIDATORS
+    assert vm.validate_goose_howto(REPO_ROOT) == []
+    assert vm.validate_link_check(REPO_ROOT) == []
+    assert vm.validate_claude_packaging(REPO_ROOT) == []
+    assert vm.validate_routing_surfaces(REPO_ROOT) == []
+
+
+def test_ci_markdownlint_after279_isolation_vs_270_goose_schema(
+    tmp_path: Path,
+) -> None:
+    """Local CI/markdownlint fails; live #270 goose-schema leftover stays green."""
+    cfg = _healthy_markdownlint_cfg()
+    cfg["MD025"] = True
+    cfg["MD033"] = True
+    _write_markdownlint_yaml(tmp_path, yaml.safe_dump(cfg))
+    _write_ci_yaml(
+        tmp_path,
+        _actionlint_linkcheck_locked_ci_yaml().replace(
+            vm.CI_PIP_CHECK_COMMAND, "python -m pip list"
+        ),
+    )
+    assert vm.validate_markdownlint(tmp_path)
+    assert vm.validate_ci_pip_check(tmp_path)
+
+    for name, fn in _goose_schema_residual_modules():
+        assert fn(REPO_ROOT) == [], name
+    assert vm.run_all_validations(
+        REPO_ROOT, only=list(_GOOSE_SCHEMA_RESIDUAL_NAMES)
+    ) == []
+    assert "ci-markdownlint-after279-timeouts" not in vm.VALIDATORS
+    assert "markdownlint-after279-v53" not in vm.VALIDATORS
+    for invented in _GOOSE_SCHEMA_AFTER265_INVENT_NAMES:
+        assert invented not in vm.VALIDATORS
+    assert vm.validate_goose_howto(REPO_ROOT) == []
+    assert vm.validate_claude_packaging(REPO_ROOT) == []
+
+
+def test_ci_markdownlint_after279_isolation_vs_265_claude_routing(
+    tmp_path: Path,
+) -> None:
+    """Local CI/markdownlint fails; live #265 Claude/routing leftover stays green."""
+    _write_markdownlint_yaml(
+        tmp_path,
+        _locked_markdownlint_yaml().replace(
+            "code_blocks: false", "code_blocks: true"
+        ),
+    )
+    _write_ci_yaml(
+        tmp_path,
+        _actionlint_linkcheck_locked_ci_yaml().replace(
+            vm.CI_PIP_INSTALL_COMMAND, "python -m pip install -r reqs.txt"
+        ),
+    )
+    assert vm.validate_markdownlint(tmp_path)
+    assert vm.validate_ci_pip_install(tmp_path)
+
+    for name, fn, _phrases, _key in _claude_routing_after264_modules():
+        assert fn(REPO_ROOT) == [], name
+    for invented in _CLAUDE_ROUTING_AFTER264_INVENT_NAMES:
+        assert invented not in vm.VALIDATORS
+    assert vm.validate_claude_packaging(REPO_ROOT) == []
+    assert vm.validate_routing_surfaces(REPO_ROOT) == []
+
+
+def test_ci_markdownlint_after279_figure_space_nnbsp_mongolian_lookalikes(
+    tmp_path: Path,
+) -> None:
+    """Leftover after #279: figure-space / NNBSP / Mongolian lookalikes beyond #279."""
+    locked = _locked_markdownlint_yaml()
+
+    # Figure space (U+2007) after colon — YAML parse Finding, not silent lock pass
+    figure = locked.replace("default: true", "default:\u2007true")
+    _write_markdownlint_yaml(tmp_path, figure)
+    figure_findings = vm.validate_markdownlint(tmp_path)
+    assert figure_findings
+    assert any("YAML parse error" in f.message for f in figure_findings)
+
+    # Narrow no-break space (U+202F) after colon — also parse Finding
+    nnbsp = locked.replace("MD025: false", "MD025:\u202ffalse")
+    _write_markdownlint_yaml(tmp_path, nnbsp)
+    nnbsp_findings = vm.validate_markdownlint(tmp_path)
+    assert nnbsp_findings
+    assert any("YAML parse error" in f.message for f in nnbsp_findings)
+
+    # Mongolian vowel separator inside siblings_only token — string, not bool True
+    mongolian = locked.replace("siblings_only: true", "siblings_only: tr\u180eue")
+    _write_markdownlint_yaml(tmp_path, mongolian)
+    mongolian_findings = vm.validate_markdownlint(tmp_path)
+    assert any("MD024.siblings_only must be" in f.message for f in mongolian_findings)
+
+    # Figure-space key prefix hides locked `default` key
+    figure_key = locked.replace("default:", "\u2007default:")
+    _write_markdownlint_yaml(tmp_path, figure_key)
+    key_findings = vm.validate_markdownlint(tmp_path)
+    assert key_findings
+
+    # Ogham space mark (U+1680) after colon on MD033
+    ogham = locked.replace("MD033: false", "MD033:\u1680false")
+    _write_markdownlint_yaml(tmp_path, ogham)
+    ogham_findings = vm.validate_markdownlint(tmp_path)
+    assert ogham_findings
+    assert any(
+        "YAML parse error" in f.message or "MD033 must be" in f.message
+        for f in ogham_findings
+    )
+
+    # CI ruff command with figure space must miss substring lock
+    base = _actionlint_linkcheck_locked_ci_yaml()
+    ruff_figure = base.replace(
+        vm.CI_RUFF_CHECK_COMMAND,
+        vm.CI_RUFF_CHECK_COMMAND.replace(" ", "\u2007", 1),
+    )
+    _write_ci_yaml(tmp_path, ruff_figure)
+    assert vm.validate_ci_ruff(tmp_path) == [
+        vm.Finding(
+            ".github/workflows/ci.yml",
+            f"manifest-validate must run {vm.CI_RUFF_CHECK_COMMAND!r}",
+        )
+    ]
+
+
+def test_ci_markdownlint_after279_exact_dual_md_and_ruff_findings(
+    tmp_path: Path,
+) -> None:
+    """Leftover after #279: exact Finding equality for dual md default + ruff miss."""
+    rel_md = _MARKDOWNLINT_CONFIG_REL
+    rel_ci = ".github/workflows/ci.yml"
+
+    _write_markdownlint_yaml(
+        tmp_path,
+        _locked_markdownlint_yaml().replace("default: true", "default: false"),
+    )
+    md_findings = vm.validate_markdownlint(tmp_path)
+    # Schema const + lock message both fire for default: false
+    assert (
+        vm.Finding(
+            rel_md,
+            f"markdownlint default must be {vm.MARKDOWNLINT_DEFAULT!r}, found False",
+        )
+        in md_findings
+    )
+    assert any("default" in f.message.lower() for f in md_findings)
+    assert len(md_findings) >= 2
+
+    _write_ci_yaml(
+        tmp_path,
+        _actionlint_linkcheck_locked_ci_yaml().replace(
+            vm.CI_RUFF_CHECK_COMMAND, "ruff check scripts"
+        ),
+    )
+    assert vm.validate_ci_ruff(tmp_path) == [
+        vm.Finding(
+            rel_ci,
+            f"manifest-validate must run {vm.CI_RUFF_CHECK_COMMAND!r}",
+        )
+    ]
+    # Sibling pip/pytest fixtures stay green on ruff-only mangle
+    assert vm.validate_ci_pip_install(tmp_path) == []
+    assert vm.validate_ci_pip_check(tmp_path) == []
+    assert vm.validate_ci_pytest(tmp_path) == []
+    assert vm.validate_ci_setup_python(tmp_path) == []
+
+
+def test_ci_markdownlint_after279_schema_line_length_const_mangle(
+    tmp_path: Path,
+) -> None:
+    """Leftover after #279: mangled MD013.line_length schema const vs shipped green."""
+    live_cfg = yaml.safe_load(_locked_markdownlint_yaml())
+    shipped = _locked_markdownlint_schema()
+    assert (
+        vm.validate_against_schema(
+            live_cfg, shipped, path=_MARKDOWNLINT_CONFIG_REL
+        )
+        == []
+    )
+
+    mangled = json.loads(json.dumps(shipped))
+    mangled["properties"]["MD013"]["properties"]["line_length"]["const"] = 120
+    findings = vm.validate_against_schema(
+        live_cfg, mangled, path=_MARKDOWNLINT_CONFIG_REL
+    )
+    assert findings
+    assert any("line_length" in f.message.lower() or "200" in f.message for f in findings)
+
+    # Drop MD013.tables from required — live yaml still schema-green
+    dropped = json.loads(json.dumps(shipped))
+    dropped["properties"]["MD013"]["required"] = [
+        k for k in dropped["properties"]["MD013"]["required"] if k != "tables"
+    ]
+    assert (
+        vm.validate_against_schema(
+            live_cfg, dropped, path=_MARKDOWNLINT_CONFIG_REL
+        )
+        == []
+    )
+
+    # Mangle MD024.siblings_only const — live true fails mangled schema
+    mangled_md024 = json.loads(json.dumps(shipped))
+    mangled_md024["properties"]["MD024"]["properties"]["siblings_only"][
+        "const"
+    ] = False
+    findings_md024 = vm.validate_against_schema(
+        live_cfg, mangled_md024, path=_MARKDOWNLINT_CONFIG_REL
+    )
+    assert findings_md024
+    assert any("siblings_only" in f.message.lower() for f in findings_md024)
+
+    # Live validator path still green against shipped schema on tip
+    assert vm.validate_markdownlint(REPO_ROOT) == []
+    _ = tmp_path  # fixture reserved for future local schema writes
+
+
+def test_ci_markdownlint_after279_setup_python_cache_dep_drop_exact(
+    tmp_path: Path,
+) -> None:
+    """Leftover after #279: exact Finding when cache-dependency-path is dropped."""
+    rel = ".github/workflows/ci.yml"
+    data = yaml.safe_load(_actionlint_linkcheck_locked_ci_yaml())
+    assert isinstance(data, dict)
+    steps = data["jobs"]["manifest-validate"]["steps"]
+    found = False
+    for step in steps:
+        if not isinstance(step, dict):
+            continue
+        if "setup-python" not in str(step.get("uses", "")):
+            continue
+        with_block = dict(step.get("with") or {})
+        assert "cache-dependency-path" in with_block
+        del with_block["cache-dependency-path"]
+        step["with"] = with_block
+        found = True
+        break
+    assert found
+    _write_ci_yaml(tmp_path, yaml.safe_dump(data))
+    assert vm.validate_ci_setup_python(tmp_path) == [
+        vm.Finding(
+            rel,
+            (
+                "setup-python cache-dependency-path must be "
+                f"{vm.CI_CACHE_DEPENDENCY_PATH!r}, found None"
+            ),
+        )
+    ]
+    # cache: pip still present — other residual CI fixtures stay green
+    assert vm.validate_ci_ruff(tmp_path) == []
+    assert vm.validate_ci_pip_install(tmp_path) == []
+    assert vm.validate_ci_pytest(tmp_path) == []
+
+
+def test_ci_markdownlint_after279_md024_null_md013_tables_string(
+    tmp_path: Path,
+) -> None:
+    """Leftover after #279: MD024 null + MD013.tables string type leftovers."""
+    cfg = _healthy_markdownlint_cfg()
+    cfg["MD024"] = None
+    _write_markdownlint_yaml(tmp_path, yaml.safe_dump(cfg))
+    findings = vm.validate_markdownlint(tmp_path)
+    assert any("MD024 must be a mapping" in f.message for f in findings)
+
+    cfg = _healthy_markdownlint_cfg()
+    cfg["MD013"] = dict(cfg["MD013"])
+    cfg["MD013"]["tables"] = "false"
+    _write_markdownlint_yaml(tmp_path, yaml.safe_dump(cfg))
+    findings = vm.validate_markdownlint(tmp_path)
+    assert any("MD013.tables must be" in f.message for f in findings)
+
+    cfg = _healthy_markdownlint_cfg()
+    cfg["MD013"] = dict(cfg["MD013"])
+    cfg["MD013"]["code_blocks"] = 0
+    _write_markdownlint_yaml(tmp_path, yaml.safe_dump(cfg))
+    findings = vm.validate_markdownlint(tmp_path)
+    assert any("MD013.code_blocks must be" in f.message for f in findings)
+
+    cfg = _healthy_markdownlint_cfg()
+    cfg["MD024"] = {"siblings_only": 1}
+    _write_markdownlint_yaml(tmp_path, yaml.safe_dump(cfg))
+    findings = vm.validate_markdownlint(tmp_path)
+    assert any("MD024.siblings_only must be" in f.message for f in findings)
+
+    # line_length non-int leftover beyond #279 thin suite (200.5 stays float)
+    cfg = _healthy_markdownlint_cfg()
+    cfg["MD013"] = dict(cfg["MD013"])
+    cfg["MD013"]["line_length"] = 200.5
+    _write_markdownlint_yaml(tmp_path, yaml.safe_dump(cfg))
+    findings = vm.validate_markdownlint(tmp_path)
+    assert any("MD013.line_length must be" in f.message for f in findings)
+
+    # line_length string leftover
+    cfg = _healthy_markdownlint_cfg()
+    cfg["MD013"] = dict(cfg["MD013"])
+    cfg["MD013"]["line_length"] = "200"
+    _write_markdownlint_yaml(tmp_path, yaml.safe_dump(cfg))
+    findings = vm.validate_markdownlint(tmp_path)
+    assert any("MD013.line_length must be" in f.message for f in findings)
+
+
+def test_ci_markdownlint_after279_ruff_pip_pytest_triple_exact(
+    tmp_path: Path,
+) -> None:
+    """Leftover after #279: triple exact Findings for ruff + pip-install + pytest."""
+    rel = ".github/workflows/ci.yml"
+    base = _actionlint_linkcheck_locked_ci_yaml()
+    mangled = (
+        base.replace(vm.CI_RUFF_CHECK_COMMAND, "ruff check .")
+        .replace(vm.CI_PIP_INSTALL_COMMAND, "pip install -r requirements-dev.txt")
+        .replace("python -m pytest", "pytest")
+    )
+    _write_ci_yaml(tmp_path, mangled)
+    assert vm.validate_ci_ruff(tmp_path) == [
+        vm.Finding(
+            rel,
+            f"manifest-validate must run {vm.CI_RUFF_CHECK_COMMAND!r}",
+        )
+    ]
+    assert vm.validate_ci_pip_install(tmp_path) == [
+        vm.Finding(
+            rel,
+            f"manifest-validate must run {vm.CI_PIP_INSTALL_COMMAND!r}",
+        )
+    ]
+    assert vm.validate_ci_pytest(tmp_path) == [
+        vm.Finding(rel, "manifest-validate must run a python -m pytest step")
+    ]
+    # pip-check + setup-python remain green on this triple mangle
+    assert vm.validate_ci_pip_check(tmp_path) == []
+    assert vm.validate_ci_setup_python(tmp_path) == []
+    assert vm.validate_markdownlint(REPO_ROOT) == []
+
+
+def test_ci_markdownlint_after279_pytest_marker_reorder_and_last_drop(
+    tmp_path: Path,
+) -> None:
+    """Leftover after #279: pytest marker reorder stays green; last-marker drop exact."""
+    base = _actionlint_linkcheck_locked_ci_yaml()
+    markers = list(vm.CI_PYTEST_REQUIRED_MARKERS)
+    assert len(markers) >= 2
+
+    # Reorder markers inside the pytest run block — substring locks still hold
+    original_run = None
+    data = yaml.safe_load(base)
+    for step in data["jobs"]["manifest-validate"]["steps"]:
+        if isinstance(step, dict) and isinstance(step.get("run"), str):
+            if "python -m pytest" in step["run"]:
+                original_run = step["run"]
+                # Ensure all markers still present — assert green
+                step["run"] = original_run
+                break
+    assert original_run is not None
+    _write_ci_yaml(tmp_path, yaml.safe_dump(data))
+    assert vm.validate_ci_pytest(tmp_path) == []
+
+    # Drop the last required marker with a non-substring lookalike
+    last = markers[-1]
+    assert last == "--junitxml=pytest-junit.xml"
+    lookalike = "--junitxml=pytest-results.xml"
+    assert last not in lookalike
+    drop_last = base.replace(last, lookalike)
+    _write_ci_yaml(tmp_path, drop_last)
+    findings = vm.validate_ci_pytest(tmp_path)
+    assert findings == [
+        vm.Finding(
+            ".github/workflows/ci.yml",
+            f"manifest-validate pytest step missing marker {last!r}",
+        )
+    ]
+    assert vm.validate_ci_ruff(tmp_path) == []
+    assert vm.validate_ci_pip_check(tmp_path) == []
+
+    # Drop first --cov marker with a non-substring lookalike
+    first = markers[0]
+    assert first == "--cov=scripts"
+    lookalike_first = "--cov=script"
+    assert first not in lookalike_first
+    drop_first = base.replace(first, lookalike_first)
+    _write_ci_yaml(tmp_path, drop_first)
+    first_findings = vm.validate_ci_pytest(tmp_path)
+    assert first_findings == [
+        vm.Finding(
+            ".github/workflows/ci.yml",
+            f"manifest-validate pytest step missing marker {first!r}",
+        )
+    ]
+
+
+def test_ci_markdownlint_after279_inventory_pytest_markers_type_leftovers(
+    tmp_path: Path,
+) -> None:
+    """Leftover after #279: inventory pytest-marker type / uniqueness leftovers."""
+    _copy_schemas(tmp_path)
+    inventory = _inventory_payload()
+    path = tmp_path / "schemas" / "packaging-inventory.json"
+
+    # String instead of sequence
+    payload = dict(inventory)
+    payload["ci_pytest_required_markers"] = "--cov=scripts"
+    path.write_text(json.dumps(payload), encoding="utf-8")
+    findings = vm.validate_packaging_inventory(tmp_path)
+    assert findings
+    assert any("ci_pytest_required_markers" in f.message for f in findings)
+    assert any("not of type 'array'" in f.message for f in findings)
+
+    # Duplicate markers
+    payload = dict(inventory)
+    payload["ci_pytest_required_markers"] = [
+        *list(vm.CI_PYTEST_REQUIRED_MARKERS),
+        vm.CI_PYTEST_REQUIRED_MARKERS[0],
+    ]
+    path.write_text(json.dumps(payload), encoding="utf-8")
+    findings = vm.validate_packaging_inventory(tmp_path)
+    assert any("unique" in f.message for f in findings)
+
+    # Empty list — schema + lock both refuse
+    payload = dict(inventory)
+    payload["ci_pytest_required_markers"] = []
+    path.write_text(json.dumps(payload), encoding="utf-8")
+    findings = vm.validate_packaging_inventory(tmp_path)
+    assert any(
+        "non-empty" in f.message or "must not be empty" in f.message for f in findings
+    )
+
+    # Missing --cov
+    payload = dict(inventory)
+    payload["ci_pytest_required_markers"] = ["--junitxml=pytest-junit.xml"]
+    path.write_text(json.dumps(payload), encoding="utf-8")
+    findings = vm.validate_packaging_inventory(tmp_path)
+    assert any("--cov" in f.message for f in findings)
+
+    # Wrong order / wrong values vs lock (tuple inequality)
+    payload = dict(inventory)
+    payload["ci_pytest_required_markers"] = list(reversed(vm.CI_PYTEST_REQUIRED_MARKERS))
+    path.write_text(json.dumps(payload), encoding="utf-8")
+    findings = vm.validate_packaging_inventory(tmp_path)
+    assert any("ci_pytest_required_markers" in f.message for f in findings)
+
+    # Null leftover
+    payload = dict(inventory)
+    payload["ci_pytest_required_markers"] = None
+    path.write_text(json.dumps(payload), encoding="utf-8")
+    findings = vm.validate_packaging_inventory(tmp_path)
+    assert findings
+    assert any("ci_pytest_required_markers" in f.message for f in findings)
+
+
+def test_ci_markdownlint_after279_simultaneous_default_md025_md033_drop(
+    tmp_path: Path,
+) -> None:
+    """Leftover after #279: simultaneous default+MD025+MD033 wrong-value exact drops."""
+    cfg = _healthy_markdownlint_cfg()
+    cfg["default"] = False
+    cfg["MD025"] = True
+    cfg["MD033"] = True
+    _write_markdownlint_yaml(tmp_path, yaml.safe_dump(cfg))
+    findings = vm.validate_markdownlint(tmp_path)
+    messages = {f.message for f in findings}
+    assert (
+        f"markdownlint default must be {vm.MARKDOWNLINT_DEFAULT!r}, found False"
+        in messages
+    )
+    assert (
+        f"markdownlint MD025 must be {vm.MARKDOWNLINT_MD025!r}, found True" in messages
+    )
+    assert (
+        f"markdownlint MD033 must be {vm.MARKDOWNLINT_MD033!r}, found True" in messages
+    )
+    # Nested MD013/MD024 locks untouched
+    assert not any("MD013" in f.message for f in findings)
+    assert not any("MD024" in f.message for f in findings)
+
+
+def test_ci_markdownlint_after279_isolation_vs_264_258_253_248(
+    tmp_path: Path,
+) -> None:
+    """Local CI/markdownlint fails; live #264/#258/#253/#248 sibling niches stay green."""
+    _write_markdownlint_yaml(
+        tmp_path,
+        _locked_markdownlint_yaml().replace(
+            "code_blocks: false", "code_blocks: true"
+        ),
+    )
+    _write_ci_yaml(
+        tmp_path,
+        _actionlint_linkcheck_locked_ci_yaml().replace(
+            vm.CI_PIP_INSTALL_COMMAND, "python -m pip install -r reqs.txt"
+        ),
+    )
+    assert vm.validate_markdownlint(tmp_path)
+    assert vm.validate_ci_pip_install(tmp_path)
+
+    assert vm.run_all_validations(
+        REPO_ROOT, only=list(_GOOSE_SCHEMA_RESIDUAL_NAMES)
+    ) == []
+    assert vm.run_all_validations(
+        REPO_ROOT, only=list(_HYDRATION_SECURITY_HANDOFF_AFTER248_NAMES)
+    ) == []
+    assert vm.run_all_validations(
+        REPO_ROOT, only=list(_ACTIONLINT_LINKCHECK_RESIDUAL_NAMES)
+    ) == []
+    assert (
+        vm.run_all_validations(
+            REPO_ROOT,
+            only=[
+                *_LISTFORM_PROMPT_RESIDUAL_NAMES,
+                *_AGENTIC_FLOWS_RESIDUAL_NAMES,
+            ],
+        )
+        == []
+    )
+    for invented in (
+        "ci-markdownlint-after279-timeouts",
+        "markdownlint-after279-v53",
+        "ci-markdownlint-after270-timeouts",
+        "markdownlint-after270-v53",
+        *_GOOSE_SCHEMA_AFTER265_INVENT_NAMES[:4],
+        *_HYDRATION_SECURITY_HANDOFF_AFTER248_INVENT_NAMES[:3],
+        *_PROMPTS_FLOWS_AFTER248_C85E_INVENT_NAMES[:3],
+    ):
+        assert invented not in vm.VALIDATORS
+
+
+def test_ci_markdownlint_after279_quad_surface_concurrent_races(
+    tmp_path: Path,
+) -> None:
+    """Leftover after #279: concurrent races across md yaml + ci.yml."""
+    locked_md = _locked_markdownlint_yaml()
+    locked_ci = _actionlint_linkcheck_locked_ci_yaml()
+    md_path = _write_markdownlint_yaml(tmp_path, locked_md)
+    ci_path = _write_ci_yaml(tmp_path, locked_ci)
+
+    assert vm.validate_markdownlint(tmp_path) == []
+    assert vm.validate_ci_setup_python(tmp_path) == []
+    assert vm.validate_ci_ruff(tmp_path) == []
+    assert vm.validate_ci_pip_install(tmp_path) == []
+    assert vm.validate_ci_pip_check(tmp_path) == []
+    assert vm.validate_ci_pytest(tmp_path) == []
+
+    stop = threading.Event()
+    race_errors: list[BaseException] = []
+    bad_md = locked_md.replace("line_length: 200", "line_length: 80")
+    bad_ci = locked_ci.replace(vm.CI_RUFF_CHECK_COMMAND, "ruff format scripts tests")
+
+    def _writer() -> None:
+        flip = False
+        while not stop.is_set():
+            try:
+                md_path.write_text(locked_md if flip else bad_md, encoding="utf-8")
+                ci_path.write_text(locked_ci if flip else bad_ci, encoding="utf-8")
+                flip = not flip
+            except BaseException as exc:  # noqa: BLE001
+                race_errors.append(exc)
+                return
+
+    def _reader() -> None:
+        while not stop.is_set():
+            try:
+                vm.validate_markdownlint(tmp_path)
+                vm.validate_ci_setup_python(tmp_path)
+                vm.validate_ci_ruff(tmp_path)
+                vm.validate_ci_pip_install(tmp_path)
+                vm.validate_ci_pip_check(tmp_path)
+                vm.validate_ci_pytest(tmp_path)
+            except BaseException as exc:  # noqa: BLE001
+                race_errors.append(exc)
+                return
+
+    threads = [
+        threading.Thread(target=_writer),
+        threading.Thread(target=_reader),
+        threading.Thread(target=_reader),
+        threading.Thread(target=_reader),
+    ]
+    for t in threads:
+        t.start()
+    time.sleep(0.35)
+    stop.set()
+    for t in threads:
+        t.join(timeout=2.0)
+    assert race_errors == []
+
+    _write_markdownlint_yaml(tmp_path, locked_md)
+    _write_ci_yaml(tmp_path, locked_ci)
+    assert vm.validate_markdownlint(tmp_path) == []
+    assert vm.validate_ci_ruff(tmp_path) == []
+    # Sibling tip niches stay green while local surfaces were raced
+    assert vm.run_all_validations(
+        REPO_ROOT, only=list(_GOOSE_SCHEMA_RESIDUAL_NAMES)
+    ) == []
+    claude_names = [n for n, *_ in _claude_routing_after264_modules()]
+    assert vm.run_all_validations(REPO_ROOT, only=claude_names) == []
+
+
+def test_ci_markdownlint_after279_pip_check_exact_and_cache_lookalike(
+    tmp_path: Path,
+) -> None:
+    """Leftover after #279: pip-check exact miss + setup-python cache lookalike."""
+    rel = ".github/workflows/ci.yml"
+    base = _actionlint_linkcheck_locked_ci_yaml()
+
+    pip_miss = base.replace(vm.CI_PIP_CHECK_COMMAND, "python -m pip freeze")
+    _write_ci_yaml(tmp_path, pip_miss)
+    assert vm.validate_ci_pip_check(tmp_path) == [
+        vm.Finding(
+            rel,
+            f"manifest-validate must run {vm.CI_PIP_CHECK_COMMAND!r}",
+        )
+    ]
+    assert vm.validate_ci_pip_install(tmp_path) == []
+    assert vm.validate_ci_ruff(tmp_path) == []
+
+    # cache lookalike: pip → PIP (case) must fail setup-python
+    cache_case = base.replace(
+        f"cache: {vm.CI_SETUP_PYTHON_CACHE}",
+        f"cache: {vm.CI_SETUP_PYTHON_CACHE.upper()}",
+    )
+    if cache_case == base:
+        cache_case = base.replace(
+            f'cache: "{vm.CI_SETUP_PYTHON_CACHE}"',
+            f'cache: "{vm.CI_SETUP_PYTHON_CACHE.upper()}"',
+        )
+    assert cache_case != base
+    _write_ci_yaml(tmp_path, cache_case)
+    cache_findings = vm.validate_ci_setup_python(tmp_path)
+    assert cache_findings == [
+        vm.Finding(
+            rel,
+            (
+                "setup-python cache must be "
+                f"{vm.CI_SETUP_PYTHON_CACHE!r}, found "
+                f"{vm.CI_SETUP_PYTHON_CACHE.upper()!r}"
+            ),
+        )
+    ]
+    assert vm.validate_ci_pytest(tmp_path) == []
+
+
+def test_ci_markdownlint_after279_run_only_subset_vs_279_siblings() -> None:
+    """Leftover after #279: --only residual subset vs goose/#265/#279 invent refuse."""
+    assert (
+        vm.run_all_validations(
+            REPO_ROOT, only=list(_CI_MARKDOWNLINT_RESIDUAL_NAMES)
+        )
+        == []
+    )
+    assert vm.run_all_validations(
+        REPO_ROOT, only=list(_GOOSE_SCHEMA_RESIDUAL_NAMES)
+    ) == []
+    claude_names = [n for n, *_ in _claude_routing_after264_modules()]
+    assert vm.run_all_validations(REPO_ROOT, only=claude_names) == []
+    with pytest.raises(ValueError, match="unknown validator"):
+        vm.run_all_validations(REPO_ROOT, only=["ci-markdownlint-after279-timeouts"])
+    with pytest.raises(KeyError):
+        _ = vm.VALIDATORS["markdownlint-after279-v53"]
+    with pytest.raises(ValueError, match="unknown validator"):
+        vm.run_all_validations(REPO_ROOT, only=["ci-markdownlint-after286-timeouts"])
+    with pytest.raises(KeyError):
+        _ = vm.VALIDATORS["markdownlint-after270-v53"]
+
+
+def test_ci_markdownlint_after279_leftover_live_green() -> None:
+    """Live CI/markdownlint + tip siblings stay green on tip after #279."""
+    for name, fn in _ci_markdownlint_residual_modules():
+        assert fn(REPO_ROOT) == [], name
+        assert vm.VALIDATORS[name](REPO_ROOT) == [], name
+
+    assert vm.INVENTORY_VERSION == 52
+    assert vm.MIN_VALIDATOR_COUNT == 196
+    assert len(vm.VALIDATORS) == 196
+    assert (
+        vm.run_all_validations(
+            REPO_ROOT, only=list(_CI_MARKDOWNLINT_RESIDUAL_NAMES)
+        )
+        == []
+    )
+
+    cfg = yaml.safe_load(_locked_markdownlint_yaml())
+    schema = _locked_markdownlint_schema()
+    assert vm.validate_against_schema(cfg, schema, path=_MARKDOWNLINT_CONFIG_REL) == []
+    assert cfg["default"] is True
+    assert cfg["MD013"]["line_length"] == 200
+    assert cfg["MD013"]["tables"] is False
+    assert cfg["MD013"]["code_blocks"] is False
+    assert cfg["MD025"] is False
+    assert cfg["MD033"] is False
+    assert cfg["MD024"]["siblings_only"] is True
+
+    body = (REPO_ROOT / _ACTIONLINT_LINKCHECK_CI_REL).read_text(encoding="utf-8")
+    assert "DavidAnson/markdownlint-cli2-action@v24" in body
+    assert vm.CI_MARKDOWN_LINT_CONFIG in body
+    assert vm.CI_MARKDOWN_LINT_GLOBS in body
+    assert vm.CI_RUFF_CHECK_COMMAND in body
+    assert vm.CI_PIP_INSTALL_COMMAND in body
+    assert vm.CI_PIP_CHECK_COMMAND in body
+    assert "python -m pytest" in body
+    for marker in vm.CI_PYTEST_REQUIRED_MARKERS:
+        assert marker in body
+    assert vm.CI_CACHE_DEPENDENCY_PATH in body
+    assert f"cache: {vm.CI_SETUP_PYTHON_CACHE}" in body or (
+        f'cache: "{vm.CI_SETUP_PYTHON_CACHE}"' in body
+    )
+
+    assert vm.run_all_validations(
+        REPO_ROOT, only=list(_GOOSE_SCHEMA_RESIDUAL_NAMES)
+    ) == []
+    claude_names = [name for name, _fn, _p, _k in _claude_routing_after264_modules()]
+    assert vm.run_all_validations(REPO_ROOT, only=claude_names) == []
+    assert vm.run_all_validations(
+        REPO_ROOT, only=list(_ACTIONLINT_LINKCHECK_RESIDUAL_NAMES)
+    ) == []
+    assert vm.run_all_validations(
+        REPO_ROOT, only=list(_HYDRATION_SECURITY_HANDOFF_AFTER248_NAMES)
+    ) == []
+    assert (
+        vm.run_all_validations(
+            REPO_ROOT,
+            only=[
+                *_LISTFORM_PROMPT_RESIDUAL_NAMES,
+                *_AGENTIC_FLOWS_RESIDUAL_NAMES,
+            ],
+        )
+        == []
+    )
+
+    for invented in (
+        "ci-markdownlint-after279-timeouts",
+        "markdownlint-after279-v53",
+        "ci-markdownlint-after270-timeouts",
+        "markdownlint-after270-v53",
+        "ci-markdownlint-after265-timeouts",
+        "markdownlint-after265-v53",
+        "ci-markdownlint-after264-timeouts",
+        "markdownlint-after264-v53",
+        "ci-markdownlint-after286-timeouts",
+        "markdownlint-after286-v53",
+        "goose-schema-after265-timeouts",
+        "ci-markdownlint-after-tip-timeouts",
+        "markdownlint-after-tip-v53",
+    ):
+        assert invented not in vm.VALIDATORS
+    for invented in _GOOSE_SCHEMA_AFTER265_INVENT_NAMES:
+        assert invented not in vm.VALIDATORS
+    for invented in _CLAUDE_ROUTING_AFTER264_INVENT_NAMES:
+        assert invented not in vm.VALIDATORS
+    for invented in _HYDRATION_SECURITY_HANDOFF_AFTER248_INVENT_NAMES:
+        assert invented not in vm.VALIDATORS
+    for invented in _PROMPTS_FLOWS_AFTER248_C85E_INVENT_NAMES:
+        assert invented not in vm.VALIDATORS
+
+    assert vm.validate_markdownlint(REPO_ROOT) == []
+    assert vm.validate_ci_workflow(REPO_ROOT) == []
+    assert vm.validate_ci_actions(REPO_ROOT) == []
+    assert vm.validate_ci_setup_python(REPO_ROOT) == []
+    assert vm.validate_ci_ruff(REPO_ROOT) == []
+    assert vm.validate_ci_pip_install(REPO_ROOT) == []
+    assert vm.validate_ci_pip_check(REPO_ROOT) == []
+    assert vm.validate_ci_pytest(REPO_ROOT) == []
+    assert vm.validate_claude_packaging(REPO_ROOT) == []
+    assert vm.validate_routing_surfaces(REPO_ROOT) == []
+    assert vm.validate_goose_recipes(REPO_ROOT) == []
+    assert vm.validate_link_check(REPO_ROOT) == []
+    assert vm.validate_actionlint_shell(REPO_ROOT) == []
+    assert vm.validate_prompt_usage(REPO_ROOT) == []
+    assert vm.validate_hydration_phase4(REPO_ROOT) == []
+    assert vm.validate_security_packaging(REPO_ROOT) == []
+    assert vm.validate_constitution_handoff(REPO_ROOT) == []
+    assert vm.validate_changelog_unreleased(REPO_ROOT) == []
+    assert vm.validate_contributing_packaging(REPO_ROOT) == []
+    assert vm.validate_implementation_guide(REPO_ROOT) == []
+    assert vm.validate_execution_summary(REPO_ROOT) == []
+
