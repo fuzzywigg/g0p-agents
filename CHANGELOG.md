@@ -10,6 +10,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Orchestration-timeouts **v53** deepeners (post-#141 prompts v52 heavy residuals; distinct from open #144 residual-edges and closed CONFLICTING #143):
+  `goose-timeouts`, `goose-deadlines`, `constitution-deadlines`,
+  `implementation-timeouts` validators; GOOSE-RECIPES.md nested/master timeout +
+  deadline-inheritance leftovers, AGENTS-v2.2.md nested-checkbox / Quality vs.
+  Deadline leftovers, IMPLEMENTATION-GUIDE.md Adjust timeouts / deadline leftovers;
+  consistency deepeners for matching `*_required_phrases` inventory keys; schema
+  zero-timeout underflow + CI concurrent-abort cancel-in-progress deepeners
+  (Packaging inventory 200 total; historic four only — orchestration-timeouts slice,
+  not prompts v52 residuals/#144 edges, memory-slot, constitution/changelog,
+  hydration, README, security, contributing, or Dependabot)
+
+
 - Prompts residual **v52 HEAVY** deepeners / **v51 leftovers continued** (post-#134 tip; distinct from closed CONFLICTING #133/#135):
   `prompt-metrics-detail`, `prompt-orch-metrics-detail`, `prompt-communication-detail`,
   `prompt-principles-detail`, `prompt-responsibilities-residual`, `prompt-expertise-residual`,

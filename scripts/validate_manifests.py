@@ -29,6 +29,9 @@ Checks structural correctness of:
 - CHANGELOG.md Keep a Changelog format / Unreleased / 0.1.0 release locks
 - GOOSE-RECIPES.md recipe headers / instruction-agent / extension locks
 - GOOSE-RECIPES.md master orchestration / conflicts / quantum-task locks
+- GOOSE-RECIPES.md orchestration timeouts / deadline-inheritance leftover locks
+- AGENTS-v2.2.md nested-checkbox / deadline leftover locks
+- IMPLEMENTATION-GUIDE.md timeout/deadline leftover locks
 - AGENT-PROMPTS.md constraints / escalation-triggers / related-docs locks
 - EXECUTION-SUMMARY.md IDE setup / innovations / next-48-hours locks
 - agentic_flows/scratchpad.txt coordination markers (+ allowed file set)
@@ -192,7 +195,7 @@ REQUIRED_ARCHIVE_DOCS = (
     "README.md",
 )
 
-INVENTORY_VERSION = 52
+INVENTORY_VERSION = 53
 CURSOR_ENVIRONMENT_NAME = "g0p-agents"
 DEPENDABOT_SCHEDULE_INTERVAL = "weekly"
 DEPENDABOT_DIRECTORIES: frozenset[str] = frozenset({"/"})
@@ -845,7 +848,7 @@ CONTRIBUTING_CI_HONESTY_REQUIRED_PHRASES: tuple[str, ...] = (
     "markdown lint, link check, actionlint",
     "manifest validate on Python 3.11/3.12/3.13",
     "Andrew or designated reviewer",
-    "Packaging inventory v52",
+    "Packaging inventory v53",
     "refuse invented recipes",
     "orphan on-disk YAML",
     "unknown `*Agent` tokens",
@@ -1682,6 +1685,33 @@ GOOSE_EXTENSIONS_REQUIRED_PHRASES: tuple[str, ...] = (
     "timeout: 600",
 )
 
+GOOSE_TIMEOUTS_REQUIRED_PHRASES: tuple[str, ...] = (
+    "timeout: 600  # Long timeout for multi-step orchestration",
+    "Long timeout for multi-step orchestration",
+    "timeout: 300",
+    "timeout: 600",
+)
+GOOSE_DEADLINES_REQUIRED_PHRASES: tuple[str, ...] = (
+    "Deadline: [24 hours from now]",
+    "Deadline: 2025-12-14T14:00:00Z",
+    "Created: 2025-12-13T14:00:00Z",
+    "Created: [Timestamp]",
+)
+CONSTITUTION_DEADLINES_REQUIRED_PHRASES: tuple[str, ...] = (
+    "Nested checkboxes allow granular tracking",
+    "Deadline: 2025-12-13T16:00:00Z",
+    "Quality vs. Deadline",
+    "Created: 2025-12-13T14:00:00Z",
+    "Status: PENDING_EXECUTION",
+)
+IMPLEMENTATION_TIMEOUTS_REQUIRED_PHRASES: tuple[str, ...] = (
+    "Adjust timeouts based on your hardware",
+    "Deadline: 2025-12-15T14:00:00Z",
+    "Update deadline and owner as work progresses",
+    "Customize each recipe",
+    "agentic_flows/quantum_nft_mint_orchestration.yaml",
+)
+
 GOOSE_ORCHESTRATION_REQUIRED_PHRASES: tuple[str, ...] = (
     "## Master Orchestration Task: Quantum NFT Mint",
     "STEP 1: Initialize task in scratchpad",
@@ -1919,7 +1949,7 @@ SCRATCHPAD_STATUS_MARKERS: tuple[str, ...] = (
 SPECIALIST_AGENTS: tuple[str, ...] = DOCUMENTED_AGENTS[:-1]
 
 MIN_COVERAGE_FAIL_UNDER = 99
-MIN_VALIDATOR_COUNT = 196
+MIN_VALIDATOR_COUNT = 200
 
 
 @dataclass(frozen=True)
@@ -3416,6 +3446,34 @@ def validate_packaging_inventory(root: Path) -> list[Finding]:
     ):
         findings.append(
             _lock_mismatch(schema_path, "goose_extensions_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("goose_timeouts_required_phrases", ()))
+        != GOOSE_TIMEOUTS_REQUIRED_PHRASES
+    ):
+        findings.append(_lock_mismatch(schema_path, "goose_timeouts_required_phrases"))
+
+    if (
+        tuple(inventory.get("goose_deadlines_required_phrases", ()))
+        != GOOSE_DEADLINES_REQUIRED_PHRASES
+    ):
+        findings.append(_lock_mismatch(schema_path, "goose_deadlines_required_phrases"))
+
+    if (
+        tuple(inventory.get("constitution_deadlines_required_phrases", ()))
+        != CONSTITUTION_DEADLINES_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "constitution_deadlines_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("implementation_timeouts_required_phrases", ()))
+        != IMPLEMENTATION_TIMEOUTS_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "implementation_timeouts_required_phrases")
         )
 
     if (
@@ -8241,7 +8299,7 @@ def _inventory_lock_consistency(
     else:
         required_ci_honesty = {
             "markdown lint, link check, actionlint",
-            "Packaging inventory v52",
+            "Packaging inventory v53",
             "refuse invented recipes",
         }
         if ci_honesty and not required_ci_honesty <= set(ci_honesty):
@@ -8249,7 +8307,7 @@ def _inventory_lock_consistency(
                 Finding(
                     schema_path,
                     "contributing_ci_honesty_required_phrases must include "
-                    "CI checks/Packaging inventory v52/refuse invented recipes",
+                    "CI checks/Packaging inventory v53/refuse invented recipes",
                 )
             )
 
@@ -9062,6 +9120,161 @@ def _inventory_lock_consistency(
                     "developer/timeout 600",
                 )
             )
+
+    goose_timeouts = list(inventory.get("goose_timeouts_required_phrases", ()))
+    if len(goose_timeouts) != len(set(goose_timeouts)):
+        findings.append(
+            Finding(schema_path, "goose_timeouts_required_phrases must be unique")
+        )
+    if not goose_timeouts:
+        findings.append(
+            Finding(schema_path, "goose_timeouts_required_phrases must not be empty")
+        )
+    for phrase in goose_timeouts:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "goose_timeouts_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_goose_timeouts = {
+            "timeout: 600  # Long timeout for multi-step orchestration",
+            "timeout: 300",
+            "timeout: 600",
+        }
+        if goose_timeouts and not required_goose_timeouts <= set(goose_timeouts):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "goose_timeouts_required_phrases must include Long timeout/"
+                    "timeout 300/timeout 600",
+                )
+            )
+
+    goose_deadlines = list(inventory.get("goose_deadlines_required_phrases", ()))
+    if len(goose_deadlines) != len(set(goose_deadlines)):
+        findings.append(
+            Finding(schema_path, "goose_deadlines_required_phrases must be unique")
+        )
+    if not goose_deadlines:
+        findings.append(
+            Finding(schema_path, "goose_deadlines_required_phrases must not be empty")
+        )
+    for phrase in goose_deadlines:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "goose_deadlines_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_goose_deadlines = {
+            "Deadline: [24 hours from now]",
+            "Deadline: 2025-12-14T14:00:00Z",
+            "Created: [Timestamp]",
+        }
+        if goose_deadlines and not required_goose_deadlines <= set(goose_deadlines):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "goose_deadlines_required_phrases must include Deadline/"
+                    "Created inheritance anchors",
+                )
+            )
+
+    constitution_deadlines = list(
+        inventory.get("constitution_deadlines_required_phrases", ())
+    )
+    if len(constitution_deadlines) != len(set(constitution_deadlines)):
+        findings.append(
+            Finding(
+                schema_path, "constitution_deadlines_required_phrases must be unique"
+            )
+        )
+    if not constitution_deadlines:
+        findings.append(
+            Finding(
+                schema_path,
+                "constitution_deadlines_required_phrases must not be empty",
+            )
+        )
+    for phrase in constitution_deadlines:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "constitution_deadlines_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_constitution_deadlines = {
+            "Nested checkboxes allow granular tracking",
+            "Deadline: 2025-12-13T16:00:00Z",
+            "Quality vs. Deadline",
+        }
+        if constitution_deadlines and not required_constitution_deadlines <= set(
+            constitution_deadlines
+        ):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "constitution_deadlines_required_phrases must include Nested/"
+                    "Deadline/Quality vs. Deadline",
+                )
+            )
+
+    implementation_timeouts = list(
+        inventory.get("implementation_timeouts_required_phrases", ())
+    )
+    if len(implementation_timeouts) != len(set(implementation_timeouts)):
+        findings.append(
+            Finding(
+                schema_path, "implementation_timeouts_required_phrases must be unique"
+            )
+        )
+    if not implementation_timeouts:
+        findings.append(
+            Finding(
+                schema_path,
+                "implementation_timeouts_required_phrases must not be empty",
+            )
+        )
+    for phrase in implementation_timeouts:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "implementation_timeouts_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_implementation_timeouts = {
+            "Adjust timeouts based on your hardware",
+            "Deadline: 2025-12-15T14:00:00Z",
+            "Update deadline and owner as work progresses",
+        }
+        if implementation_timeouts and not required_implementation_timeouts <= set(
+            implementation_timeouts
+        ):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "implementation_timeouts_required_phrases must include Adjust "
+                    "timeouts/Deadline/Update deadline",
+                )
+            )
+
 
     orch = list(inventory.get("goose_orchestration_required_phrases", ()))
     if len(orch) != len(set(orch)):
@@ -12290,8 +12503,8 @@ def validate_contributing_ci_honesty(root: Path) -> list[Finding]:
         return [Finding(rel, "CONTRIBUTING.md missing")]
     text = path.read_text(encoding="utf-8")
     findings: list[Finding] = []
-    if "Packaging inventory v52" not in text:
-        findings.append(Finding(rel, "missing Packaging inventory v52 honesty lock"))
+    if "Packaging inventory v53" not in text:
+        findings.append(Finding(rel, "missing Packaging inventory v53 honesty lock"))
     for phrase in CONTRIBUTING_CI_HONESTY_REQUIRED_PHRASES:
         if phrase not in text:
             findings.append(
@@ -12543,6 +12756,80 @@ def validate_goose_instruction_agents(root: Path) -> list[Finding]:
             findings.append(
                 Finding(
                     rel, f"missing locked goose-instruction-agents phrase: {phrase}"
+                )
+            )
+    return findings
+
+
+
+
+def validate_goose_timeouts(root: Path) -> list[Finding]:
+    rel = "GOOSE-RECIPES.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "GOOSE-RECIPES.md missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "Long timeout for multi-step orchestration" not in body:
+        findings.append(
+            Finding(rel, "missing Long timeout for multi-step orchestration lock")
+        )
+    for phrase in GOOSE_TIMEOUTS_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked goose-timeouts phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_goose_deadlines(root: Path) -> list[Finding]:
+    rel = "GOOSE-RECIPES.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "GOOSE-RECIPES.md missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "Deadline: [24 hours from now]" not in body:
+        findings.append(Finding(rel, "missing Deadline inheritance placeholder lock"))
+    for phrase in GOOSE_DEADLINES_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked goose-deadlines phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_constitution_deadlines(root: Path) -> list[Finding]:
+    rel = "AGENTS-v2.2.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "constitution missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "Nested checkboxes allow granular tracking" not in body:
+        findings.append(Finding(rel, "missing Nested checkboxes deadline-cancel lock"))
+    for phrase in CONSTITUTION_DEADLINES_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked constitution-deadlines phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_implementation_timeouts(root: Path) -> list[Finding]:
+    rel = "IMPLEMENTATION-GUIDE.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "IMPLEMENTATION-GUIDE.md missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "Adjust timeouts based on your hardware" not in body:
+        findings.append(Finding(rel, "missing Adjust timeouts hardware lock"))
+    for phrase in IMPLEMENTATION_TIMEOUTS_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(
+                    rel, f"missing locked implementation-timeouts phrase: {phrase}"
                 )
             )
     return findings
@@ -14092,6 +14379,7 @@ VALIDATORS: dict[str, ValidatorFn] = {
     "constitution-escalation-format": validate_constitution_escalation_format,
     "constitution-recipe-orchestration": validate_constitution_recipe_orchestration,
     "constitution-scratchpad-state": validate_constitution_scratchpad_state,
+    "constitution-deadlines": validate_constitution_deadlines,
     "constitution-conflict-matrix": validate_constitution_conflict_matrix,
     "routing": validate_routing_surfaces,
     "environment": validate_cursor_environment,
@@ -14128,6 +14416,8 @@ VALIDATORS: dict[str, ValidatorFn] = {
     "goose-recipe-headers": validate_goose_recipe_headers,
     "goose-instruction-agents": validate_goose_instruction_agents,
     "goose-extensions": validate_goose_extensions,
+    "goose-timeouts": validate_goose_timeouts,
+    "goose-deadlines": validate_goose_deadlines,
     "goose-orchestration": validate_goose_orchestration,
     "goose-conflicts": validate_goose_conflicts,
     "goose-quantum-task": validate_goose_quantum_task,
@@ -14143,6 +14433,7 @@ VALIDATORS: dict[str, ValidatorFn] = {
     "implementation-issues": validate_implementation_issues,
     "implementation-faq": validate_implementation_faq,
     "implementation-support": validate_implementation_support,
+    "implementation-timeouts": validate_implementation_timeouts,
     "execution-timeline": validate_execution_timeline,
     "execution-technologies": validate_execution_technologies,
     "execution-workflow": validate_execution_workflow,
