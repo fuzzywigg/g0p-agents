@@ -25,6 +25,10 @@ Checks structural correctness of:
 - CHANGELOG / postmortem / .gitignore / CLAUDE negative-constraint locks
 - CHANGELOG.md Keep a Changelog format / Unreleased / 0.1.0 release locks
 - GOOSE-RECIPES.md recipe headers / instruction-agent / extension locks
+- docs/agent-hydration.md findings / LIST A / PHASE 4–5 issue locks
+- GOOSE-RECIPES.md recipe title / howto-master / adding-recipes locks
+- AGENTS-v2.2.md §22.2 on-device / §22.3 multi-chain / §24 hard-constraint locks
+- SECURITY.md injection-surface / reporting-contact / future-scope locks
 - agentic_flows/scratchpad.txt coordination markers (+ allowed file set)
 - pyproject.toml validation tooling keys (+ coverage / requires-python / ruff)
 - CI workflow job/step/matrix/concurrency/permissions/artifact-if presence
@@ -165,7 +169,7 @@ REQUIRED_ARCHIVE_DOCS = (
     "README.md",
 )
 
-INVENTORY_VERSION = 33
+INVENTORY_VERSION = 34
 CURSOR_ENVIRONMENT_NAME = "g0p-agents"
 DEPENDABOT_SCHEDULE_INTERVAL = "weekly"
 DEPENDABOT_DIRECTORIES: frozenset[str] = frozenset({"/"})
@@ -944,6 +948,113 @@ GOOSE_EXTENSIONS_REQUIRED_PHRASES: tuple[str, ...] = (
     "timeout: 300",
     "timeout: 600",
 )
+
+HYDRATION_FINDINGS_REQUIRED_PHRASES: tuple[str, ...] = (
+    '## PHASE 1: FINDINGS REPORT',
+    '### Identity',
+    '### Source Architecture',
+    '### Dependencies',
+    '### CI/CD',
+    '### Governance',
+    '### Git State',
+    'Markdown only (documentation archive)',
+    'Public archive of Quantum-Blockchain agentic protocols v2.2',
+)
+HYDRATION_LIST_A_REQUIRED_PHRASES: tuple[str, ...] = (
+    '### LIST A — Researchable',
+    'What is the Goose framework?',
+    'What are CRYSTALS-Kyber and CRYSTALS-Dilithium?',
+    'What is `liboqs`?',
+    'What is `stimgery`',
+    '## PHASE 3: RESOLVED (LIST A)',
+    "Goose is Block's open-source AI agent framework",
+    'ML-KEM, FIPS 203',
+)
+HYDRATION_ISSUES_REQUIRED_PHRASES: tuple[str, ...] = (
+    '## PHASE 4: ISSUES GENERATED',
+    'Add LICENSE file',
+    'Create .github/workflows/ CI pipeline',
+    'Scaffold agentic_flows/ with actual Goose recipe YAML files',
+    'Scaffold quantum_circuits/ with sample Cirq implementation',
+    'Scaffold contracts/ with sample Solidity ERC-721 contract',
+    '## PHASE 5: Roadmap',
+    '## LIST B — Deferred to Andrew',
+)
+GOOSE_RECIPE_TITLES_DOC_REQUIRED_PHRASES: tuple[str, ...] = (
+    'title: Design and Optimize Quantum Algorithm for Cryptographic Operation',
+    'title: Design and Audit Smart Contract for Quantum-Resistant Multi-Chain',
+    'title: Implement Quantum-Safe Cryptography on Mobile Device',
+    'title: Full Quantum-Blockchain-Mobile Orchestration for NFT Mint Operation',
+)
+GOOSE_HOWTO_MASTER_REQUIRED_PHRASES: tuple[str, ...] = (
+    '### Step 2: Master Recipe (All Agents)',
+    'This will:',
+    'Run all three specialist agents',
+    'Collect their outputs',
+    'Check for conflicts',
+    'Make final go/no-go decision',
+    'Log everything in postmortem.md',
+)
+GOOSE_ADDING_REQUIRED_PHRASES: tuple[str, ...] = (
+    '## Adding New Recipes',
+    '**Create new YAML file**',
+    '**Follow the structure**',
+    '**Add to README**',
+    '**Update AGENTS.md**',
+    '**Document** expected inputs/outputs',
+    'quantum_algorithm_validate.yaml',
+    'orchestration_conflict_resolution.yaml',
+)
+CONSTITUTION_ON_DEVICE_REQUIRED_PHRASES: tuple[str, ...] = (
+    '### 22.2 On-Device Quantum Logic Execution',
+    'MUST use Cirq circuits compiled for mobile constraints',
+    'MUST have deterministic fallback to classical simulation (Qualtran)',
+    'MUST NOT block UI thread',
+    'Circuit execution: < 500ms on Snapdragon 8 Gen 3',
+    'Memory footprint: < 2MB for circuit state',
+    'Battery drain: < 2% per transaction',
+)
+CONSTITUTION_MULTI_CHAIN_REQUIRED_PHRASES: tuple[str, ...] = (
+    '### 22.3 Multi-Chain State Consistency',
+    'State Commitment Protocol',
+    'Result cryptographically signed (post-quantum signature)',
+    'If quantum computation fails: revert to state before step 2',
+    'Maximum pending duration: 24 hours',
+    'Pre-define rollback contract for every quantum operation',
+    'Gas cost of rollback: user pays',
+)
+CONSTITUTION_HARD_CONSTRAINTS_REQUIRED_PHRASES: tuple[str, ...] = (
+    '## 24. Hard Constraints — Quantum-Blockchain Additions',
+    'Design quantum algorithms without validating against known quantum-resistant properties',
+    'Deploy smart contracts without post-quantum cryptography threat modeling',
+    'Implement on-device crypto without HSM/secure enclave consideration',
+    'Claim quantum-safe without formal verification',
+    'NIST-standardized algorithms (Kyber, Dilithium, SPHINCS+)',
+)
+SECURITY_INJECTION_REQUIRED_PHRASES: tuple[str, ...] = (
+    '## Supported Versions',
+    'potential injection risks if values are interpolated without sanitization',
+    'potential prompt injection surface',
+    'YAML recipe templates',
+    'Agent system prompts',
+)
+SECURITY_REPORTING_CONTACT_REQUIRED_PHRASES: tuple[str, ...] = (
+    '## Reporting a Vulnerability',
+    'Andrew Pappas — contact via smtp.eth ENS or GitHub @fuzzywigg',
+    '1. Email:',
+    '2. Include:',
+    '3. Expected response:',
+    'acknowledgment within 48 hours',
+)
+SECURITY_FUTURE_SCOPE_REQUIRED_PHRASES: tuple[str, ...] = (
+    (
+        "Future: Solidity contracts, Python quantum circuits, "
+        "React Native mobile code (when scaffolded)"
+    ),
+    'No executable code is deployed',
+    'Security policy applies to:',
+    'documentation archive',
+)
 PROMPT_ROLES_REQUIRED_PHRASES: tuple[str, ...] = (
     "## 1. QuantumArchitectAgent Prompt Template",
     "You are the Quantum Computing specialist for the FUZZYWIGG-AI ecosystem.",
@@ -1052,7 +1163,7 @@ SCRATCHPAD_STATUS_MARKERS: tuple[str, ...] = (
 SPECIALIST_AGENTS: tuple[str, ...] = DOCUMENTED_AGENTS[:-1]
 
 MIN_COVERAGE_FAIL_UNDER = 99
-MIN_VALIDATOR_COUNT = 112
+MIN_VALIDATOR_COUNT = 124
 
 
 @dataclass(frozen=True)
@@ -1987,6 +2098,102 @@ def validate_packaging_inventory(root: Path) -> list[Finding]:
     ):
         findings.append(
             _lock_mismatch(schema_path, "goose_extensions_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("hydration_findings_required_phrases", ()))
+        != HYDRATION_FINDINGS_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "hydration_findings_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("hydration_list_a_required_phrases", ()))
+        != HYDRATION_LIST_A_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "hydration_list_a_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("hydration_issues_required_phrases", ()))
+        != HYDRATION_ISSUES_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "hydration_issues_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("goose_recipe_titles_doc_required_phrases", ()))
+        != GOOSE_RECIPE_TITLES_DOC_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "goose_recipe_titles_doc_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("goose_howto_master_required_phrases", ()))
+        != GOOSE_HOWTO_MASTER_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "goose_howto_master_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("goose_adding_required_phrases", ()))
+        != GOOSE_ADDING_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "goose_adding_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("constitution_on_device_required_phrases", ()))
+        != CONSTITUTION_ON_DEVICE_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "constitution_on_device_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("constitution_multi_chain_required_phrases", ()))
+        != CONSTITUTION_MULTI_CHAIN_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "constitution_multi_chain_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("constitution_hard_constraints_required_phrases", ()))
+        != CONSTITUTION_HARD_CONSTRAINTS_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "constitution_hard_constraints_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("security_injection_required_phrases", ()))
+        != SECURITY_INJECTION_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "security_injection_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("security_reporting_contact_required_phrases", ()))
+        != SECURITY_REPORTING_CONTACT_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "security_reporting_contact_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("security_future_scope_required_phrases", ()))
+        != SECURITY_FUTURE_SCOPE_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "security_future_scope_required_phrases")
         )
 
     if (
@@ -4500,6 +4707,417 @@ def _inventory_lock_consistency(
             )
 
 
+    v34_phrases_0 = list(inventory.get("hydration_findings_required_phrases", ()))
+    if len(v34_phrases_0) != len(set(v34_phrases_0)):
+        findings.append(
+            Finding(schema_path, "hydration_findings_required_phrases must be unique")
+        )
+    if not v34_phrases_0:
+        findings.append(
+            Finding(schema_path, "hydration_findings_required_phrases must not be empty")
+        )
+    for phrase in v34_phrases_0:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "hydration_findings_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_set = {
+            '## PHASE 1: FINDINGS REPORT',
+            '### Git State',
+            '### Identity'
+        }
+        if v34_phrases_0 and not required_set <= set(v34_phrases_0):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "hydration_findings_required_phrases must include "
+                    "PHASE 1/Identity/Git State",
+                )
+            )
+
+    v34_phrases_1 = list(inventory.get("hydration_list_a_required_phrases", ()))
+    if len(v34_phrases_1) != len(set(v34_phrases_1)):
+        findings.append(
+            Finding(schema_path, "hydration_list_a_required_phrases must be unique")
+        )
+    if not v34_phrases_1:
+        findings.append(
+            Finding(schema_path, "hydration_list_a_required_phrases must not be empty")
+        )
+    for phrase in v34_phrases_1:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "hydration_list_a_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_set = {
+            '## PHASE 3: RESOLVED (LIST A)',
+            '### LIST A — Researchable',
+            'What is the Goose framework?'
+        }
+        if v34_phrases_1 and not required_set <= set(v34_phrases_1):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "hydration_list_a_required_phrases must include "
+                    "LIST A/Goose/PHASE 3",
+                )
+            )
+
+    v34_phrases_2 = list(inventory.get("hydration_issues_required_phrases", ()))
+    if len(v34_phrases_2) != len(set(v34_phrases_2)):
+        findings.append(
+            Finding(schema_path, "hydration_issues_required_phrases must be unique")
+        )
+    if not v34_phrases_2:
+        findings.append(
+            Finding(schema_path, "hydration_issues_required_phrases must not be empty")
+        )
+    for phrase in v34_phrases_2:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "hydration_issues_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_set = {
+            '## PHASE 4: ISSUES GENERATED',
+            '## PHASE 5: Roadmap',
+            'Add LICENSE file'
+        }
+        if v34_phrases_2 and not required_set <= set(v34_phrases_2):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "hydration_issues_required_phrases must include "
+                    "PHASE 4/LICENSE/PHASE 5",
+                )
+            )
+
+    v34_phrases_3 = list(inventory.get("goose_recipe_titles_doc_required_phrases", ()))
+    if len(v34_phrases_3) != len(set(v34_phrases_3)):
+        findings.append(
+            Finding(schema_path, "goose_recipe_titles_doc_required_phrases must be unique")
+        )
+    if not v34_phrases_3:
+        findings.append(
+            Finding(schema_path, "goose_recipe_titles_doc_required_phrases must not be empty")
+        )
+    for phrase in v34_phrases_3:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "goose_recipe_titles_doc_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_set = {
+            'title: Design and Optimize Quantum Algorithm for Cryptographic Operation',
+            'title: Full Quantum-Blockchain-Mobile Orchestration for NFT Mint Operation'
+        }
+        if v34_phrases_3 and not required_set <= set(v34_phrases_3):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "goose_recipe_titles_doc_required_phrases must include "
+                    "Recipe 1/Recipe 4 titles",
+                )
+            )
+
+    v34_phrases_4 = list(inventory.get("goose_howto_master_required_phrases", ()))
+    if len(v34_phrases_4) != len(set(v34_phrases_4)):
+        findings.append(
+            Finding(schema_path, "goose_howto_master_required_phrases must be unique")
+        )
+    if not v34_phrases_4:
+        findings.append(
+            Finding(schema_path, "goose_howto_master_required_phrases must not be empty")
+        )
+    for phrase in v34_phrases_4:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "goose_howto_master_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_set = {
+            '### Step 2: Master Recipe (All Agents)',
+            'Log everything in postmortem.md',
+            'Make final go/no-go decision'
+        }
+        if v34_phrases_4 and not required_set <= set(v34_phrases_4):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "goose_howto_master_required_phrases must include "
+                    "Step 2/go-no-go/postmortem",
+                )
+            )
+
+    v34_phrases_5 = list(inventory.get("goose_adding_required_phrases", ()))
+    if len(v34_phrases_5) != len(set(v34_phrases_5)):
+        findings.append(
+            Finding(schema_path, "goose_adding_required_phrases must be unique")
+        )
+    if not v34_phrases_5:
+        findings.append(
+            Finding(schema_path, "goose_adding_required_phrases must not be empty")
+        )
+    for phrase in v34_phrases_5:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "goose_adding_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_set = {
+            '## Adding New Recipes',
+            '**Create new YAML file**',
+            'orchestration_conflict_resolution.yaml'
+        }
+        if v34_phrases_5 and not required_set <= set(v34_phrases_5):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "goose_adding_required_phrases must include "
+                    "Adding New/Create YAML/conflict_resolution",
+                )
+            )
+
+    v34_phrases_6 = list(inventory.get("constitution_on_device_required_phrases", ()))
+    if len(v34_phrases_6) != len(set(v34_phrases_6)):
+        findings.append(
+            Finding(schema_path, "constitution_on_device_required_phrases must be unique")
+        )
+    if not v34_phrases_6:
+        findings.append(
+            Finding(schema_path, "constitution_on_device_required_phrases must not be empty")
+        )
+    for phrase in v34_phrases_6:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "constitution_on_device_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_set = {
+            '### 22.2 On-Device Quantum Logic Execution',
+            'Circuit execution: < 500ms on Snapdragon 8 Gen 3',
+            'MUST NOT block UI thread'
+        }
+        if v34_phrases_6 and not required_set <= set(v34_phrases_6):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "constitution_on_device_required_phrases must include "
+                    "22.2/UI thread/500ms",
+                )
+            )
+
+    v34_phrases_7 = list(inventory.get("constitution_multi_chain_required_phrases", ()))
+    if len(v34_phrases_7) != len(set(v34_phrases_7)):
+        findings.append(
+            Finding(schema_path, "constitution_multi_chain_required_phrases must be unique")
+        )
+    if not v34_phrases_7:
+        findings.append(
+            Finding(schema_path, "constitution_multi_chain_required_phrases must not be empty")
+        )
+    for phrase in v34_phrases_7:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "constitution_multi_chain_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_set = {
+            '### 22.3 Multi-Chain State Consistency',
+            'Gas cost of rollback: user pays',
+            'State Commitment Protocol'
+        }
+        if v34_phrases_7 and not required_set <= set(v34_phrases_7):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "constitution_multi_chain_required_phrases must include "
+                    "22.3/State Commitment/rollback gas",
+                )
+            )
+
+    v34_phrases_8 = list(inventory.get("constitution_hard_constraints_required_phrases", ()))
+    if len(v34_phrases_8) != len(set(v34_phrases_8)):
+        findings.append(
+            Finding(schema_path, "constitution_hard_constraints_required_phrases must be unique")
+        )
+    if not v34_phrases_8:
+        findings.append(
+            Finding(schema_path, "constitution_hard_constraints_required_phrases must not be empty")
+        )
+    for phrase in v34_phrases_8:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "constitution_hard_constraints_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_set = {
+            '## 24. Hard Constraints — Quantum-Blockchain Additions',
+            'Claim quantum-safe without formal verification',
+            'NIST-standardized algorithms (Kyber, Dilithium, SPHINCS+)'
+        }
+        if v34_phrases_8 and not required_set <= set(v34_phrases_8):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "constitution_hard_constraints_required_phrases must include "
+                    "Hard Constraints/formal verification/NIST",
+                )
+            )
+
+    v34_phrases_9 = list(inventory.get("security_injection_required_phrases", ()))
+    if len(v34_phrases_9) != len(set(v34_phrases_9)):
+        findings.append(
+            Finding(schema_path, "security_injection_required_phrases must be unique")
+        )
+    if not v34_phrases_9:
+        findings.append(
+            Finding(schema_path, "security_injection_required_phrases must not be empty")
+        )
+    for phrase in v34_phrases_9:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "security_injection_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_set = {
+            '## Supported Versions',
+            'potential injection risks if values are interpolated without sanitization',
+            'potential prompt injection surface'
+        }
+        if v34_phrases_9 and not required_set <= set(v34_phrases_9):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "security_injection_required_phrases must include "
+                    "Supported/YAML injection/prompt injection",
+                )
+            )
+
+    v34_phrases_10 = list(inventory.get("security_reporting_contact_required_phrases", ()))
+    if len(v34_phrases_10) != len(set(v34_phrases_10)):
+        findings.append(
+            Finding(schema_path, "security_reporting_contact_required_phrases must be unique")
+        )
+    if not v34_phrases_10:
+        findings.append(
+            Finding(schema_path, "security_reporting_contact_required_phrases must not be empty")
+        )
+    for phrase in v34_phrases_10:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "security_reporting_contact_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_set = {
+            '## Reporting a Vulnerability',
+            'Andrew Pappas — contact via smtp.eth ENS or GitHub @fuzzywigg',
+            'acknowledgment within 48 hours'
+        }
+        if v34_phrases_10 and not required_set <= set(v34_phrases_10):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "security_reporting_contact_required_phrases must include "
+                    "Reporting/Andrew contact/48 hours",
+                )
+            )
+
+    v34_phrases_11 = list(inventory.get("security_future_scope_required_phrases", ()))
+    if len(v34_phrases_11) != len(set(v34_phrases_11)):
+        findings.append(
+            Finding(schema_path, "security_future_scope_required_phrases must be unique")
+        )
+    if not v34_phrases_11:
+        findings.append(
+            Finding(schema_path, "security_future_scope_required_phrases must not be empty")
+        )
+    for phrase in v34_phrases_11:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "security_future_scope_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_set = {
+            (
+                "Future: Solidity contracts, Python quantum circuits, "
+                "React Native mobile code (when scaffolded)"
+            ),
+            'No executable code is deployed',
+            'documentation archive'
+        }
+        if v34_phrases_11 and not required_set <= set(v34_phrases_11):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "security_future_scope_required_phrases must include "
+                    "Future scaffold/no executable/documentation archive",
+                )
+            )
+
+
     return findings
 
 
@@ -6596,6 +7214,212 @@ def validate_goose_extensions(root: Path) -> list[Finding]:
     return findings
 
 
+def validate_hydration_findings(root: Path) -> list[Finding]:
+    rel = 'docs/agent-hydration.md'
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, 'hydration report missing')]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if '## PHASE 1: FINDINGS REPORT' not in body:
+        findings.append(Finding(rel, 'missing PHASE 1 FINDINGS REPORT section'))
+    for phrase in HYDRATION_FINDINGS_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked hydration-findings phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_hydration_list_a(root: Path) -> list[Finding]:
+    rel = 'docs/agent-hydration.md'
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, 'hydration report missing')]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if '### LIST A — Researchable' not in body:
+        findings.append(Finding(rel, 'missing LIST A Researchable section'))
+    for phrase in HYDRATION_LIST_A_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked hydration-list-a phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_hydration_issues(root: Path) -> list[Finding]:
+    rel = 'docs/agent-hydration.md'
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, 'hydration report missing')]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if '## PHASE 4: ISSUES GENERATED' not in body:
+        findings.append(Finding(rel, 'missing PHASE 4 ISSUES GENERATED section'))
+    for phrase in HYDRATION_ISSUES_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked hydration-issues phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_goose_recipe_titles_doc(root: Path) -> list[Finding]:
+    rel = 'GOOSE-RECIPES.md'
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, 'GOOSE-RECIPES.md missing')]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if 'title: Design and Optimize Quantum Algorithm for Cryptographic Operation' not in body:
+        findings.append(Finding(rel, 'missing Recipe 1 title lock'))
+    if 'title: Full Quantum-Blockchain-Mobile Orchestration for NFT Mint Operation' not in body:
+        findings.append(Finding(rel, 'missing Recipe 4 title lock'))
+    for phrase in GOOSE_RECIPE_TITLES_DOC_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked goose-recipe-titles-doc phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_goose_howto_master(root: Path) -> list[Finding]:
+    rel = 'GOOSE-RECIPES.md'
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, 'GOOSE-RECIPES.md missing')]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if '### Step 2: Master Recipe (All Agents)' not in body:
+        findings.append(Finding(rel, 'missing Step 2 Master Recipe section'))
+    for phrase in GOOSE_HOWTO_MASTER_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked goose-howto-master phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_goose_adding(root: Path) -> list[Finding]:
+    rel = 'GOOSE-RECIPES.md'
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, 'GOOSE-RECIPES.md missing')]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if '## Adding New Recipes' not in body:
+        findings.append(Finding(rel, 'missing Adding New Recipes section'))
+    for phrase in GOOSE_ADDING_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked goose-adding phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_constitution_on_device(root: Path) -> list[Finding]:
+    rel = 'AGENTS-v2.2.md'
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, 'constitution missing')]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if '### 22.2 On-Device Quantum Logic Execution' not in body:
+        findings.append(Finding(rel, 'missing On-Device Quantum Logic Execution section'))
+    for phrase in CONSTITUTION_ON_DEVICE_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked constitution-on-device phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_constitution_multi_chain(root: Path) -> list[Finding]:
+    rel = 'AGENTS-v2.2.md'
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, 'constitution missing')]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if '### 22.3 Multi-Chain State Consistency' not in body:
+        findings.append(Finding(rel, 'missing Multi-Chain State Consistency section'))
+    for phrase in CONSTITUTION_MULTI_CHAIN_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked constitution-multi-chain phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_constitution_hard_constraints(root: Path) -> list[Finding]:
+    rel = 'AGENTS-v2.2.md'
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, 'constitution missing')]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if '## 24. Hard Constraints — Quantum-Blockchain Additions' not in body:
+        findings.append(Finding(rel, 'missing Hard Constraints section'))
+    for phrase in CONSTITUTION_HARD_CONSTRAINTS_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked constitution-hard-constraints phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_security_injection(root: Path) -> list[Finding]:
+    rel = 'SECURITY.md'
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, 'SECURITY.md missing')]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if '## Supported Versions' not in body:
+        findings.append(Finding(rel, 'missing Supported Versions section'))
+    for phrase in SECURITY_INJECTION_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked security-injection phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_security_reporting_contact(root: Path) -> list[Finding]:
+    rel = 'SECURITY.md'
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, 'SECURITY.md missing')]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if '## Reporting a Vulnerability' not in body:
+        findings.append(Finding(rel, 'missing Reporting a Vulnerability section'))
+    for phrase in SECURITY_REPORTING_CONTACT_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked security-reporting-contact phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_security_future_scope(root: Path) -> list[Finding]:
+    rel = 'SECURITY.md'
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, 'SECURITY.md missing')]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if SECURITY_FUTURE_SCOPE_REQUIRED_PHRASES[0] not in body:
+        findings.append(Finding(rel, "missing Future scaffold scope phrase"))
+    for phrase in SECURITY_FUTURE_SCOPE_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked security-future-scope phrase: {phrase}")
+            )
+    return findings
+
+
 def validate_prompt_roles(root: Path) -> list[Finding]:
     rel = "AGENT-PROMPTS.md"
     path = root / rel
@@ -7915,6 +8739,9 @@ VALIDATORS: dict[str, ValidatorFn] = {
     "constitution-crypto": validate_constitution_crypto,
     "constitution-handoff": validate_constitution_handoff,
     "constitution-escalation-matrix": validate_constitution_escalation_matrix,
+    "constitution-on-device": validate_constitution_on_device,
+    "constitution-multi-chain": validate_constitution_multi_chain,
+    "constitution-hard-constraints": validate_constitution_hard_constraints,
     "routing": validate_routing_surfaces,
     "environment": validate_cursor_environment,
     "github-agents": validate_github_agents,
@@ -7947,6 +8774,9 @@ VALIDATORS: dict[str, ValidatorFn] = {
     "goose-recipe-headers": validate_goose_recipe_headers,
     "goose-instruction-agents": validate_goose_instruction_agents,
     "goose-extensions": validate_goose_extensions,
+    "goose-recipe-titles-doc": validate_goose_recipe_titles_doc,
+    "goose-howto-master": validate_goose_howto_master,
+    "goose-adding": validate_goose_adding,
     "prompt-roles": validate_prompt_roles,
     "prompt-sections": validate_prompt_sections,
     "prompt-usage": validate_prompt_usage,
@@ -7996,9 +8826,15 @@ VALIDATORS: dict[str, ValidatorFn] = {
     "security-header": validate_security_header,
     "security-fips": validate_security_fips,
     "security-known-non-issues": validate_security_known_non_issues,
+    "security-injection": validate_security_injection,
+    "security-reporting-contact": validate_security_reporting_contact,
+    "security-future-scope": validate_security_future_scope,
     "implementation-quickstart": validate_implementation_quickstart,
     "execution-specialists": validate_execution_specialists,
     "hydration-list-b": validate_hydration_list_b,
+    "hydration-findings": validate_hydration_findings,
+    "hydration-list-a": validate_hydration_list_a,
+    "hydration-issues": validate_hydration_issues,
     "link-check": validate_link_check,
     "prompts": validate_documented_agent_prompts,
     "cross-docs": validate_cross_doc_agents,

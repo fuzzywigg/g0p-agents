@@ -1,5 +1,5 @@
 {
-  "version": 33,
+  "version": 34,
   "documented_agents": [
     "QuantumArchitectAgent",
     "BlockchainArchitectAgent",
@@ -295,6 +295,9 @@
     "constitution-crypto",
     "constitution-escalation-matrix",
     "constitution-handoff",
+    "constitution-hard-constraints",
+    "constitution-multi-chain",
+    "constitution-on-device",
     "contributing",
     "contributing-branches",
     "contributing-governance",
@@ -317,13 +320,19 @@
     "github-agents",
     "gitignore",
     "goose",
+    "goose-adding",
     "goose-extensions",
     "goose-howto",
+    "goose-howto-master",
     "goose-instruction-agents",
     "goose-naming",
     "goose-recipe-headers",
+    "goose-recipe-titles-doc",
     "goose-state-machine",
     "hydration",
+    "hydration-findings",
+    "hydration-issues",
+    "hydration-list-a",
     "hydration-list-b",
     "implementation-guide",
     "implementation-phases",
@@ -375,16 +384,19 @@
     "scratchpad-task-meta",
     "security",
     "security-fips",
+    "security-future-scope",
     "security-header",
+    "security-injection",
     "security-known-non-issues",
     "security-reporting",
+    "security-reporting-contact",
     "security-standards",
     "security-supported",
     "state-residency",
     "yaml-configs"
   ],
   "min_coverage_fail_under": 99,
-  "min_validator_count": 112,
+  "min_validator_count": 124,
   "required_paths": [
     "README.md",
     "LICENSE",
@@ -1080,5 +1092,108 @@
     "name: developer",
     "timeout: 300",
     "timeout: 600"
+  ],
+  "hydration_findings_required_phrases": [
+    "## PHASE 1: FINDINGS REPORT",
+    "### Identity",
+    "### Source Architecture",
+    "### Dependencies",
+    "### CI/CD",
+    "### Governance",
+    "### Git State",
+    "Markdown only (documentation archive)",
+    "Public archive of Quantum-Blockchain agentic protocols v2.2"
+  ],
+  "hydration_list_a_required_phrases": [
+    "### LIST A — Researchable",
+    "What is the Goose framework?",
+    "What are CRYSTALS-Kyber and CRYSTALS-Dilithium?",
+    "What is `liboqs`?",
+    "What is `stimgery`",
+    "## PHASE 3: RESOLVED (LIST A)",
+    "Goose is Block's open-source AI agent framework",
+    "ML-KEM, FIPS 203"
+  ],
+  "hydration_issues_required_phrases": [
+    "## PHASE 4: ISSUES GENERATED",
+    "Add LICENSE file",
+    "Create .github/workflows/ CI pipeline",
+    "Scaffold agentic_flows/ with actual Goose recipe YAML files",
+    "Scaffold quantum_circuits/ with sample Cirq implementation",
+    "Scaffold contracts/ with sample Solidity ERC-721 contract",
+    "## PHASE 5: Roadmap",
+    "## LIST B — Deferred to Andrew"
+  ],
+  "goose_recipe_titles_doc_required_phrases": [
+    "title: Design and Optimize Quantum Algorithm for Cryptographic Operation",
+    "title: Design and Audit Smart Contract for Quantum-Resistant Multi-Chain",
+    "title: Implement Quantum-Safe Cryptography on Mobile Device",
+    "title: Full Quantum-Blockchain-Mobile Orchestration for NFT Mint Operation"
+  ],
+  "goose_howto_master_required_phrases": [
+    "### Step 2: Master Recipe (All Agents)",
+    "This will:",
+    "Run all three specialist agents",
+    "Collect their outputs",
+    "Check for conflicts",
+    "Make final go/no-go decision",
+    "Log everything in postmortem.md"
+  ],
+  "goose_adding_required_phrases": [
+    "## Adding New Recipes",
+    "**Create new YAML file**",
+    "**Follow the structure**",
+    "**Add to README**",
+    "**Update AGENTS.md**",
+    "**Document** expected inputs/outputs",
+    "quantum_algorithm_validate.yaml",
+    "orchestration_conflict_resolution.yaml"
+  ],
+  "constitution_on_device_required_phrases": [
+    "### 22.2 On-Device Quantum Logic Execution",
+    "MUST use Cirq circuits compiled for mobile constraints",
+    "MUST have deterministic fallback to classical simulation (Qualtran)",
+    "MUST NOT block UI thread",
+    "Circuit execution: < 500ms on Snapdragon 8 Gen 3",
+    "Memory footprint: < 2MB for circuit state",
+    "Battery drain: < 2% per transaction"
+  ],
+  "constitution_multi_chain_required_phrases": [
+    "### 22.3 Multi-Chain State Consistency",
+    "State Commitment Protocol",
+    "Result cryptographically signed (post-quantum signature)",
+    "If quantum computation fails: revert to state before step 2",
+    "Maximum pending duration: 24 hours",
+    "Pre-define rollback contract for every quantum operation",
+    "Gas cost of rollback: user pays"
+  ],
+  "constitution_hard_constraints_required_phrases": [
+    "## 24. Hard Constraints — Quantum-Blockchain Additions",
+    "Design quantum algorithms without validating against known quantum-resistant properties",
+    "Deploy smart contracts without post-quantum cryptography threat modeling",
+    "Implement on-device crypto without HSM/secure enclave consideration",
+    "Claim quantum-safe without formal verification",
+    "NIST-standardized algorithms (Kyber, Dilithium, SPHINCS+)"
+  ],
+  "security_injection_required_phrases": [
+    "## Supported Versions",
+    "potential injection risks if values are interpolated without sanitization",
+    "potential prompt injection surface",
+    "YAML recipe templates",
+    "Agent system prompts"
+  ],
+  "security_reporting_contact_required_phrases": [
+    "## Reporting a Vulnerability",
+    "Andrew Pappas — contact via smtp.eth ENS or GitHub @fuzzywigg",
+    "1. Email:",
+    "2. Include:",
+    "3. Expected response:",
+    "acknowledgment within 48 hours"
+  ],
+  "security_future_scope_required_phrases": [
+    "Future: Solidity contracts, Python quantum circuits, React Native mobile code (when scaffolded)",
+    "No executable code is deployed",
+    "Security policy applies to:",
+    "documentation archive"
   ]
 }

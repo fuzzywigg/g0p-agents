@@ -184,12 +184,24 @@
     "constitution_escalation_matrix_required_phrases",
     "changelog_format_required_phrases",
     "changelog_unreleased_required_phrases",
-    "changelog_release_required_phrases"
+    "changelog_release_required_phrases",
+    "hydration_findings_required_phrases",
+    "hydration_list_a_required_phrases",
+    "hydration_issues_required_phrases",
+    "goose_recipe_titles_doc_required_phrases",
+    "goose_howto_master_required_phrases",
+    "goose_adding_required_phrases",
+    "constitution_on_device_required_phrases",
+    "constitution_multi_chain_required_phrases",
+    "constitution_hard_constraints_required_phrases",
+    "security_injection_required_phrases",
+    "security_reporting_contact_required_phrases",
+    "security_future_scope_required_phrases"
   ],
   "properties": {
     "version": {
       "type": "integer",
-      "minimum": 32
+      "minimum": 33
     },
     "required_paths": {
       "type": "array",
@@ -447,7 +459,7 @@
     },
     "min_validator_count": {
       "type": "integer",
-      "minimum": 1
+      "minimum": 112
     },
     "issue_bug_report_headings": {
       "type": "array",
@@ -1536,6 +1548,114 @@
       }
     },
     "goose_extensions_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "hydration_findings_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "hydration_list_a_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "hydration_issues_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "goose_recipe_titles_doc_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "goose_howto_master_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "goose_adding_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "constitution_on_device_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "constitution_multi_chain_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "constitution_hard_constraints_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "security_injection_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "security_reporting_contact_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "security_future_scope_required_phrases": {
       "type": "array",
       "minItems": 1,
       "uniqueItems": true,

@@ -10,6 +10,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Multi-slice **v34** deepeners (post-#80): `hydration-findings`,
+  `hydration-list-a`, `hydration-issues`, `goose-recipe-titles-doc`,
+  `goose-howto-master`, `goose-adding`, `constitution-on-device`,
+  `constitution-multi-chain`, `constitution-hard-constraints`,
+  `security-injection`, `security-reporting-contact`,
+  `security-future-scope` validators; hydrate PHASE 1/LIST A/PHASE 4–5 locks,
+  GOOSE-RECIPES.md title / Step-2 master / Adding-New locks, AGENTS-v2.2.md
+  §22.2 on-device / §22.3 multi-chain / §24 hard-constraint locks, and
+  SECURITY.md injection-surface / reporting-contact / future-scope locks;
+  consistency deepeners for twelve new required-phrase arrays (124 total;
+  historic four only — hydration/goose/constitution/security slices, not
+  changelog, contributing, execution-summary, implementation guide, agent
+  prompts, README honesty, PR-template, issue-template, scratchpad,
+  postmortem, archive snapshot, routing/identity, or Dependabot)
+
 - Goose recipes **v33** deepeners (post-#78): `goose-recipe-headers`,
   `goose-instruction-agents`, `goose-extensions` validators; GOOSE-RECIPES.md
   Recipe 1–4 heading / File-path locks, historic four instruction-agent identity
