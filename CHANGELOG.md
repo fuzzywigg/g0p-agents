@@ -10,6 +10,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Agent-handoff edges **HEAVY** deepen-tests only (post-#131 prompts v51 heavy):
+  existing `constitution-handoff` / `constitution-multichain` (Failure Recovery /
+  Rollback) / `constitution-escalation-matrix` / `constitution-recipe-orchestration` /
+  `constitution-scratchpad-state` / `constitution-conflict-matrix` validators;
+  empty-payload / failed-rollback / reverse-arrow / per-phrase / cross-isolation /
+  inventory consistency matrices (Packaging inventory still 184 / v51; historic four
+  only — agent-handoff edges slice, not prompts-locks-v51 leftovers, changelog,
+  hydration, README, security, contributing, goose recipes, postmortem, or Dependabot)
+
 - Prompts residual **v51 HEAVY** deepeners / **v50 leftovers max** (post-#128 prompts context/cannot-delegate/escalation-authority v50):
   `prompt-role-blurbs`, `prompt-escalation-format`, `prompt-living-docs`,
   `prompt-constraints-detail`, `prompt-triggers-detail`, `prompt-human-fields`,

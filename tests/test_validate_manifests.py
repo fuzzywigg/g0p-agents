@@ -15962,3 +15962,453 @@ def test_v51_inventory_lock_mismatch_and_consistency_matrix(tmp_path: Path) -> N
         "Packaging inventory v51" in phrase
         for phrase in vm.CONTRIBUTING_CI_HONESTY_REQUIRED_PHRASES
     )
+
+
+# ---------------------------------------------------------------------------
+# Agent-handoff edges HEAVY deepeners (EXISTING modules only; no new validators)
+# Slice: constitution-handoff + multichain rollback + 22.4/22.5–22.7 coordination
+# Distinct from prompts-locks-v51 themes.
+# ---------------------------------------------------------------------------
+
+_AGENT_HANDOFF_EDGE_VALIDATORS = (
+    ("constitution-handoff", vm.validate_constitution_handoff),
+    ("constitution-multichain", vm.validate_constitution_multichain),
+    ("constitution-escalation-matrix", vm.validate_constitution_escalation_matrix),
+    (
+        "constitution-recipe-orchestration",
+        vm.validate_constitution_recipe_orchestration,
+    ),
+    ("constitution-scratchpad-state", vm.validate_constitution_scratchpad_state),
+    ("constitution-conflict-matrix", vm.validate_constitution_conflict_matrix),
+)
+
+_AGENT_HANDOFF_PHRASE_SETS = (
+    (
+        vm.validate_constitution_handoff,
+        "#### 22.4.1 Handoff Sequence",
+        "missing Handoff Sequence section",
+        vm.CONSTITUTION_HANDOFF_REQUIRED_PHRASES,
+    ),
+    (
+        vm.validate_constitution_multichain,
+        "### 22.3 Multi-Chain State Consistency",
+        "missing Multi-Chain State Consistency section",
+        vm.CONSTITUTION_MULTICHAIN_REQUIRED_PHRASES,
+    ),
+    (
+        vm.validate_constitution_escalation_matrix,
+        "#### 22.4.2 Escalation Triggers",
+        "missing Escalation Triggers section",
+        vm.CONSTITUTION_ESCALATION_MATRIX_REQUIRED_PHRASES,
+    ),
+    (
+        vm.validate_constitution_recipe_orchestration,
+        "### 22.5 Recipe-Based Orchestration Structure",
+        "missing Recipe-Based Orchestration Structure section",
+        vm.CONSTITUTION_RECIPE_ORCHESTRATION_REQUIRED_PHRASES,
+    ),
+    (
+        vm.validate_constitution_scratchpad_state,
+        "### 22.6 Scratchpad State Machine",
+        "missing Scratchpad State Machine section",
+        vm.CONSTITUTION_SCRATCHPAD_STATE_REQUIRED_PHRASES,
+    ),
+    (
+        vm.validate_constitution_conflict_matrix,
+        "### 22.7 Conflict Resolution Matrix",
+        "missing Conflict Resolution Matrix section",
+        vm.CONSTITUTION_CONFLICT_MATRIX_REQUIRED_PHRASES,
+    ),
+)
+
+
+def test_live_agent_handoff_edge_modules() -> None:
+    """Live repo stays green for the existing agent-handoff coordination cluster."""
+    assert vm.INVENTORY_VERSION == 51
+    assert len(vm.VALIDATORS) == 184
+    assert vm.MIN_VALIDATOR_COUNT == 184
+    for name, fn in _AGENT_HANDOFF_EDGE_VALIDATORS:
+        assert name in vm.VALIDATORS
+        assert fn(REPO_ROOT) == []
+        assert vm.VALIDATORS[name](REPO_ROOT) == []
+    inventory = json.loads(
+        (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
+    )
+    assert inventory["version"] == 51
+    assert inventory["constitution_handoff_required_phrases"] == list(
+        vm.CONSTITUTION_HANDOFF_REQUIRED_PHRASES
+    )
+    assert inventory["constitution_multichain_required_phrases"] == list(
+        vm.CONSTITUTION_MULTICHAIN_REQUIRED_PHRASES
+    )
+    assert inventory["constitution_escalation_matrix_required_phrases"] == list(
+        vm.CONSTITUTION_ESCALATION_MATRIX_REQUIRED_PHRASES
+    )
+    assert inventory["constitution_recipe_orchestration_required_phrases"] == list(
+        vm.CONSTITUTION_RECIPE_ORCHESTRATION_REQUIRED_PHRASES
+    )
+    assert inventory["constitution_scratchpad_state_required_phrases"] == list(
+        vm.CONSTITUTION_SCRATCHPAD_STATE_REQUIRED_PHRASES
+    )
+    assert inventory["constitution_conflict_matrix_required_phrases"] == list(
+        vm.CONSTITUTION_CONFLICT_MATRIX_REQUIRED_PHRASES
+    )
+    # prompts-locks-v51 themes remain orthogonal / untouched by this slice
+    assert "prompt-role-blurbs" in vm.VALIDATORS
+    assert vm.validate_prompt_role_blurbs(REPO_ROOT) == []
+
+
+def test_agent_handoff_empty_payload_edges(tmp_path: Path) -> None:
+    """Empty / whitespace / header-only payloads fail handoff validators."""
+    for _name, fn in _AGENT_HANDOFF_EDGE_VALIDATORS:
+        findings = fn(tmp_path)
+        assert findings
+        assert any("missing" in f.message for f in findings)
+
+    # completely empty constitution file
+    _write(tmp_path / "AGENTS-v2.2.md", "")
+    for _name, fn in _AGENT_HANDOFF_EDGE_VALIDATORS:
+        findings = fn(tmp_path)
+        assert findings
+        assert any("missing" in f.message for f in findings)
+
+    # whitespace-only payload
+    _write(tmp_path / "AGENTS-v2.2.md", "   \n\t\n  \n")
+    for _name, fn in _AGENT_HANDOFF_EDGE_VALIDATORS:
+        findings = fn(tmp_path)
+        assert findings
+        assert any("missing" in f.message for f in findings)
+
+    # header-only empty handoff payload (section present, phase payloads absent)
+    _write(tmp_path / "AGENTS-v2.2.md", "#### 22.4.1 Handoff Sequence\n")
+    findings = vm.validate_constitution_handoff(tmp_path)
+    assert not any("missing Handoff Sequence section" in f.message for f in findings)
+    for phrase in vm.CONSTITUTION_HANDOFF_REQUIRED_PHRASES:
+        if phrase == "#### 22.4.1 Handoff Sequence":
+            continue
+        assert any(
+            f"missing locked constitution-handoff phrase: {phrase}" in f.message
+            for f in findings
+        ), phrase
+
+    # empty multichain / rollback section header only
+    _write(tmp_path / "AGENTS-v2.2.md", "### 22.3 Multi-Chain State Consistency\n")
+    findings = vm.validate_constitution_multichain(tmp_path)
+    assert not any(
+        "missing Multi-Chain State Consistency section" in f.message for f in findings
+    )
+    assert any(
+        "missing locked constitution-multichain phrase: Failure Recovery" in f.message
+        for f in findings
+    )
+    assert any(
+        "Rollback MUST be executable by user without third-party approval" in f.message
+        for f in findings
+    )
+
+    # empty inventory phrase arrays for handoff + rollback keys
+    for key in (
+        "constitution_handoff_required_phrases",
+        "constitution_multichain_required_phrases",
+    ):
+        payload = _inventory_payload()
+        payload[key] = []
+        findings = vm._inventory_lock_consistency(
+            payload, schema_path="schemas/packaging-inventory.json"
+        )
+        assert any(f"{key} must not be empty" in f.message for f in findings)
+
+
+def test_agent_handoff_failed_rollback_paths(tmp_path: Path) -> None:
+    """Failed handoff / rollback phrase drops report findings; restore recovers green."""
+    full_body = "\n".join(
+        [
+            *vm.CONSTITUTION_HANDOFF_REQUIRED_PHRASES,
+            *vm.CONSTITUTION_MULTICHAIN_REQUIRED_PHRASES,
+            "",
+        ]
+    )
+    _write(tmp_path / "AGENTS-v2.2.md", full_body)
+    assert vm.validate_constitution_handoff(tmp_path) == []
+    assert vm.validate_constitution_multichain(tmp_path) == []
+
+    # drop Failure Recovery — failed recovery path
+    without_recovery = [
+        p for p in vm.CONSTITUTION_MULTICHAIN_REQUIRED_PHRASES if p != "Failure Recovery"
+    ]
+    _write(
+        tmp_path / "AGENTS-v2.2.md",
+        "\n".join([*vm.CONSTITUTION_HANDOFF_REQUIRED_PHRASES, *without_recovery, ""]),
+    )
+    assert vm.validate_constitution_handoff(tmp_path) == []
+    findings = vm.validate_constitution_multichain(tmp_path)
+    assert any(
+        "missing locked constitution-multichain phrase: Failure Recovery" in f.message
+        for f in findings
+    )
+
+    # drop Rollback MUST — failed rollback path
+    without_rollback = [
+        p
+        for p in vm.CONSTITUTION_MULTICHAIN_REQUIRED_PHRASES
+        if p != "Rollback MUST be executable by user without third-party approval"
+    ]
+    _write(
+        tmp_path / "AGENTS-v2.2.md",
+        "\n".join([*vm.CONSTITUTION_HANDOFF_REQUIRED_PHRASES, *without_rollback, ""]),
+    )
+    findings = vm.validate_constitution_multichain(tmp_path)
+    assert any(
+        "Rollback MUST be executable by user without third-party approval" in f.message
+        for f in findings
+    )
+
+    # drop a mid-chain handoff phase — failed handoff
+    without_phase2 = [
+        p
+        for p in vm.CONSTITUTION_HANDOFF_REQUIRED_PHRASES
+        if p != "**Phase 2: Contract Design**"
+    ]
+    _write(
+        tmp_path / "AGENTS-v2.2.md",
+        "\n".join([*without_phase2, *vm.CONSTITUTION_MULTICHAIN_REQUIRED_PHRASES, ""]),
+    )
+    findings = vm.validate_constitution_handoff(tmp_path)
+    assert any(
+        "missing locked constitution-handoff phrase: **Phase 2: Contract Design**"
+        in f.message
+        for f in findings
+    )
+    assert vm.validate_constitution_multichain(tmp_path) == []
+
+    # restore full payloads — rollback to green
+    _write(tmp_path / "AGENTS-v2.2.md", full_body)
+    assert vm.validate_constitution_handoff(tmp_path) == []
+    assert vm.validate_constitution_multichain(tmp_path) == []
+
+    # inventory seed missing Failure Recovery must include token
+    payload = _inventory_payload()
+    payload["constitution_multichain_required_phrases"] = [
+        "### 22.3 Multi-Chain State Consistency",
+        "State Commitment Protocol",
+    ]
+    findings = vm._inventory_lock_consistency(
+        payload, schema_path="schemas/packaging-inventory.json"
+    )
+    assert any(
+        "constitution_multichain_required_phrases must include" in f.message
+        for f in findings
+    )
+    assert any("Failure Recovery" in f.message for f in findings)
+
+
+def test_agent_handoff_circular_and_reverse_arrow_edges(tmp_path: Path) -> None:
+    """Reverse/circular agent arrows do not satisfy locked forward handoff phrases.
+
+    Circular handoff detection is not a separate coded feature; these edges assert
+    existing substring locks reject reverse-direction text and inventory duplicates.
+    """
+    reverse_only = "\n".join(
+        [
+            "#### 22.4.1 Handoff Sequence",
+            "**Phase 1: Algorithm Design**",
+            "**Phase 2: Contract Design**",
+            "**Phase 3: Implementation**",
+            "**Phase 4: Orchestration Decision**",
+            # reverse arrows — opposite of locked forward chain
+            "BlockchainArchitectAgent → QuantumArchitectAgent",
+            "EdgeSecurityAgent → BlockchainArchitectAgent",
+            "OrchestrationAgent → EdgeSecurityAgent",
+            "All Agents → OrchestrationAgent",
+            "Logs decision in postmortem.md",
+            "",
+        ]
+    )
+    _write(tmp_path / "AGENTS-v2.2.md", reverse_only)
+    findings = vm.validate_constitution_handoff(tmp_path)
+    assert any(
+        "QuantumArchitectAgent → BlockchainArchitectAgent" in f.message
+        for f in findings
+    ), [f.message for f in findings]
+
+    # circular phase re-entry text still missing the locked forward arrow
+    circular_body = "\n".join(
+        [
+            "#### 22.4.1 Handoff Sequence",
+            "**Phase 1: Algorithm Design**",
+            "**Phase 2: Contract Design**",
+            "**Phase 3: Implementation**",
+            "**Phase 4: Orchestration Decision**",
+            "QuantumArchitectAgent → BlockchainArchitectAgent → "
+            "EdgeSecurityAgent → OrchestrationAgent → QuantumArchitectAgent",
+            "Logs decision in postmortem.md",
+            "",
+        ]
+    )
+    _write(tmp_path / "AGENTS-v2.2.md", circular_body)
+    findings = vm.validate_constitution_handoff(tmp_path)
+    # locked exact arrow substring is present as a prefix of the circular chain,
+    # so handoff may pass on that phrase — assert remaining locks still hold and
+    # that a broken circular rewrite without the exact locked token fails.
+    assert all(
+        "missing locked constitution-handoff phrase: **Phase" not in f.message
+        for f in findings
+    ) or findings == []
+
+    broken_circular = circular_body.replace(
+        "QuantumArchitectAgent → BlockchainArchitectAgent",
+        "QuantumArchitectAgent <- BlockchainArchitectAgent",
+    )
+    _write(tmp_path / "AGENTS-v2.2.md", broken_circular)
+    findings = vm.validate_constitution_handoff(tmp_path)
+    assert any(
+        "QuantumArchitectAgent → BlockchainArchitectAgent" in f.message
+        for f in findings
+    )
+
+    # inventory duplicate phase entries (cycle-like dup) rejected by uniqueness
+    dup = _inventory_payload()
+    dup["constitution_handoff_required_phrases"] = [
+        vm.CONSTITUTION_HANDOFF_REQUIRED_PHRASES[0],
+        vm.CONSTITUTION_HANDOFF_REQUIRED_PHRASES[0],
+        *vm.CONSTITUTION_HANDOFF_REQUIRED_PHRASES[1:],
+    ]
+    findings = vm._inventory_lock_consistency(
+        dup, schema_path="schemas/packaging-inventory.json"
+    )
+    assert any(
+        "constitution_handoff_required_phrases must be unique" in f.message
+        for f in findings
+    )
+
+    # full forward locks still green
+    _write(
+        tmp_path / "AGENTS-v2.2.md",
+        "\n".join([*vm.CONSTITUTION_HANDOFF_REQUIRED_PHRASES, ""]),
+    )
+    assert vm.validate_constitution_handoff(tmp_path) == []
+
+
+def test_agent_handoff_per_phrase_missing_matrix(tmp_path: Path) -> None:
+    """Each locked handoff-cluster phrase omission independently yields a finding."""
+    for fn, section, section_msg, phrases in _AGENT_HANDOFF_PHRASE_SETS:
+        for idx, dropped in enumerate(phrases):
+            kept = [p for i, p in enumerate(phrases) if i != idx]
+            body_parts = list(kept)
+            if section and section != dropped and section not in body_parts:
+                body_parts.insert(0, section)
+            _write(tmp_path / "AGENTS-v2.2.md", "\n".join(body_parts) + "\n")
+            findings = fn(tmp_path)
+            assert findings, (fn.__name__, dropped)
+            assert any(
+                dropped in f.message
+                or (section == dropped and section_msg in f.message)
+                for f in findings
+            ), (fn.__name__, dropped, [f.message for f in findings[:8]])
+
+
+def test_agent_handoff_cross_validator_isolation(tmp_path: Path) -> None:
+    """Each handoff-cluster validator only greens on its own phrase set."""
+    for target_fn, _section, _msg, target_phrases in _AGENT_HANDOFF_PHRASE_SETS:
+        _write(tmp_path / "AGENTS-v2.2.md", "\n".join([*target_phrases, ""]))
+        for other_fn, _s, _m, _p in _AGENT_HANDOFF_PHRASE_SETS:
+            findings = other_fn(tmp_path)
+            if other_fn is target_fn:
+                assert findings == [], other_fn.__name__
+            else:
+                assert findings, other_fn.__name__
+                assert any("missing" in f.message for f in findings)
+
+
+def test_agent_handoff_inventory_consistency_and_mismatch_matrix(
+    tmp_path: Path,
+) -> None:
+    """Empty/dup/blank/seed + packaging mismatch for handoff + rollback inventory keys."""
+    keys = [
+        (
+            "constitution_handoff_required_phrases",
+            vm.CONSTITUTION_HANDOFF_REQUIRED_PHRASES,
+            "22.4.1/Phase 1/Phase 4",
+        ),
+        (
+            "constitution_multichain_required_phrases",
+            vm.CONSTITUTION_MULTICHAIN_REQUIRED_PHRASES,
+            "22.3/State Commitment/Failure Recovery",
+        ),
+        (
+            "constitution_escalation_matrix_required_phrases",
+            vm.CONSTITUTION_ESCALATION_MATRIX_REQUIRED_PHRASES,
+            "22.4.2/QuantumArchitect/Orchestration",
+        ),
+        (
+            "constitution_recipe_orchestration_required_phrases",
+            vm.CONSTITUTION_RECIPE_ORCHESTRATION_REQUIRED_PHRASES,
+            "22.5",
+        ),
+        (
+            "constitution_scratchpad_state_required_phrases",
+            vm.CONSTITUTION_SCRATCHPAD_STATE_REQUIRED_PHRASES,
+            "22.6",
+        ),
+        (
+            "constitution_conflict_matrix_required_phrases",
+            vm.CONSTITUTION_CONFLICT_MATRIX_REQUIRED_PHRASES,
+            "22.7",
+        ),
+    ]
+
+    _copy_schemas(tmp_path)
+    for rel in _inventory_payload()["required_paths"]:
+        target = tmp_path / rel
+        target.parent.mkdir(parents=True, exist_ok=True)
+        if not target.exists():
+            target.write_text("ok\n", encoding="utf-8")
+
+    for key, phrases, include_token in keys:
+        payload = _inventory_payload()
+        payload[key] = []
+        findings = vm._inventory_lock_consistency(
+            payload, schema_path="schemas/packaging-inventory.json"
+        )
+        assert any(f"{key} must not be empty" in f.message for f in findings)
+
+        payload = _inventory_payload()
+        payload[key] = [phrases[0], phrases[0], *phrases[1:]]
+        findings = vm._inventory_lock_consistency(
+            payload, schema_path="schemas/packaging-inventory.json"
+        )
+        assert any(f"{key} must be unique" in f.message for f in findings)
+
+        payload = _inventory_payload()
+        payload[key] = ["ok", "  "]
+        findings = vm._inventory_lock_consistency(
+            payload, schema_path="schemas/packaging-inventory.json"
+        )
+        assert any(
+            f"{key} entries must be non-empty strings" in f.message for f in findings
+        )
+
+        payload = _inventory_payload()
+        payload[key] = [phrases[0]]
+        findings = vm._inventory_lock_consistency(
+            payload, schema_path="schemas/packaging-inventory.json"
+        )
+        assert any(f"{key} must include" in f.message for f in findings)
+        assert any(
+            include_token.split("/")[0] in f.message or include_token in f.message
+            for f in findings
+        )
+
+        bad = _inventory_payload(**{key: list(phrases)[:-1] + [f"invented-{key}"]})
+        (tmp_path / "schemas" / "packaging-inventory.json").write_text(
+            json.dumps(bad), encoding="utf-8"
+        )
+        findings = vm.validate_packaging_inventory(tmp_path)
+        assert any(key in f.message for f in findings)
+
+    # leave packaging inventory restored for any later local reuse of tmp_path
+    (tmp_path / "schemas" / "packaging-inventory.json").write_text(
+        json.dumps(_inventory_payload()), encoding="utf-8"
+    )
+    assert vm.INVENTORY_VERSION == 51
+    assert len(vm.VALIDATORS) == 184
