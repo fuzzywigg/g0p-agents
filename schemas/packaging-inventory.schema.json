@@ -51,11 +51,14 @@
     "constitution_on_device_required_phrases",
     "contributing_branch_required_phrases",
     "contributing_branch_surfaces",
+    "contributing_ci_honesty_required_phrases",
     "contributing_governance_required_phrases",
     "contributing_issues_required_phrases",
     "contributing_local_required_phrases",
+    "contributing_metadata_required_phrases",
     "contributing_pr_required_phrases",
     "contributing_required_phrases",
+    "contributing_surfaces_required_phrases",
     "contributing_who_required_phrases",
     "coverage_branch",
     "coverage_show_missing",
@@ -1656,6 +1659,33 @@
       }
     },
     "constitution_escalation_format_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "contributing_metadata_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "contributing_surfaces_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "contributing_ci_honesty_required_phrases": {
       "type": "array",
       "minItems": 1,
       "uniqueItems": true,
