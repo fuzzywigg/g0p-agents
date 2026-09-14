@@ -26,6 +26,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   #151 (thirty-three prompt-pre-v52 residuals), and closed CONFLICTING #150
   constitution invent.
 
+- Execution residual **tests-only** deepeners after **#151** tip (EXISTING eight
+  `execution-*` phrase-lock validators + distinct execution↔goose cross-doc
+  isolation — no invented product / inventory bump): concurrent validate races,
+  empty/whitespace/header-only EXECUTION-SUMMARY, invalid/invented
+  execution-timeout sibling keys, per-phrase drop matrix, inventory mismatch
+  matrix, cross-isolation, historic-four invented-agent fixture edges, and
+  goose cross-doc isolation against `execution-summary` /
+  `execution-specialists` / `execution-timeline` / `execution-technologies` /
+  `execution-workflow` / `execution-ide` / `execution-innovations` /
+  `execution-next48`. Historic four only; inventory unchanged (v52 / 196).
+  Distinct from merged goose-recipe #147, prompt-pre-v52 #151, constitution
+  residual #156, prompt-v52 #144, closed CONFLICTING #154, and orch-timeout
+  drafts.
+
 - Prompt-pre-v52 residual **tests-only** deepeners after #144/#147 tip (EXISTING
   thirty-three pre-v52 `prompt-*` fixtures only, including
   `prompt-orchestration-matrix` — no invented product / inventory bump):
