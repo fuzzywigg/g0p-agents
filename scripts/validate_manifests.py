@@ -63,6 +63,9 @@ Checks structural correctness of:
 - GitHub agent description lock
 - Expanded Cursor install refs matching live environment.json
 
+- AGENTS-v2.2.md constitution specialist-table / quantum-safe crypto /
+  quarterly risk-tolerance (12.4.1) locks (constitution slice)
+
 Does not invent agents or scaffold new specialist definitions.
 """
 
@@ -160,7 +163,7 @@ REQUIRED_ARCHIVE_DOCS = (
     "README.md",
 )
 
-INVENTORY_VERSION = 29
+INVENTORY_VERSION = 30
 CURSOR_ENVIRONMENT_NAME = "g0p-agents"
 DEPENDABOT_SCHEDULE_INTERVAL = "weekly"
 DEPENDABOT_DIRECTORIES: frozenset[str] = frozenset({"/"})
@@ -941,6 +944,34 @@ EXECUTION_WORKFLOW_REQUIRED_PHRASES: tuple[str, ...] = (
     "Agents Disagree → OrchestrationAgent Reviews",
 )
 
+CONSTITUTION_SPECIALISTS_REQUIRED_PHRASES: tuple[str, ...] = (
+    "## 6.4.1 Quantum-Blockchain Specialist Agents",
+    "QuantumArchitectAgent",
+    "BlockchainArchitectAgent",
+    "EdgeSecurityAgent",
+    "OrchestrationAgent",
+    "Quantum Computing",
+    "Blockchain Dev",
+    "On-Device Security",
+    "Meta/Strategic",
+)
+CONSTITUTION_CRYPTO_REQUIRED_PHRASES: tuple[str, ...] = (
+    "### 22.1 Quantum-Safe Cryptography Requirements",
+    "CRYSTALS-Kyber",
+    "CRYSTALS-Dilithium",
+    "SPHINCS+",
+    "liboqs",
+    "Never use classical RSA/ECDSA for new implementations",
+)
+CONSTITUTION_RISK_REQUIRED_PHRASES: tuple[str, ...] = (
+    "## 25. Quarterly Risk Tolerance Review (Section 12.4.1)",
+    "### 12.4.1 Risk Tolerance Evolution Protocol",
+    "Every 90 days",
+    "Success rate > 99.5%",
+    "Review incident log (postmortem.md)",
+    "**Rollback Trigger**:",
+)
+
 CONTRIBUTING_BRANCH_SURFACES: tuple[str, ...] = ("copilot", "geryon", "cursor")
 
 SCRATCHPAD_STATUS_MARKERS: tuple[str, ...] = (
@@ -953,7 +984,7 @@ SCRATCHPAD_STATUS_MARKERS: tuple[str, ...] = (
 SPECIALIST_AGENTS: tuple[str, ...] = DOCUMENTED_AGENTS[:-1]
 
 MIN_COVERAGE_FAIL_UNDER = 99
-MIN_VALIDATOR_COUNT = 100
+MIN_VALIDATOR_COUNT = 103
 
 
 @dataclass(frozen=True)
@@ -1880,6 +1911,31 @@ def validate_packaging_inventory(root: Path) -> list[Finding]:
     ):
         findings.append(
             _lock_mismatch(schema_path, "contributing_governance_required_phrases")
+        )
+
+
+    if (
+        tuple(inventory.get("constitution_specialists_required_phrases", ()))
+        != CONSTITUTION_SPECIALISTS_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "constitution_specialists_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("constitution_crypto_required_phrases", ()))
+        != CONSTITUTION_CRYPTO_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "constitution_crypto_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("constitution_risk_required_phrases", ()))
+        != CONSTITUTION_RISK_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "constitution_risk_required_phrases")
         )
 
     expected_validator_names = tuple(sorted(VALIDATORS))
@@ -3854,6 +3910,118 @@ def _inventory_lock_consistency(
                     "Governance/Structural changes/Andrew approval",
                 )
             )
+
+
+    specialists = list(inventory.get("constitution_specialists_required_phrases", ()))
+    if len(specialists) != len(set(specialists)):
+        findings.append(
+            Finding(
+                schema_path,
+                "constitution_specialists_required_phrases must be unique",
+            )
+        )
+    if not specialists:
+        findings.append(
+            Finding(
+                schema_path,
+                "constitution_specialists_required_phrases must not be empty",
+            )
+        )
+    for phrase in specialists:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "constitution_specialists_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_specialists = {
+            "## 6.4.1 Quantum-Blockchain Specialist Agents",
+            "QuantumArchitectAgent",
+            "OrchestrationAgent",
+        }
+        if specialists and not required_specialists <= set(specialists):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "constitution_specialists_required_phrases must include "
+                    "6.4.1/QuantumArchitect/Orchestration",
+                )
+            )
+
+    crypto = list(inventory.get("constitution_crypto_required_phrases", ()))
+    if len(crypto) != len(set(crypto)):
+        findings.append(
+            Finding(schema_path, "constitution_crypto_required_phrases must be unique")
+        )
+    if not crypto:
+        findings.append(
+            Finding(
+                schema_path, "constitution_crypto_required_phrases must not be empty"
+            )
+        )
+    for phrase in crypto:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "constitution_crypto_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_crypto = {
+            "### 22.1 Quantum-Safe Cryptography Requirements",
+            "CRYSTALS-Kyber",
+            "SPHINCS+",
+        }
+        if crypto and not required_crypto <= set(crypto):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "constitution_crypto_required_phrases must include 22.1/"
+                    "Kyber/SPHINCS+",
+                )
+            )
+
+    risk = list(inventory.get("constitution_risk_required_phrases", ()))
+    if len(risk) != len(set(risk)):
+        findings.append(
+            Finding(schema_path, "constitution_risk_required_phrases must be unique")
+        )
+    if not risk:
+        findings.append(
+            Finding(schema_path, "constitution_risk_required_phrases must not be empty")
+        )
+    for phrase in risk:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "constitution_risk_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_risk = {
+            "## 25. Quarterly Risk Tolerance Review (Section 12.4.1)",
+            "### 12.4.1 Risk Tolerance Evolution Protocol",
+            "**Rollback Trigger**:",
+        }
+        if risk and not required_risk <= set(risk):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "constitution_risk_required_phrases must include Section 25/"
+                    "12.4.1/Rollback",
+                )
+            )
+
 
     return findings
 
@@ -5901,6 +6069,58 @@ def validate_execution_workflow(root: Path) -> list[Finding]:
     return findings
 
 
+
+def validate_constitution_specialists(root: Path) -> list[Finding]:
+    rel = "AGENTS-v2.2.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "AGENTS-v2.2.md missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## 6.4.1 Quantum-Blockchain Specialist Agents" not in text:
+        findings.append(Finding(rel, "missing 6.4.1 Specialist Agents section"))
+    for phrase in CONSTITUTION_SPECIALISTS_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(rel, f"missing locked constitution-specialists phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_constitution_crypto(root: Path) -> list[Finding]:
+    rel = "AGENTS-v2.2.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "AGENTS-v2.2.md missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "### 22.1 Quantum-Safe Cryptography Requirements" not in text:
+        findings.append(Finding(rel, "missing 22.1 Quantum-Safe Cryptography section"))
+    for phrase in CONSTITUTION_CRYPTO_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(rel, f"missing locked constitution-crypto phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_constitution_risk(root: Path) -> list[Finding]:
+    rel = "AGENTS-v2.2.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "AGENTS-v2.2.md missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## 25. Quarterly Risk Tolerance Review (Section 12.4.1)" not in text:
+        findings.append(Finding(rel, "missing Section 25 Risk Tolerance Review"))
+    for phrase in CONSTITUTION_RISK_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(rel, f"missing locked constitution-risk phrase: {phrase}")
+            )
+    return findings
+
+
 def validate_agent_task_template(root: Path) -> list[Finding]:
     rel = ".github/ISSUE_TEMPLATE/agent_task.md"
     path = root / rel
@@ -7049,6 +7269,9 @@ VALIDATORS: dict[str, ValidatorFn] = {
     "recipe-titles": validate_recipe_titles,
     "agent-tokens": validate_archive_agent_tokens,
     "constitution": validate_constitution_agent_headings,
+    "constitution-specialists": validate_constitution_specialists,
+    "constitution-crypto": validate_constitution_crypto,
+    "constitution-risk": validate_constitution_risk,
     "routing": validate_routing_surfaces,
     "environment": validate_cursor_environment,
     "github-agents": validate_github_agents,

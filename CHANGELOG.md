@@ -10,6 +10,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Constitution **v30** deepeners (post-#63 contributing v29):
+  `constitution-specialists`, `constitution-crypto`, `constitution-risk`
+  validators; AGENTS-v2.2.md §6.4.1 specialist-table locks, §22.1 quantum-safe
+  crypto (Kyber/Dilithium/SPHINCS+/liboqs) locks, and §25 / 12.4.1 quarterly
+  risk-tolerance / rollback locks; consistency deepeners for
+  `constitution_specialists_required_phrases` /
+  `constitution_crypto_required_phrases` / `constitution_risk_required_phrases`
+  (103 total; historic four only — constitution slice, not contributing,
+  execution-summary, implementation-guide, agent prompts, goose recipes,
+  README honesty, PR-template, issue-template, scratchpad, postmortem, archive
+  snapshot, security policy, routing/identity, or Dependabot)
+
 - Contributing guide **v29** deepeners (post-#61): `contributing-issues`,
   `contributing-local`, `contributing-governance` validators; CONTRIBUTING.md
   Issue Reporting / Bug / Feature / Agent Task locks, Local validation
