@@ -62,6 +62,10 @@ Checks structural correctness of:
 - docs/agent-hydration.md PHASE 1 / LIST A / PHASE 3 resolved /
 - AGENTS-v2.2.md §23 IDE stack / install / VS Code /
   §24 hard-constraints / §25 risk-tolerance leftover locks
+- AGENTS-v2.2.md §6.4 specialists-overview / quantum-profile / blockchain-profile leftover locks
+- AGENTS-v2.2.md §6.4 edge-profile / orch-profile / §22 crypto-residual leftover locks
+- AGENTS-v2.2.md §22 on-device-residual / multichain-residual / handoff-residual leftover locks
+- AGENTS-v2.2.md §22 recipe-yaml-residual / §23 install-residual / §12 risk-residual leftover locks
 - CHANGELOG.md preamble / Changed / 0.1.0 initial leftover locks
 - AGENT-PROMPTS.md expertise / principles / metrics leftover locks
 - AGENT-PROMPTS.md tools / communication / escalation-identity leftover locks
@@ -192,7 +196,7 @@ REQUIRED_ARCHIVE_DOCS = (
     "README.md",
 )
 
-INVENTORY_VERSION = 52
+INVENTORY_VERSION = 53
 CURSOR_ENVIRONMENT_NAME = "g0p-agents"
 DEPENDABOT_SCHEDULE_INTERVAL = "weekly"
 DEPENDABOT_DIRECTORIES: frozenset[str] = frozenset({"/"})
@@ -685,6 +689,171 @@ CONSTITUTION_RISK_TOLERANCE_REQUIRED_PHRASES: tuple[str, ...] = (
     "If failure rate > 2% in new tier, immediately revert to previous tier.",
 )
 
+
+CONSTITUTION_SPECIALISTS_OVERVIEW_REQUIRED_PHRASES: tuple[str, ...] = (
+    '## 6.4.1 Quantum-Blockchain Specialist Agents',
+    'The system includes four coordinated agents specializing in quantum computing, blockchain development, on-device security, and strategic orchestration:',  # noqa: E501
+    '| Agent | Community | Primary Focus | Key Tools | Success Metrics |',
+    'Algorithm design, circuit optimization, quantum-safe validation',
+    'Circuit depth <50 gates, error rate <1%',
+    'Multi-chain architecture, smart contracts, consensus design',
+    '0 critical vulnerabilities, <2500 gas/op',
+    'Mobile crypto, data protection, constrained optimization',
+    'Crypto ops <500ms, data isolation 100%',
+    'Cross-domain coordination, trade-off resolution, escalation',
+    'Team consensus, on-time delivery',
+    '### 6.4.2 Agent Expertise Profiles',
+)
+
+CONSTITUTION_QUANTUM_PROFILE_REQUIRED_PHRASES: tuple[str, ...] = (
+    '#### QuantumArchitectAgent: "The Theorist"',
+    '**Archetype**: Quantum physicist + quantum engineer hybrid',
+    "Quantum algorithm design (Shor's, Grover's, VQE)",
+    'Google Cirq expertise (circuit construction, simulation)',
+    'Qualtran (resource analysis, fault-tolerant designs)',
+    'Quantum timeline simulation (your "Mickey 18" concept)',
+    '**Communication Style**: Technical, precise. Explains via circuit diagrams and algorithm complexity. Conservative on claims.',  # noqa: E501
+    '**Decision Making**: Prioritizes quantum-safety over performance. Recommends testing on multiple backends. Flags emerging threats.',  # noqa: E501
+    'Jupyter (interactive circuit design)',
+    'Cannot achieve required circuit depth with current algorithms',
+    'Quantum advantage deadline approaching',
+)
+
+CONSTITUTION_BLOCKCHAIN_PROFILE_REQUIRED_PHRASES: tuple[str, ...] = (
+    '#### BlockchainArchitectAgent: "The System Designer"',
+    '**Archetype**: Systems architect + cryptographic security engineer',
+    'Cryptographic threat modeling (classical + post-quantum)',
+    'Cross-chain state synchronization',
+    '**Communication Style**: Clear, structured. Explains via architecture diagrams. Risk-aware ("this could fail if...").',  # noqa: E501
+    '**Decision Making**: Balances security with usability. Prioritizes multi-chain resilience. Recommends staged rollouts.',  # noqa: E501
+    'Security audit fails',
+    'Multi-chain state inconsistency detected',
+    'Gas cost exceeds acceptable threshold',
+)
+
+CONSTITUTION_EDGE_PROFILE_REQUIRED_PHRASES: tuple[str, ...] = (
+    '#### EdgeSecurityAgent: "The Guardian"',
+    '**Archetype**: Mobile security specialist + cryptographer',
+    'Health data privacy (HIPAA, GDPR applicability)',
+    'Constrained systems programming',
+    '**Communication Style**: Pragmatic, performance-aware. Explains via user flow diagrams. Conservative on capabilities.',  # noqa: E501
+    '**Decision Making**: Prioritizes user security and privacy. Recommends constraint-based designs. Flags performance issues early.',  # noqa: E501
+    'Device cannot meet crypto performance requirements',
+    'Data isolation breach detected',
+    'Apple/Google security review fails',
+)
+
+CONSTITUTION_ORCH_PROFILE_REQUIRED_PHRASES: tuple[str, ...] = (
+    '#### OrchestrationAgent: "The Conductor" (You)',
+    '**Archetype**: Strategic orchestrator, domain bridge, vision custodian',
+    'Strategic thinking (quantum + blockchain + security integration)',
+    'Trade-off analysis (security vs. performance vs. usability)',
+    'Risk management (technical + financial)',
+    'Long-term vision (Mickey 18 → technical architecture)',
+    'Ecosystem coordination',
+    'Final decision on architectural conflicts',
+    'Escalation handling (when agents disagree)',
+    'Vision articulation and roadmap planning',
+    'Risk tolerance updates (quarterly review, Section 12.4.1)',
+    'Team consensus on direction',
+)
+
+CONSTITUTION_CRYPTO_RESIDUAL_REQUIRED_PHRASES: tuple[str, ...] = (
+    '## 22. Quantum-Blockchain Integration Standards',
+    "All cryptographic operations in FUZZYWIGG's multi-chain structures **MUST** use post-quantum algorithms:",  # noqa: E501
+    'All keys MUST be rotated to post-quantum equivalents before quantum advantage is achieved',
+    'On-device implementations MUST validate key formats',
+)
+
+CONSTITUTION_ON_DEVICE_RESIDUAL_REQUIRED_PHRASES: tuple[str, ...] = (
+    'For any quantum computation executed on-device (mobile):',
+    'MUST validate correctness on testnet before mainnet deployment',
+    'MUST NOT expose quantum results in plaintext to user (always encrypt)',
+    'Battery drain: < 2% per transaction',
+    'Network latency: < 1 second for result transmission',
+    '2. **Device testnet**: Execute 100x with random inputs',
+    '3. **Staging**: Execute on test devices with monitoring',
+    '4. **Production**: Gradual rollout (10% → 50% → 100%)',
+)
+
+CONSTITUTION_MULTICHAIN_RESIDUAL_REQUIRED_PHRASES: tuple[str, ...] = (
+    'When quantum operations span multiple chains:',
+    '1. User initiates operation on primary chain',
+    '3. Quantum computation executed (off-chain or on specialized chain)',
+    '5. Signature published to all dependent chains',
+    '6. State updated atomically (or rolled back if signature invalid)',
+    'If quantum computation fails: revert to state before step 2',
+    'If signature fails: escalate to user, no state change',
+    'If multi-chain sync fails: hold state in "pending" until resolved',
+    '**Rollback Procedure**:',
+    'Pre-define rollback contract for every quantum operation',
+    'Rollback MUST restore state to prior-to-operation snapshot',
+    'Gas cost of rollback: user pays (not subsidized)',
+)
+
+CONSTITUTION_HANDOFF_RESIDUAL_REQUIRED_PHRASES: tuple[str, ...] = (
+    '### 22.4 Agent Coordination Protocol',
+    'The four specialist agents coordinate via YAML recipes and shared scratchpad. This section defines the formal handoff protocol.',  # noqa: E501
+    '- Cirq circuit (optimized)',
+    '- Gate count (actual)',
+    '- Circuit depth (actual)',
+    '- Error rate (simulated)',
+    '"Here\'s a quantum factorization circuit. Can you design a smart contract interface that calls this?"',  # noqa: E501
+    '- Smart contract interface (Solidity ABI)',
+    '"Implement this quantum interface on mobile. Encrypt inputs, decrypt outputs, validate signatures."',  # noqa: E501
+    '"Implementation complete. Ready for deployment. Any conflicts?"',
+    '- Reviews all three outputs',
+    '- Resolves conflicts (if any)',
+    '- Makes final go/no-go decision',
+    '- Escalates to human if needed',
+)
+
+CONSTITUTION_RECIPE_YAML_RESIDUAL_REQUIRED_PHRASES: tuple[str, ...] = (
+    'Orchestrate a quantum-validated NFT mint operation.',
+    '4. ALL AGENTS: Update scratchpad with approval status',
+    'Execute on testnet first',
+    'Wait for 2 block confirmations',
+    'Execute on mainnet',
+    'Log transaction hash',
+    'Stop immediately',
+    'Log conflict in postmortem.md',
+    'Request human arbitration',
+    'name: quantum_service',
+    'name: blockchain_service',
+    'name: edge_security_service',
+)
+
+CONSTITUTION_INSTALL_RESIDUAL_REQUIRED_PHRASES: tuple[str, ...] = (
+    '#!/bin/bash',
+    '# Run this in WSL2 Ubuntu 22.04',
+    'sudo apt update && sudo apt upgrade -y',
+    'echo "Installing Quantum frameworks..."',
+    'cirq-google',
+    'qiskit-aer',
+    'jupyterlab',
+    'curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -',
+    '@nomicfoundation/hardhat-toolbox',
+    '@openzeppelin/hardhat-upgrades',
+    'hardhat-gas-reporter',
+    'solidity-coverage',
+    'mkdir -p ~/fuzzywigg-ai/contracts',
+    'mkdir -p ~/fuzzywigg-ai/mobile',
+    'echo "  cd ~/fuzzywigg-ai && npx hardhat node"',
+    'echo "  jupyter lab"',
+)
+
+CONSTITUTION_RISK_RESIDUAL_REQUIRED_PHRASES: tuple[str, ...] = (
+    'Add to Section 12 (Security Invariants):',
+    '**Success Metrics for Threshold Increase**:',
+    'Average transaction value < approved tier by >20%',
+    'No security audits detected vulnerabilities',
+    '1. Document current tier performance',
+    '3. Propose new threshold with justification',
+    '5. Log decision in AGENTS.md with effective date',
+    '6. Update this file with new threshold',
+    '**Rollback Trigger**:',
+)
+
 CHANGELOG_PREAMBLE_REQUIRED_PHRASES: tuple[str, ...] = (
     "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).",
     "https://keepachangelog.com/en/1.0.0/",
@@ -845,7 +1014,7 @@ CONTRIBUTING_CI_HONESTY_REQUIRED_PHRASES: tuple[str, ...] = (
     "markdown lint, link check, actionlint",
     "manifest validate on Python 3.11/3.12/3.13",
     "Andrew or designated reviewer",
-    "Packaging inventory v52",
+    "Packaging inventory v53",
     "refuse invented recipes",
     "orphan on-disk YAML",
     "unknown `*Agent` tokens",
@@ -1919,7 +2088,7 @@ SCRATCHPAD_STATUS_MARKERS: tuple[str, ...] = (
 SPECIALIST_AGENTS: tuple[str, ...] = DOCUMENTED_AGENTS[:-1]
 
 MIN_COVERAGE_FAIL_UNDER = 99
-MIN_VALIDATOR_COUNT = 196
+MIN_VALIDATOR_COUNT = 208
 
 
 @dataclass(frozen=True)
@@ -2893,6 +3062,102 @@ def validate_packaging_inventory(root: Path) -> list[Finding]:
     ):
         findings.append(
             _lock_mismatch(schema_path, "constitution_risk_tolerance_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("constitution_specialists_overview_required_phrases", ()))
+        != CONSTITUTION_SPECIALISTS_OVERVIEW_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "constitution_specialists_overview_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("constitution_quantum_profile_required_phrases", ()))
+        != CONSTITUTION_QUANTUM_PROFILE_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "constitution_quantum_profile_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("constitution_blockchain_profile_required_phrases", ()))
+        != CONSTITUTION_BLOCKCHAIN_PROFILE_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "constitution_blockchain_profile_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("constitution_edge_profile_required_phrases", ()))
+        != CONSTITUTION_EDGE_PROFILE_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "constitution_edge_profile_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("constitution_orch_profile_required_phrases", ()))
+        != CONSTITUTION_ORCH_PROFILE_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "constitution_orch_profile_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("constitution_crypto_residual_required_phrases", ()))
+        != CONSTITUTION_CRYPTO_RESIDUAL_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "constitution_crypto_residual_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("constitution_on_device_residual_required_phrases", ()))
+        != CONSTITUTION_ON_DEVICE_RESIDUAL_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "constitution_on_device_residual_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("constitution_multichain_residual_required_phrases", ()))
+        != CONSTITUTION_MULTICHAIN_RESIDUAL_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "constitution_multichain_residual_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("constitution_handoff_residual_required_phrases", ()))
+        != CONSTITUTION_HANDOFF_RESIDUAL_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "constitution_handoff_residual_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("constitution_recipe_yaml_residual_required_phrases", ()))
+        != CONSTITUTION_RECIPE_YAML_RESIDUAL_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "constitution_recipe_yaml_residual_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("constitution_install_residual_required_phrases", ()))
+        != CONSTITUTION_INSTALL_RESIDUAL_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "constitution_install_residual_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("constitution_risk_residual_required_phrases", ()))
+        != CONSTITUTION_RISK_RESIDUAL_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "constitution_risk_residual_required_phrases")
         )
 
     if (
@@ -4843,6 +5108,402 @@ def _inventory_lock_consistency(
                     schema_path,
                     "constitution_risk_tolerance_required_phrases must include "
                     "Risk Tolerance/12.4.1/99.5%/revert",
+                )
+            )
+
+    specialists_overview_phrases = list(inventory.get("constitution_specialists_overview_required_phrases", ()))  # noqa: E501
+    if len(specialists_overview_phrases) != len(set(specialists_overview_phrases)):
+        findings.append(
+            Finding(schema_path, "constitution_specialists_overview_required_phrases must be unique")  # noqa: E501
+        )
+    if not specialists_overview_phrases:
+        findings.append(
+            Finding(schema_path, "constitution_specialists_overview_required_phrases must not be empty")  # noqa: E501
+        )
+    for phrase in specialists_overview_phrases:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "constitution_specialists_overview_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_specialists_overview_phrases = {
+            '## 6.4.1 Quantum-Blockchain Specialist Agents',
+            'Algorithm design, circuit optimization, quantum-safe validation',
+            'Circuit depth <50 gates, error rate <1%',
+        }
+        if specialists_overview_phrases and not required_specialists_overview_phrases <= set(specialists_overview_phrases):  # noqa: E501
+            findings.append(
+                Finding(
+                    schema_path,
+                    'constitution_specialists_overview_required_phrases must include 6.4.1/algorithm design/circuit depth',  # noqa: E501
+                )
+            )
+
+    quantum_profile_phrases = list(inventory.get("constitution_quantum_profile_required_phrases", ()))  # noqa: E501
+    if len(quantum_profile_phrases) != len(set(quantum_profile_phrases)):
+        findings.append(
+            Finding(schema_path, "constitution_quantum_profile_required_phrases must be unique")
+        )
+    if not quantum_profile_phrases:
+        findings.append(
+            Finding(schema_path, "constitution_quantum_profile_required_phrases must not be empty")
+        )
+    for phrase in quantum_profile_phrases:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "constitution_quantum_profile_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_quantum_profile_phrases = {
+            '#### QuantumArchitectAgent: "The Theorist"',
+            '**Archetype**: Quantum physicist + quantum engineer hybrid',
+            'Cannot achieve required circuit depth with current algorithms',
+        }
+        if quantum_profile_phrases and not required_quantum_profile_phrases <= set(quantum_profile_phrases):  # noqa: E501
+            findings.append(
+                Finding(
+                    schema_path,
+                    'constitution_quantum_profile_required_phrases must include Theorist/Archetype/circuit depth escalate',  # noqa: E501
+                )
+            )
+
+    blockchain_profile_phrases = list(inventory.get("constitution_blockchain_profile_required_phrases", ()))  # noqa: E501
+    if len(blockchain_profile_phrases) != len(set(blockchain_profile_phrases)):
+        findings.append(
+            Finding(schema_path, "constitution_blockchain_profile_required_phrases must be unique")
+        )
+    if not blockchain_profile_phrases:
+        findings.append(
+            Finding(schema_path, "constitution_blockchain_profile_required_phrases must not be empty")  # noqa: E501
+        )
+    for phrase in blockchain_profile_phrases:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "constitution_blockchain_profile_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_blockchain_profile_phrases = {
+            '#### BlockchainArchitectAgent: "The System Designer"',
+            '**Archetype**: Systems architect + cryptographic security engineer',
+            'Security audit fails',
+        }
+        if blockchain_profile_phrases and not required_blockchain_profile_phrases <= set(blockchain_profile_phrases):  # noqa: E501
+            findings.append(
+                Finding(
+                    schema_path,
+                    'constitution_blockchain_profile_required_phrases must include System Designer/Archetype/Security audit fails',  # noqa: E501
+                )
+            )
+
+    edge_profile_phrases = list(inventory.get("constitution_edge_profile_required_phrases", ()))
+    if len(edge_profile_phrases) != len(set(edge_profile_phrases)):
+        findings.append(
+            Finding(schema_path, "constitution_edge_profile_required_phrases must be unique")
+        )
+    if not edge_profile_phrases:
+        findings.append(
+            Finding(schema_path, "constitution_edge_profile_required_phrases must not be empty")
+        )
+    for phrase in edge_profile_phrases:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "constitution_edge_profile_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_edge_profile_phrases = {
+            '#### EdgeSecurityAgent: "The Guardian"',
+            '**Archetype**: Mobile security specialist + cryptographer',
+            'Apple/Google security review fails',
+        }
+        if edge_profile_phrases and not required_edge_profile_phrases <= set(edge_profile_phrases):
+            findings.append(
+                Finding(
+                    schema_path,
+                    'constitution_edge_profile_required_phrases must include Guardian/Archetype/Apple Google review fails',  # noqa: E501
+                )
+            )
+
+    orch_profile_phrases = list(inventory.get("constitution_orch_profile_required_phrases", ()))
+    if len(orch_profile_phrases) != len(set(orch_profile_phrases)):
+        findings.append(
+            Finding(schema_path, "constitution_orch_profile_required_phrases must be unique")
+        )
+    if not orch_profile_phrases:
+        findings.append(
+            Finding(schema_path, "constitution_orch_profile_required_phrases must not be empty")
+        )
+    for phrase in orch_profile_phrases:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "constitution_orch_profile_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_orch_profile_phrases = {
+            '#### OrchestrationAgent: "The Conductor" (You)',
+            '**Archetype**: Strategic orchestrator, domain bridge, vision custodian',
+            'Final decision on architectural conflicts',
+        }
+        if orch_profile_phrases and not required_orch_profile_phrases <= set(orch_profile_phrases):
+            findings.append(
+                Finding(
+                    schema_path,
+                    'constitution_orch_profile_required_phrases must include Conductor/Archetype/Final decision',  # noqa: E501
+                )
+            )
+
+    crypto_residual_phrases = list(inventory.get("constitution_crypto_residual_required_phrases", ()))  # noqa: E501
+    if len(crypto_residual_phrases) != len(set(crypto_residual_phrases)):
+        findings.append(
+            Finding(schema_path, "constitution_crypto_residual_required_phrases must be unique")
+        )
+    if not crypto_residual_phrases:
+        findings.append(
+            Finding(schema_path, "constitution_crypto_residual_required_phrases must not be empty")
+        )
+    for phrase in crypto_residual_phrases:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "constitution_crypto_residual_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_crypto_residual_phrases = {
+            '## 22. Quantum-Blockchain Integration Standards',
+            'All keys MUST be rotated to post-quantum equivalents before quantum advantage is achieved',  # noqa: E501
+            'On-device implementations MUST validate key formats',
+        }
+        if crypto_residual_phrases and not required_crypto_residual_phrases <= set(crypto_residual_phrases):  # noqa: E501
+            findings.append(
+                Finding(
+                    schema_path,
+                    'constitution_crypto_residual_required_phrases must include Integration Standards/key rotation/key formats',  # noqa: E501
+                )
+            )
+
+    on_device_residual_phrases = list(inventory.get("constitution_on_device_residual_required_phrases", ()))  # noqa: E501
+    if len(on_device_residual_phrases) != len(set(on_device_residual_phrases)):
+        findings.append(
+            Finding(schema_path, "constitution_on_device_residual_required_phrases must be unique")
+        )
+    if not on_device_residual_phrases:
+        findings.append(
+            Finding(schema_path, "constitution_on_device_residual_required_phrases must not be empty")  # noqa: E501
+        )
+    for phrase in on_device_residual_phrases:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "constitution_on_device_residual_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_on_device_residual_phrases = {
+            'Battery drain: < 2% per transaction',
+            'For any quantum computation executed on-device (mobile):',
+            'MUST validate correctness on testnet before mainnet deployment',
+        }
+        if on_device_residual_phrases and not required_on_device_residual_phrases <= set(on_device_residual_phrases):  # noqa: E501
+            findings.append(
+                Finding(
+                    schema_path,
+                    'constitution_on_device_residual_required_phrases must include on-device mobile/testnet validate/Battery drain',  # noqa: E501
+                )
+            )
+
+    multichain_residual_phrases = list(inventory.get("constitution_multichain_residual_required_phrases", ()))  # noqa: E501
+    if len(multichain_residual_phrases) != len(set(multichain_residual_phrases)):
+        findings.append(
+            Finding(schema_path, "constitution_multichain_residual_required_phrases must be unique")
+        )
+    if not multichain_residual_phrases:
+        findings.append(
+            Finding(schema_path, "constitution_multichain_residual_required_phrases must not be empty")  # noqa: E501
+        )
+    for phrase in multichain_residual_phrases:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "constitution_multichain_residual_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_multichain_residual_phrases = {
+            '**Rollback Procedure**:',
+            'Gas cost of rollback: user pays (not subsidized)',
+            'When quantum operations span multiple chains:',
+        }
+        if multichain_residual_phrases and not required_multichain_residual_phrases <= set(multichain_residual_phrases):  # noqa: E501
+            findings.append(
+                Finding(
+                    schema_path,
+                    'constitution_multichain_residual_required_phrases must include span multiple chains/Rollback Procedure/user pays',  # noqa: E501
+                )
+            )
+
+    handoff_residual_phrases = list(inventory.get("constitution_handoff_residual_required_phrases", ()))  # noqa: E501
+    if len(handoff_residual_phrases) != len(set(handoff_residual_phrases)):
+        findings.append(
+            Finding(schema_path, "constitution_handoff_residual_required_phrases must be unique")
+        )
+    if not handoff_residual_phrases:
+        findings.append(
+            Finding(schema_path, "constitution_handoff_residual_required_phrases must not be empty")
+        )
+    for phrase in handoff_residual_phrases:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "constitution_handoff_residual_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_handoff_residual_phrases = {
+            '"Implementation complete. Ready for deployment. Any conflicts?"',
+            '### 22.4 Agent Coordination Protocol',
+            '- Cirq circuit (optimized)',
+        }
+        if handoff_residual_phrases and not required_handoff_residual_phrases <= set(handoff_residual_phrases):  # noqa: E501
+            findings.append(
+                Finding(
+                    schema_path,
+                    'constitution_handoff_residual_required_phrases must include Coordination Protocol/Cirq circuit/Implementation complete',  # noqa: E501
+                )
+            )
+
+    recipe_yaml_residual_phrases = list(inventory.get("constitution_recipe_yaml_residual_required_phrases", ()))  # noqa: E501
+    if len(recipe_yaml_residual_phrases) != len(set(recipe_yaml_residual_phrases)):
+        findings.append(
+            Finding(schema_path, "constitution_recipe_yaml_residual_required_phrases must be unique")  # noqa: E501
+        )
+    if not recipe_yaml_residual_phrases:
+        findings.append(
+            Finding(schema_path, "constitution_recipe_yaml_residual_required_phrases must not be empty")  # noqa: E501
+        )
+    for phrase in recipe_yaml_residual_phrases:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "constitution_recipe_yaml_residual_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_recipe_yaml_residual_phrases = {
+            '4. ALL AGENTS: Update scratchpad with approval status',
+            'Orchestrate a quantum-validated NFT mint operation.',
+            'name: quantum_service',
+        }
+        if recipe_yaml_residual_phrases and not required_recipe_yaml_residual_phrases <= set(recipe_yaml_residual_phrases):  # noqa: E501
+            findings.append(
+                Finding(
+                    schema_path,
+                    'constitution_recipe_yaml_residual_required_phrases must include Orchestrate NFT mint/ALL AGENTS/quantum_service',  # noqa: E501
+                )
+            )
+
+    install_residual_phrases = list(inventory.get("constitution_install_residual_required_phrases", ()))  # noqa: E501
+    if len(install_residual_phrases) != len(set(install_residual_phrases)):
+        findings.append(
+            Finding(schema_path, "constitution_install_residual_required_phrases must be unique")
+        )
+    if not install_residual_phrases:
+        findings.append(
+            Finding(schema_path, "constitution_install_residual_required_phrases must not be empty")
+        )
+    for phrase in install_residual_phrases:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "constitution_install_residual_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_install_residual_phrases = {
+            '# Run this in WSL2 Ubuntu 22.04',
+            'echo "Installing Quantum frameworks..."',
+            'mkdir -p ~/fuzzywigg-ai/contracts',
+        }
+        if install_residual_phrases and not required_install_residual_phrases <= set(install_residual_phrases):  # noqa: E501
+            findings.append(
+                Finding(
+                    schema_path,
+                    'constitution_install_residual_required_phrases must include WSL2 Ubuntu/Installing Quantum/contracts mkdir',  # noqa: E501
+                )
+            )
+
+    risk_residual_phrases = list(inventory.get("constitution_risk_residual_required_phrases", ()))
+    if len(risk_residual_phrases) != len(set(risk_residual_phrases)):
+        findings.append(
+            Finding(schema_path, "constitution_risk_residual_required_phrases must be unique")
+        )
+    if not risk_residual_phrases:
+        findings.append(
+            Finding(schema_path, "constitution_risk_residual_required_phrases must not be empty")
+        )
+    for phrase in risk_residual_phrases:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "constitution_risk_residual_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_risk_residual_phrases = {
+            '**Rollback Trigger**:',
+            '**Success Metrics for Threshold Increase**:',
+            'Add to Section 12 (Security Invariants):',
+        }
+        if risk_residual_phrases and not required_risk_residual_phrases <= set(risk_residual_phrases):  # noqa: E501
+            findings.append(
+                Finding(
+                    schema_path,
+                    'constitution_risk_residual_required_phrases must include Section 12/Success Metrics/Rollback Trigger',  # noqa: E501
                 )
             )
 
@@ -8241,7 +8902,7 @@ def _inventory_lock_consistency(
     else:
         required_ci_honesty = {
             "markdown lint, link check, actionlint",
-            "Packaging inventory v52",
+            "Packaging inventory v53",
             "refuse invented recipes",
         }
         if ci_honesty and not required_ci_honesty <= set(ci_honesty):
@@ -8249,7 +8910,7 @@ def _inventory_lock_consistency(
                 Finding(
                     schema_path,
                     "contributing_ci_honesty_required_phrases must include "
-                    "CI checks/Packaging inventory v52/refuse invented recipes",
+                    "CI checks/Packaging inventory v53/refuse invented recipes",
                 )
             )
 
@@ -10434,6 +11095,210 @@ def validate_constitution_risk_tolerance(root: Path) -> list[Finding]:
     return findings
 
 
+
+def validate_constitution_specialists_overview(root: Path) -> list[Finding]:
+    rel = "AGENTS-v2.2.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "constitution missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if '## 6.4.1 Quantum-Blockchain Specialist Agents' not in body:
+        findings.append(Finding(rel, 'missing specialists-overview 6.4.1 section lock'))
+    for phrase in CONSTITUTION_SPECIALISTS_OVERVIEW_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked constitution-specialists-overview phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_constitution_quantum_profile(root: Path) -> list[Finding]:
+    rel = "AGENTS-v2.2.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "constitution missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if '#### QuantumArchitectAgent: "The Theorist"' not in body:
+        findings.append(Finding(rel, 'missing quantum-profile Theorist heading lock'))
+    for phrase in CONSTITUTION_QUANTUM_PROFILE_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked constitution-quantum-profile phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_constitution_blockchain_profile(root: Path) -> list[Finding]:
+    rel = "AGENTS-v2.2.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "constitution missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if '#### BlockchainArchitectAgent: "The System Designer"' not in body:
+        findings.append(Finding(rel, 'missing blockchain-profile System Designer heading lock'))
+    for phrase in CONSTITUTION_BLOCKCHAIN_PROFILE_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked constitution-blockchain-profile phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_constitution_edge_profile(root: Path) -> list[Finding]:
+    rel = "AGENTS-v2.2.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "constitution missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if '#### EdgeSecurityAgent: "The Guardian"' not in body:
+        findings.append(Finding(rel, 'missing edge-profile Guardian heading lock'))
+    for phrase in CONSTITUTION_EDGE_PROFILE_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked constitution-edge-profile phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_constitution_orch_profile(root: Path) -> list[Finding]:
+    rel = "AGENTS-v2.2.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "constitution missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if '#### OrchestrationAgent: "The Conductor" (You)' not in body:
+        findings.append(Finding(rel, 'missing orch-profile Conductor heading lock'))
+    for phrase in CONSTITUTION_ORCH_PROFILE_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked constitution-orch-profile phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_constitution_crypto_residual(root: Path) -> list[Finding]:
+    rel = "AGENTS-v2.2.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "constitution missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if '## 22. Quantum-Blockchain Integration Standards' not in body:
+        findings.append(Finding(rel, 'missing crypto-residual Integration Standards heading lock'))
+    for phrase in CONSTITUTION_CRYPTO_RESIDUAL_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked constitution-crypto-residual phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_constitution_on_device_residual(root: Path) -> list[Finding]:
+    rel = "AGENTS-v2.2.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "constitution missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if 'For any quantum computation executed on-device (mobile):' not in body:
+        findings.append(Finding(rel, 'missing on-device-residual mobile computation lock'))
+    for phrase in CONSTITUTION_ON_DEVICE_RESIDUAL_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked constitution-on-device-residual phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_constitution_multichain_residual(root: Path) -> list[Finding]:
+    rel = "AGENTS-v2.2.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "constitution missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if 'When quantum operations span multiple chains:' not in body:
+        findings.append(Finding(rel, 'missing multichain-residual span multiple chains lock'))
+    for phrase in CONSTITUTION_MULTICHAIN_RESIDUAL_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked constitution-multichain-residual phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_constitution_handoff_residual(root: Path) -> list[Finding]:
+    rel = "AGENTS-v2.2.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "constitution missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if '### 22.4 Agent Coordination Protocol' not in body:
+        findings.append(Finding(rel, 'missing handoff-residual Coordination Protocol lock'))
+    for phrase in CONSTITUTION_HANDOFF_RESIDUAL_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked constitution-handoff-residual phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_constitution_recipe_yaml_residual(root: Path) -> list[Finding]:
+    rel = "AGENTS-v2.2.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "constitution missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if 'Orchestrate a quantum-validated NFT mint operation.' not in body:
+        findings.append(Finding(rel, 'missing recipe-yaml-residual Orchestrate NFT mint lock'))
+    for phrase in CONSTITUTION_RECIPE_YAML_RESIDUAL_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked constitution-recipe-yaml-residual phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_constitution_install_residual(root: Path) -> list[Finding]:
+    rel = "AGENTS-v2.2.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "constitution missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if '# Run this in WSL2 Ubuntu 22.04' not in body:
+        findings.append(Finding(rel, 'missing install-residual WSL2 Ubuntu lock'))
+    for phrase in CONSTITUTION_INSTALL_RESIDUAL_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked constitution-install-residual phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_constitution_risk_residual(root: Path) -> list[Finding]:
+    rel = "AGENTS-v2.2.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "constitution missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if 'Add to Section 12 (Security Invariants):' not in body:
+        findings.append(Finding(rel, 'missing risk-residual Section 12 Security Invariants lock'))
+    for phrase in CONSTITUTION_RISK_RESIDUAL_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked constitution-risk-residual phrase: {phrase}")
+            )
+    return findings
+
 def validate_changelog_preamble(root: Path) -> list[Finding]:
     rel = "CHANGELOG.md"
     path = root / rel
@@ -12290,8 +13155,8 @@ def validate_contributing_ci_honesty(root: Path) -> list[Finding]:
         return [Finding(rel, "CONTRIBUTING.md missing")]
     text = path.read_text(encoding="utf-8")
     findings: list[Finding] = []
-    if "Packaging inventory v52" not in text:
-        findings.append(Finding(rel, "missing Packaging inventory v52 honesty lock"))
+    if "Packaging inventory v53" not in text:
+        findings.append(Finding(rel, "missing Packaging inventory v53 honesty lock"))
     for phrase in CONTRIBUTING_CI_HONESTY_REQUIRED_PHRASES:
         if phrase not in text:
             findings.append(
@@ -14211,6 +15076,18 @@ VALIDATORS: dict[str, ValidatorFn] = {
     "constitution-vscode": validate_constitution_vscode,
     "constitution-hard-constraints": validate_constitution_hard_constraints,
     "constitution-risk-tolerance": validate_constitution_risk_tolerance,
+    "constitution-specialists-overview": validate_constitution_specialists_overview,
+    "constitution-quantum-profile": validate_constitution_quantum_profile,
+    "constitution-blockchain-profile": validate_constitution_blockchain_profile,
+    "constitution-edge-profile": validate_constitution_edge_profile,
+    "constitution-orch-profile": validate_constitution_orch_profile,
+    "constitution-crypto-residual": validate_constitution_crypto_residual,
+    "constitution-on-device-residual": validate_constitution_on_device_residual,
+    "constitution-multichain-residual": validate_constitution_multichain_residual,
+    "constitution-handoff-residual": validate_constitution_handoff_residual,
+    "constitution-recipe-yaml-residual": validate_constitution_recipe_yaml_residual,
+    "constitution-install-residual": validate_constitution_install_residual,
+    "constitution-risk-residual": validate_constitution_risk_residual,
     "changelog-preamble": validate_changelog_preamble,
     "changelog-changed": validate_changelog_changed,
     "changelog-initial": validate_changelog_initial,

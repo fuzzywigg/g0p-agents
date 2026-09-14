@@ -45,20 +45,32 @@
     "claude_metadata_required_phrases",
     "claude_required_phrases",
     "claude_required_sections",
+    "constitution_blockchain_profile_required_phrases",
     "constitution_conflict_matrix_required_phrases",
     "constitution_crypto_required_phrases",
+    "constitution_crypto_residual_required_phrases",
+    "constitution_edge_profile_required_phrases",
     "constitution_escalation_format_required_phrases",
     "constitution_escalation_matrix_required_phrases",
     "constitution_handoff_required_phrases",
+    "constitution_handoff_residual_required_phrases",
     "constitution_hard_constraints_required_phrases",
     "constitution_heading_prefix",
     "constitution_ide_stack_required_phrases",
+    "constitution_install_residual_required_phrases",
     "constitution_install_script_required_phrases",
     "constitution_multichain_required_phrases",
+    "constitution_multichain_residual_required_phrases",
     "constitution_on_device_required_phrases",
+    "constitution_on_device_residual_required_phrases",
+    "constitution_orch_profile_required_phrases",
+    "constitution_quantum_profile_required_phrases",
     "constitution_recipe_orchestration_required_phrases",
+    "constitution_recipe_yaml_residual_required_phrases",
+    "constitution_risk_residual_required_phrases",
     "constitution_risk_tolerance_required_phrases",
     "constitution_scratchpad_state_required_phrases",
+    "constitution_specialists_overview_required_phrases",
     "constitution_vscode_required_phrases",
     "contributing_branch_required_phrases",
     "contributing_branch_surfaces",
@@ -2376,6 +2388,114 @@
       }
     },
     "prompt_usage_detail_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "constitution_specialists_overview_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "constitution_quantum_profile_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "constitution_blockchain_profile_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "constitution_edge_profile_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "constitution_orch_profile_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "constitution_crypto_residual_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "constitution_on_device_residual_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "constitution_multichain_residual_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "constitution_handoff_residual_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "constitution_recipe_yaml_residual_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "constitution_install_residual_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "constitution_risk_residual_required_phrases": {
       "type": "array",
       "minItems": 1,
       "uniqueItems": true,

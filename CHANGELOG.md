@@ -10,6 +10,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Constitution residual **v53 HEAVY** deepeners / **v52 leftovers continued** (post-#144 tip; distinct from prompt residual edges #144 and prompts v52 #141):
+  `constitution-specialists-overview`, `constitution-quantum-profile`, `constitution-blockchain-profile`,
+  `constitution-edge-profile`, `constitution-orch-profile`, `constitution-crypto-residual`,
+  `constitution-on-device-residual`, `constitution-multichain-residual`, `constitution-handoff-residual`,
+  `constitution-recipe-yaml-residual`, `constitution-install-residual`, `constitution-risk-residual`
+  validators; AGENTS-v2.2.md leftover locks across §6.4 specialist overview + expertise profiles,
+  §22 crypto/on-device/multichain/handoff/recipe-yaml residuals, §23 install residual, and §12 risk residual;
+  consistency deepeners for matching `*_required_phrases` inventory keys
+  (Packaging inventory 208 total; historic four only — constitution v53 heavy leftovers slice,
+  not prompts v52/#144 residual edges, not memory-slot #134, not hydration/README/security/
+  contributing/goose/postmortem, or Dependabot)
+
 - Prompt/validator residual **tests-only** deepeners for post-#141 **v52** modules
   (EXISTING twelve only — no invented product / inventory bump): concurrent
   validate races, empty/whitespace/header-only AGENT-PROMPTS, invalid/invented
