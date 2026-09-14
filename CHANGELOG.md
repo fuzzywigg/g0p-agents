@@ -10,6 +10,28 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Goose-recipe schema leftover **tests-only** deepeners after tip through **#219**
+  (goose-schema leftover after #209) / **#209** / **#208** / **#202** / **#200**
+  / **#195** / **#188** / **#187** / **#186** / **#184** (goose-schema tip) /
+  **#172** (goose-schema residual suite) (EXISTING three fixtures — `goose` /
+  `recipe-agents` / `recipe-titles` plus `schemas/goose-recipe.schema.json` +
+  `GOOSE-RECIPES.md` — no invented product / inventory bump): unsaturated reject
+  leftovers beyond #219 (`name` plus, `title` float, `provider` object,
+  extension name bool / type list, `recipe` list), invent-key KeyError /
+  `run_all --only` ValueError, **File** count / `.yml`-**File** / fence
+  info-string / indented-closer leftovers, non-yaml agentic_flows allow-list +
+  multi-binding historic provider leftovers, non-string title exact message +
+  `recipe: not-a-map` agent skip, inventory `recipe_titles` /
+  `agentic_flows_allowed_files` leftovers, CI `--list-validators` / `--only`
+  goose-trio + required manifest step-marker smoke, concurrent races, and tip
+  isolation against #219/#209/#208/#202/#200 siblings. Historic four only;
+  Packaging inventory unchanged (v52 / 196 validators). Distinct from merged
+  #219 (prior goose-schema leftover), closed CONFLICTING #216/#212 (same
+  leftover on pre-#219/#209 tips), #209 (hydration/security+handoff),
+  #202/#200 (listform+flows), #184 (tip type matrix), #172 (residual suite),
+  #147 (nine goose-* phrase locks), and not a v53 invent sibling or Dependabot
+  bump.
+
 - Goose-recipe schema leftover **tests-only** deepeners after tip through **#209**
   (hydration/security+handoff leftover after #208) / **#208** / **#202** /
   **#200** / **#195** / **#188** / **#187** / **#186** / **#184** (goose-schema
