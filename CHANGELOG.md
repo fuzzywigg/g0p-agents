@@ -10,6 +10,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Changelog **v42** deepeners (post-#101 implementation-guide v41): `changelog-preamble`,
+  `changelog-changed`, `changelog-initial` validators; CHANGELOG.md Keep a
+  Changelog URL / separator preamble leftovers, Changed-section inventory/CI/
+  Dependabot/`alpha` leftovers, and 0.1.0 README / IMPLEMENTATION-GUIDE /
+  EXECUTION-SUMMARY initial-archive leftovers; consistency deepeners for
+  `changelog_preamble_required_phrases` / `changelog_changed_required_phrases` /
+  `changelog_initial_required_phrases`
+  (Packaging inventory 139 total; historic four only — changelog leftovers
+  slice, not implementation-guide v41, constitution v40, security v39,
+  contributing v38, goose recipes, execution-summary, hydration, agent prompts,
+  or Dependabot)
+
 - Implementation guide **v41** deepeners (post-#96 constitution v40): `implementation-issues`,
   `implementation-faq`, `implementation-support` validators; IMPLEMENTATION-GUIDE.md
   Common Issues 1–5 / Qualtran / rollups / classical-fallback / scratchpad append-only
