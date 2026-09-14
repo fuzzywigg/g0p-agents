@@ -32318,7 +32318,7 @@ def test_prompts_flows_after242_c85e_cross_isolation_races_and_live_green(
     for invented in _PROMPTS_FLOWS_AFTER242_C85E_INVENT_NAMES:
         assert invented not in vm.VALIDATORS
 
-    # Tip isolation vs #242 prompts+flows / #236 actionlint / #229 hydration / markdownlint siblings.
+    # Tip isolation vs #242 prompts+flows / #236 actionlint / markdownlint niche.
     assert vm.validate_hydration_phase4(REPO_ROOT) == []
     assert vm.validate_security_packaging(REPO_ROOT) == []
     assert vm.validate_constitution_handoff(REPO_ROOT) == []
