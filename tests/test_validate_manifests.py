@@ -41530,7 +41530,7 @@ def test_hydration_security_handoff_after289_last_phrase_and_quad_surface_exact(
     scratch_base = _locked_scratchpad_text()
     _write_hydration_security_handoff_after289_docs(tmp_path)
 
-    # Last-phrase exact drops (≠ after289 first-phrase matrix redo / #258 last-phrase packaging redo for these four).
+    # Last-phrase exact drops (≠ after289 first-phrase / #258 packaging redo).
     cases = [
         (
             "hydration-phase4",
