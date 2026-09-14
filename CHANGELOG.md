@@ -10,6 +10,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Hydration report **v40** deepeners (post-#94 security v39): `hydration-phase1`,
+  `hydration-list-a`, `hydration-resolved` validators; docs/agent-hydration.md PHASE 1
+  findings category leftovers, LIST A researchable Goose/Kyber/liboqs/stimgery leftovers,
+  and PHASE 3 resolved LIST A / deferred-LIST-B leftovers; consistency deepeners for
+  `hydration_phase1_required_phrases` / `hydration_list_a_required_phrases` /
+  `hydration_resolved_required_phrases`
+  (Packaging inventory 133 total; historic four only — hydration leftovers slice,
+  not security v39, contributing v38, constitution, goose recipes, execution-summary,
+  implementation-guide, agent prompts, changelog, or Dependabot)
+
+
 - Security policy **v39** deepeners (post-#92 contributing v38): `security-scope`,
   `security-reporting-channel`, `security-compliance-detail` validators; SECURITY.md
   Supported Versions scope/injection leftovers, Reporting channel/contact leftovers,

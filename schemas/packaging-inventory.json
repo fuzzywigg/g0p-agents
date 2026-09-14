@@ -1,5 +1,5 @@
 {
-  "version": 39,
+  "version": 40,
   "documented_agents": [
     "QuantumArchitectAgent",
     "BlockchainArchitectAgent",
@@ -336,7 +336,10 @@
     "goose-recipe-headers",
     "goose-state-machine",
     "hydration",
+    "hydration-list-a",
     "hydration-list-b",
+    "hydration-phase1",
+    "hydration-resolved",
     "implementation-guide",
     "implementation-phases",
     "implementation-quickstart",
@@ -402,7 +405,7 @@
     "yaml-configs"
   ],
   "min_coverage_fail_under": 99,
-  "min_validator_count": 130,
+  "min_validator_count": 133,
   "required_paths": [
     "README.md",
     "LICENSE",
@@ -1242,7 +1245,7 @@
     "markdown lint, link check, actionlint",
     "manifest validate on Python 3.11/3.12/3.13",
     "Andrew or designated reviewer",
-    "Packaging inventory v39",
+    "Packaging inventory v40",
     "refuse invented recipes",
     "orphan on-disk YAML",
     "unknown `*Agent` tokens",
@@ -1269,5 +1272,35 @@
     "in RAM, logs, or code",
     "AGENTS-v2.2.md references",
     "updated in a future issue"
+  ],
+  "hydration_phase1_required_phrases": [
+    "### Identity",
+    "### Source Architecture",
+    "### Dependencies",
+    "### Tests",
+    "### CI/CD",
+    "### Documentation",
+    "### Governance",
+    "### Templates",
+    "### Security",
+    "Public archive of Quantum-Blockchain agentic protocols v2.2"
+  ],
+  "hydration_list_a_required_phrases": [
+    "### LIST A \u2014 Researchable",
+    "What is the Goose framework?",
+    "What are CRYSTALS-Kyber and CRYSTALS-Dilithium?",
+    "What is `liboqs`?",
+    "What is `stimgery`",
+    "Determines if recipe files can be scaffolded correctly",
+    "Clarify if typo or intentional term"
+  ],
+  "hydration_resolved_required_phrases": [
+    "Goose is Block's open-source AI agent framework",
+    "CRYSTALS-Kyber (now ML-KEM, FIPS 203)",
+    "CRYSTALS-Dilithium (now ML-DSA, FIPS 204)",
+    "liboqs (Open Quantum Safe)",
+    "colloquial portmanteau of \"strategy\" + \"imagery\"",
+    "LIST B items B1\u2013B5 are deferred to Andrew",
+    "No scaffolding issues marked P1 until B1/B2 are answered"
   ]
 }
