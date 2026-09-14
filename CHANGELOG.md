@@ -10,6 +10,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Memory-slot **tests-only** deepeners (EXISTING modules only — no invented product):
+  concurrent validate races, empty scratchpad/inventory maps, invalid registry/
+  allow-list keys, and full-capacity agentic_flows overflow rejection against
+  scratchpad* / constitution-scratchpad-state / constitution-on-device /
+  agentic_flows allow-list (single non-recipe slot `scratchpad.txt`; no LRU
+  eviction coded). Historic four only; inventory version unchanged (v51 / 184).
+
 - Prompts residual **v51 HEAVY** deepeners / **v50 leftovers max** (post-#128 prompts context/cannot-delegate/escalation-authority v50):
   `prompt-role-blurbs`, `prompt-escalation-format`, `prompt-living-docs`,
   `prompt-constraints-detail`, `prompt-triggers-detail`, `prompt-human-fields`,

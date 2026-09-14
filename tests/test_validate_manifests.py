@@ -4,6 +4,9 @@ from __future__ import annotations
 
 import json
 import sys
+import threading
+import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
 import pytest
@@ -15962,3 +15965,401 @@ def test_v51_inventory_lock_mismatch_and_consistency_matrix(tmp_path: Path) -> N
         "Packaging inventory v51" in phrase
         for phrase in vm.CONTRIBUTING_CI_HONESTY_REQUIRED_PHRASES
     )
+
+
+# ---------------------------------------------------------------------------
+# Overnight memory-slot deepeners (EXISTING modules only)
+# Maps "memory slot / store / validator" onto archive coordination memory:
+#   - scratchpad* validators (shared coordination store)
+#   - constitution-scratchpad-state (append-only / never-delete semantics)
+#   - constitution-on-device (Memory footprint < 2MB lock)
+#   - agentic_flows allow-list (single non-recipe slot: scratchpad.txt)
+# No invented memory-slot product module; eviction only where coded
+# (allow-list rejection of overflow files — no LRU eviction exists).
+# ---------------------------------------------------------------------------
+
+
+def _locked_scratchpad_text() -> str:
+    """Minimal scratchpad body satisfying all scratchpad* phrase locks."""
+    return "\n".join(
+        [
+            "# g0p-agents Agent Coordination Scratchpad",
+            "",
+            "This file is the **source of truth** for agent coordination state "
+            "in this repo.",
+            "Updated by each agent after completing their task. Never delete "
+            "entries — mark them complete.",
+            "",
+            "Format:",
+            "- [x] = DONE",
+            "- [ ] = PENDING",
+            "- [~] = IN_PROGRESS",
+            "- [!] = BLOCKED/ESCALATED",
+            "",
+            "## Task: Repo Hydration — 2026-04-13",
+            "",
+            "- [x] Phase 1: Discovery",
+            "",
+            "Status: IN_PROGRESS",
+            "Created: 2026-04-13T02:07:01Z",
+            "Owner: copilot",
+            "Current blocker: none",
+            "",
+        ]
+    )
+
+
+def _write_four_locked_goose_doc(tmp_path: Path) -> None:
+    """Write GOOSE-RECIPES.md with the four locked historic recipe fences."""
+    blocks: list[str] = []
+    for name in [
+        "quantum_algorithm_design_workflow",
+        "blockchain_contract_design_workflow",
+        "edge_security_implementation_workflow",
+        "quantum_nft_mint_full_orchestration",
+    ]:
+        payload = {
+            "name": name,
+            "recipe": {
+                "version": vm.HISTORIC_RECIPE_VERSION,
+                "title": vm.RECIPE_TITLES[name],
+                "settings": {
+                    "goose_provider": vm.HISTORIC_GOOSE_PROVIDER,
+                    "goose_model": vm.HISTORIC_GOOSE_MODEL,
+                },
+                "instructions": f"You are {vm.RECIPE_PRIMARY_AGENT[name]}",
+                "prompt": "STEP",
+                "extensions": [
+                    {
+                        "type": vm.HISTORIC_EXTENSION_TYPE,
+                        "name": vm.HISTORIC_EXTENSION_NAME,
+                    }
+                ],
+            },
+        }
+        blocks.append(f"```yaml\n{yaml.dump(payload)}```")
+    files = "\n".join(f"**File**: `{path}`" for path in vm.EXPECTED_RECIPE_FILES)
+    runs = "\n".join(f"goose run ./{path}" for path in vm.EXPECTED_RECIPE_FILES)
+    _write(
+        tmp_path / "GOOSE-RECIPES.md",
+        "\n\n".join(blocks) + "\n\n" + files + "\n\n" + runs + "\n",
+    )
+
+
+def test_memory_slot_modules_are_existing_only() -> None:
+    """Slice targets existing validators — no invented memory-slot product."""
+    assert "memory-slot" not in vm.VALIDATORS
+    assert "memory-store" not in vm.VALIDATORS
+    for name in (
+        "scratchpad",
+        "scratchpad-intro",
+        "scratchpad-format",
+        "scratchpad-task-meta",
+        "constitution-scratchpad-state",
+        "constitution-on-device",
+    ):
+        assert name in vm.VALIDATORS
+    assert vm.AGENTIC_FLOWS_ALLOWED_FILES == frozenset({"scratchpad.txt"})
+    assert "Memory footprint: < 2MB" in vm.CONSTITUTION_ON_DEVICE_REQUIRED_PHRASES
+    assert "Never delete entries" in vm.SCRATCHPAD_REQUIRED_PHRASES
+    assert (
+        "Only append, never overwrite"
+        in vm.CONSTITUTION_SCRATCHPAD_STATE_REQUIRED_PHRASES
+    )
+
+
+def test_memory_slot_empty_maps_and_empty_scratchpad(tmp_path: Path) -> None:
+    """Empty coordination memory: missing/empty scratchpad + empty inventory maps."""
+    assert any("missing" in f.message for f in vm.validate_scratchpad(tmp_path))
+    assert any("missing" in f.message for f in vm.validate_scratchpad_intro(tmp_path))
+    assert any("missing" in f.message for f in vm.validate_scratchpad_format(tmp_path))
+    assert any(
+        "missing" in f.message for f in vm.validate_scratchpad_task_meta(tmp_path)
+    )
+
+    _write(tmp_path / "agentic_flows" / "scratchpad.txt", "\n\t  \n")
+    findings = vm.validate_scratchpad(tmp_path)
+    assert any("scratchpad is empty" in f.message for f in findings)
+    assert not any("status marker" in f.message for f in findings)
+
+    empty_root = tmp_path / "empty_root"
+    (empty_root / "agentic_flows").mkdir(parents=True)
+    assert any("missing" in f.message for f in vm.validate_scratchpad(empty_root))
+
+    # Phrase-array empty deepeners live in _inventory_lock_consistency
+    for key in (
+        "scratchpad_intro_required_phrases",
+        "scratchpad_format_required_phrases",
+        "scratchpad_task_meta_required_phrases",
+        "constitution_on_device_required_phrases",
+        "constitution_scratchpad_state_required_phrases",
+    ):
+        payload = _inventory_payload()
+        payload[key] = []
+        findings = vm._inventory_lock_consistency(
+            payload, schema_path="schemas/packaging-inventory.json"
+        )
+        assert any(f"{key} must not be empty" in f.message for f in findings), key
+
+    # Field locks / schema minItems for base scratchpad + allow-list maps
+    _copy_schemas(tmp_path)
+    for rel in _inventory_payload()["required_paths"]:
+        target = tmp_path / rel
+        target.parent.mkdir(parents=True, exist_ok=True)
+        if not target.exists():
+            target.write_text("ok\n", encoding="utf-8")
+    for key in (
+        "scratchpad_required_phrases",
+        "scratchpad_status_markers",
+        "agentic_flows_allowed_files",
+    ):
+        payload = _inventory_payload()
+        payload[key] = []
+        (tmp_path / "schemas" / "packaging-inventory.json").write_text(
+            json.dumps(payload),
+            encoding="utf-8",
+        )
+        findings = vm.validate_packaging_inventory(tmp_path)
+        assert any(key in f.message for f in findings), key
+
+
+def test_memory_slot_invalid_keys(tmp_path: Path) -> None:
+    """Invalid validator keys, invented allow-list names, and unknown inventory keys."""
+    with pytest.raises(KeyError):
+        _ = vm.VALIDATORS["memory-slot"]
+    with pytest.raises(ValueError, match="unknown validator"):
+        vm.run_all_validations(REPO_ROOT, only=["memory-slot"])
+
+    _copy_schemas(tmp_path)
+    for rel in _inventory_payload()["required_paths"]:
+        target = tmp_path / rel
+        target.parent.mkdir(parents=True, exist_ok=True)
+        if not target.exists():
+            target.write_text("ok\n", encoding="utf-8")
+
+    for allowed in (
+        ["invented-slot.bin", "scratchpad.txt"],
+        ["not-scratchpad.txt"],
+    ):
+        payload = _inventory_payload()
+        payload["agentic_flows_allowed_files"] = allowed
+        (tmp_path / "schemas" / "packaging-inventory.json").write_text(
+            json.dumps(payload),
+            encoding="utf-8",
+        )
+        findings = vm.validate_packaging_inventory(tmp_path)
+        assert any("agentic_flows_allowed_files" in f.message for f in findings)
+
+    bad = _inventory_payload()
+    bad["invented_memory_slot_map"] = {"slot-0": "x"}
+    (tmp_path / "schemas" / "packaging-inventory.json").write_text(
+        json.dumps(bad),
+        encoding="utf-8",
+    )
+    findings = vm.validate_packaging_inventory(tmp_path)
+    assert findings
+
+    body = _locked_scratchpad_text()
+    for marker in vm.SCRATCHPAD_STATUS_MARKERS:
+        # Remove marker tokens entirely (substring replace would leave e.g. DONE
+        # inside X_DONE_X and still satisfy `marker in text`).
+        stripped = body.replace(marker, "ABSENT")
+        assert marker not in stripped
+        _write(tmp_path / "agentic_flows" / "scratchpad.txt", stripped)
+        findings = vm.validate_scratchpad(tmp_path)
+        assert any(f"status marker: {marker}" in f.message for f in findings), marker
+
+    mangled = body.replace("Never delete entries", "Always delete entries")
+    _write(tmp_path / "agentic_flows" / "scratchpad.txt", mangled)
+    findings = vm.validate_scratchpad(tmp_path)
+    assert any("Never delete entries" in f.message for f in findings)
+
+    _write(
+        tmp_path / "AGENTS-v2.2.md",
+        "\n".join(
+            p
+            for p in vm.CONSTITUTION_ON_DEVICE_REQUIRED_PHRASES
+            if "Memory footprint" not in p
+        )
+        + "\n",
+    )
+    findings = vm.validate_constitution_on_device(tmp_path)
+    assert any("Memory footprint: < 2MB" in f.message for f in findings)
+
+
+def test_memory_slot_full_capacity_overflow_rejection(tmp_path: Path) -> None:
+    """Full-slot overflow: allow-list rejects invented files (no LRU eviction coded)."""
+    _copy_schemas(tmp_path)
+    _write_four_locked_goose_doc(tmp_path)
+    flows = tmp_path / "agentic_flows"
+    flows.mkdir(parents=True, exist_ok=True)
+    _write(flows / "scratchpad.txt", _locked_scratchpad_text())
+
+    for rel in vm.EXPECTED_RECIPE_FILES:
+        name = Path(rel).name
+        recipe_name = next(
+            n for n, path in vm.EXPECTED_RECIPE_BINDINGS.items() if path == rel
+        )
+        payload = {
+            "name": recipe_name,
+            "recipe": {
+                "version": vm.HISTORIC_RECIPE_VERSION,
+                "title": vm.RECIPE_TITLES[recipe_name],
+                "settings": {
+                    "goose_provider": vm.HISTORIC_GOOSE_PROVIDER,
+                    "goose_model": vm.HISTORIC_GOOSE_MODEL,
+                },
+                "instructions": f"You are {vm.RECIPE_PRIMARY_AGENT[recipe_name]}",
+                "prompt": "STEP",
+                "extensions": [
+                    {
+                        "type": vm.HISTORIC_EXTENSION_TYPE,
+                        "name": vm.HISTORIC_EXTENSION_NAME,
+                    }
+                ],
+            },
+        }
+        _write(flows / name, yaml.dump(payload))
+
+    findings = vm.validate_goose_recipes(tmp_path)
+    overflow = [
+        f
+        for f in findings
+        if "unexpected/invented agentic_flows file" in f.message
+        or "unexpected/invented on-disk recipe" in f.message
+    ]
+    assert overflow == []
+
+    for invented in (
+        "memory-slot-overflow.txt",
+        "slot-extra.md",
+        "cache.bin",
+        "extra_recipe.yaml",
+    ):
+        _write(flows / invented, "invented\n")
+    findings = vm.validate_goose_recipes(tmp_path)
+    invented_findings = [
+        f
+        for f in findings
+        if "unexpected/invented agentic_flows file" in f.message
+        or "unexpected/invented on-disk recipe" in f.message
+    ]
+    assert len(invented_findings) >= 4
+    assert any("memory-slot-overflow.txt" in f.path for f in invented_findings)
+    assert any("extra_recipe.yaml" in f.path for f in invented_findings)
+
+    _write(
+        tmp_path / "AGENTS-v2.2.md",
+        "\n".join(
+            p
+            for p in vm.CONSTITUTION_SCRATCHPAD_STATE_REQUIRED_PHRASES
+            if p != "Only append, never overwrite"
+        )
+        + "\n",
+    )
+    findings = vm.validate_constitution_scratchpad_state(tmp_path)
+    assert any("Only append, never overwrite" in f.message for f in findings)
+
+
+def test_memory_slot_concurrent_validate_races(tmp_path: Path) -> None:
+    """Concurrent readers/writers against scratchpad store must not crash."""
+    _write(tmp_path / "agentic_flows" / "scratchpad.txt", _locked_scratchpad_text())
+    assert vm.validate_scratchpad(tmp_path) == []
+    assert vm.validate_scratchpad_intro(tmp_path) == []
+    assert vm.validate_scratchpad_format(tmp_path) == []
+    assert vm.validate_scratchpad_task_meta(tmp_path) == []
+
+    errors: list[BaseException] = []
+
+    def _read_live() -> list[vm.Finding]:
+        return (
+            vm.validate_scratchpad(REPO_ROOT)
+            + vm.validate_scratchpad_intro(REPO_ROOT)
+            + vm.validate_constitution_on_device(REPO_ROOT)
+            + vm.validate_constitution_scratchpad_state(REPO_ROOT)
+        )
+
+    with ThreadPoolExecutor(max_workers=16) as pool:
+        futures = [pool.submit(_read_live) for _ in range(64)]
+        for fut in as_completed(futures):
+            try:
+                assert fut.result() == []
+            except BaseException as exc:  # noqa: BLE001 — collect race failures
+                errors.append(exc)
+    assert errors == []
+
+    stop = threading.Event()
+    race_errors: list[BaseException] = []
+    path = tmp_path / "agentic_flows" / "scratchpad.txt"
+
+    def _writer() -> None:
+        flip = False
+        while not stop.is_set():
+            try:
+                if flip:
+                    path.write_text(_locked_scratchpad_text(), encoding="utf-8")
+                else:
+                    path.write_text("\n", encoding="utf-8")
+                flip = not flip
+            except BaseException as exc:  # noqa: BLE001
+                race_errors.append(exc)
+                return
+
+    def _reader() -> None:
+        while not stop.is_set():
+            try:
+                vm.validate_scratchpad(tmp_path)
+                vm.validate_scratchpad_intro(tmp_path)
+                vm.validate_scratchpad_format(tmp_path)
+                vm.validate_scratchpad_task_meta(tmp_path)
+            except BaseException as exc:  # noqa: BLE001
+                race_errors.append(exc)
+                return
+
+    threads = [
+        threading.Thread(target=_writer),
+        threading.Thread(target=_reader),
+        threading.Thread(target=_reader),
+        threading.Thread(target=_reader),
+    ]
+    for t in threads:
+        t.start()
+    time.sleep(0.35)
+    stop.set()
+    for t in threads:
+        t.join(timeout=2.0)
+    assert race_errors == []
+
+    def _empty_map_check(key: str) -> bool:
+        payload = _inventory_payload()
+        payload[key] = []
+        findings = vm._inventory_lock_consistency(
+            payload, schema_path="schemas/packaging-inventory.json"
+        )
+        return any(f"{key} must not be empty" in f.message for f in findings)
+
+    keys = [
+        "scratchpad_intro_required_phrases",
+        "constitution_on_device_required_phrases",
+        "constitution_scratchpad_state_required_phrases",
+        "scratchpad_task_meta_required_phrases",
+    ]
+    with ThreadPoolExecutor(max_workers=8) as pool:
+        futs = [pool.submit(_empty_map_check, k) for k in keys for _ in range(8)]
+        assert all(fut.result() for fut in as_completed(futs))
+
+
+def test_memory_slot_live_validators_green() -> None:
+    """Live archive coordination-memory validators remain clean on alpha tip."""
+    assert vm.validate_scratchpad(REPO_ROOT) == []
+    assert vm.validate_scratchpad_intro(REPO_ROOT) == []
+    assert vm.validate_scratchpad_format(REPO_ROOT) == []
+    assert vm.validate_scratchpad_task_meta(REPO_ROOT) == []
+    assert vm.validate_constitution_scratchpad_state(REPO_ROOT) == []
+    assert vm.validate_constitution_on_device(REPO_ROOT) == []
+    assert "Memory footprint: < 2MB" in (REPO_ROOT / "AGENTS-v2.2.md").read_text(
+        encoding="utf-8"
+    )
+    assert "Never delete entries" in (
+        REPO_ROOT / "agentic_flows" / "scratchpad.txt"
+    ).read_text(encoding="utf-8")
