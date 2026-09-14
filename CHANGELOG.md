@@ -18,16 +18,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   bump): exact Finding equality for missing-file messages (incl. `prompt-usage`
   `AGENT-PROMPTS.md missing` asymmetry), section-present/phrases-absent for
   monthly / cannot-delegate / decision-authority / usage / usage-example /
-  living-docs + scratchpad format/task-meta, directory-not-file on prompts /
+  living-docs and scratchpad format/task-meta, directory-not-file on prompts /
   scratchpad / GOOSE-RECIPES, case/BOM/ZWSP/NBSP lookalikes, exact locked-phrase
-  message formats + simultaneous multi-surface drops (living-docs + cannot-delegate
-  + scratchpad + GOOSE_DOCS), scratchpad exact empty/header/checkbox/status with
-  listform↔goose isolation, inventory type/seed leftovers + `run_all --only`
-  subset, concurrent races, and tip isolation against #209/#208/#202/#200/#195
-  siblings. Historic four only; inventory unchanged (v52 / 196). Distinct from
-  merged #209 (hydration/security+handoff), #208 (goose-schema leftover),
-  #202/#200 (listform+flows leftover / residual suites), and sibling after-#209
-  drafts (#217 hydration edges / #218 actionlint / #219 goose-schema).
+  message formats and simultaneous multi-surface drops (living-docs,
+  cannot-delegate, scratchpad, GOOSE_DOCS), scratchpad exact empty/header/
+  checkbox/status with listform↔goose isolation, inventory type/seed leftovers
+  and `run_all --only` subset, concurrent races, and tip isolation against
+  #209/#208/#202/#200/#195 siblings. Historic four only; inventory unchanged
+  (v52 / 196). Distinct from merged #209 (hydration/security+handoff), #208
+  (goose-schema leftover), #202/#200 (listform+flows leftover / residual suites),
+  and sibling after-#209 drafts (#217 hydration edges / #218 actionlint /
+  #219 goose-schema).
 
 - Hydration↔security + memory-slot/agent-handoff residual **tests-only** leftover
   deepeners after tip through **#208** (goose-schema leftover after #200) /

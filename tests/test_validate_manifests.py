@@ -28775,7 +28775,10 @@ def test_prompts_flows_after209_exact_phrase_and_multi_surface_drops(
     _write_prompts_flows_after209_docs(tmp_path)
     goose_base = (tmp_path / "GOOSE-RECIPES.md").read_text(encoding="utf-8")
 
-    living_phrase = "Keep prompts synchronized with AGENTS.md Section 22 (Quantum-Blockchain Integration Standards)."
+    living_phrase = (
+        "Keep prompts synchronized with AGENTS.md Section 22 "
+        "(Quantum-Blockchain Integration Standards)."
+    )
     mangled = prompt_base.replace(living_phrase, "ABSENT_LIVING_SYNC")
     assert living_phrase not in mangled
     _write(tmp_path / "AGENT-PROMPTS.md", mangled)
