@@ -10,6 +10,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Prompts residual **v51 round2** deepeners / **v51 heavy leftovers residuals** (post-#131 prompts heavy leftover locks v51):
+  `prompt-instantiation-residual`, `prompt-related-docs-residual`, `prompt-living-update`,
+  `prompt-conflict-resolve`, `prompt-vision-monthly`, `prompt-usage-input`,
+  `prompt-go-nogo`, `prompt-comm-residual`, `prompt-metrics-residual`
+  validators; AGENT-PROMPTS.md leftover residual locks across instantiation-copy /
+  related-docs postmortem / living-update / conflict-resolve / vision-monthly /
+  usage-input / go-nogo / comm-residual / metrics-residual; consistency deepeners
+  for matching `*_required_phrases` inventory keys
+  (Packaging inventory 193 total; historic four only — prompts v51 residuals r2 slice,
+  not constitution/changelog v45, hydration, README, implementation-guide, security,
+  contributing, goose recipes, postmortem, or Dependabot)
+
 - Prompts residual **v51 HEAVY** deepeners / **v50 leftovers max** (post-#128 prompts context/cannot-delegate/escalation-authority v50):
   `prompt-role-blurbs`, `prompt-escalation-format`, `prompt-living-docs`,
   `prompt-constraints-detail`, `prompt-triggers-detail`, `prompt-human-fields`,

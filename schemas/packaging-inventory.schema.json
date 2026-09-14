@@ -166,7 +166,9 @@
     "pr_summary_required_phrases",
     "pr_template_headings",
     "prompt_cannot_delegate_required_phrases",
+    "prompt_comm_residual_required_phrases",
     "prompt_communication_required_phrases",
+    "prompt_conflict_resolve_required_phrases",
     "prompt_constraints_detail_required_phrases",
     "prompt_constraints_required_phrases",
     "prompt_context_detail_required_phrases",
@@ -177,15 +179,20 @@
     "prompt_escalation_identity_required_phrases",
     "prompt_expertise_detail_required_phrases",
     "prompt_expertise_required_phrases",
+    "prompt_go_nogo_required_phrases",
     "prompt_human_fields_required_phrases",
     "prompt_instantiation_required_phrases",
+    "prompt_instantiation_residual_required_phrases",
     "prompt_integration_required_phrases",
     "prompt_living_docs_required_phrases",
+    "prompt_living_update_required_phrases",
     "prompt_metrics_required_phrases",
+    "prompt_metrics_residual_required_phrases",
     "prompt_monthly_required_phrases",
     "prompt_orchestration_matrix_required_phrases",
     "prompt_principles_required_phrases",
     "prompt_related_docs_required_phrases",
+    "prompt_related_docs_residual_required_phrases",
     "prompt_related_health_required_phrases",
     "prompt_responsibilities_detail_required_phrases",
     "prompt_responsibilities_required_phrases",
@@ -198,7 +205,9 @@
     "prompt_triggers_detail_required_phrases",
     "prompt_triggers_required_phrases",
     "prompt_usage_example_required_phrases",
+    "prompt_usage_input_required_phrases",
     "prompt_usage_required_phrases",
+    "prompt_vision_monthly_required_phrases",
     "pyproject_description",
     "pyproject_license_text",
     "pyproject_line_length",
@@ -2256,6 +2265,87 @@
       }
     },
     "prompt_instantiation_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "prompt_instantiation_residual_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "prompt_related_docs_residual_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "prompt_living_update_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "prompt_conflict_resolve_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "prompt_vision_monthly_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "prompt_usage_input_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "prompt_go_nogo_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "prompt_comm_residual_required_phrases": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "prompt_metrics_residual_required_phrases": {
       "type": "array",
       "minItems": 1,
       "uniqueItems": true,
