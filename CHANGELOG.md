@@ -10,6 +10,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Execution residual **tests-only** deepeners after **#161** tip (EXISTING eight
+  `execution-*` phrase-lock validators + distinct execution↔goose cross-doc
+  isolation — no invented product / inventory bump): concurrent validate races,
+  empty/whitespace/header-only EXECUTION-SUMMARY, invalid/invented
+  execution-timeout sibling keys, per-phrase drop matrix, inventory mismatch
+  matrix, cross-isolation, historic-four invented-agent fixture edges, and
+  goose cross-doc isolation against `execution-summary` /
+  `execution-specialists` / `execution-timeline` / `execution-technologies` /
+  `execution-workflow` / `execution-ide` / `execution-innovations` /
+  `execution-next48`. Historic four only; inventory unchanged (v52 / 196).
+  Distinct from merged hydration #161, constitution #156, goose-recipe #147,
+  prompt-pre-v52 #151, prompt-v52 #144, closed CONFLICTING #154/#160/#162
+  execution tip refills, and orch-timeout invent drafts.
+
 - Hydration residual **tests-only** deepeners after **#151** tip / post-#156
   (EXISTING eleven `hydration-*` phrase-lock fixtures plus the live `hydration`
   report lock — no invented product / inventory bump): concurrent validate races,
