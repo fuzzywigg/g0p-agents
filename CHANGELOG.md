@@ -11,6 +11,28 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 
 - Claude/routing governance residual **tests-only** leftover deepeners after tip
+  through **#265** (Claude/routing leftover after #264) / **#264** / **#258** /
+  **#253** / **#248** / **#242** / **#236** / **#229** / **#224** / **#219** /
+  **#209** / **#208** / **#202** / **#200** / **#195** / **#188** / **#187**
+  (docs-cross tip) (EXISTING twelve CLAUDE.md fixtures — `claude` /
+  `claude-metadata` / `routing` / `routing-matrix` / `routing-rationales` /
+  `repo-identity` / `state-residency` / `key-files` / `escalation-format` /
+  `escalation-usage` / `quarterly-review` / `negative-constraints` — no invented
+  product / inventory bump): unsaturated beyond #265 packaging +
+  escalation-format exact phrase Finding equality, claude-metadata exact
+  phrase formats (no section gate), Negative Constraints long-vs-short header
+  divergence (`CLAUDE_REQUIRED_SECTIONS` vs `negative-constraints`), case / BOM /
+  symlink Finding.path lookalikes, multi-invented agent join order +
+  per-documented-agent drop matrix, per-surface exact drops + matrix/rationale
+  length-mismatch inventory + seed drift for packaging/escalation-format/
+  negative/routing_surfaces keys, CI `--list-validators` / `--only` twelve-module
+  smoke, concurrent races, and tip isolation against #265/#264/#258/#253/#248
+  siblings. Historic four only; Packaging inventory unchanged (v52 / 196).
+  Distinct from merged #265 (prior Claude/routing leftover), #264
+  (goose-schema), #258 (hydration/security+handoff), #253 (prompts+flows),
+  #248 (actionlint/linkcheck), and closed CONFLICTING #260/#192.
+
+- Claude/routing governance residual **tests-only** leftover deepeners after tip
   through **#264** (goose-schema leftover after #258) / **#258** / **#253** /
   **#248** / **#242** / **#236** / **#229** / **#224** / **#219** / **#209** /
   **#208** / **#202** / **#200** / **#195** / **#188** / **#187** (docs-cross tip)
