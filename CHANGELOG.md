@@ -10,6 +10,31 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Claude/routing governance residual **tests-only** leftover deepeners after tip
+  through **#270** (goose-schema leftover after #265) / **#265** (Claude/routing
+  leftover after #264) / **#264** / **#258** / **#253** / **#248** / **#242** /
+  **#236** / **#229** / **#224** / **#219** / **#209** / **#208** / **#202** /
+  **#200** / **#195** / **#188** / **#187** (docs-cross tip) (EXISTING twelve
+  CLAUDE.md fixtures — `claude` / `claude-metadata` / `routing` /
+  `routing-matrix` / `routing-rationales` / `repo-identity` / `state-residency` /
+  `key-files` / `escalation-format` / `escalation-usage` / `quarterly-review` /
+  `negative-constraints` — historic v14–v16 + merged **#265** residual; tip-relaunch
+  of closed CONFLICTING **#271** / **#278**; no invented product / inventory bump):
+  CI `--list-validators` / `--only` twelve + required manifest step-marker smoke,
+  exact packaging / escalation-format / metadata / routing-surfaces /
+  negative-constraints Finding equality, long-vs-short Negative Constraints header
+  divergence, multi-invent + per-documented-agent drop matrix, BOM + ZWNJ /
+  word-joiner / Mongolian-vowel-separator / RLM / casefold lookalikes + symlink
+  follow/dangling leftovers, matrix/rationale length-mismatch +
+  `claude_required_sections` / `escalation_format_phrases` inventory seed/type
+  leftovers, matrix surface vs rationale column-header vs metadata isolation,
+  concurrent CLAUDE.md races, and tip isolation against #270/#265/#264/#258/#253
+  siblings. Historic four only; Packaging inventory unchanged (v52 / 196).
+  Distinct from merged #270 (goose-schema leftover), merged #265 (prior
+  Claude/routing leftover), #264 (goose-schema), #258 (hydration/security+handoff),
+  #253 (prompts+flows), #248 (actionlint/linkcheck), #187 (docs-cross), and closed
+  CONFLICTING #271/#278/#260/#192 (same niche on stale tips).
+
 - Goose-recipe schema leftover **tests-only** deepeners after tip through **#265**
   (Claude/routing leftover after #264) / **#264** (goose-schema leftover after #258)
   / **#258** (hydration/security+handoff leftover after #248) / **#253** / **#248** /
