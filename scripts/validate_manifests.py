@@ -160,7 +160,7 @@ REQUIRED_ARCHIVE_DOCS = (
     "README.md",
 )
 
-INVENTORY_VERSION = 28
+INVENTORY_VERSION = 29
 CURSOR_ENVIRONMENT_NAME = "g0p-agents"
 DEPENDABOT_SCHEDULE_INTERVAL = "weekly"
 DEPENDABOT_DIRECTORIES: frozenset[str] = frozenset({"/"})
@@ -431,6 +431,33 @@ CONTRIBUTING_PR_REQUIRED_PHRASES: tuple[str, ...] = (
     "One approval required",
     "## Governance",
     "require Andrew approval",
+)
+CONTRIBUTING_ISSUES_REQUIRED_PHRASES: tuple[str, ...] = (
+    "## Issue Reporting",
+    "Use the appropriate issue template",
+    "**Bug** — something broken",
+    "**Feature** — new capability needed",
+    "**Agent Task** — structured work",
+    "metadata header defined in CLAUDE.md",
+)
+CONTRIBUTING_LOCAL_REQUIRED_PHRASES: tuple[str, ...] = (
+    "## Local validation (docs packaging)",
+    "python -m pip install -r requirements-dev.txt",
+    "ruff check scripts tests",
+    "python scripts/validate_manifests.py --list-validators",
+    "python scripts/validate_manifests.py",
+    "python -m pytest --cov=scripts --cov-report=term-missing",
+)
+CONTRIBUTING_GOVERNANCE_REQUIRED_PHRASES: tuple[str, ...] = (
+    "## Governance",
+    "Structural changes",
+    "directory reorganization",
+    "agent routing changes",
+    "license changes",
+    "require Andrew approval before merging",
+    "regardless of CI status",
+    "See [CLAUDE.md](CLAUDE.md)",
+    "agent routing matrix and negative constraints",
 )
 PR_SUMMARY_REQUIRED_PHRASES: tuple[str, ...] = (
     "# Summary",
@@ -926,7 +953,7 @@ SCRATCHPAD_STATUS_MARKERS: tuple[str, ...] = (
 SPECIALIST_AGENTS: tuple[str, ...] = DOCUMENTED_AGENTS[:-1]
 
 MIN_COVERAGE_FAIL_UNDER = 99
-MIN_VALIDATOR_COUNT = 97
+MIN_VALIDATOR_COUNT = 100
 
 
 @dataclass(frozen=True)
@@ -1829,6 +1856,30 @@ def validate_packaging_inventory(root: Path) -> list[Finding]:
     ):
         findings.append(
             _lock_mismatch(schema_path, "execution_workflow_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("contributing_issues_required_phrases", ()))
+        != CONTRIBUTING_ISSUES_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "contributing_issues_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("contributing_local_required_phrases", ()))
+        != CONTRIBUTING_LOCAL_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "contributing_local_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("contributing_governance_required_phrases", ()))
+        != CONTRIBUTING_GOVERNANCE_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "contributing_governance_required_phrases")
         )
 
     expected_validator_names = tuple(sorted(VALIDATORS))
@@ -3692,6 +3743,118 @@ def _inventory_lock_consistency(
                 )
             )
 
+    issues = list(inventory.get("contributing_issues_required_phrases", ()))
+    if len(issues) != len(set(issues)):
+        findings.append(
+            Finding(schema_path, "contributing_issues_required_phrases must be unique")
+        )
+    if not issues:
+        findings.append(
+            Finding(
+                schema_path, "contributing_issues_required_phrases must not be empty"
+            )
+        )
+    for phrase in issues:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "contributing_issues_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_issues = {
+            "## Issue Reporting",
+            "**Bug** — something broken",
+            "**Agent Task** — structured work",
+        }
+        if issues and not required_issues <= set(issues):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "contributing_issues_required_phrases must include Issue "
+                    "Reporting/Bug/Agent Task",
+                )
+            )
+
+    local = list(inventory.get("contributing_local_required_phrases", ()))
+    if len(local) != len(set(local)):
+        findings.append(
+            Finding(schema_path, "contributing_local_required_phrases must be unique")
+        )
+    if not local:
+        findings.append(
+            Finding(
+                schema_path, "contributing_local_required_phrases must not be empty"
+            )
+        )
+    for phrase in local:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "contributing_local_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_local = {
+            "## Local validation (docs packaging)",
+            "python scripts/validate_manifests.py",
+            "ruff check scripts tests",
+        }
+        if local and not required_local <= set(local):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "contributing_local_required_phrases must include Local "
+                    "validation/validate_manifests/ruff",
+                )
+            )
+
+    governance = list(inventory.get("contributing_governance_required_phrases", ()))
+    if len(governance) != len(set(governance)):
+        findings.append(
+            Finding(
+                schema_path,
+                "contributing_governance_required_phrases must be unique",
+            )
+        )
+    if not governance:
+        findings.append(
+            Finding(
+                schema_path,
+                "contributing_governance_required_phrases must not be empty",
+            )
+        )
+    for phrase in governance:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "contributing_governance_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_gov = {
+            "## Governance",
+            "Structural changes",
+            "require Andrew approval before merging",
+        }
+        if governance and not required_gov <= set(governance):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "contributing_governance_required_phrases must include "
+                    "Governance/Structural changes/Andrew approval",
+                )
+            )
+
     return findings
 
 
@@ -5366,6 +5529,59 @@ def validate_contributing_pr(root: Path) -> list[Finding]:
     return findings
 
 
+def validate_contributing_issues(root: Path) -> list[Finding]:
+    rel = "CONTRIBUTING.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "CONTRIBUTING.md missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## Issue Reporting" not in text:
+        findings.append(Finding(rel, "missing Issue Reporting section"))
+    for phrase in CONTRIBUTING_ISSUES_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(rel, f"missing locked contributing-issues phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_contributing_local(root: Path) -> list[Finding]:
+    rel = "CONTRIBUTING.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "CONTRIBUTING.md missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## Local validation (docs packaging)" not in text:
+        findings.append(Finding(rel, "missing Local validation section"))
+    for phrase in CONTRIBUTING_LOCAL_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(rel, f"missing locked contributing-local phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_contributing_governance(root: Path) -> list[Finding]:
+    rel = "CONTRIBUTING.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "CONTRIBUTING.md missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## Governance" not in text:
+        findings.append(Finding(rel, "missing Governance section"))
+    for phrase in CONTRIBUTING_GOVERNANCE_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(
+                    rel, f"missing locked contributing-governance phrase: {phrase}"
+                )
+            )
+    return findings
+
+
 def validate_pr_summary(root: Path) -> list[Finding]:
     rel = ".github/pull_request_template.md"
     path = root / rel
@@ -6876,6 +7092,9 @@ VALIDATORS: dict[str, ValidatorFn] = {
     "contributing-who": validate_contributing_who,
     "contributing-branches": validate_contributing_branches,
     "contributing-pr": validate_contributing_pr,
+    "contributing-issues": validate_contributing_issues,
+    "contributing-local": validate_contributing_local,
+    "contributing-governance": validate_contributing_governance,
     "scratchpad": validate_scratchpad,
     "scratchpad-intro": validate_scratchpad_intro,
     "scratchpad-format": validate_scratchpad_format,
