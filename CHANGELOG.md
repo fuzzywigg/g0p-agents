@@ -10,6 +10,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Constitution **v31** deepeners (post-#69): `constitution-crypto`,
+  `constitution-handoff`, `constitution-escalation-matrix` validators;
+  AGENTS-v2.2.md §22.1 Quantum-Safe Cryptography (Kyber/Dilithium/SPHINCS+/
+  liboqs/RSA-ECDSA/hybrid) locks, §22.4.1 Handoff Sequence Phase 1–4 /
+  postmortem decision locks, and §22.4.2 Escalation Triggers per-agent
+  matrix locks; consistency deepeners for
+  `constitution_crypto_required_phrases` /
+  `constitution_handoff_required_phrases` /
+  `constitution_escalation_matrix_required_phrases` (106 total; historic four
+  only — constitution slice, not security policy, contributing,
+  execution-summary, implementation guide, agent prompts, goose recipes,
+  README honesty, PR-template, issue-template, scratchpad, postmortem,
+  archive snapshot, routing/identity, or Dependabot)
+
 - Security policy **v30** deepeners (post-#63): `security-header`,
   `security-fips`, `security-known-non-issues` validators; SECURITY.md
   Status/Tier/Created/Edit-policy header locks, Standards-table FIPS
