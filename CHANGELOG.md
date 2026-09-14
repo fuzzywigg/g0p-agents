@@ -10,6 +10,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Execution residual **tests-only** deepeners after **#156** tip (EXISTING eight
+  `execution-*` phrase-lock validators + distinct execution↔goose cross-doc
+  isolation — no invented product / inventory bump): concurrent validate races,
+  empty/whitespace/header-only EXECUTION-SUMMARY, invalid/invented
+  execution-timeout sibling keys, per-phrase drop matrix, inventory mismatch
+  matrix, cross-isolation, historic-four invented-agent fixture edges, and
+  goose cross-doc isolation against `execution-summary` /
+  `execution-specialists` / `execution-timeline` / `execution-technologies` /
+  `execution-workflow` / `execution-ide` / `execution-innovations` /
+  `execution-next48`. Historic four only; inventory unchanged (v52 / 196).
+  Distinct from merged constitution residuals #156, goose-recipe #147,
+  prompt-pre-v52 #151, prompt-v52 #144, and closed CONFLICTING #154/#157/#158/#160
+  (orch-timeout invent / security residual / pre-#156 execution tip refill).
+
 - Constitution residual **tests-only** deepeners after **#151** (EXISTING fourteen
   `constitution-*` phrase-lock validators only — no invented product / inventory
   bump): concurrent validate races, empty/whitespace/header-only AGENTS-v2.2,
