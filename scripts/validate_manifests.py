@@ -9,6 +9,7 @@ Checks structural correctness of:
 - Documented specialist agents only (no invented agents / *Agent tokens)
 - Prompt fence headers + escalation markers for historic four agents
 - AGENTS-v2.2.md constitution headings for documented agents only
+- AGENTS-v2.2.md constitution crypto / handoff / escalation-matrix locks
 - CLAUDE.md routing surfaces (packaging surfaces; not specialist agents)
 - SECURITY.md / CONTRIBUTING.md packaging honesty locks
 - Agent-task / bug / feature issue template headings
@@ -45,6 +46,7 @@ Checks structural correctness of:
 - CLAUDE.md escalation usage intro + fenced placeholder field locks
 - SECURITY.md Supported Versions / Reporting / Standards domain locks
 - SECURITY.md header / FIPS standards-row / Known Non-Issues rename locks
+- AGENTS-v2.2.md §22.1 crypto / §22.4.1 handoff / §22.4.2 escalation-matrix locks
 - IMPLEMENTATION-GUIDE Quick Start / EXECUTION-SUMMARY specialist table /
   hydration LIST B HITL question locks (Dec 2025 archive snapshot slice)
 - postmortem.md intro / Decision field / Next Steps surface locks
@@ -161,7 +163,7 @@ REQUIRED_ARCHIVE_DOCS = (
     "README.md",
 )
 
-INVENTORY_VERSION = 30
+INVENTORY_VERSION = 31
 CURSOR_ENVIRONMENT_NAME = "g0p-agents"
 DEPENDABOT_SCHEDULE_INTERVAL = "weekly"
 DEPENDABOT_DIRECTORIES: frozenset[str] = frozenset({"/"})
@@ -339,6 +341,34 @@ SECURITY_KNOWN_NON_ISSUES_REQUIRED_PHRASES: tuple[str, ...] = (
     "ML-DSA (FIPS 204)",
     "pre-finalization names",
     "The underlying algorithms are correct",
+)
+CONSTITUTION_CRYPTO_REQUIRED_PHRASES: tuple[str, ...] = (
+    "### 22.1 Quantum-Safe Cryptography Requirements",
+    "CRYSTALS-Kyber",
+    "CRYSTALS-Dilithium",
+    "SPHINCS+",
+    "liboqs",
+    "Never use classical RSA/ECDSA for new implementations",
+    "Hybrid approach during transition",
+)
+CONSTITUTION_HANDOFF_REQUIRED_PHRASES: tuple[str, ...] = (
+    "#### 22.4.1 Handoff Sequence",
+    "**Phase 1: Algorithm Design**",
+    "**Phase 2: Contract Design**",
+    "**Phase 3: Implementation**",
+    "**Phase 4: Orchestration Decision**",
+    "QuantumArchitectAgent → BlockchainArchitectAgent",
+    "Logs decision in postmortem.md",
+)
+CONSTITUTION_ESCALATION_MATRIX_REQUIRED_PHRASES: tuple[str, ...] = (
+    "#### 22.4.2 Escalation Triggers",
+    "**QuantumArchitectAgent escalates when**:",
+    "Circuit depth exceeds device constraints by >20%",
+    "**BlockchainArchitectAgent escalates when**:",
+    "Gas cost exceeds 10M",
+    "**EdgeSecurityAgent escalates when**:",
+    "Crypto operations > 500ms",
+    "**OrchestrationAgent escalates to user when**:",
 )
 IMPLEMENTATION_QUICKSTART_REQUIRED_PHRASES: tuple[str, ...] = (
     "## Quick Start (30 minutes)",
@@ -977,7 +1007,7 @@ SCRATCHPAD_STATUS_MARKERS: tuple[str, ...] = (
 SPECIALIST_AGENTS: tuple[str, ...] = DOCUMENTED_AGENTS[:-1]
 
 MIN_COVERAGE_FAIL_UNDER = 99
-MIN_VALIDATOR_COUNT = 103
+MIN_VALIDATOR_COUNT = 106
 
 
 @dataclass(frozen=True)
@@ -1673,6 +1703,32 @@ def validate_packaging_inventory(root: Path) -> list[Finding]:
     ):
         findings.append(
             _lock_mismatch(schema_path, "security_known_non_issues_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("constitution_crypto_required_phrases", ()))
+        != CONSTITUTION_CRYPTO_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "constitution_crypto_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("constitution_handoff_required_phrases", ()))
+        != CONSTITUTION_HANDOFF_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "constitution_handoff_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("constitution_escalation_matrix_required_phrases", ()))
+        != CONSTITUTION_ESCALATION_MATRIX_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(
+                schema_path, "constitution_escalation_matrix_required_phrases"
+            )
         )
 
     if (
@@ -4009,6 +4065,122 @@ def _inventory_lock_consistency(
                 )
             )
 
+    crypto = list(inventory.get("constitution_crypto_required_phrases", ()))
+    if len(crypto) != len(set(crypto)):
+        findings.append(
+            Finding(schema_path, "constitution_crypto_required_phrases must be unique")
+        )
+    if not crypto:
+        findings.append(
+            Finding(
+                schema_path, "constitution_crypto_required_phrases must not be empty"
+            )
+        )
+    for phrase in crypto:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "constitution_crypto_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_crypto = {
+            "### 22.1 Quantum-Safe Cryptography Requirements",
+            "CRYSTALS-Kyber",
+            "SPHINCS+",
+        }
+        if crypto and not required_crypto <= set(crypto):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "constitution_crypto_required_phrases must include "
+                    "22.1/Kyber/SPHINCS+",
+                )
+            )
+
+    handoff = list(inventory.get("constitution_handoff_required_phrases", ()))
+    if len(handoff) != len(set(handoff)):
+        findings.append(
+            Finding(
+                schema_path, "constitution_handoff_required_phrases must be unique"
+            )
+        )
+    if not handoff:
+        findings.append(
+            Finding(
+                schema_path, "constitution_handoff_required_phrases must not be empty"
+            )
+        )
+    for phrase in handoff:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "constitution_handoff_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_handoff = {
+            "#### 22.4.1 Handoff Sequence",
+            "**Phase 1: Algorithm Design**",
+            "**Phase 4: Orchestration Decision**",
+        }
+        if handoff and not required_handoff <= set(handoff):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "constitution_handoff_required_phrases must include "
+                    "22.4.1/Phase 1/Phase 4",
+                )
+            )
+
+    esc_matrix = list(
+        inventory.get("constitution_escalation_matrix_required_phrases", ())
+    )
+    if len(esc_matrix) != len(set(esc_matrix)):
+        findings.append(
+            Finding(
+                schema_path,
+                "constitution_escalation_matrix_required_phrases must be unique",
+            )
+        )
+    if not esc_matrix:
+        findings.append(
+            Finding(
+                schema_path,
+                "constitution_escalation_matrix_required_phrases must not be empty",
+            )
+        )
+    for phrase in esc_matrix:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "constitution_escalation_matrix_required_phrases entries "
+                    "must be non-empty strings",
+                )
+            )
+            break
+    else:
+        required_esc = {
+            "#### 22.4.2 Escalation Triggers",
+            "**QuantumArchitectAgent escalates when**:",
+            "**OrchestrationAgent escalates to user when**:",
+        }
+        if esc_matrix and not required_esc <= set(esc_matrix):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "constitution_escalation_matrix_required_phrases must include "
+                    "22.4.2/QuantumArchitect/Orchestration",
+                )
+            )
+
     return findings
 
 
@@ -4732,6 +4904,62 @@ def validate_security_known_non_issues(root: Path) -> list[Finding]:
             findings.append(
                 Finding(
                     rel, f"missing locked security-known-non-issues phrase: {phrase}"
+                )
+            )
+    return findings
+
+
+def validate_constitution_crypto(root: Path) -> list[Finding]:
+    rel = "AGENTS-v2.2.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "constitution missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "### 22.1 Quantum-Safe Cryptography Requirements" not in text:
+        findings.append(
+            Finding(rel, "missing Quantum-Safe Cryptography Requirements section")
+        )
+    for phrase in CONSTITUTION_CRYPTO_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(rel, f"missing locked constitution-crypto phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_constitution_handoff(root: Path) -> list[Finding]:
+    rel = "AGENTS-v2.2.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "constitution missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "#### 22.4.1 Handoff Sequence" not in text:
+        findings.append(Finding(rel, "missing Handoff Sequence section"))
+    for phrase in CONSTITUTION_HANDOFF_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(rel, f"missing locked constitution-handoff phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_constitution_escalation_matrix(root: Path) -> list[Finding]:
+    rel = "AGENTS-v2.2.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "constitution missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "#### 22.4.2 Escalation Triggers" not in text:
+        findings.append(Finding(rel, "missing Escalation Triggers section"))
+    for phrase in CONSTITUTION_ESCALATION_MATRIX_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(
+                    rel,
+                    f"missing locked constitution-escalation-matrix phrase: {phrase}",
                 )
             )
     return findings
@@ -7258,6 +7486,9 @@ VALIDATORS: dict[str, ValidatorFn] = {
     "recipe-titles": validate_recipe_titles,
     "agent-tokens": validate_archive_agent_tokens,
     "constitution": validate_constitution_agent_headings,
+    "constitution-crypto": validate_constitution_crypto,
+    "constitution-handoff": validate_constitution_handoff,
+    "constitution-escalation-matrix": validate_constitution_escalation_matrix,
     "routing": validate_routing_surfaces,
     "environment": validate_cursor_environment,
     "github-agents": validate_github_agents,

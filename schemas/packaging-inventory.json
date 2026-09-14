@@ -1,5 +1,5 @@
 {
-  "version": 30,
+  "version": 31,
   "documented_agents": [
     "QuantumArchitectAgent",
     "BlockchainArchitectAgent",
@@ -289,6 +289,9 @@
     "claude",
     "claude-metadata",
     "constitution",
+    "constitution-crypto",
+    "constitution-escalation-matrix",
+    "constitution-handoff",
     "contributing",
     "contributing-branches",
     "contributing-governance",
@@ -375,7 +378,7 @@
     "yaml-configs"
   ],
   "min_coverage_fail_under": 99,
-  "min_validator_count": 103,
+  "min_validator_count": 106,
   "required_paths": [
     "README.md",
     "LICENSE",
@@ -1000,5 +1003,33 @@
     "ML-DSA (FIPS 204)",
     "pre-finalization names",
     "The underlying algorithms are correct"
+  ],
+  "constitution_crypto_required_phrases": [
+    "### 22.1 Quantum-Safe Cryptography Requirements",
+    "CRYSTALS-Kyber",
+    "CRYSTALS-Dilithium",
+    "SPHINCS+",
+    "liboqs",
+    "Never use classical RSA/ECDSA for new implementations",
+    "Hybrid approach during transition"
+  ],
+  "constitution_handoff_required_phrases": [
+    "#### 22.4.1 Handoff Sequence",
+    "**Phase 1: Algorithm Design**",
+    "**Phase 2: Contract Design**",
+    "**Phase 3: Implementation**",
+    "**Phase 4: Orchestration Decision**",
+    "QuantumArchitectAgent \u2192 BlockchainArchitectAgent",
+    "Logs decision in postmortem.md"
+  ],
+  "constitution_escalation_matrix_required_phrases": [
+    "#### 22.4.2 Escalation Triggers",
+    "**QuantumArchitectAgent escalates when**:",
+    "Circuit depth exceeds device constraints by >20%",
+    "**BlockchainArchitectAgent escalates when**:",
+    "Gas cost exceeds 10M",
+    "**EdgeSecurityAgent escalates when**:",
+    "Crypto operations > 500ms",
+    "**OrchestrationAgent escalates to user when**:"
   ]
 }
