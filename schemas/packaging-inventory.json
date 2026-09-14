@@ -1,5 +1,5 @@
 {
-  "version": 28,
+  "version": 29,
   "documented_agents": [
     "QuantumArchitectAgent",
     "BlockchainArchitectAgent",
@@ -291,7 +291,10 @@
     "constitution",
     "contributing",
     "contributing-branches",
+    "contributing-governance",
+    "contributing-issues",
     "contributing-pr",
+    "contributing-validation",
     "contributing-who",
     "cross-docs",
     "dependabot",
@@ -369,7 +372,7 @@
     "yaml-configs"
   ],
   "min_coverage_fail_under": 99,
-  "min_validator_count": 97,
+  "min_validator_count": 100,
   "required_paths": [
     "README.md",
     "LICENSE",
@@ -944,5 +947,31 @@
     "### Step 2: Multi-Agent Workflow",
     "### Step 3: Escalation (If Conflict)",
     "Agents Disagree \u2192 OrchestrationAgent Reviews"
+  ],
+  "contributing_validation_required_phrases": [
+    "## Local validation (docs packaging)",
+    "python -m pip install -r requirements-dev.txt",
+    "ruff check scripts tests",
+    "python scripts/validate_manifests.py --list-validators",
+    "python -m pytest --cov=scripts --cov-report=term-missing",
+    "Do not invent new specialist agents in PRs"
+  ],
+  "contributing_issues_required_phrases": [
+    "## Issue Reporting",
+    "Use the appropriate issue template",
+    "**Bug** \u2014 something broken",
+    "**Feature** \u2014 new capability needed",
+    "**Agent Task** \u2014 structured work",
+    "metadata header defined in CLAUDE.md"
+  ],
+  "contributing_governance_required_phrases": [
+    "## Governance",
+    "Structural changes",
+    "directory reorganization",
+    "agent routing changes",
+    "license changes",
+    "regardless of CI status",
+    "See [CLAUDE.md](CLAUDE.md)",
+    "agent routing matrix and negative constraints"
   ]
 }

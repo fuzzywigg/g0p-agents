@@ -10,6 +10,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Contributing guide **v29** deepeners (post-#61): `contributing-validation`,
+  `contributing-issues`, `contributing-governance` validators; CONTRIBUTING.md
+  Local validation / ruff / pytest locks, Issue Reporting Bug/Feature/Agent Task
+  locks, and Governance structural-change / CLAUDE.md / negative-constraint
+  locks; consistency deepeners for `contributing_validation_required_phrases` /
+  `contributing_issues_required_phrases` / `contributing_governance_required_phrases`
+  (100 total; historic four only — contributing slice, not execution-summary,
+  implementation guide, agent prompts, goose recipes, README honesty,
+  PR-template, issue-template, scratchpad, postmortem, archive snapshot,
+  security policy, routing/identity, or Dependabot)
+
 - Execution summary **v28** deepeners (post-#56): `execution-timeline`,
   `execution-technologies`, `execution-workflow` validators; EXECUTION-SUMMARY.md
   Implementation Timeline / Week 1 / By End of Month locks, Key Technologies
