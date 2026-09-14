@@ -25168,3 +25168,402 @@ def test_actionlint_linkcheck_after186_leftover_live_green() -> None:
     assert vm.validate_changelog_unreleased(REPO_ROOT) == []
     assert vm.validate_implementation_guide(REPO_ROOT) == []
     assert vm.validate_execution_summary(REPO_ROOT) == []
+
+
+# ---------------------------------------------------------------------------
+# TOKENMAXX HEAVY: leftover goose-recipe.schema.json edges after #188/#184/#172
+# ---------------------------------------------------------------------------
+
+_GOOSE_RECIPE_SCHEMA_NAME = "goose-recipe.schema.json"
+_GOOSE_RECIPE_SCHEMA_REL = f"schemas/{_GOOSE_RECIPE_SCHEMA_NAME}"
+
+
+def _goose_recipe_schema() -> dict:
+    """Load the live goose-recipe JSON Schema (existing file only)."""
+    return vm.load_schema(_GOOSE_RECIPE_SCHEMA_NAME)
+
+
+def _clone_minimal_recipe() -> dict:
+    return json.loads(json.dumps(MINIMAL_RECIPE))
+
+
+def test_goose_recipe_schema_leftover_modules_existing_only() -> None:
+    """Leftover slice reuses live schema + three goose modules — no invent-product."""
+    assert vm.INVENTORY_VERSION == 52
+    assert vm.MIN_VALIDATOR_COUNT == 196
+    assert len(vm.VALIDATORS) == 196
+
+    goose = _goose_schema_residual_modules()
+    assert len(goose) == 3
+    assert [n for n, _ in goose] == list(_GOOSE_SCHEMA_RESIDUAL_NAMES)
+
+    for invented in (
+        "goose-schema-v53",
+        "recipe-timeouts",
+        "goose-schema-leftovers",
+        "goose-recipe-v53",
+        "schema-timeouts",
+        "actionlint-timeouts",
+        "docs-cross-timeouts",
+        "hydration-security-timeouts",
+    ):
+        assert invented not in vm.VALIDATORS
+
+    inventory = json.loads(
+        (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
+    )
+    assert inventory["version"] == 52
+    assert inventory["min_validator_count"] == 196
+    assert _GOOSE_RECIPE_SCHEMA_NAME in inventory["required_schema_files"]
+    assert (REPO_ROOT / _GOOSE_RECIPE_SCHEMA_REL).is_file()
+    assert sorted(vm.VALIDATORS) == inventory["validator_names"]
+
+
+def test_goose_recipe_schema_leftover_invalid_keys(tmp_path: Path) -> None:
+    """Reject invented leftover sibling keys; live goose+schema stay green."""
+    with pytest.raises(KeyError):
+        _ = vm.VALIDATORS["goose-schema-leftovers"]
+    with pytest.raises(KeyError):
+        _ = vm.VALIDATORS["goose-schema-v53"]
+    with pytest.raises(KeyError):
+        _ = vm.VALIDATORS["recipe-timeouts"]
+    with pytest.raises(ValueError, match="unknown validator"):
+        vm.run_all_validations(REPO_ROOT, only=["goose-schema-leftovers"])
+    with pytest.raises(ValueError, match="unknown validator"):
+        vm.run_all_validations(REPO_ROOT, only=["goose-schema-v53"])
+    with pytest.raises(ValueError, match="unknown validator"):
+        vm.run_all_validations(REPO_ROOT, only=["schema-timeouts"])
+
+    findings = vm.run_all_validations(
+        REPO_ROOT, only=["goose", "recipe-agents", "recipe-titles"]
+    )
+    assert findings == []
+
+    _copy_schemas(tmp_path)
+    for rel in _inventory_payload()["required_paths"]:
+        target = tmp_path / rel
+        target.parent.mkdir(parents=True, exist_ok=True)
+        if not target.exists():
+            target.write_text("ok\n", encoding="utf-8")
+
+    bad = _inventory_payload()
+    bad["invented_goose_recipe_schema_leftover_map"] = {"slot": "x"}
+    (tmp_path / "schemas" / "packaging-inventory.json").write_text(
+        json.dumps(bad),
+        encoding="utf-8",
+    )
+    assert vm.validate_packaging_inventory(tmp_path)
+
+
+def test_goose_recipe_schema_leftover_reject_matrix() -> None:
+    """Leftover reject edges beyond #172 residual + #184 type/missing matrices."""
+    schema = _goose_recipe_schema()
+    base = _clone_minimal_recipe()
+    assert vm.validate_against_schema(base, schema, path="fixture") == []
+
+    def _recipe(**overrides: object) -> dict:
+        payload = _clone_minimal_recipe()
+        payload["recipe"] = {**payload["recipe"], **overrides}
+        return payload
+
+    def _settings(**overrides: object) -> dict:
+        payload = _clone_minimal_recipe()
+        payload["recipe"] = {
+            **payload["recipe"],
+            "settings": {**payload["recipe"]["settings"], **overrides},
+        }
+        return payload
+
+    def _ext(item: object) -> dict:
+        payload = _clone_minimal_recipe()
+        payload["recipe"] = {**payload["recipe"], "extensions": [item]}
+        return payload
+
+    cases: list[tuple[str, dict]] = [
+        ("name_null", {**base, "name": None}),
+        ("name_list", {**base, "name": ["example_recipe_workflow"]}),
+        ("name_float", {**base, "name": 1.5}),
+        ("name_space", {**base, "name": "bad name"}),
+        ("name_dot", {**base, "name": "bad.name"}),
+        ("name_dollar", {**base, "name": "bad$name"}),
+        ("title_null", _recipe(title=None)),
+        ("title_bool", _recipe(title=True)),
+        ("instructions_null", _recipe(instructions=None)),
+        ("instructions_int", _recipe(instructions=1)),
+        ("version_empty", _recipe(version="")),
+        ("version_bool", _recipe(version=True)),
+        ("version_list", _recipe(version=["1.0.0"])),
+        (
+            "provider_bool",
+            _settings(goose_provider=True, goose_model="claude-opus-4"),
+        ),
+        (
+            "provider_int",
+            _settings(goose_provider=1, goose_model="claude-opus-4"),
+        ),
+        (
+            "provider_list",
+            _settings(goose_provider=["anthropic"], goose_model="claude-opus-4"),
+        ),
+        (
+            "model_bool",
+            _settings(goose_provider="anthropic", goose_model=True),
+        ),
+        (
+            "model_int",
+            _settings(goose_provider="anthropic", goose_model=1),
+        ),
+        ("settings_empty_object", _recipe(settings={})),
+        ("recipe_empty_object", {**base, "recipe": {}}),
+        ("extension_missing_type", _ext({"name": "developer"})),
+        ("extension_type_null", _ext({"type": None, "name": "developer"})),
+        ("extension_type_empty", _ext({"type": "", "name": "developer"})),
+        ("extension_type_int", _ext({"type": 1, "name": "developer"})),
+        ("extension_null_item", _ext(None)),
+        ("extension_string_item", _ext("builtin")),
+        (
+            "timeout_null",
+            _ext({"type": "builtin", "name": "developer", "timeout": None}),
+        ),
+        (
+            "timeout_list",
+            _ext({"type": "builtin", "name": "developer", "timeout": [30]}),
+        ),
+        (
+            "timeout_object",
+            _ext({"type": "builtin", "name": "developer", "timeout": {"s": 30}}),
+        ),
+    ]
+
+    for label, payload in cases:
+        findings = vm.validate_against_schema(payload, schema, path="fixture")
+        assert findings, label
+
+
+def test_goose_recipe_schema_leftover_accept_boundaries() -> None:
+    """Leftover ACCEPT edges: max/min lengths, optional timeout, extra ext keys."""
+    schema = _goose_recipe_schema()
+    base = _clone_minimal_recipe()
+
+    name_max = _clone_minimal_recipe()
+    name_max["name"] = "a" + ("b" * 127)
+    assert len(name_max["name"]) == 128
+    assert vm.validate_against_schema(name_max, schema, path="fixture") == []
+
+    name_min = _clone_minimal_recipe()
+    name_min["name"] = "a"
+    assert vm.validate_against_schema(name_min, schema, path="fixture") == []
+
+    title_max = _clone_minimal_recipe()
+    title_max["recipe"] = {**base["recipe"], "title": "x" * 256}
+    assert vm.validate_against_schema(title_max, schema, path="fixture") == []
+
+    title_min = _clone_minimal_recipe()
+    title_min["recipe"] = {**base["recipe"], "title": "t"}
+    assert vm.validate_against_schema(title_min, schema, path="fixture") == []
+
+    ext_name_max = _clone_minimal_recipe()
+    ext_name_max["recipe"]["extensions"] = [{"type": "builtin", "name": "n" * 128}]
+    assert vm.validate_against_schema(ext_name_max, schema, path="fixture") == []
+
+    # timeout is optional on extension items
+    no_timeout = _clone_minimal_recipe()
+    no_timeout["recipe"]["extensions"] = [{"type": "builtin", "name": "developer"}]
+    assert vm.validate_against_schema(no_timeout, schema, path="fixture") == []
+
+    # additionalProperties: true on extension items (cmd/uri extras allowed)
+    extra_keys = _clone_minimal_recipe()
+    extra_keys["recipe"]["extensions"] = [
+        {"type": "stdio", "name": "x", "cmd": "echo", "timeout": 5}
+    ]
+    assert vm.validate_against_schema(extra_keys, schema, path="fixture") == []
+
+    mixed = _clone_minimal_recipe()
+    mixed["recipe"]["extensions"] = [
+        {"type": "builtin", "name": "a"},
+        {"type": "stdio", "name": "b"},
+        {"type": "sse", "name": "c"},
+        {"type": "streamable_http", "name": "d"},
+    ]
+    assert vm.validate_against_schema(mixed, schema, path="fixture") == []
+
+    # uniqueItems compares whole objects; distinct timeouts remain unique
+    distinct_timeouts = _clone_minimal_recipe()
+    distinct_timeouts["recipe"]["extensions"] = [
+        {"type": "builtin", "name": "developer", "timeout": 1},
+        {"type": "builtin", "name": "developer", "timeout": 2},
+    ]
+    assert vm.validate_against_schema(distinct_timeouts, schema, path="fixture") == []
+
+
+def test_goose_recipe_schema_leftover_live_yaml_roundtrip() -> None:
+    """Live fenced recipes + YAML round-trip of MINIMAL_RECIPE stay schema-green."""
+    schema = _goose_recipe_schema()
+    body = (REPO_ROOT / "GOOSE-RECIPES.md").read_text(encoding="utf-8")
+    fences = vm.extract_fenced_yaml_blocks(body)
+    assert len(fences) == 4
+    names: list[str] = []
+    for block in fences:
+        data = yaml.safe_load(block)
+        assert isinstance(data, dict)
+        names.append(str(data["name"]))
+        findings = vm.validate_against_schema(data, schema, path="live-fence")
+        assert findings == []
+    assert set(names) == set(vm.EXPECTED_RECIPE_NAMES)
+
+    dumped = yaml.safe_load(yaml.safe_dump(MINIMAL_RECIPE, sort_keys=False))
+    assert vm.validate_against_schema(dumped, schema, path="yaml-roundtrip") == []
+
+
+def test_goose_recipe_schema_leftover_file_self_locks() -> None:
+    """Existing schema file self-locks: draft, $id, required, consts, enums."""
+    path = REPO_ROOT / _GOOSE_RECIPE_SCHEMA_REL
+    raw = json.loads(path.read_text(encoding="utf-8"))
+    assert raw["$schema"] == vm.SCHEMA_DRAFT_URI
+    assert raw["$id"] == f"{vm.SCHEMA_ID_PREFIX}{_GOOSE_RECIPE_SCHEMA_NAME}"
+    assert raw["type"] == "object"
+    assert raw["additionalProperties"] is False
+    assert raw["required"] == ["name", "recipe"]
+
+    name_schema = raw["properties"]["name"]
+    assert name_schema["minLength"] == 1
+    assert name_schema["maxLength"] == 128
+    assert name_schema["pattern"] == "^[a-z][a-z0-9_]*$"
+
+    recipe = raw["properties"]["recipe"]
+    assert recipe["additionalProperties"] is False
+    assert recipe["required"] == [
+        "version",
+        "title",
+        "settings",
+        "instructions",
+        "prompt",
+        "extensions",
+    ]
+    assert recipe["properties"]["version"]["const"] == vm.HISTORIC_RECIPE_VERSION
+    title = recipe["properties"]["title"]
+    assert title["minLength"] == 1
+    assert title["maxLength"] == 256
+
+    settings = recipe["properties"]["settings"]
+    assert settings["additionalProperties"] is False
+    assert settings["required"] == ["goose_provider", "goose_model"]
+    assert (
+        settings["properties"]["goose_provider"]["const"] == vm.HISTORIC_GOOSE_PROVIDER
+    )
+    assert settings["properties"]["goose_model"]["const"] == vm.HISTORIC_GOOSE_MODEL
+
+    extensions = recipe["properties"]["extensions"]
+    assert extensions["minItems"] == 1
+    assert extensions["uniqueItems"] is True
+    items = extensions["items"]
+    assert items["additionalProperties"] is True
+    assert items["required"] == ["type", "name"]
+    assert items["properties"]["type"]["enum"] == [
+        "builtin",
+        "stdio",
+        "sse",
+        "streamable_http",
+    ]
+    timeout = items["properties"]["timeout"]
+    assert timeout["minimum"] == 1
+    assert timeout["maximum"] == 86400
+
+    assert vm.validate_schemas_meta(REPO_ROOT) == []
+
+
+def test_goose_recipe_schema_leftover_concurrent_races() -> None:
+    """Concurrent leftover schema validates must not crash or flip green/red."""
+    schema = _goose_recipe_schema()
+    base = _clone_minimal_recipe()
+    bad = _clone_minimal_recipe()
+    bad["name"] = "bad name"
+
+    def _check_ok() -> bool:
+        return vm.validate_against_schema(base, schema, path="race-ok") == []
+
+    def _check_bad() -> bool:
+        return bool(vm.validate_against_schema(bad, schema, path="race-bad"))
+
+    errors: list[BaseException] = []
+    with ThreadPoolExecutor(max_workers=16) as pool:
+        futs = [pool.submit(_check_ok) for _ in range(24)] + [
+            pool.submit(_check_bad) for _ in range(24)
+        ]
+        for fut in as_completed(futs):
+            try:
+                assert fut.result() is True
+            except BaseException as exc:  # noqa: BLE001 — collect race failures
+                errors.append(exc)
+    assert errors == []
+
+    # Live schema trio remains green under concurrent readers
+    live_fns = [fn for _name, fn in _goose_schema_residual_modules()]
+
+    def _read_live() -> list[vm.Finding]:
+        out: list[vm.Finding] = []
+        for fn in live_fns:
+            out.extend(fn(REPO_ROOT))
+        return out
+
+    with ThreadPoolExecutor(max_workers=8) as pool:
+        futs = [pool.submit(_read_live) for _ in range(16)]
+        assert all(fut.result() == [] for fut in as_completed(futs))
+
+
+def test_goose_recipe_schema_leftover_isolation_vs_188_siblings(tmp_path: Path) -> None:
+    """Local schema reject stays isolated; #188/#187/#186/#184 live siblings green."""
+    schema = _goose_recipe_schema()
+    bad = _clone_minimal_recipe()
+    bad["name"] = "Bad.Name"
+    assert vm.validate_against_schema(bad, schema, path="fixture")
+
+    _write(tmp_path / "GOOSE-RECIPES.md", "# Recipe-Based Agent Orchestration\n")
+    assert vm.validate_goose_recipes(tmp_path)
+    assert vm.validate_recipe_titles(tmp_path)
+
+    # Live CI leftover fixtures (#188/#186) stay green
+    assert vm.validate_ci_workflow(REPO_ROOT) == []
+    assert vm.validate_link_check(REPO_ROOT) == []
+    assert vm.validate_actionlint_shell(REPO_ROOT) == []
+    assert vm.validate_ci_job_names(REPO_ROOT) == []
+    assert vm.validate_ci_runs_on(REPO_ROOT) == []
+    assert vm.validate_ci_artifacts(REPO_ROOT) == []
+
+    # Live docs-cross / hydration / security / memory-handoff stay green
+    assert vm.validate_contributing_packaging(REPO_ROOT) == []
+    assert vm.validate_changelog_unreleased(REPO_ROOT) == []
+    assert vm.validate_implementation_guide(REPO_ROOT) == []
+    assert vm.validate_hydration_phase4(REPO_ROOT) == []
+    assert vm.validate_security_packaging(REPO_ROOT) == []
+    assert vm.validate_constitution_handoff(REPO_ROOT) == []
+    assert vm.validate_scratchpad(REPO_ROOT) == []
+    assert vm.validate_goose_howto(REPO_ROOT) == []
+    assert vm.validate_goose_recipes(REPO_ROOT) == []
+
+
+def test_goose_recipe_schema_leftover_live_green() -> None:
+    """Live goose-recipe.schema.json + trio + inventory stay green after leftovers."""
+    schema = _goose_recipe_schema()
+    assert vm.validate_against_schema(MINIMAL_RECIPE, schema, path="live") == []
+    for name, fn in _goose_schema_residual_modules():
+        assert fn(REPO_ROOT) == [], name
+
+    assert vm.INVENTORY_VERSION == 52
+    assert vm.MIN_VALIDATOR_COUNT == 196
+    assert len(vm.VALIDATORS) == 196
+    assert vm.validate_schemas_meta(REPO_ROOT) == []
+    assert vm.run_all_validations(
+        REPO_ROOT, only=["goose", "recipe-agents", "recipe-titles"]
+    ) == []
+
+    # Adjacent leftover/tip surfaces remain green
+    assert vm.validate_ci_workflow(REPO_ROOT) == []
+    assert vm.validate_link_check(REPO_ROOT) == []
+    assert vm.validate_hydration_phase4(REPO_ROOT) == []
+    assert vm.validate_security_packaging(REPO_ROOT) == []
+    assert vm.validate_changelog_unreleased(REPO_ROOT) == []
+    assert vm.validate_contributing_packaging(REPO_ROOT) == []
+    assert vm.validate_implementation_guide(REPO_ROOT) == []
+    assert vm.validate_constitution_handoff(REPO_ROOT) == []
+    assert vm.validate_scratchpad(REPO_ROOT) == []

@@ -10,6 +10,25 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Goose-recipe schema leftover **tests-only** deepeners after tip through
+  **#188** (actionlint leftovers) / **#187** (docs-cross) / **#186** /
+  **#184** (goose-schema type/missing tip) / **#172** (goose-schema residual
+  matrix) — EXISTING `schemas/goose-recipe.schema.json` only (no invented
+  recipe / validator / inventory bump): leftover JSON Schema reject matrix
+  (name charset/null/list/float, title/instructions null+bool, empty/bool
+  version, provider/model bool/int/list, empty settings/recipe objects,
+  extension missing/null/empty/non-string type, null/string array items,
+  timeout null/list/object), leftover ACCEPT boundaries (name/title/extension
+  name max+min, optional timeout, extension additionalProperties, mixed
+  transports, uniqueItems with distinct timeouts), live fenced YAML→schema
+  round-trip, schema-file self-locks (`$schema`/`$id`/required/const/enum),
+  concurrent schema races, invalid/invented sibling keys, and tip isolation
+  against #188/#187/#186/#184 siblings. Historic four only; inventory
+  unchanged (v52 / 196). Distinct from merged #188 (actionlint leftovers),
+  #187 (docs-cross), #186 (actionlint residual suite), #184 (goose-schema
+  type/missing tip), #172 (goose-schema+security residual), and #147
+  (goose-recipe phrase residuals).
+
 - Actionlint/workflow + link-check residual **tests-only** leftover deepeners
   after tip through **#187** (docs-cross) / **#186** (actionlint/workflow +
   link-check) / **#184** / **#181** / **#178** / **#176** / **#174**
