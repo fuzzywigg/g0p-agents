@@ -10,6 +10,22 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Constitution residual **tests-only** deepeners after **#151** (EXISTING fourteen
+  `constitution-*` phrase-lock validators only — no invented product / inventory
+  bump): concurrent validate races, empty/whitespace/header-only AGENTS-v2.2,
+  invalid/invented constitution-timeout + closed-#150 sibling keys, per-phrase
+  drop matrix, inventory mismatch matrix, and cross-isolation against
+  `constitution-crypto` / `constitution-handoff` / `constitution-escalation-matrix`
+  / `constitution-on-device` / `constitution-multichain` /
+  `constitution-escalation-format` / `constitution-recipe-orchestration` /
+  `constitution-scratchpad-state` / `constitution-conflict-matrix` /
+  `constitution-ide-stack` / `constitution-install-script` /
+  `constitution-vscode` / `constitution-hard-constraints` /
+  `constitution-risk-tolerance`. Historic four only; inventory unchanged
+  (v52 / 196). Distinct from merged #147 (nine goose-recipe residuals), merged
+  #151 (thirty-three prompt-pre-v52 residuals), and closed CONFLICTING #150
+  constitution invent.
+
 - Prompt-pre-v52 residual **tests-only** deepeners after #144/#147 tip (EXISTING
   thirty-three pre-v52 `prompt-*` fixtures only, including
   `prompt-orchestration-matrix` — no invented product / inventory bump):
