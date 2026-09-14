@@ -10,6 +10,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Hydration **v35** deepeners (post-#81): `hydration-phase1`,
+  `hydration-list-a`, `hydration-resolved` validators; docs/agent-hydration.md
+  PHASE 1 findings-category locks (Identity/Source Architecture/CI/CD/…),
+  LIST A researchable Goose/Kyber/liboqs/stimgery question locks, and
+  PHASE 3 resolved LIST A / deferred-LIST-B answer locks; consistency
+  deepeners for `hydration_phase1_required_phrases` /
+  `hydration_list_a_required_phrases` / `hydration_resolved_required_phrases`
+  (118 total; historic four only — hydration slice, not agent prompts,
+  goose recipes, changelog, constitution, security policy, contributing,
+  execution-summary, implementation guide, README honesty, PR-template,
+  issue-template, scratchpad, postmortem, archive snapshot, routing/identity,
+  or Dependabot)
+
 - Agent prompts **v34** deepeners (post-#80): `prompt-constraints`,
   `prompt-triggers`, `prompt-related-docs` validators; AGENT-PROMPTS.md
   never-violate constraint locks across specialists, escalation-trigger /
