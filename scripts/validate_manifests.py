@@ -11,6 +11,7 @@ Checks structural correctness of:
 - AGENTS-v2.2.md constitution headings for documented agents only
 - AGENTS-v2.2.md constitution crypto / handoff / escalation-matrix locks
 - AGENTS-v2.2.md §22.2 on-device / §22.3 multichain / §22.4.3 escalation-format locks
+- AGENTS-v2.2.md §22.5 orchestration / §22.6 scratchpad / §22.7 conflicts locks
 - CONTRIBUTING.md metadata / surface-duty / CI-honesty leftover locks
 - CLAUDE.md routing surfaces (packaging surfaces; not specialist agents)
 - SECURITY.md / CONTRIBUTING.md packaging honesty locks
@@ -55,6 +56,7 @@ Checks structural correctness of:
 - SECURITY.md header / FIPS standards-row / Known Non-Issues rename locks
 - AGENTS-v2.2.md §22.1 crypto / §22.4.1 handoff / §22.4.2 escalation-matrix locks
 - AGENTS-v2.2.md §22.2 on-device / §22.3 multichain / §22.4.3 escalation-format locks
+- AGENTS-v2.2.md §22.5 orchestration / §22.6 scratchpad / §22.7 conflicts locks
 - IMPLEMENTATION-GUIDE Quick Start / EXECUTION-SUMMARY specialist table /
   hydration LIST B HITL question locks (Dec 2025 archive snapshot slice)
 - postmortem.md intro / Decision field / Next Steps surface locks
@@ -171,7 +173,7 @@ REQUIRED_ARCHIVE_DOCS = (
     "README.md",
 )
 
-INVENTORY_VERSION = 38
+INVENTORY_VERSION = 39
 CURSOR_ENVIRONMENT_NAME = "g0p-agents"
 DEPENDABOT_SCHEDULE_INTERVAL = "weekly"
 DEPENDABOT_DIRECTORIES: frozenset[str] = frozenset({"/"})
@@ -427,6 +429,37 @@ CONSTITUTION_ESCALATION_FORMAT_REQUIRED_PHRASES: tuple[str, ...] = (
     "Recommendation: [How should we resolve this?]",
     "Awaiting approval before proceeding.",
 )
+CONSTITUTION_ORCHESTRATION_REQUIRED_PHRASES: tuple[str, ...] = (
+    '### 22.5 Recipe-Based Orchestration Structure',
+    'All agent workflows use YAML recipes in `./agentic_flows/` directory.',
+    '#### Example: NFT Mint with Quantum Validation',
+    'QuantumArchitectAgent validates cryptographic randomness',
+    'BlockchainArchitectAgent prepares smart contract call',
+    'EdgeSecurityAgent executes on mobile device',
+    'All three agents sign off before mainnet deployment',
+    'IF ANY AGENT ESCALATES:',
+    'Request human arbitration',
+)
+CONSTITUTION_SCRATCHPAD_REQUIRED_PHRASES: tuple[str, ...] = (
+    '### 22.6 Scratchpad State Machine',
+    'All agent coordination state lives in `./agentic_flows/scratchpad.txt`:',
+    '**Rules**:',
+    'Checkbox state is source of truth',
+    'Only append, never overwrite',
+    'Each agent owns its section',
+    'Deadline must be set before work begins',
+    'If deadline passes without completion → escalate to user',
+)
+CONSTITUTION_CONFLICTS_REQUIRED_PHRASES: tuple[str, ...] = (
+    '### 22.7 Conflict Resolution Matrix',
+    'When agents disagree on a design decision:',
+    '**Quantum Algorithm Complexity**',
+    '**Smart Contract Gas Cost**',
+    '**Crypto Algorithm Choice**',
+    '**Deployment Timeline**',
+    '**Final Decision Maker**: OrchestrationAgent (you)',
+    'If you cannot decide, escalate to stakeholder/user',
+)
 IMPLEMENTATION_QUICKSTART_REQUIRED_PHRASES: tuple[str, ...] = (
     "## Quick Start (30 minutes)",
     "mkdir -p agentic_flows",
@@ -593,7 +626,7 @@ CONTRIBUTING_CI_HONESTY_REQUIRED_PHRASES: tuple[str, ...] = (
     "markdown lint, link check, actionlint",
     "manifest validate on Python 3.11/3.12/3.13",
     "Andrew or designated reviewer",
-    "Packaging inventory v38",
+    "Packaging inventory v39",
     "refuse invented recipes",
     "orphan on-disk YAML",
     "unknown `*Agent` tokens",
@@ -1212,7 +1245,7 @@ SCRATCHPAD_STATUS_MARKERS: tuple[str, ...] = (
 SPECIALIST_AGENTS: tuple[str, ...] = DOCUMENTED_AGENTS[:-1]
 
 MIN_COVERAGE_FAIL_UNDER = 99
-MIN_VALIDATOR_COUNT = 127
+MIN_VALIDATOR_COUNT = 130
 
 
 @dataclass(frozen=True)
@@ -1962,6 +1995,32 @@ def validate_packaging_inventory(root: Path) -> list[Finding]:
             _lock_mismatch(
                 schema_path, "constitution_escalation_format_required_phrases"
             )
+        )
+
+    if (
+        tuple(inventory.get("constitution_orchestration_required_phrases", ()))
+        != CONSTITUTION_ORCHESTRATION_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(
+                schema_path, "constitution_orchestration_required_phrases"
+            )
+        )
+
+    if (
+        tuple(inventory.get("constitution_scratchpad_required_phrases", ()))
+        != CONSTITUTION_SCRATCHPAD_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "constitution_scratchpad_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("constitution_conflicts_required_phrases", ()))
+        != CONSTITUTION_CONFLICTS_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "constitution_conflicts_required_phrases")
         )
 
     if (
@@ -4655,7 +4714,7 @@ def _inventory_lock_consistency(
     else:
         required_ci_honesty = {
             "markdown lint, link check, actionlint",
-            "Packaging inventory v38",
+            "Packaging inventory v39",
             "refuse invented recipes",
         }
         if ci_honesty and not required_ci_honesty <= set(ci_honesty):
@@ -5012,6 +5071,129 @@ def _inventory_lock_consistency(
                     "22.4.3/ESCALATION REQUIRED/Awaiting approval",
                 )
             )
+
+    orchestration = list(
+        inventory.get("constitution_orchestration_required_phrases", ())
+    )
+    if len(orchestration) != len(set(orchestration)):
+        findings.append(
+            Finding(
+                schema_path,
+                "constitution_orchestration_required_phrases must be unique",
+            )
+        )
+    if not orchestration:
+        findings.append(
+            Finding(
+                schema_path,
+                "constitution_orchestration_required_phrases must not be empty",
+            )
+        )
+    for phrase in orchestration:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "constitution_orchestration_required_phrases entries "
+                    "must be non-empty strings",
+                )
+            )
+            break
+    else:
+        required_orch = {
+            "### 22.5 Recipe-Based Orchestration Structure",
+            "IF ANY AGENT ESCALATES:",
+            "Request human arbitration",
+        }
+        if orchestration and not required_orch <= set(orchestration):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "constitution_orchestration_required_phrases must include "
+                    "22.5/IF ANY AGENT ESCALATES/Request human arbitration",
+                )
+            )
+
+    scratchpad = list(inventory.get("constitution_scratchpad_required_phrases", ()))
+    if len(scratchpad) != len(set(scratchpad)):
+        findings.append(
+            Finding(
+                schema_path,
+                "constitution_scratchpad_required_phrases must be unique",
+            )
+        )
+    if not scratchpad:
+        findings.append(
+            Finding(
+                schema_path,
+                "constitution_scratchpad_required_phrases must not be empty",
+            )
+        )
+    for phrase in scratchpad:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "constitution_scratchpad_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_scratch = {
+            "### 22.6 Scratchpad State Machine",
+            "Checkbox state is source of truth",
+            "Only append, never overwrite",
+        }
+        if scratchpad and not required_scratch <= set(scratchpad):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "constitution_scratchpad_required_phrases must include "
+                    "22.6/Checkbox/Only append",
+                )
+            )
+
+    conflicts = list(inventory.get("constitution_conflicts_required_phrases", ()))
+    if len(conflicts) != len(set(conflicts)):
+        findings.append(
+            Finding(
+                schema_path,
+                "constitution_conflicts_required_phrases must be unique",
+            )
+        )
+    if not conflicts:
+        findings.append(
+            Finding(
+                schema_path,
+                "constitution_conflicts_required_phrases must not be empty",
+            )
+        )
+    for phrase in conflicts:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "constitution_conflicts_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_conflicts = {
+            "### 22.7 Conflict Resolution Matrix",
+            "**Final Decision Maker**: OrchestrationAgent (you)",
+            "If you cannot decide, escalate to stakeholder/user",
+        }
+        if conflicts and not required_conflicts <= set(conflicts):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "constitution_conflicts_required_phrases must include "
+                    "22.7/Final Decision Maker/escalate to stakeholder",
+                )
+            )
+
 
     changelog_format = list(inventory.get("changelog_format_required_phrases", ()))
     if len(changelog_format) != len(set(changelog_format)):
@@ -6184,6 +6366,65 @@ def validate_constitution_escalation_format(root: Path) -> list[Finding]:
             )
     return findings
 
+
+def validate_constitution_orchestration(root: Path) -> list[Finding]:
+    rel = "AGENTS-v2.2.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "constitution missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "### 22.5 Recipe-Based Orchestration Structure" not in text:
+        findings.append(
+            Finding(rel, "missing Recipe-Based Orchestration Structure section")
+        )
+    for phrase in CONSTITUTION_ORCHESTRATION_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(
+                    rel, f"missing locked constitution-orchestration phrase: {phrase}"
+                )
+            )
+    return findings
+
+
+def validate_constitution_scratchpad(root: Path) -> list[Finding]:
+    rel = "AGENTS-v2.2.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "constitution missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "### 22.6 Scratchpad State Machine" not in text:
+        findings.append(Finding(rel, "missing Scratchpad State Machine section"))
+    for phrase in CONSTITUTION_SCRATCHPAD_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(
+                    rel, f"missing locked constitution-scratchpad phrase: {phrase}"
+                )
+            )
+    return findings
+
+
+def validate_constitution_conflicts(root: Path) -> list[Finding]:
+    rel = "AGENTS-v2.2.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "constitution missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "### 22.7 Conflict Resolution Matrix" not in text:
+        findings.append(Finding(rel, "missing Conflict Resolution Matrix section"))
+    for phrase in CONSTITUTION_CONFLICTS_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(
+                    rel, f"missing locked constitution-conflicts phrase: {phrase}"
+                )
+            )
+    return findings
+
 def validate_changelog_format(root: Path) -> list[Finding]:
     rel = "CHANGELOG.md"
     path = root / rel
@@ -7330,7 +7571,7 @@ def validate_contributing_ci_honesty(root: Path) -> list[Finding]:
         return [Finding(rel, "CONTRIBUTING.md missing")]
     text = path.read_text(encoding="utf-8")
     findings: list[Finding] = []
-    if "Packaging inventory v38" not in text:
+    if "Packaging inventory v39" not in text:
         findings.append(Finding(rel, "missing Packaging inventory v38 honesty lock"))
     for phrase in CONTRIBUTING_CI_HONESTY_REQUIRED_PHRASES:
         if phrase not in text:
@@ -9022,6 +9263,9 @@ VALIDATORS: dict[str, ValidatorFn] = {
     "constitution-on-device": validate_constitution_on_device,
     "constitution-multichain": validate_constitution_multichain,
     "constitution-escalation-format": validate_constitution_escalation_format,
+    "constitution-orchestration": validate_constitution_orchestration,
+    "constitution-scratchpad": validate_constitution_scratchpad,
+    "constitution-conflicts": validate_constitution_conflicts,
     "routing": validate_routing_surfaces,
     "environment": validate_cursor_environment,
     "github-agents": validate_github_agents,

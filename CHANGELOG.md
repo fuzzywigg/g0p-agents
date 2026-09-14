@@ -10,6 +10,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Constitution **v39** deepeners (post-#92): `constitution-orchestration`,
+  `constitution-scratchpad`, `constitution-conflicts` validators; AGENTS-v2.2.md
+  §22.5 Recipe-Based Orchestration Structure locks, §22.6 Scratchpad State
+  Machine locks, and §22.7 Conflict Resolution Matrix locks; consistency
+  deepeners for `constitution_orchestration_required_phrases` /
+  `constitution_scratchpad_required_phrases` /
+  `constitution_conflicts_required_phrases` (Packaging inventory 130 total;
+  historic four only — constitution leftovers slice, not contributing v38,
+  goose recipes, execution-summary, hydration, implementation-guide, security
+  policy, agent prompts, changelog, Dependabot, README honesty, PR-template,
+  issue-template, scratchpad, postmortem, archive snapshot, or routing/identity)
+
 - Contributing guide **v38** deepeners (post-#90; #89 conflict closed): `contributing-metadata`,
   `contributing-surfaces`, `contributing-ci-honesty` validators; CONTRIBUTING.md title /
   Status / Edit-policy locks, agent-surface duty list / branch-purpose leftovers, and PR

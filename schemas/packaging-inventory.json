@@ -1,5 +1,5 @@
 {
-  "version": 38,
+  "version": 39,
   "documented_agents": [
     "QuantumArchitectAgent",
     "BlockchainArchitectAgent",
@@ -292,12 +292,15 @@
     "claude",
     "claude-metadata",
     "constitution",
+    "constitution-conflicts",
     "constitution-crypto",
     "constitution-escalation-format",
     "constitution-escalation-matrix",
     "constitution-handoff",
     "constitution-multichain",
     "constitution-on-device",
+    "constitution-orchestration",
+    "constitution-scratchpad",
     "contributing",
     "contributing-branches",
     "contributing-ci-honesty",
@@ -399,7 +402,7 @@
     "yaml-configs"
   ],
   "min_coverage_fail_under": 99,
-  "min_validator_count": 127,
+  "min_validator_count": 130,
   "required_paths": [
     "README.md",
     "LICENSE",
@@ -1239,10 +1242,41 @@
     "markdown lint, link check, actionlint",
     "manifest validate on Python 3.11/3.12/3.13",
     "Andrew or designated reviewer",
-    "Packaging inventory v38",
+    "Packaging inventory v39",
     "refuse invented recipes",
     "orphan on-disk YAML",
     "unknown `*Agent` tokens",
     "`AGENT-PROMPTS.md` / `GOOSE-RECIPES.md` / `AGENTS-v2.2.md`"
+  ],
+  "constitution_orchestration_required_phrases": [
+    "### 22.5 Recipe-Based Orchestration Structure",
+    "All agent workflows use YAML recipes in `./agentic_flows/` directory.",
+    "#### Example: NFT Mint with Quantum Validation",
+    "QuantumArchitectAgent validates cryptographic randomness",
+    "BlockchainArchitectAgent prepares smart contract call",
+    "EdgeSecurityAgent executes on mobile device",
+    "All three agents sign off before mainnet deployment",
+    "IF ANY AGENT ESCALATES:",
+    "Request human arbitration"
+  ],
+  "constitution_scratchpad_required_phrases": [
+    "### 22.6 Scratchpad State Machine",
+    "All agent coordination state lives in `./agentic_flows/scratchpad.txt`:",
+    "**Rules**:",
+    "Checkbox state is source of truth",
+    "Only append, never overwrite",
+    "Each agent owns its section",
+    "Deadline must be set before work begins",
+    "If deadline passes without completion → escalate to user"
+  ],
+  "constitution_conflicts_required_phrases": [
+    "### 22.7 Conflict Resolution Matrix",
+    "When agents disagree on a design decision:",
+    "**Quantum Algorithm Complexity**",
+    "**Smart Contract Gas Cost**",
+    "**Crypto Algorithm Choice**",
+    "**Deployment Timeline**",
+    "**Final Decision Maker**: OrchestrationAgent (you)",
+    "If you cannot decide, escalate to stakeholder/user"
   ]
 }
