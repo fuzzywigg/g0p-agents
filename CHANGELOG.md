@@ -10,6 +10,41 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Goose-recipe schema leftover **tests-only** deepeners after tip through **#253**
+  (prompts+flows leftover after #248) / **#248** (actionlint/linkcheck leftover
+  after #242) / **#242** / **#236** / **#229** / **#224** / **#219** (goose-schema
+  leftover after #209) / **#209** / **#208** / **#202** / **#200** / **#195** /
+  **#188** / **#187** / **#186** / **#184** (goose-schema tip) / **#172**
+  (goose-schema residual suite) (EXISTING three fixtures — `goose` /
+  `recipe-agents` / `recipe-titles` plus `schemas/goose-recipe.schema.json` +
+  `GOOSE-RECIPES.md` — no invented product / inventory bump): unsaturated reject
+  leftovers beyond #219/#246 (`name` plus/at/mid-caps/tab/emoji/hyphen/CR, `title`
+  float/object/empty, `provider` object/padded, extension name bool/list / type
+  list/`STDIO`/`SSE`/`Stdio`/`streamable_HTTP`/padded, empty/timeout-only items,
+  timeout float/string/empty list, `recipe` list/bool, settings/extensions
+  bool/string + settings extra key, uniqueItems exact-dup), invent-key KeyError /
+  `run_all --only` ValueError, ACCEPT leftovers (digit/trailing-newline/name-max-128,
+  title max 256, omit timeout, spaced/unicode extension names, long
+  instructions/prompt, mixed transports + additionalProperties, uniqueItems
+  distinct timeouts / same-name-diff-type / omit-vs-timeout), **File** count /
+  `.yml`-**File** / fence info-string / indented-closer / uppercase-`YAML` /
+  mixed-`Yaml` / nodot `goose run` leftovers, non-yaml agentic_flows allow-list +
+  multi-binding historic provider + fence historic extension/model/version +
+  on-disk empty-name schema leftovers, non-string title exact / found-None /
+  prompt-only primary + `recipe: not-a-map` agent skip, inventory `recipe_titles`
+  / `agentic_flows_allowed_files` / `expected_recipe_files` type leftovers, CI
+  `--list-validators` / `--only` goose-trio + required manifest step-marker smoke,
+  concurrent races, and tip isolation against
+  #253/#248/#242/#236/#229/#224/#219/#209/#208/#202 siblings. Historic four only;
+  Packaging inventory unchanged (v52 / 196 validators). Distinct from merged #253
+  (prompts+flows leftover), #248 (actionlint/linkcheck leftover), #242
+  (prompts+flows), #236 (actionlint/linkcheck), #229 (hydration/security+handoff),
+  #224 (prompts+flows), #219 (prior goose-schema leftover), closed CONFLICTING
+  #255/#254/#249/#246/#245/#239/#234/#228/#216/#212 (same leftover on pre-#253/#248
+  tips), open #258 (hydration/security+handoff niche), #202/#200 (listform+flows),
+  #184 (tip type matrix), #172 (residual suite), #147 (nine goose-* phrase locks),
+  and not a v53 invent sibling or Dependabot bump.
+
 - Prompts listform + agentic_flows residual **tests-only** leftover deepeners
   after tip through **#248** (actionlint/linkcheck leftover after #242) /
   **#242** / **#236** / **#229** / **#224** / **#219** / **#209** / **#208** /
