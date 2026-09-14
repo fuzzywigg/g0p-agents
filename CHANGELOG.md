@@ -10,6 +10,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Prompts residual **v50** deepeners / leftovers continued (post-#122 prompts context/authority v49):
+  `prompt-responsibilities`, `prompt-cannot-delegate`, `prompt-human-escalation` validators; AGENT-PROMPTS.md
+  Core Responsibilities / CANNOT Delegate / When You Escalate to Human leftovers; consistency deepeners
+  for matching `*_required_phrases` inventory keys
+  (Packaging inventory 172 total; historic four only — prompts responsibilities/cannot-delegate/human-escalation
+  leftovers slice, not constitution/changelog v45, hydration, README, implementation-guide,
+  security, contributing, goose recipes, or Dependabot)
+
 - Prompts residual **v49** deepeners / leftovers continued (post-#121 prompts matrix/monthly/usage-example v48):
   `prompt-context`, `prompt-decision-authority`, `prompt-escalation-authority` validators; AGENT-PROMPTS.md
   Current Project Context / Decision Authority / Escalation Authority leftovers; consistency deepeners
