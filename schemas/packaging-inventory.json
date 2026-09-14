@@ -1,5 +1,5 @@
 {
-  "version": 29,
+  "version": 30,
   "documented_agents": [
     "QuantumArchitectAgent",
     "BlockchainArchitectAgent",
@@ -315,6 +315,9 @@
     "goose-naming",
     "goose-state-machine",
     "hydration",
+    "hydration-findings",
+    "hydration-issues",
+    "hydration-list-a",
     "hydration-list-b",
     "implementation-guide",
     "implementation-phases",
@@ -372,7 +375,7 @@
     "yaml-configs"
   ],
   "min_coverage_fail_under": 99,
-  "min_validator_count": 100,
+  "min_validator_count": 103,
   "required_paths": [
     "README.md",
     "LICENSE",
@@ -974,5 +977,40 @@
     "regardless of CI status",
     "See [CLAUDE.md](CLAUDE.md)",
     "agent routing matrix and negative constraints"
+  ],
+  "hydration_findings_required_phrases": [
+    "### Identity",
+    "### Source Architecture",
+    "### Dependencies",
+    "### Tests",
+    "### CI/CD",
+    "### Documentation",
+    "### Governance",
+    "### Templates",
+    "### Security",
+    "### Error Handling",
+    "### Observability",
+    "### Deployment",
+    "### Git State"
+  ],
+  "hydration_list_a_required_phrases": [
+    "### LIST A \u2014 Researchable",
+    "What is the Goose framework?",
+    "What are CRYSTALS-Kyber and CRYSTALS-Dilithium?",
+    "What is `liboqs`?",
+    "What is `stimgery`",
+    "| A1 |",
+    "| A4 |"
+  ],
+  "hydration_issues_required_phrases": [
+    "## PHASE 4: ISSUES GENERATED",
+    "Add LICENSE file",
+    "Create .github/workflows/ CI pipeline",
+    "Scaffold agentic_flows/ with actual Goose recipe YAML files",
+    "Scaffold quantum_circuits/ with sample Cirq implementation",
+    "## PHASE 5: Roadmap",
+    "## LIST B \u2014 Deferred to Andrew",
+    "**B1**:",
+    "**B5**:"
   ]
 }
