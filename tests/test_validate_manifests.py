@@ -1170,6 +1170,12 @@ def test_validators_registry_covers_all_checks() -> None:
         "prompt-context",
         "prompt-cannot-delegate",
         "prompt-escalation-authority",
+        "prompt-specialist-intros",
+        "prompt-template-headers",
+        "prompt-constraints-residual",
+        "prompt-triggers-residual",
+        "prompt-related-docs-residual",
+        "prompt-instantiation",
         "hydration-phase2",
         "hydration-phase5",
         "license-mit",
@@ -15748,6 +15754,14 @@ def test_v51_inventory_lock_mismatch_and_consistency_matrix(tmp_path: Path) -> N
             "Copy template/access to/Task.md/System Prompt copy",
         ),
     ]
+
+    _copy_schemas(tmp_path)
+    for rel in _inventory_payload()["required_paths"]:
+        target = tmp_path / rel
+        target.parent.mkdir(parents=True, exist_ok=True)
+        if not target.exists():
+            target.write_text("ok\n", encoding="utf-8")
+
     for key, phrases, include_token in keys:
         payload = _inventory_payload()
         payload[key] = []
@@ -15780,13 +15794,6 @@ def test_v51_inventory_lock_mismatch_and_consistency_matrix(tmp_path: Path) -> N
         assert any(f"{key} must include" in f.message for f in findings)
         assert any(include_token in f.message for f in findings)
 
-        # lock mismatch path via packaging inventory validate
-        _copy_schemas(tmp_path)
-        for rel in _inventory_payload()["required_paths"]:
-            target = tmp_path / rel
-            target.parent.mkdir(parents=True, exist_ok=True)
-            if not target.exists():
-                target.write_text("ok\n", encoding="utf-8")
         bad = _inventory_payload(**{key: list(phrases)[:-1] + [f"invented-{key}"]})
         (tmp_path / "schemas" / "packaging-inventory.json").write_text(
             json.dumps(bad), encoding="utf-8"
@@ -15799,11 +15806,18 @@ def test_v51_inventory_lock_mismatch_and_consistency_matrix(tmp_path: Path) -> N
         for phrase in vm.CONTRIBUTING_CI_HONESTY_REQUIRED_PHRASES
     )
     assert vm.validate_contributing_ci_honesty(REPO_ROOT) == []
-    assert "inventory v51 locks" in (REPO_ROOT / "README.md").read_text(encoding="utf-8")
-    # ensure all six validators fire missing-phrase findings independently
+    assert "inventory v51 locks" in (REPO_ROOT / "README.md").read_text(
+        encoding="utf-8"
+    )
     for fn, phrases in [
-        (vm.validate_prompt_specialist_intros, vm.PROMPT_SPECIALIST_INTROS_REQUIRED_PHRASES),
-        (vm.validate_prompt_template_headers, vm.PROMPT_TEMPLATE_HEADERS_REQUIRED_PHRASES),
+        (
+            vm.validate_prompt_specialist_intros,
+            vm.PROMPT_SPECIALIST_INTROS_REQUIRED_PHRASES,
+        ),
+        (
+            vm.validate_prompt_template_headers,
+            vm.PROMPT_TEMPLATE_HEADERS_REQUIRED_PHRASES,
+        ),
         (
             vm.validate_prompt_constraints_residual,
             vm.PROMPT_CONSTRAINTS_RESIDUAL_REQUIRED_PHRASES,
@@ -15864,11 +15878,17 @@ def test_v51_prompt_residual_per_phrase_missing_matrix(tmp_path: Path) -> None:
         for idx, dropped in enumerate(phrases):
             kept = [p for i, p in enumerate(phrases) if i != idx]
             body_parts = list(kept)
-            if section and section not in body_parts:
+            if section and section != dropped and section not in body_parts:
                 body_parts.insert(0, section)
             _write(tmp_path / "AGENT-PROMPTS.md", "\n".join(body_parts) + "\n")
             findings = fn(tmp_path)
-            assert any(dropped in f.message for f in findings), (fn.__name__, dropped)
+            assert findings, (fn.__name__, dropped)
+            assert any(
+                dropped in f.message
+                or (section == dropped and "missing" in f.message)
+                for f in findings
+            ), (fn.__name__, dropped, [f.message for f in findings[:5]])
+
 
 
 def test_v51_prompt_residual_cross_validator_isolation(tmp_path: Path) -> None:
