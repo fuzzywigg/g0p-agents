@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/fuzzywigg/g0p-agents/schemas/markdownlint.schema.json",
   "title": "markdownlint config",
-  "description": "Structural schema for .markdownlint.yaml in this docs archive (v32 locks).",
+  "description": "Structural schema for .markdownlint.yaml in this docs archive (v33 locks).",
   "type": "object",
   "additionalProperties": true,
   "required": [

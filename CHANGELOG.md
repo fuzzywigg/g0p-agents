@@ -10,6 +10,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Goose recipes **v33** deepeners (post-#78): `goose-recipe-headers`,
+  `goose-instruction-agents`, `goose-extensions` validators; GOOSE-RECIPES.md
+  Recipe 1–4 heading / File-path locks, historic four instruction-agent identity
+  locks, and builtin developer extension / timeout 300+600 locks; consistency
+  deepeners for `goose_recipe_headers_required_phrases` /
+  `goose_instruction_agents_required_phrases` /
+  `goose_extensions_required_phrases` (112 total; historic four only — goose
+  recipes slice, not changelog, hydration, constitution, security policy,
+  contributing, execution-summary, implementation guide, agent prompts, README
+  honesty, PR-template, issue-template, scratchpad, postmortem, archive
+  snapshot, routing/identity, or Dependabot)
+
 - Changelog **v32** deepeners (post-#75): `changelog-format`, `changelog-unreleased`,
   `changelog-release` validators; CHANGELOG.md Keep a Changelog / Unreleased / Added
   format locks, Unreleased packaging/historic-four/Dependabot honesty locks, and

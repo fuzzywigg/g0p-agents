@@ -24,6 +24,7 @@ Checks structural correctness of:
 - LICENSE MIT + copyright holder; README packaging / honesty phrases
 - CHANGELOG / postmortem / .gitignore / CLAUDE negative-constraint locks
 - CHANGELOG.md Keep a Changelog format / Unreleased / 0.1.0 release locks
+- GOOSE-RECIPES.md recipe headers / instruction-agent / extension locks
 - agentic_flows/scratchpad.txt coordination markers (+ allowed file set)
 - pyproject.toml validation tooling keys (+ coverage / requires-python / ruff)
 - CI workflow job/step/matrix/concurrency/permissions/artifact-if presence
@@ -164,7 +165,7 @@ REQUIRED_ARCHIVE_DOCS = (
     "README.md",
 )
 
-INVENTORY_VERSION = 32
+INVENTORY_VERSION = 33
 CURSOR_ENVIRONMENT_NAME = "g0p-agents"
 DEPENDABOT_SCHEDULE_INTERVAL = "weekly"
 DEPENDABOT_DIRECTORIES: frozenset[str] = frozenset({"/"})
@@ -921,6 +922,28 @@ GOOSE_NAMING_REQUIRED_PHRASES: tuple[str, ...] = (
     "Create new YAML file",
     "Follow the structure",
 )
+GOOSE_RECIPE_HEADERS_REQUIRED_PHRASES: tuple[str, ...] = (
+    "## Recipe 1: Quantum Algorithm Design",
+    "**File**: `./agentic_flows/quantum_algorithm_design.yaml`",
+    "## Recipe 2: Smart Contract Design",
+    "**File**: `./agentic_flows/blockchain_contract_design.yaml`",
+    "## Recipe 3: On-Device Security Implementation",
+    "**File**: `./agentic_flows/edge_security_implementation.yaml`",
+    "## Recipe 4: Multi-Agent Orchestration (Master Recipe)",
+    "**File**: `./agentic_flows/quantum_nft_mint_orchestration.yaml`",
+)
+GOOSE_INSTRUCTION_AGENTS_REQUIRED_PHRASES: tuple[str, ...] = (
+    "You are QuantumArchitectAgent designing a quantum algorithm for FUZZYWIGG.",
+    "You are BlockchainArchitectAgent designing a smart contract for FUZZYWIGG.",
+    "You are EdgeSecurityAgent implementing quantum-safe cryptography on mobile.",
+    "You are OrchestrationAgent coordinating a complete quantum NFT mint operation.",
+)
+GOOSE_EXTENSIONS_REQUIRED_PHRASES: tuple[str, ...] = (
+    "type: builtin",
+    "name: developer",
+    "timeout: 300",
+    "timeout: 600",
+)
 PROMPT_ROLES_REQUIRED_PHRASES: tuple[str, ...] = (
     "## 1. QuantumArchitectAgent Prompt Template",
     "You are the Quantum Computing specialist for the FUZZYWIGG-AI ecosystem.",
@@ -1029,7 +1052,7 @@ SCRATCHPAD_STATUS_MARKERS: tuple[str, ...] = (
 SPECIALIST_AGENTS: tuple[str, ...] = DOCUMENTED_AGENTS[:-1]
 
 MIN_COVERAGE_FAIL_UNDER = 99
-MIN_VALIDATOR_COUNT = 109
+MIN_VALIDATOR_COUNT = 112
 
 
 @dataclass(frozen=True)
@@ -1941,6 +1964,30 @@ def validate_packaging_inventory(root: Path) -> list[Finding]:
         != GOOSE_NAMING_REQUIRED_PHRASES
     ):
         findings.append(_lock_mismatch(schema_path, "goose_naming_required_phrases"))
+
+    if (
+        tuple(inventory.get("goose_recipe_headers_required_phrases", ()))
+        != GOOSE_RECIPE_HEADERS_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "goose_recipe_headers_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("goose_instruction_agents_required_phrases", ()))
+        != GOOSE_INSTRUCTION_AGENTS_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "goose_instruction_agents_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("goose_extensions_required_phrases", ()))
+        != GOOSE_EXTENSIONS_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "goose_extensions_required_phrases")
+        )
 
     if (
         tuple(inventory.get("prompt_roles_required_phrases", ()))
@@ -4343,6 +4390,116 @@ def _inventory_lock_consistency(
             )
 
 
+    goose_headers = list(inventory.get("goose_recipe_headers_required_phrases", ()))
+    if len(goose_headers) != len(set(goose_headers)):
+        findings.append(
+            Finding(schema_path, "goose_recipe_headers_required_phrases must be unique")
+        )
+    if not goose_headers:
+        findings.append(
+            Finding(
+                schema_path, "goose_recipe_headers_required_phrases must not be empty"
+            )
+        )
+    for phrase in goose_headers:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "goose_recipe_headers_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_headers = {
+            "## Recipe 1: Quantum Algorithm Design",
+            "## Recipe 4: Multi-Agent Orchestration (Master Recipe)",
+            "**File**: `./agentic_flows/quantum_nft_mint_orchestration.yaml`",
+        }
+        if goose_headers and not required_headers <= set(goose_headers):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "goose_recipe_headers_required_phrases must include Recipe 1/"
+                    "Recipe 4/orchestration File",
+                )
+            )
+
+    goose_instr = list(inventory.get("goose_instruction_agents_required_phrases", ()))
+    if len(goose_instr) != len(set(goose_instr)):
+        findings.append(
+            Finding(
+                schema_path,
+                "goose_instruction_agents_required_phrases must be unique",
+            )
+        )
+    if not goose_instr:
+        findings.append(
+            Finding(
+                schema_path,
+                "goose_instruction_agents_required_phrases must not be empty",
+            )
+        )
+    for phrase in goose_instr:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "goose_instruction_agents_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_instr = {
+            "You are QuantumArchitectAgent designing a quantum algorithm for FUZZYWIGG.",
+            "You are OrchestrationAgent coordinating a complete quantum NFT mint operation.",
+        }
+        if goose_instr and not required_instr <= set(goose_instr):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "goose_instruction_agents_required_phrases must include "
+                    "QuantumArchitect/Orchestration",
+                )
+            )
+
+    goose_ext = list(inventory.get("goose_extensions_required_phrases", ()))
+    if len(goose_ext) != len(set(goose_ext)):
+        findings.append(
+            Finding(schema_path, "goose_extensions_required_phrases must be unique")
+        )
+    if not goose_ext:
+        findings.append(
+            Finding(schema_path, "goose_extensions_required_phrases must not be empty")
+        )
+    for phrase in goose_ext:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "goose_extensions_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_ext = {
+            "type: builtin",
+            "name: developer",
+            "timeout: 600",
+        }
+        if goose_ext and not required_ext <= set(goose_ext):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "goose_extensions_required_phrases must include builtin/"
+                    "developer/timeout 600",
+                )
+            )
+
+
     return findings
 
 
@@ -6384,6 +6541,61 @@ def validate_goose_naming(root: Path) -> list[Finding]:
     return findings
 
 
+def validate_goose_recipe_headers(root: Path) -> list[Finding]:
+    rel = "GOOSE-RECIPES.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "GOOSE-RECIPES.md missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## Recipe 1: Quantum Algorithm Design" not in body:
+        findings.append(Finding(rel, "missing Recipe 1 heading"))
+    if "## Recipe 4: Multi-Agent Orchestration (Master Recipe)" not in body:
+        findings.append(Finding(rel, "missing Recipe 4 heading"))
+    for phrase in GOOSE_RECIPE_HEADERS_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked goose-recipe-headers phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_goose_instruction_agents(root: Path) -> list[Finding]:
+    rel = "GOOSE-RECIPES.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "GOOSE-RECIPES.md missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "You are QuantumArchitectAgent" not in body:
+        findings.append(Finding(rel, "missing QuantumArchitectAgent instruction"))
+    for phrase in GOOSE_INSTRUCTION_AGENTS_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(
+                    rel, f"missing locked goose-instruction-agents phrase: {phrase}"
+                )
+            )
+    return findings
+
+
+def validate_goose_extensions(root: Path) -> list[Finding]:
+    rel = "GOOSE-RECIPES.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "GOOSE-RECIPES.md missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "type: builtin" not in body:
+        findings.append(Finding(rel, "missing builtin extension type"))
+    for phrase in GOOSE_EXTENSIONS_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked goose-extensions phrase: {phrase}")
+            )
+    return findings
+
+
 def validate_prompt_roles(root: Path) -> list[Finding]:
     rel = "AGENT-PROMPTS.md"
     path = root / rel
@@ -7732,6 +7944,9 @@ VALIDATORS: dict[str, ValidatorFn] = {
     "goose-howto": validate_goose_howto,
     "goose-state-machine": validate_goose_state_machine,
     "goose-naming": validate_goose_naming,
+    "goose-recipe-headers": validate_goose_recipe_headers,
+    "goose-instruction-agents": validate_goose_instruction_agents,
+    "goose-extensions": validate_goose_extensions,
     "prompt-roles": validate_prompt_roles,
     "prompt-sections": validate_prompt_sections,
     "prompt-usage": validate_prompt_usage,
