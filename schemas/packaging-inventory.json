@@ -1,5 +1,5 @@
 {
-  "version": 29,
+  "version": 30,
   "documented_agents": [
     "QuantumArchitectAgent",
     "BlockchainArchitectAgent",
@@ -276,6 +276,9 @@
     "bug-repro",
     "bug-template",
     "changelog",
+    "changelog-format",
+    "changelog-release",
+    "changelog-unreleased",
     "ci",
     "ci-actions",
     "ci-artifacts",
@@ -372,7 +375,7 @@
     "yaml-configs"
   ],
   "min_coverage_fail_under": 99,
-  "min_validator_count": 100,
+  "min_validator_count": 103,
   "required_paths": [
     "README.md",
     "LICENSE",
@@ -974,5 +977,26 @@
     "regardless of CI status",
     "See [CLAUDE.md](CLAUDE.md)",
     "agent routing matrix and negative constraints"
+  ],
+  "changelog_format_required_phrases": [
+    "# Changelog",
+    "All notable changes to this project will be documented in this file.",
+    "Keep a Changelog",
+    "## [Unreleased]",
+    "### Added"
+  ],
+  "changelog_unreleased_required_phrases": [
+    "## [Unreleased]",
+    "Packaging inventory",
+    "historic four",
+    "or Dependabot",
+    "validators"
+  ],
+  "changelog_release_required_phrases": [
+    "### Changed",
+    "## [0.1.0] \u2014 2025-12-13",
+    "`AGENTS-v2.2.md` \u2014 agent constitution",
+    "`AGENT-PROMPTS.md` \u2014 specialist agent system prompts (4 agents)",
+    "`GOOSE-RECIPES.md` \u2014 Goose YAML recipe templates"
   ]
 }

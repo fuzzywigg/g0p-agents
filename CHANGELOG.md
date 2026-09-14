@@ -10,6 +10,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Changelog **v30** deepeners (post-#63): `changelog-format`, `changelog-unreleased`,
+  `changelog-release` validators; CHANGELOG.md Keep a Changelog / Unreleased / Added
+  format locks, Unreleased packaging/historic-four/Dependabot honesty locks, and
+  Changed / 0.1.0 release / AGENTS/AGENT-PROMPTS/GOOSE-RECIPES archive locks;
+  consistency deepeners for `changelog_format_required_phrases` /
+  `changelog_unreleased_required_phrases` / `changelog_release_required_phrases`
+  (103 total; historic four only — changelog slice, not hydration, constitution,
+  security policy, contributing, execution-summary, implementation guide, agent
+  prompts, goose recipes, README honesty, PR-template, issue-template, scratchpad,
+  postmortem, archive snapshot, routing/identity, or Dependabot)
+
 - Contributing guide **v29** deepeners (post-#61): `contributing-issues`,
   `contributing-local`, `contributing-governance` validators; CONTRIBUTING.md
   Issue Reporting / Bug / Feature / Agent Task locks, Local validation

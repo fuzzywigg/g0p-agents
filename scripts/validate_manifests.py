@@ -22,6 +22,7 @@ Checks structural correctness of:
 - requirements-dev.txt required validation packages
 - LICENSE MIT + copyright holder; README packaging / honesty phrases
 - CHANGELOG / postmortem / .gitignore / CLAUDE negative-constraint locks
+- CHANGELOG.md Keep a Changelog format / Unreleased / 0.1.0 release locks
 - agentic_flows/scratchpad.txt coordination markers (+ allowed file set)
 - pyproject.toml validation tooling keys (+ coverage / requires-python / ruff)
 - CI workflow job/step/matrix/concurrency/permissions/artifact-if presence
@@ -160,7 +161,7 @@ REQUIRED_ARCHIVE_DOCS = (
     "README.md",
 )
 
-INVENTORY_VERSION = 29
+INVENTORY_VERSION = 30
 CURSOR_ENVIRONMENT_NAME = "g0p-agents"
 DEPENDABOT_SCHEDULE_INTERVAL = "weekly"
 DEPENDABOT_DIRECTORIES: frozenset[str] = frozenset({"/"})
@@ -458,6 +459,27 @@ CONTRIBUTING_GOVERNANCE_REQUIRED_PHRASES: tuple[str, ...] = (
     "regardless of CI status",
     "See [CLAUDE.md](CLAUDE.md)",
     "agent routing matrix and negative constraints",
+)
+CHANGELOG_FORMAT_REQUIRED_PHRASES: tuple[str, ...] = (
+    "# Changelog",
+    "All notable changes to this project will be documented in this file.",
+    "Keep a Changelog",
+    "## [Unreleased]",
+    "### Added",
+)
+CHANGELOG_UNRELEASED_REQUIRED_PHRASES: tuple[str, ...] = (
+    "## [Unreleased]",
+    "Packaging inventory",
+    "historic four",
+    "or Dependabot",
+    "validators",
+)
+CHANGELOG_RELEASE_REQUIRED_PHRASES: tuple[str, ...] = (
+    "### Changed",
+    "## [0.1.0] — 2025-12-13",
+    "`AGENTS-v2.2.md` — agent constitution",
+    "`AGENT-PROMPTS.md` — specialist agent system prompts (4 agents)",
+    "`GOOSE-RECIPES.md` — Goose YAML recipe templates",
 )
 PR_SUMMARY_REQUIRED_PHRASES: tuple[str, ...] = (
     "# Summary",
@@ -953,7 +975,7 @@ SCRATCHPAD_STATUS_MARKERS: tuple[str, ...] = (
 SPECIALIST_AGENTS: tuple[str, ...] = DOCUMENTED_AGENTS[:-1]
 
 MIN_COVERAGE_FAIL_UNDER = 99
-MIN_VALIDATOR_COUNT = 100
+MIN_VALIDATOR_COUNT = 103
 
 
 @dataclass(frozen=True)
@@ -1880,6 +1902,30 @@ def validate_packaging_inventory(root: Path) -> list[Finding]:
     ):
         findings.append(
             _lock_mismatch(schema_path, "contributing_governance_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("changelog_format_required_phrases", ()))
+        != CHANGELOG_FORMAT_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "changelog_format_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("changelog_unreleased_required_phrases", ()))
+        != CHANGELOG_UNRELEASED_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "changelog_unreleased_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("changelog_release_required_phrases", ()))
+        != CHANGELOG_RELEASE_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "changelog_release_required_phrases")
         )
 
     expected_validator_names = tuple(sorted(VALIDATORS))
@@ -3855,6 +3901,118 @@ def _inventory_lock_consistency(
                 )
             )
 
+    changelog_format = list(inventory.get("changelog_format_required_phrases", ()))
+    if len(changelog_format) != len(set(changelog_format)):
+        findings.append(
+            Finding(schema_path, "changelog_format_required_phrases must be unique")
+        )
+    if not changelog_format:
+        findings.append(
+            Finding(schema_path, "changelog_format_required_phrases must not be empty")
+        )
+    for phrase in changelog_format:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "changelog_format_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_format = {
+            "# Changelog",
+            "## [Unreleased]",
+            "### Added",
+        }
+        if changelog_format and not required_format <= set(changelog_format):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "changelog_format_required_phrases must include Changelog/"
+                    "Unreleased/Added",
+                )
+            )
+
+    changelog_unreleased = list(
+        inventory.get("changelog_unreleased_required_phrases", ())
+    )
+    if len(changelog_unreleased) != len(set(changelog_unreleased)):
+        findings.append(
+            Finding(
+                schema_path, "changelog_unreleased_required_phrases must be unique"
+            )
+        )
+    if not changelog_unreleased:
+        findings.append(
+            Finding(
+                schema_path, "changelog_unreleased_required_phrases must not be empty"
+            )
+        )
+    for phrase in changelog_unreleased:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "changelog_unreleased_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_unreleased = {
+            "## [Unreleased]",
+            "Packaging inventory",
+            "historic four",
+        }
+        if changelog_unreleased and not required_unreleased <= set(
+            changelog_unreleased
+        ):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "changelog_unreleased_required_phrases must include Unreleased/"
+                    "Packaging/historic",
+                )
+            )
+
+    changelog_release = list(inventory.get("changelog_release_required_phrases", ()))
+    if len(changelog_release) != len(set(changelog_release)):
+        findings.append(
+            Finding(schema_path, "changelog_release_required_phrases must be unique")
+        )
+    if not changelog_release:
+        findings.append(
+            Finding(
+                schema_path, "changelog_release_required_phrases must not be empty"
+            )
+        )
+    for phrase in changelog_release:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "changelog_release_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_release = {
+            "### Changed",
+            "## [0.1.0] — 2025-12-13",
+            "`GOOSE-RECIPES.md` — Goose YAML recipe templates",
+        }
+        if changelog_release and not required_release <= set(changelog_release):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "changelog_release_required_phrases must include Changed/"
+                    "0.1.0/GOOSE-RECIPES",
+                )
+            )
+
     return findings
 
 
@@ -5582,6 +5740,57 @@ def validate_contributing_governance(root: Path) -> list[Finding]:
     return findings
 
 
+
+def validate_changelog_format(root: Path) -> list[Finding]:
+    rel = "CHANGELOG.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "CHANGELOG.md missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "# Changelog" not in body:
+        findings.append(Finding(rel, "missing Changelog heading"))
+    for phrase in CHANGELOG_FORMAT_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked changelog-format phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_changelog_unreleased(root: Path) -> list[Finding]:
+    rel = "CHANGELOG.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "CHANGELOG.md missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## [Unreleased]" not in body:
+        findings.append(Finding(rel, "missing Unreleased section"))
+    for phrase in CHANGELOG_UNRELEASED_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked changelog-unreleased phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_changelog_release(root: Path) -> list[Finding]:
+    rel = "CHANGELOG.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "CHANGELOG.md missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## [0.1.0] — 2025-12-13" not in body:
+        findings.append(Finding(rel, "missing 0.1.0 release section"))
+    for phrase in CHANGELOG_RELEASE_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked changelog-release phrase: {phrase}")
+            )
+    return findings
+
 def validate_pr_summary(root: Path) -> list[Finding]:
     rel = ".github/pull_request_template.md"
     path = root / rel
@@ -7095,6 +7304,9 @@ VALIDATORS: dict[str, ValidatorFn] = {
     "contributing-issues": validate_contributing_issues,
     "contributing-local": validate_contributing_local,
     "contributing-governance": validate_contributing_governance,
+    "changelog-format": validate_changelog_format,
+    "changelog-unreleased": validate_changelog_unreleased,
+    "changelog-release": validate_changelog_release,
     "scratchpad": validate_scratchpad,
     "scratchpad-intro": validate_scratchpad_intro,
     "scratchpad-format": validate_scratchpad_format,
