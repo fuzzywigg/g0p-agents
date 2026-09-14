@@ -59,6 +59,7 @@ Checks structural correctness of:
 - IMPLEMENTATION-GUIDE Quick Start / EXECUTION-SUMMARY specialist table /
   hydration LIST B HITL question locks (Dec 2025 archive snapshot slice)
 - postmortem.md intro / Decision field / Next Steps surface locks
+- postmortem.md decision-title / context-detail / blocked leftovers locks
 - agentic_flows/scratchpad.txt intro / format-legend / task-meta locks
 - GitHub issue template metadata / routing-field / bug-repro locks
 - pyproject project name + version/license/description/readme +
@@ -172,7 +173,7 @@ REQUIRED_ARCHIVE_DOCS = (
     "README.md",
 )
 
-INVENTORY_VERSION = 39
+INVENTORY_VERSION = 40
 CURSOR_ENVIRONMENT_NAME = "g0p-agents"
 DEPENDABOT_SCHEDULE_INTERVAL = "weekly"
 DEPENDABOT_DIRECTORIES: frozenset[str] = frozenset({"/"})
@@ -503,6 +504,28 @@ POSTMORTEM_NEXT_STEPS_REQUIRED_PHRASES: tuple[str, ...] = (
     "claude-cowork creates/updates Notion page under Active Sprint Work",
     "geryon scaffolds agentic_flows/ once B1 is answered",
 )
+POSTMORTEM_DECISION_REQUIRED_PHRASES: tuple[str, ...] = (
+    "## Decision: Repo Hydration — 2026-04-13",
+    "PROCEED WITH DOCUMENTATION HYDRATION; defer code scaffolding",
+    "copilot (hydration run)",
+    "g0p-agents is a documentation archive. No executable code exists.",
+    "Hydration protocol executed per agent_instructions.",
+)
+POSTMORTEM_CONTEXT_DETAIL_REQUIRED_PHRASES: tuple[str, ...] = (
+    "Questions B1–B5 require Andrew input before scaffolding",
+    "agentic_flows/, quantum_circuits/, contracts/, mobile/",
+    "LOW — documentation changes only, no code deployed",
+    "agentic_flows/scratchpad.txt",
+    "postmortem.md (this file)",
+    ".github/workflows/ci.yml",
+)
+POSTMORTEM_BLOCKED_REQUIRED_PHRASES: tuple[str, ...] = (
+    "**Next Steps**:",
+    "GitHub issue creation (gh CLI auth scope insufficient)",
+    "Notion update (requires claude-cowork surface)",
+    "from docs/agent-hydration.md Phase 4 table",
+    "Blocked**: GitHub issue creation",
+)
 SCRATCHPAD_INTRO_REQUIRED_PHRASES: tuple[str, ...] = (
     "Agent Coordination Scratchpad",
     "Updated by each agent after completing their task",
@@ -616,7 +639,7 @@ CONTRIBUTING_CI_HONESTY_REQUIRED_PHRASES: tuple[str, ...] = (
     "markdown lint, link check, actionlint",
     "manifest validate on Python 3.11/3.12/3.13",
     "Andrew or designated reviewer",
-    "Packaging inventory v39",
+    "Packaging inventory v40",
     "refuse invented recipes",
     "orphan on-disk YAML",
     "unknown `*Agent` tokens",
@@ -1235,7 +1258,7 @@ SCRATCHPAD_STATUS_MARKERS: tuple[str, ...] = (
 SPECIALIST_AGENTS: tuple[str, ...] = DOCUMENTED_AGENTS[:-1]
 
 MIN_COVERAGE_FAIL_UNDER = 99
-MIN_VALIDATOR_COUNT = 130
+MIN_VALIDATOR_COUNT = 133
 
 
 @dataclass(frozen=True)
@@ -2078,6 +2101,30 @@ def validate_packaging_inventory(root: Path) -> list[Finding]:
     ):
         findings.append(
             _lock_mismatch(schema_path, "postmortem_next_steps_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("postmortem_decision_required_phrases", ()))
+        != POSTMORTEM_DECISION_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "postmortem_decision_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("postmortem_context_detail_required_phrases", ()))
+        != POSTMORTEM_CONTEXT_DETAIL_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "postmortem_context_detail_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("postmortem_blocked_required_phrases", ()))
+        != POSTMORTEM_BLOCKED_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "postmortem_blocked_required_phrases")
         )
 
     if (
@@ -4702,7 +4749,7 @@ def _inventory_lock_consistency(
     else:
         required_ci_honesty = {
             "markdown lint, link check, actionlint",
-            "Packaging inventory v39",
+            "Packaging inventory v40",
             "refuse invented recipes",
         }
         if ci_honesty and not required_ci_honesty <= set(ci_honesty):
@@ -4710,7 +4757,7 @@ def _inventory_lock_consistency(
                 Finding(
                     schema_path,
                     "contributing_ci_honesty_required_phrases must include "
-                    "CI checks/Packaging inventory v39/refuse invented recipes",
+                    "CI checks/Packaging inventory v40/refuse invented recipes",
                 )
             )
 
@@ -4827,6 +4874,120 @@ def _inventory_lock_consistency(
                     schema_path,
                     "security_compliance_detail_required_phrases must include "
                     "scaffold-comply/RAM-logs/future-issue leftovers",
+                )
+            )
+
+    decision = list(inventory.get("postmortem_decision_required_phrases", ()))
+    if len(decision) != len(set(decision)):
+        findings.append(
+            Finding(schema_path, "postmortem_decision_required_phrases must be unique")
+        )
+    if not decision:
+        findings.append(
+            Finding(
+                schema_path, "postmortem_decision_required_phrases must not be empty"
+            )
+        )
+    for phrase in decision:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "postmortem_decision_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_decision = {
+            "## Decision: Repo Hydration — 2026-04-13",
+            "PROCEED WITH DOCUMENTATION HYDRATION; defer code scaffolding",
+            "copilot (hydration run)",
+        }
+        if decision and not required_decision <= set(decision):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "postmortem_decision_required_phrases must include Decision "
+                    "heading/PROCEED/copilot leftovers",
+                )
+            )
+
+    context_detail = list(
+        inventory.get("postmortem_context_detail_required_phrases", ())
+    )
+    if len(context_detail) != len(set(context_detail)):
+        findings.append(
+            Finding(
+                schema_path,
+                "postmortem_context_detail_required_phrases must be unique",
+            )
+        )
+    if not context_detail:
+        findings.append(
+            Finding(
+                schema_path,
+                "postmortem_context_detail_required_phrases must not be empty",
+            )
+        )
+    for phrase in context_detail:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "postmortem_context_detail_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_context = {
+            "Questions B1–B5 require Andrew input before scaffolding",
+            "LOW — documentation changes only, no code deployed",
+            "postmortem.md (this file)",
+        }
+        if context_detail and not required_context <= set(context_detail):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "postmortem_context_detail_required_phrases must include "
+                    "LIST-B/Risk/this-file leftovers",
+                )
+            )
+
+    blocked = list(inventory.get("postmortem_blocked_required_phrases", ()))
+    if len(blocked) != len(set(blocked)):
+        findings.append(
+            Finding(schema_path, "postmortem_blocked_required_phrases must be unique")
+        )
+    if not blocked:
+        findings.append(
+            Finding(
+                schema_path, "postmortem_blocked_required_phrases must not be empty"
+            )
+        )
+    for phrase in blocked:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "postmortem_blocked_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_blocked = {
+            "**Next Steps**:",
+            "GitHub issue creation (gh CLI auth scope insufficient)",
+            "Notion update (requires claude-cowork surface)",
+        }
+        if blocked and not required_blocked <= set(blocked):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "postmortem_blocked_required_phrases must include Next "
+                    "Steps/gh-CLI/Notion leftovers",
                 )
             )
 
@@ -7548,8 +7709,8 @@ def validate_contributing_ci_honesty(root: Path) -> list[Finding]:
         return [Finding(rel, "CONTRIBUTING.md missing")]
     text = path.read_text(encoding="utf-8")
     findings: list[Finding] = []
-    if "Packaging inventory v39" not in text:
-        findings.append(Finding(rel, "missing Packaging inventory v39 honesty lock"))
+    if "Packaging inventory v40" not in text:
+        findings.append(Finding(rel, "missing Packaging inventory v40 honesty lock"))
     for phrase in CONTRIBUTING_CI_HONESTY_REQUIRED_PHRASES:
         if phrase not in text:
             findings.append(
@@ -8209,6 +8370,59 @@ def validate_postmortem_next_steps(root: Path) -> list[Finding]:
         if phrase not in text:
             findings.append(
                 Finding(rel, f"missing locked postmortem-next-steps phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_postmortem_decision(root: Path) -> list[Finding]:
+    rel = "postmortem.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "postmortem.md missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## Decision: Repo Hydration — 2026-04-13" not in text:
+        findings.append(Finding(rel, "missing Repo Hydration Decision heading"))
+    for phrase in POSTMORTEM_DECISION_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(rel, f"missing locked postmortem-decision phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_postmortem_context_detail(root: Path) -> list[Finding]:
+    rel = "postmortem.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "postmortem.md missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "LOW — documentation changes only, no code deployed" not in text:
+        findings.append(Finding(rel, "missing postmortem risk-level leftover"))
+    for phrase in POSTMORTEM_CONTEXT_DETAIL_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(
+                    rel, f"missing locked postmortem-context-detail phrase: {phrase}"
+                )
+            )
+    return findings
+
+
+def validate_postmortem_blocked(root: Path) -> list[Finding]:
+    rel = "postmortem.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "postmortem.md missing")]
+    text = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "GitHub issue creation (gh CLI auth scope insufficient)" not in text:
+        findings.append(Finding(rel, "missing postmortem blocked gh-CLI leftover"))
+    for phrase in POSTMORTEM_BLOCKED_REQUIRED_PHRASES:
+        if phrase not in text:
+            findings.append(
+                Finding(rel, f"missing locked postmortem-blocked phrase: {phrase}")
             )
     return findings
 
@@ -9350,6 +9564,9 @@ VALIDATORS: dict[str, ValidatorFn] = {
     "postmortem-intro": validate_postmortem_intro,
     "postmortem-fields": validate_postmortem_fields,
     "postmortem-next-steps": validate_postmortem_next_steps,
+    "postmortem-decision": validate_postmortem_decision,
+    "postmortem-context-detail": validate_postmortem_context_detail,
+    "postmortem-blocked": validate_postmortem_blocked,
     "gitignore": validate_gitignore_packaging,
     "negative-constraints": validate_negative_constraints,
     "claude": validate_claude_packaging,

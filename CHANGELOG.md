@@ -10,6 +10,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Postmortem decision-log **v40** deepeners (post-#94 security v39; orthogonal to
+  open constitution v40 #96 and closed contributing v38 leftovers): `postmortem-decision`,
+  `postmortem-context-detail`, `postmortem-blocked` validators; postmortem.md Repo
+  Hydration Decision / PROCEED / copilot leftovers, LIST-B deferred / Risk / Files
+  Created leftovers, and Blocked gh-CLI / Notion / Phase-4 leftovers; consistency
+  deepeners for `postmortem_decision_required_phrases` /
+  `postmortem_context_detail_required_phrases` / `postmortem_blocked_required_phrases`
+  (Packaging inventory 133 total; historic four only — postmortem leftovers slice,
+  not security v39, constitution, contributing v38, goose recipes, execution-summary,
+  implementation-guide, agent prompts, changelog, or Dependabot)
+
 - Security policy **v39** deepeners (post-#92 contributing v38): `security-scope`,
   `security-reporting-channel`, `security-compliance-detail` validators; SECURITY.md
   Supported Versions scope/injection leftovers, Reporting channel/contact leftovers,
