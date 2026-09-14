@@ -10,6 +10,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Prompts residual **v52 HEAVY** deepeners / **v51 leftovers continued** (post-#131 prompts heavy leftover locks v51):
+  `prompt-metrics-detail`, `prompt-orch-metrics-detail`, `prompt-communication-detail`,
+  `prompt-principles-detail`, `prompt-responsibilities-residual`, `prompt-expertise-residual`,
+  `prompt-vision-context`, `prompt-context-residual`, `prompt-monthly-detail`,
+  `prompt-docs-residual`, `prompt-matrix-resolutions`, `prompt-usage-detail`
+  validators; AGENT-PROMPTS.md leftover locks across metrics-detail / orch-metrics /
+  communication-detail / principles-detail / responsibilities-residual / expertise-residual /
+  vision-context / context-residual / monthly-detail / docs-residual / matrix-resolutions /
+  usage-detail; consistency deepeners for matching `*_required_phrases` inventory keys
+  (Packaging inventory 196 total; historic four only — prompts v52 heavy residuals slice,
+  not #128/#131 context/cannot-delegate/escalation-authority/role-blurbs/constraints-detail
+  slices, not constitution/changelog/hydration/README/security/contributing/goose/postmortem,
+  or Dependabot)
+
 - Prompts residual **v51 HEAVY** deepeners / **v50 leftovers max** (post-#128 prompts context/cannot-delegate/escalation-authority v50):
   `prompt-role-blurbs`, `prompt-escalation-format`, `prompt-living-docs`,
   `prompt-constraints-detail`, `prompt-triggers-detail`, `prompt-human-fields`,

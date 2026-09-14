@@ -72,6 +72,10 @@ Checks structural correctness of:
 - AGENT-PROMPTS.md constraints-detail / triggers-detail / human-fields leftover locks
 - AGENT-PROMPTS.md context-detail / expertise-detail / related-health leftover locks
 - AGENT-PROMPTS.md tools-detail / responsibilities-detail / instantiation leftover locks
+- AGENT-PROMPTS.md metrics-detail / orch-metrics / communication-detail leftover locks
+- AGENT-PROMPTS.md principles-detail / responsibilities-residual / expertise-residual leftover locks
+- AGENT-PROMPTS.md vision-context / context-residual / monthly-detail leftover locks
+- AGENT-PROMPTS.md docs-residual / matrix-resolutions / usage-detail leftover locks
   PHASE 4 issues / LIST B deferred leftover locks
 - postmortem.md intro / Decision field / Next Steps surface locks
 - agentic_flows/scratchpad.txt intro / format-legend / task-meta locks
@@ -188,7 +192,7 @@ REQUIRED_ARCHIVE_DOCS = (
     "README.md",
 )
 
-INVENTORY_VERSION = 51
+INVENTORY_VERSION = 52
 CURSOR_ENVIRONMENT_NAME = "g0p-agents"
 DEPENDABOT_SCHEDULE_INTERVAL = "weekly"
 DEPENDABOT_DIRECTORIES: frozenset[str] = frozenset({"/"})
@@ -841,7 +845,7 @@ CONTRIBUTING_CI_HONESTY_REQUIRED_PHRASES: tuple[str, ...] = (
     "markdown lint, link check, actionlint",
     "manifest validate on Python 3.11/3.12/3.13",
     "Andrew or designated reviewer",
-    "Packaging inventory v51",
+    "Packaging inventory v52",
     "refuse invented recipes",
     "orphan on-disk YAML",
     "unknown `*Agent` tokens",
@@ -1215,6 +1219,102 @@ PROMPT_INSTANTIATION_REQUIRED_PHRASES: tuple[str, ...] = (
     'Reads ./agentic_flows/scratchpad.txt (finds pending quantum mint task)',
     'Updates scratchpad with gate count, depth, error rate',
 )
+
+
+PROMPT_METRICS_DETAIL_REQUIRED_PHRASES: tuple[str, ...] = (
+    'Gate count optimized for target hardware',
+    'Quantum-safe properties validated (NIST standards)',
+    'Hardware estimates within device constraints',
+    'Multi-chain sync < 2 minutes',
+    '< 10% variance in gas estimates vs. actual',
+    'All smart contracts quantum-safe audited',
+)
+
+PROMPT_ORCH_METRICS_DETAIL_REQUIRED_PHRASES: tuple[str, ...] = (
+    'Battery drain < 2% per transaction',
+    'Apple security review: PASS',
+    'Google security review: PASS',
+    'Team consensus on direction (if possible)',
+    'On-time delivery',
+    'Stakeholder satisfaction',
+)
+
+PROMPT_COMMUNICATION_DETAIL_REQUIRED_PHRASES: tuple[str, ...] = (
+    'Conservative on claims ("this is theoretically possible, but...")',
+    'Flag quantum advantage deadlines and threats',
+    'Explain via architecture diagrams',
+    'Provide cost/benefit analysis for design trade-offs',
+    'Explain via user flow diagrams',
+    'Provide device-specific constraints and workarounds',
+    'Explain trade-off reasoning',
+    'Acknowledge risks clearly',
+)
+
+PROMPT_PRINCIPLES_DETAIL_REQUIRED_PHRASES: tuple[str, ...] = (
+    'Recommend testing on multiple backends',
+    'Validate circuit correctness before integration',
+    'Estimate gate count, depth, and error rates',
+    'Validate quantum-resistant cryptographic choices',
+    'Validate Apple/Google security guidelines compliance',
+)
+
+PROMPT_RESPONSIBILITIES_RESIDUAL_REQUIRED_PHRASES: tuple[str, ...] = (
+    'Validate quantum-safe properties (post-quantum crypto)',
+    'Escalate when constraints cannot be met',
+    'Estimate gas costs and optimization opportunities',
+    'Escalate when security or performance constraints cannot be met',
+    'Optimize for mobile constraints (battery, memory, CPU)',
+    'Escalate when device constraints cannot be met',
+    'Identify conflicts (if any)',
+    'Make final go/no-go decision',
+)
+
+PROMPT_EXPERTISE_RESIDUAL_REQUIRED_PHRASES: tuple[str, ...] = (
+    'Qualtran (resource analysis)',
+    'Qualtran (algorithm analysis)',
+    'Data lifecycle management',
+    'Battery/memory optimization',
+)
+
+PROMPT_VISION_CONTEXT_REQUIRED_PHRASES: tuple[str, ...] = (
+    '## Current Project Vision',
+    'Timeline: [INSERT TARGET DATE]',
+    'Budget: [INSERT IF APPLICABLE]',
+)
+
+PROMPT_CONTEXT_RESIDUAL_REQUIRED_PHRASES: tuple[str, ...] = (
+    'Error tolerance: < 1%',
+    'Gas budget: [INSERT LIMIT]',
+    'Deadline: [INSERT DATE]',
+)
+
+PROMPT_MONTHLY_DETAIL_REQUIRED_PHRASES: tuple[str, ...] = (
+    'Update risk register (quarterly, minimum)',
+    'Communicate progress to stakeholder',
+)
+
+PROMPT_DOCS_RESIDUAL_REQUIRED_PHRASES: tuple[str, ...] = (
+    'See postmortem.md (incident log)',
+    'postmortem.md (incident log)',
+    'Update them whenever:',
+)
+
+PROMPT_MATRIX_RESOLUTIONS_REQUIRED_PHRASES: tuple[str, ...] = (
+    'Weigh risk tolerance. Choose testnet approach to validate.',
+    'Redesign contract interface or reduce scope.',
+    'Use hybrid (post-quantum + RSA), implement staged migration.',
+    'Reduce scope, increase risk, escalate to stakeholder.',
+)
+
+PROMPT_USAGE_DETAIL_REQUIRED_PHRASES: tuple[str, ...] = (
+    'Agent Action:',
+    '**Fill in the [INSERT PROJECT-SPECIFIC INFO HERE] sections**',
+    '(Claude, GPT, Gemini, etc.)',
+    '**Copy the relevant prompt template** (above)',
+    'Check Cirq optimization, validate quantum-safety, provide gate count '
+    'and error rate estimates. Use the scratchpad to track progress.',
+)
+
 
 
 
@@ -1819,7 +1919,7 @@ SCRATCHPAD_STATUS_MARKERS: tuple[str, ...] = (
 SPECIALIST_AGENTS: tuple[str, ...] = DOCUMENTED_AGENTS[:-1]
 
 MIN_COVERAGE_FAIL_UNDER = 99
-MIN_VALIDATOR_COUNT = 184
+MIN_VALIDATOR_COUNT = 196
 
 
 @dataclass(frozen=True)
@@ -3037,6 +3137,102 @@ def validate_packaging_inventory(root: Path) -> list[Finding]:
     ):
         findings.append(
             _lock_mismatch(schema_path, "prompt_instantiation_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("prompt_metrics_detail_required_phrases", ()))
+        != PROMPT_METRICS_DETAIL_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "prompt_metrics_detail_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("prompt_orch_metrics_detail_required_phrases", ()))
+        != PROMPT_ORCH_METRICS_DETAIL_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "prompt_orch_metrics_detail_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("prompt_communication_detail_required_phrases", ()))
+        != PROMPT_COMMUNICATION_DETAIL_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "prompt_communication_detail_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("prompt_principles_detail_required_phrases", ()))
+        != PROMPT_PRINCIPLES_DETAIL_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "prompt_principles_detail_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("prompt_responsibilities_residual_required_phrases", ()))
+        != PROMPT_RESPONSIBILITIES_RESIDUAL_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "prompt_responsibilities_residual_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("prompt_expertise_residual_required_phrases", ()))
+        != PROMPT_EXPERTISE_RESIDUAL_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "prompt_expertise_residual_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("prompt_vision_context_required_phrases", ()))
+        != PROMPT_VISION_CONTEXT_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "prompt_vision_context_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("prompt_context_residual_required_phrases", ()))
+        != PROMPT_CONTEXT_RESIDUAL_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "prompt_context_residual_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("prompt_monthly_detail_required_phrases", ()))
+        != PROMPT_MONTHLY_DETAIL_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "prompt_monthly_detail_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("prompt_docs_residual_required_phrases", ()))
+        != PROMPT_DOCS_RESIDUAL_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "prompt_docs_residual_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("prompt_matrix_resolutions_required_phrases", ()))
+        != PROMPT_MATRIX_RESOLUTIONS_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "prompt_matrix_resolutions_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("prompt_usage_detail_required_phrases", ()))
+        != PROMPT_USAGE_DETAIL_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "prompt_usage_detail_required_phrases")
         )
 
     if (
@@ -5789,6 +5985,419 @@ def _inventory_lock_consistency(
                 )
             )
 
+    metrics_detail = list(inventory.get("prompt_metrics_detail_required_phrases", ()))
+    if len(metrics_detail) != len(set(metrics_detail)):
+        findings.append(
+            Finding(schema_path, "prompt_metrics_detail_required_phrases must be unique")
+        )
+    if not metrics_detail:
+        findings.append(
+            Finding(schema_path, "prompt_metrics_detail_required_phrases must not be empty")
+        )
+    for phrase in metrics_detail:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_metrics_detail_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_metrics_detail = {
+            'All smart contracts quantum-safe audited',
+            'Gate count optimized for target hardware',
+            'Multi-chain sync < 2 minutes',
+        }
+        if metrics_detail and not required_metrics_detail <= set(metrics_detail):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_metrics_detail_required_phrases must include "
+                    "Gate count/Multi-chain sync/quantum-safe audited",
+                )
+            )
+
+    orch_metrics_detail = list(inventory.get("prompt_orch_metrics_detail_required_phrases", ()))
+    if len(orch_metrics_detail) != len(set(orch_metrics_detail)):
+        findings.append(
+            Finding(schema_path, "prompt_orch_metrics_detail_required_phrases must be unique")
+        )
+    if not orch_metrics_detail:
+        findings.append(
+            Finding(schema_path, "prompt_orch_metrics_detail_required_phrases must not be empty")
+        )
+    for phrase in orch_metrics_detail:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_orch_metrics_detail_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_orch_metrics_detail = {
+            'Apple security review: PASS',
+            'Google security review: PASS',
+            'Team consensus on direction (if possible)',
+        }
+        if orch_metrics_detail and not required_orch_metrics_detail <= set(orch_metrics_detail):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_orch_metrics_detail_required_phrases must include "
+                    "Apple/Google PASS/Team consensus/On-time/Stakeholder",
+                )
+            )
+
+    communication_detail = list(inventory.get("prompt_communication_detail_required_phrases", ()))
+    if len(communication_detail) != len(set(communication_detail)):
+        findings.append(
+            Finding(schema_path, "prompt_communication_detail_required_phrases must be unique")
+        )
+    if not communication_detail:
+        findings.append(
+            Finding(schema_path, "prompt_communication_detail_required_phrases must not be empty")
+        )
+    for phrase in communication_detail:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_communication_detail_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_communication_detail = {
+            'Acknowledge risks clearly',
+            'Conservative on claims ("this is theoretically possible, but...")',
+            'Explain via architecture diagrams',
+        }
+        if communication_detail and not required_communication_detail <= set(communication_detail):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_communication_detail_required_phrases must include "
+                    "Conservative on claims/architecture diagrams/Acknowledge risks",
+                )
+            )
+
+    principles_detail = list(inventory.get("prompt_principles_detail_required_phrases", ()))
+    if len(principles_detail) != len(set(principles_detail)):
+        findings.append(
+            Finding(schema_path, "prompt_principles_detail_required_phrases must be unique")
+        )
+    if not principles_detail:
+        findings.append(
+            Finding(schema_path, "prompt_principles_detail_required_phrases must not be empty")
+        )
+    for phrase in principles_detail:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_principles_detail_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_principles_detail = {
+            'Recommend testing on multiple backends',
+            'Validate Apple/Google security guidelines compliance',
+            'Validate circuit correctness before integration',
+        }
+        if principles_detail and not required_principles_detail <= set(principles_detail):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_principles_detail_required_phrases must include "
+                    "Recommend testing/circuit correctness/Apple/Google compliance",
+                )
+            )
+
+    responsibilities_residual = list(
+        inventory.get("prompt_responsibilities_residual_required_phrases", ())
+    )
+    if len(responsibilities_residual) != len(set(responsibilities_residual)):
+        findings.append(
+            Finding(schema_path, "prompt_responsibilities_residual_required_phrases must be unique")
+        )
+    if not responsibilities_residual:
+        findings.append(
+            Finding(
+                schema_path, "prompt_responsibilities_residual_required_phrases must not be empty"
+            )
+        )
+    for phrase in responsibilities_residual:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_responsibilities_residual_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_responsibilities_residual = {
+            'Identify conflicts (if any)',
+            'Make final go/no-go decision',
+            'Validate quantum-safe properties (post-quantum crypto)',
+        }
+        if responsibilities_residual and not (
+            required_responsibilities_residual <= set(responsibilities_residual)
+        ):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_responsibilities_residual_required_phrases must include "
+                    "Validate quantum-safe/Identify conflicts/Make final go/no-go",
+                )
+            )
+
+    expertise_residual = list(inventory.get("prompt_expertise_residual_required_phrases", ()))
+    if len(expertise_residual) != len(set(expertise_residual)):
+        findings.append(
+            Finding(schema_path, "prompt_expertise_residual_required_phrases must be unique")
+        )
+    if not expertise_residual:
+        findings.append(
+            Finding(schema_path, "prompt_expertise_residual_required_phrases must not be empty")
+        )
+    for phrase in expertise_residual:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_expertise_residual_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_expertise_residual = {
+            'Data lifecycle management',
+            'Qualtran (algorithm analysis)',
+            'Qualtran (resource analysis)',
+        }
+        if expertise_residual and not required_expertise_residual <= set(expertise_residual):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_expertise_residual_required_phrases must include "
+                    "Qualtran resource/algorithm/Data lifecycle/Battery/memory",
+                )
+            )
+
+    vision_context = list(inventory.get("prompt_vision_context_required_phrases", ()))
+    if len(vision_context) != len(set(vision_context)):
+        findings.append(
+            Finding(schema_path, "prompt_vision_context_required_phrases must be unique")
+        )
+    if not vision_context:
+        findings.append(
+            Finding(schema_path, "prompt_vision_context_required_phrases must not be empty")
+        )
+    for phrase in vision_context:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_vision_context_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_vision_context = {
+            '## Current Project Vision',
+            'Budget: [INSERT IF APPLICABLE]',
+            'Timeline: [INSERT TARGET DATE]',
+        }
+        if vision_context and not required_vision_context <= set(vision_context):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_vision_context_required_phrases must include "
+                    "Current Project Vision/Timeline/Budget INSERT",
+                )
+            )
+
+    context_residual = list(inventory.get("prompt_context_residual_required_phrases", ()))
+    if len(context_residual) != len(set(context_residual)):
+        findings.append(
+            Finding(schema_path, "prompt_context_residual_required_phrases must be unique")
+        )
+    if not context_residual:
+        findings.append(
+            Finding(schema_path, "prompt_context_residual_required_phrases must not be empty")
+        )
+    for phrase in context_residual:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_context_residual_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_context_residual = {
+            'Deadline: [INSERT DATE]',
+            'Error tolerance: < 1%',
+            'Gas budget: [INSERT LIMIT]',
+        }
+        if context_residual and not required_context_residual <= set(context_residual):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_context_residual_required_phrases must include "
+                    "Error tolerance/Gas budget/Deadline INSERT",
+                )
+            )
+
+    monthly_detail = list(inventory.get("prompt_monthly_detail_required_phrases", ()))
+    if len(monthly_detail) != len(set(monthly_detail)):
+        findings.append(
+            Finding(schema_path, "prompt_monthly_detail_required_phrases must be unique")
+        )
+    if not monthly_detail:
+        findings.append(
+            Finding(schema_path, "prompt_monthly_detail_required_phrases must not be empty")
+        )
+    for phrase in monthly_detail:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_monthly_detail_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_monthly_detail = {
+            'Communicate progress to stakeholder',
+            'Update risk register (quarterly, minimum)',
+        }
+        if monthly_detail and not required_monthly_detail <= set(monthly_detail):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_monthly_detail_required_phrases must include "
+                    "Update risk register/Communicate progress",
+                )
+            )
+
+    docs_residual = list(inventory.get("prompt_docs_residual_required_phrases", ()))
+    if len(docs_residual) != len(set(docs_residual)):
+        findings.append(
+            Finding(schema_path, "prompt_docs_residual_required_phrases must be unique")
+        )
+    if not docs_residual:
+        findings.append(
+            Finding(schema_path, "prompt_docs_residual_required_phrases must not be empty")
+        )
+    for phrase in docs_residual:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_docs_residual_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_docs_residual = {
+            'See postmortem.md (incident log)',
+            'Update them whenever:',
+            'postmortem.md (incident log)',
+        }
+        if docs_residual and not required_docs_residual <= set(docs_residual):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_docs_residual_required_phrases must include "
+                    "See postmortem.md/postmortem incident log/Update them whenever",
+                )
+            )
+
+    matrix_resolutions = list(inventory.get("prompt_matrix_resolutions_required_phrases", ()))
+    if len(matrix_resolutions) != len(set(matrix_resolutions)):
+        findings.append(
+            Finding(schema_path, "prompt_matrix_resolutions_required_phrases must be unique")
+        )
+    if not matrix_resolutions:
+        findings.append(
+            Finding(schema_path, "prompt_matrix_resolutions_required_phrases must not be empty")
+        )
+    for phrase in matrix_resolutions:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_matrix_resolutions_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_matrix_resolutions = {
+            'Redesign contract interface or reduce scope.',
+            'Reduce scope, increase risk, escalate to stakeholder.',
+            'Weigh risk tolerance. Choose testnet approach to validate.',
+        }
+        if matrix_resolutions and not required_matrix_resolutions <= set(matrix_resolutions):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_matrix_resolutions_required_phrases must include "
+                    "Weigh risk tolerance/Redesign contract/hybrid RSA/Reduce scope",
+                )
+            )
+
+    usage_detail = list(inventory.get("prompt_usage_detail_required_phrases", ()))
+    if len(usage_detail) != len(set(usage_detail)):
+        findings.append(
+            Finding(schema_path, "prompt_usage_detail_required_phrases must be unique")
+        )
+    if not usage_detail:
+        findings.append(
+            Finding(schema_path, "prompt_usage_detail_required_phrases must not be empty")
+        )
+    for phrase in usage_detail:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_usage_detail_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_usage_detail = {
+            '(Claude, GPT, Gemini, etc.)',
+            '**Fill in the [INSERT PROJECT-SPECIFIC INFO HERE] sections**',
+            'Agent Action:',
+        }
+        if usage_detail and not required_usage_detail <= set(usage_detail):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_usage_detail_required_phrases must include "
+                    "Agent Action/Fill in INSERT/Claude GPT Gemini/Copy template",
+                )
+            )
+
     intro = list(inventory.get("postmortem_intro_required_phrases", ()))
     if len(intro) != len(set(intro)):
         findings.append(
@@ -7632,7 +8241,7 @@ def _inventory_lock_consistency(
     else:
         required_ci_honesty = {
             "markdown lint, link check, actionlint",
-            "Packaging inventory v51",
+            "Packaging inventory v52",
             "refuse invented recipes",
         }
         if ci_honesty and not required_ci_honesty <= set(ci_honesty):
@@ -7640,7 +8249,7 @@ def _inventory_lock_consistency(
                 Finding(
                     schema_path,
                     "contributing_ci_honesty_required_phrases must include "
-                    "CI checks/Packaging inventory v51/refuse invented recipes",
+                    "CI checks/Packaging inventory v52/refuse invented recipes",
                 )
             )
 
@@ -10345,6 +10954,213 @@ def validate_prompt_instantiation(root: Path) -> list[Finding]:
             )
     return findings
 
+
+def validate_prompt_metrics_detail(root: Path) -> list[Finding]:
+    rel = "AGENT-PROMPTS.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "prompts missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if 'Gate count optimized for target hardware' not in body:
+        findings.append(Finding(rel, 'missing metrics-detail Gate count lock'))
+    for phrase in PROMPT_METRICS_DETAIL_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked prompt-metrics-detail phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_prompt_orch_metrics_detail(root: Path) -> list[Finding]:
+    rel = "AGENT-PROMPTS.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "prompts missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if 'Apple security review: PASS' not in body:
+        findings.append(Finding(rel, 'missing orch-metrics-detail Apple security review lock'))
+    for phrase in PROMPT_ORCH_METRICS_DETAIL_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked prompt-orch-metrics-detail phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_prompt_communication_detail(root: Path) -> list[Finding]:
+    rel = "AGENT-PROMPTS.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "prompts missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if 'Conservative on claims ("this is theoretically possible, but...")' not in body:
+        findings.append(Finding(rel, 'missing communication-detail Conservative on claims lock'))
+    for phrase in PROMPT_COMMUNICATION_DETAIL_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked prompt-communication-detail phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_prompt_principles_detail(root: Path) -> list[Finding]:
+    rel = "AGENT-PROMPTS.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "prompts missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if 'Recommend testing on multiple backends' not in body:
+        findings.append(Finding(rel, 'missing principles-detail Recommend testing lock'))
+    for phrase in PROMPT_PRINCIPLES_DETAIL_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked prompt-principles-detail phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_prompt_responsibilities_residual(root: Path) -> list[Finding]:
+    rel = "AGENT-PROMPTS.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "prompts missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if 'Validate quantum-safe properties (post-quantum crypto)' not in body:
+        findings.append(
+            Finding(rel, 'missing responsibilities-residual Validate quantum-safe lock')
+        )
+    for phrase in PROMPT_RESPONSIBILITIES_RESIDUAL_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked prompt-responsibilities-residual phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_prompt_expertise_residual(root: Path) -> list[Finding]:
+    rel = "AGENT-PROMPTS.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "prompts missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if 'Qualtran (resource analysis)' not in body:
+        findings.append(Finding(rel, 'missing expertise-residual Qualtran resource lock'))
+    for phrase in PROMPT_EXPERTISE_RESIDUAL_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked prompt-expertise-residual phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_prompt_vision_context(root: Path) -> list[Finding]:
+    rel = "AGENT-PROMPTS.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "prompts missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if '## Current Project Vision' not in body:
+        findings.append(Finding(rel, 'missing vision-context Current Project Vision lock'))
+    for phrase in PROMPT_VISION_CONTEXT_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked prompt-vision-context phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_prompt_context_residual(root: Path) -> list[Finding]:
+    rel = "AGENT-PROMPTS.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "prompts missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if 'Error tolerance: < 1%' not in body:
+        findings.append(Finding(rel, 'missing context-residual Error tolerance lock'))
+    for phrase in PROMPT_CONTEXT_RESIDUAL_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked prompt-context-residual phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_prompt_monthly_detail(root: Path) -> list[Finding]:
+    rel = "AGENT-PROMPTS.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "prompts missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if 'Update risk register (quarterly, minimum)' not in body:
+        findings.append(Finding(rel, 'missing monthly-detail Update risk register lock'))
+    for phrase in PROMPT_MONTHLY_DETAIL_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked prompt-monthly-detail phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_prompt_docs_residual(root: Path) -> list[Finding]:
+    rel = "AGENT-PROMPTS.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "prompts missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if 'See postmortem.md (incident log)' not in body:
+        findings.append(Finding(rel, 'missing docs-residual See postmortem.md lock'))
+    for phrase in PROMPT_DOCS_RESIDUAL_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked prompt-docs-residual phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_prompt_matrix_resolutions(root: Path) -> list[Finding]:
+    rel = "AGENT-PROMPTS.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "prompts missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if 'Weigh risk tolerance. Choose testnet approach to validate.' not in body:
+        findings.append(Finding(rel, 'missing matrix-resolutions Weigh risk tolerance lock'))
+    for phrase in PROMPT_MATRIX_RESOLUTIONS_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked prompt-matrix-resolutions phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_prompt_usage_detail(root: Path) -> list[Finding]:
+    rel = "AGENT-PROMPTS.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "prompts missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if 'Agent Action:' not in body:
+        findings.append(Finding(rel, 'missing usage-detail Agent Action lock'))
+    for phrase in PROMPT_USAGE_DETAIL_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked prompt-usage-detail phrase: {phrase}")
+            )
+    return findings
+
+
 def validate_changelog_initial(root: Path) -> list[Finding]:
     rel = "CHANGELOG.md"
     path = root / rel
@@ -11474,8 +12290,8 @@ def validate_contributing_ci_honesty(root: Path) -> list[Finding]:
         return [Finding(rel, "CONTRIBUTING.md missing")]
     text = path.read_text(encoding="utf-8")
     findings: list[Finding] = []
-    if "Packaging inventory v51" not in text:
-        findings.append(Finding(rel, "missing Packaging inventory v51 honesty lock"))
+    if "Packaging inventory v52" not in text:
+        findings.append(Finding(rel, "missing Packaging inventory v52 honesty lock"))
     for phrase in CONTRIBUTING_CI_HONESTY_REQUIRED_PHRASES:
         if phrase not in text:
             findings.append(
@@ -13426,6 +14242,18 @@ VALIDATORS: dict[str, ValidatorFn] = {
     "prompt-tools-detail": validate_prompt_tools_detail,
     "prompt-responsibilities-detail": validate_prompt_responsibilities_detail,
     "prompt-instantiation": validate_prompt_instantiation,
+    "prompt-metrics-detail": validate_prompt_metrics_detail,
+    "prompt-orch-metrics-detail": validate_prompt_orch_metrics_detail,
+    "prompt-communication-detail": validate_prompt_communication_detail,
+    "prompt-principles-detail": validate_prompt_principles_detail,
+    "prompt-responsibilities-residual": validate_prompt_responsibilities_residual,
+    "prompt-expertise-residual": validate_prompt_expertise_residual,
+    "prompt-vision-context": validate_prompt_vision_context,
+    "prompt-context-residual": validate_prompt_context_residual,
+    "prompt-monthly-detail": validate_prompt_monthly_detail,
+    "prompt-docs-residual": validate_prompt_docs_residual,
+    "prompt-matrix-resolutions": validate_prompt_matrix_resolutions,
+    "prompt-usage-detail": validate_prompt_usage_detail,
     "hydration-phase2": validate_hydration_phase2,
     "hydration-phase5": validate_hydration_phase5,
     "link-check": validate_link_check,
