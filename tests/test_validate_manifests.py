@@ -22587,11 +22587,671 @@ def test_memory_handoff_residual_live_green() -> None:
 
 
 # ---------------------------------------------------------------------------
-# Link-check residual HEAVY fixtures after #181 (memory-handoff) / #178 / #176 /
-# #174 / post-#172. EXISTING `link-check` module + inventory locks only —
-# distinct leftover vs open MERGEABLE #184 (hydration↔security + goose-schema
-# tip), merged #181/#178/#176/#174/#172/#166/#161, and the v10 link-check edge
-# suite. No invented product / inventory bump (still v52 / 196).
+# Hydration↔security cross + goose-schema tip residual HEAVY edges after #181
+# (memory-handoff) / #178 / #176 / #174 / post-#172.
+# EXISTING modules only — distinct leftover vs merged #181 (memory-handoff),
+# #178 (implementation), #176 (changelog), #174 (contributing), #172
+# (goose-schema+security residual suite), #166 (execution↔goose cross),
+# #161 (hydration residual suite). Open CONFLICTING #182 claimed this tip
+# slice on a pre-#181 tip and is not MERGEABLE — fresh draft rebases the
+# unsaturated leftover onto post-#181 alpha. No invented product / inventory
+# bump (still v52 / 196).
+# ---------------------------------------------------------------------------
+
+_HYDRATION_SECURITY_CROSS_DOC = Path("docs") / "agent-hydration.md"
+
+
+def test_hydration_security_cross_residual_modules_existing_only() -> None:
+    """Tip slice reuses live hydration-phase4 + ten security + goose schema trio."""
+    assert vm.INVENTORY_VERSION == 52
+    assert vm.MIN_VALIDATOR_COUNT == 196
+    assert len(vm.VALIDATORS) == 196
+
+    assert "hydration-phase4" in vm.VALIDATORS
+    assert "Add SECURITY.md" in vm.HYDRATION_PHASE4_REQUIRED_PHRASES
+    assert "Add CONTRIBUTING.md" in vm.HYDRATION_PHASE4_REQUIRED_PHRASES
+
+    security = _security_residual_modules()
+    goose = _goose_schema_residual_modules()
+    assert len(security) == 10
+    assert len(goose) == 3
+    assert [n for n, _ in goose] == list(_GOOSE_SCHEMA_RESIDUAL_NAMES)
+
+    for invented in (
+        "hydration-security-timeouts",
+        "hydration-security-cross",
+        "goose-schema-v53",
+        "security-timeouts",
+        "hydration-timeouts",
+        "implementation-timeouts",
+        "changelog-timeouts",
+        "memory-slot",
+        "agent-handoff",
+        "handoff-timeouts",
+    ):
+        assert invented not in vm.VALIDATORS
+
+    inventory = json.loads(
+        (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
+    )
+    assert inventory["version"] == 52
+    assert inventory["min_validator_count"] == 196
+    assert sorted(vm.VALIDATORS) == inventory["validator_names"]
+    assert "goose-recipe.schema.json" in inventory["required_schema_files"]
+    assert inventory["hydration_phase4_required_phrases"] == list(
+        vm.HYDRATION_PHASE4_REQUIRED_PHRASES
+    )
+
+
+def test_hydration_security_cross_residual_invalid_keys(tmp_path: Path) -> None:
+    """Reject invented hydration/security/goose-schema tip sibling keys."""
+    with pytest.raises(KeyError):
+        _ = vm.VALIDATORS["hydration-security-timeouts"]
+    with pytest.raises(KeyError):
+        _ = vm.VALIDATORS["goose-schema-v53"]
+    with pytest.raises(KeyError):
+        _ = vm.VALIDATORS["handoff-timeouts"]
+    with pytest.raises(ValueError, match="unknown validator"):
+        vm.run_all_validations(REPO_ROOT, only=["hydration-security-timeouts"])
+    with pytest.raises(ValueError, match="unknown validator"):
+        vm.run_all_validations(REPO_ROOT, only=["goose-schema-v53"])
+    with pytest.raises(ValueError, match="unknown validator"):
+        vm.run_all_validations(REPO_ROOT, only=["memory-slot"])
+
+    findings = vm.run_all_validations(
+        REPO_ROOT,
+        only=[
+            "hydration-phase4",
+            "security",
+            "security-header",
+            "goose",
+            "recipe-agents",
+            "recipe-titles",
+        ],
+    )
+    assert findings == []
+
+    _copy_schemas(tmp_path)
+    for rel in _inventory_payload()["required_paths"]:
+        target = tmp_path / rel
+        target.parent.mkdir(parents=True, exist_ok=True)
+        if not target.exists():
+            target.write_text("ok\n", encoding="utf-8")
+
+    bad = _inventory_payload()
+    bad["invented_hydration_security_cross_residual_map"] = {"slot": "x"}
+    (tmp_path / "schemas" / "packaging-inventory.json").write_text(
+        json.dumps(bad),
+        encoding="utf-8",
+    )
+    assert vm.validate_packaging_inventory(tmp_path)
+
+
+def test_hydration_security_cross_doc_isolation(tmp_path: Path) -> None:
+    """Distinct leftover: hydration↔security cross-doc isolation (not #161/#172 redo)."""
+    hyd_base = _hydration_residual_locked_text()
+    sec_base = _security_residual_locked_text()
+
+    # Healthy paired stubs.
+    _write(tmp_path / _HYDRATION_SECURITY_CROSS_DOC, hyd_base)
+    _write(tmp_path / "SECURITY.md", sec_base)
+    assert vm.validate_hydration_phase4(tmp_path) == []
+    for name, fn, _phrases, _key in _security_residual_modules():
+        assert fn(tmp_path) == [], name
+    assert vm.validate_hydration_report(tmp_path) == []
+
+    # Mangle SECURITY.md only — security fails; hydration-phase4 stays green.
+    _write(tmp_path / "SECURITY.md", "# Security Policy\n")
+    assert vm.validate_security_packaging(tmp_path)
+    assert vm.validate_security_header(tmp_path)
+    assert vm.validate_hydration_phase4(tmp_path) == []
+    assert vm.validate_hydration_list_b(tmp_path) == []
+
+    # Restore security; drop the Add SECURITY.md lock from hydration only.
+    _write(tmp_path / "SECURITY.md", sec_base)
+    mangled = hyd_base.replace("Add SECURITY.md", "ABSENT_SECURITY_DOC_REF")
+    assert "Add SECURITY.md" not in mangled
+    _write(tmp_path / _HYDRATION_SECURITY_CROSS_DOC, mangled)
+    findings = vm.validate_hydration_phase4(tmp_path)
+    assert findings
+    assert any(
+        "Add SECURITY.md" in f.message or "missing" in f.message for f in findings
+    )
+    for name, fn, _phrases, _key in _security_residual_modules():
+        assert fn(tmp_path) == [], name
+
+    # Drop Add CONTRIBUTING.md lock only — phase4 fails; security stays green.
+    mangled_contrib = hyd_base.replace("Add CONTRIBUTING.md", "ABSENT_CONTRIBUTING_REF")
+    assert "Add CONTRIBUTING.md" not in mangled_contrib
+    _write(tmp_path / _HYDRATION_SECURITY_CROSS_DOC, mangled_contrib)
+    findings = vm.validate_hydration_phase4(tmp_path)
+    assert findings
+    assert any("Add CONTRIBUTING.md" in f.message or "missing" in f.message for f in findings)
+    assert vm.validate_security_packaging(tmp_path) == []
+    assert vm.validate_security_packaging(REPO_ROOT) == []
+    assert vm.validate_hydration_phase4(REPO_ROOT) == []
+
+
+def test_goose_schema_tip_jsonschema_type_matrix() -> None:
+    """Tip HEAVY goose-recipe.schema.json type/missing edges beyond #172 matrix."""
+    schema = vm.load_schema("goose-recipe.schema.json")
+    base = json.loads(json.dumps(MINIMAL_RECIPE))
+    assert vm.validate_against_schema(base, schema, path="fixture") == []
+
+    cases: list[tuple[str, dict]] = [
+        ("missing_recipe", {"name": "example_recipe_workflow"}),
+        ("name_starts_digit", {**base, "name": "1bad_name"}),
+        ("name_starts_underscore", {**base, "name": "_bad_name"}),
+        ("name_non_string", {**base, "name": 123}),
+        ("name_bool", {**base, "name": True}),
+        (
+            "missing_settings",
+            {
+                **base,
+                "recipe": {
+                    k: v for k, v in base["recipe"].items() if k != "settings"
+                },
+            },
+        ),
+        (
+            "missing_provider",
+            {
+                **base,
+                "recipe": {
+                    **base["recipe"],
+                    "settings": {"goose_model": "claude-opus-4"},
+                },
+            },
+        ),
+        (
+            "missing_model",
+            {
+                **base,
+                "recipe": {
+                    **base["recipe"],
+                    "settings": {"goose_provider": "anthropic"},
+                },
+            },
+        ),
+        (
+            "settings_null",
+            {
+                **base,
+                "recipe": {**base["recipe"], "settings": None},
+            },
+        ),
+        (
+            "settings_non_object",
+            {
+                **base,
+                "recipe": {**base["recipe"], "settings": ["anthropic"]},
+            },
+        ),
+        (
+            "provider_null",
+            {
+                **base,
+                "recipe": {
+                    **base["recipe"],
+                    "settings": {
+                        "goose_provider": None,
+                        "goose_model": "claude-opus-4",
+                    },
+                },
+            },
+        ),
+        (
+            "model_null",
+            {
+                **base,
+                "recipe": {
+                    **base["recipe"],
+                    "settings": {
+                        "goose_provider": "anthropic",
+                        "goose_model": None,
+                    },
+                },
+            },
+        ),
+        (
+            "timeout_float",
+            {
+                **base,
+                "recipe": {
+                    **base["recipe"],
+                    "extensions": [
+                        {"type": "builtin", "name": "developer", "timeout": 1.5}
+                    ],
+                },
+            },
+        ),
+        (
+            "timeout_string",
+            {
+                **base,
+                "recipe": {
+                    **base["recipe"],
+                    "extensions": [
+                        {"type": "builtin", "name": "developer", "timeout": "30"}
+                    ],
+                },
+            },
+        ),
+        (
+            "timeout_bool",
+            {
+                **base,
+                "recipe": {
+                    **base["recipe"],
+                    "extensions": [
+                        {"type": "builtin", "name": "developer", "timeout": True}
+                    ],
+                },
+            },
+        ),
+        (
+            "timeout_negative",
+            {
+                **base,
+                "recipe": {
+                    **base["recipe"],
+                    "extensions": [
+                        {"type": "builtin", "name": "developer", "timeout": -1}
+                    ],
+                },
+            },
+        ),
+        (
+            "timeout_too_large",
+            {
+                **base,
+                "recipe": {
+                    **base["recipe"],
+                    "extensions": [
+                        {"type": "builtin", "name": "developer", "timeout": 86401}
+                    ],
+                },
+            },
+        ),
+        (
+            "extension_missing_name",
+            {
+                **base,
+                "recipe": {
+                    **base["recipe"],
+                    "extensions": [{"type": "builtin", "timeout": 30}],
+                },
+            },
+        ),
+        (
+            "extension_name_too_long",
+            {
+                **base,
+                "recipe": {
+                    **base["recipe"],
+                    "extensions": [
+                        {"type": "builtin", "name": "x" * 129, "timeout": 30}
+                    ],
+                },
+            },
+        ),
+        (
+            "extension_name_empty",
+            {
+                **base,
+                "recipe": {
+                    **base["recipe"],
+                    "extensions": [{"type": "builtin", "name": "", "timeout": 30}],
+                },
+            },
+        ),
+        (
+            "extension_name_non_string",
+            {
+                **base,
+                "recipe": {
+                    **base["recipe"],
+                    "extensions": [{"type": "builtin", "name": 12, "timeout": 30}],
+                },
+            },
+        ),
+        (
+            "extensions_non_array",
+            {
+                **base,
+                "recipe": {**base["recipe"], "extensions": {"type": "builtin"}},
+            },
+        ),
+        (
+            "missing_extensions",
+            {
+                **base,
+                "recipe": {
+                    k: v for k, v in base["recipe"].items() if k != "extensions"
+                },
+            },
+        ),
+        (
+            "missing_title",
+            {
+                **base,
+                "recipe": {k: v for k, v in base["recipe"].items() if k != "title"},
+            },
+        ),
+        (
+            "title_non_string",
+            {
+                **base,
+                "recipe": {**base["recipe"], "title": 99},
+            },
+        ),
+        (
+            "missing_prompt",
+            {
+                **base,
+                "recipe": {k: v for k, v in base["recipe"].items() if k != "prompt"},
+            },
+        ),
+        (
+            "missing_version",
+            {
+                **base,
+                "recipe": {k: v for k, v in base["recipe"].items() if k != "version"},
+            },
+        ),
+        (
+            "instructions_non_string",
+            {
+                **base,
+                "recipe": {**base["recipe"], "instructions": ["list"]},
+            },
+        ),
+        (
+            "prompt_null",
+            {
+                **base,
+                "recipe": {**base["recipe"], "prompt": None},
+            },
+        ),
+        (
+            "prompt_non_string",
+            {
+                **base,
+                "recipe": {**base["recipe"], "prompt": {"step": 1}},
+            },
+        ),
+        (
+            "recipe_null",
+            {**base, "recipe": None},
+        ),
+        (
+            "recipe_non_object",
+            {**base, "recipe": "not-an-object"},
+        ),
+        (
+            "top_level_extra",
+            {**base, "extra_top": True},
+        ),
+        (
+            "version_null",
+            {
+                **base,
+                "recipe": {**base["recipe"], "version": None},
+            },
+        ),
+        (
+            "version_non_string",
+            {
+                **base,
+                "recipe": {**base["recipe"], "version": 1},
+            },
+        ),
+    ]
+
+    for label, payload in cases:
+        findings = vm.validate_against_schema(payload, schema, path="fixture")
+        assert findings, label
+
+    # Max-boundary timeout remains green (covered lightly in #172; tip re-lock).
+    ok = json.loads(json.dumps(base))
+    ok["recipe"]["extensions"] = [
+        {"type": "builtin", "name": "developer", "timeout": 86400}
+    ]
+    assert vm.validate_against_schema(ok, schema, path="fixture") == []
+
+    # Min-boundary timeout remains green.
+    ok_min = json.loads(json.dumps(base))
+    ok_min["recipe"]["extensions"] = [
+        {"type": "builtin", "name": "developer", "timeout": 1}
+    ]
+    assert vm.validate_against_schema(ok_min, schema, path="fixture") == []
+
+
+def test_goose_schema_security_doc_mangling_isolation(tmp_path: Path) -> None:
+    """Goose-schema↔security doc mangling isolation beyond #172 combined live matrix."""
+    locked_goose = _goose_schema_residual_locked_doc()
+    locked_sec = _security_residual_locked_text()
+
+    _write(tmp_path / "GOOSE-RECIPES.md", locked_goose)
+    _write(tmp_path / "SECURITY.md", locked_sec)
+    for name, fn in _goose_schema_residual_modules():
+        assert fn(tmp_path) == [], name
+    for name, fn, _phrases, _key in _security_residual_modules():
+        assert fn(tmp_path) == [], name
+
+    # Mangle GOOSE only — schema trio fails; security residual stays green.
+    _write(tmp_path / "GOOSE-RECIPES.md", "# Recipe-Based Agent Orchestration\n")
+    assert vm.validate_goose_recipes(tmp_path)
+    assert vm.validate_recipe_titles(tmp_path)
+    for name, fn, _phrases, _key in _security_residual_modules():
+        assert fn(tmp_path) == [], name
+
+    # Restore goose; mangle SECURITY only — security fails; goose schema stays green.
+    _write(tmp_path / "GOOSE-RECIPES.md", locked_goose)
+    _write(tmp_path / "SECURITY.md", "\n")
+    assert vm.validate_security_packaging(tmp_path)
+    assert vm.validate_security_fips(tmp_path)
+    for name, fn in _goose_schema_residual_modules():
+        assert fn(tmp_path) == [], name
+
+    # Live root siblings remain green
+    assert vm.validate_goose_recipes(REPO_ROOT) == []
+    assert vm.validate_security_packaging(REPO_ROOT) == []
+    assert vm.validate_constitution_handoff(REPO_ROOT) == []
+    assert vm.validate_scratchpad(REPO_ROOT) == []
+
+
+def test_hydration_security_cross_concurrent_validate_races(tmp_path: Path) -> None:
+    """Concurrent readers/writers across hydration + SECURITY paired docs."""
+    hyd_fns = [
+        vm.validate_hydration_phase4,
+        vm.validate_hydration_list_b,
+        vm.validate_hydration_report,
+    ]
+    sec_fns = [fn for _n, fn, _p, _k in _security_residual_modules()]
+
+    def _read_live() -> list[vm.Finding]:
+        out: list[vm.Finding] = []
+        for fn in hyd_fns + sec_fns:
+            out.extend(fn(REPO_ROOT))
+        return out
+
+    errors: list[BaseException] = []
+    with ThreadPoolExecutor(max_workers=16) as pool:
+        futures = [pool.submit(_read_live) for _ in range(48)]
+        for fut in as_completed(futures):
+            try:
+                assert fut.result() == []
+            except BaseException as exc:  # noqa: BLE001 — collect race failures
+                errors.append(exc)
+    assert errors == []
+
+    hyd_path = tmp_path / _HYDRATION_SECURITY_CROSS_DOC
+    sec_path = tmp_path / "SECURITY.md"
+    hyd_locked = _hydration_residual_locked_text()
+    sec_locked = _security_residual_locked_text()
+    _write(hyd_path, hyd_locked)
+    _write(sec_path, sec_locked)
+    assert vm.validate_hydration_phase4(tmp_path) == []
+    for name, fn, _phrases, _key in _security_residual_modules():
+        assert fn(tmp_path) == [], name
+
+    stop = threading.Event()
+    race_errors: list[BaseException] = []
+
+    def _writer() -> None:
+        flip = False
+        while not stop.is_set():
+            try:
+                if flip:
+                    hyd_path.write_text(hyd_locked, encoding="utf-8")
+                    sec_path.write_text(sec_locked, encoding="utf-8")
+                else:
+                    hyd_path.write_text("\n", encoding="utf-8")
+                    sec_path.write_text("\n", encoding="utf-8")
+                flip = not flip
+            except BaseException as exc:  # noqa: BLE001
+                race_errors.append(exc)
+                return
+
+    def _reader() -> None:
+        while not stop.is_set():
+            try:
+                for fn in hyd_fns + sec_fns:
+                    fn(tmp_path)
+            except BaseException as exc:  # noqa: BLE001
+                race_errors.append(exc)
+                return
+
+    threads = [
+        threading.Thread(target=_writer),
+        threading.Thread(target=_reader),
+        threading.Thread(target=_reader),
+        threading.Thread(target=_reader),
+    ]
+    for t in threads:
+        t.start()
+    time.sleep(0.35)
+    stop.set()
+    for t in threads:
+        t.join(timeout=2.0)
+    assert race_errors == []
+
+
+def test_hydration_security_phase4_inventory_mismatch_edges(tmp_path: Path) -> None:
+    """Phase4 phrase-map inventory mismatch edges for the SECURITY.md tip lock."""
+    _copy_schemas(tmp_path)
+    for rel in _inventory_payload()["required_paths"]:
+        target = tmp_path / rel
+        target.parent.mkdir(parents=True, exist_ok=True)
+        if not target.exists():
+            target.write_text("ok\n", encoding="utf-8")
+
+    key = "hydration_phase4_required_phrases"
+    base = _inventory_payload()
+
+    empty = dict(base)
+    empty[key] = []
+    (tmp_path / "schemas" / "packaging-inventory.json").write_text(
+        json.dumps(empty), encoding="utf-8"
+    )
+    findings = vm.validate_packaging_inventory(tmp_path)
+    assert findings
+    assert any(key in f.message or "empty" in f.message.lower() for f in findings)
+
+    dup = dict(base)
+    dup[key] = list(vm.HYDRATION_PHASE4_REQUIRED_PHRASES) + [
+        vm.HYDRATION_PHASE4_REQUIRED_PHRASES[0]
+    ]
+    (tmp_path / "schemas" / "packaging-inventory.json").write_text(
+        json.dumps(dup), encoding="utf-8"
+    )
+    findings = vm.validate_packaging_inventory(tmp_path)
+    assert findings
+
+    missing_security = dict(base)
+    missing_security[key] = [
+        p for p in vm.HYDRATION_PHASE4_REQUIRED_PHRASES if p != "Add SECURITY.md"
+    ]
+    (tmp_path / "schemas" / "packaging-inventory.json").write_text(
+        json.dumps(missing_security), encoding="utf-8"
+    )
+    findings = vm.validate_packaging_inventory(tmp_path)
+    assert findings
+    assert any("Add SECURITY.md" in f.message or key in f.message for f in findings)
+
+    # Live inventory remains green
+    assert vm.validate_packaging_inventory(REPO_ROOT) == []
+
+
+def test_hydration_security_goose_tip_cross_isolation_vs_siblings(tmp_path: Path) -> None:
+    """Tip isolation: hydration/security/goose fail locally; #181/#178 siblings stay green."""
+    hyd_base = _hydration_residual_locked_text()
+    mangled_hyd = hyd_base.replace("Add SECURITY.md", "GONE_SECURITY_LOCK")
+    _write(tmp_path / _HYDRATION_SECURITY_CROSS_DOC, mangled_hyd)
+    assert vm.validate_hydration_phase4(tmp_path)
+
+    _write(tmp_path / "SECURITY.md", "# Security Policy\n")
+    assert vm.validate_security_packaging(tmp_path)
+
+    _write(tmp_path / "GOOSE-RECIPES.md", "# Recipe-Based Agent Orchestration\n")
+    assert vm.validate_goose_recipes(tmp_path)
+    assert vm.validate_recipe_titles(tmp_path)
+
+    # Merged tip siblings remain green on live root (#181 memory-handoff included)
+    assert vm.validate_changelog_unreleased(REPO_ROOT) == []
+    assert vm.validate_changelog_format(REPO_ROOT) == []
+    assert vm.validate_contributing_packaging(REPO_ROOT) == []
+    assert vm.validate_contributing_who(REPO_ROOT) == []
+    assert vm.validate_execution_summary(REPO_ROOT) == []
+    assert vm.validate_implementation_guide(REPO_ROOT) == []
+    assert vm.validate_constitution_crypto(REPO_ROOT) == []
+    assert vm.validate_constitution_handoff(REPO_ROOT) == []
+    assert vm.validate_scratchpad(REPO_ROOT) == []
+    assert vm.validate_scratchpad_intro(REPO_ROOT) == []
+    assert vm.validate_goose_howto(REPO_ROOT) == []
+    assert vm.validate_prompt_orchestration_matrix(REPO_ROOT) == []
+
+
+def test_hydration_security_goose_tip_live_green() -> None:
+    """Live hydration-phase4 + security residual + goose schema tip stay green."""
+    assert vm.validate_hydration_phase4(REPO_ROOT) == []
+    assert vm.validate_hydration_report(REPO_ROOT) == []
+    for name, fn, _phrases, _key in _security_residual_modules():
+        assert fn(REPO_ROOT) == [], name
+    for name, fn in _goose_schema_residual_modules():
+        assert fn(REPO_ROOT) == [], name
+
+    schema = vm.load_schema("goose-recipe.schema.json")
+    assert vm.validate_against_schema(MINIMAL_RECIPE, schema, path="live") == []
+    assert vm.validate_schemas_meta(REPO_ROOT) == []
+
+    assert vm.INVENTORY_VERSION == 52
+    assert vm.MIN_VALIDATOR_COUNT == 196
+    assert len(vm.VALIDATORS) == 196
+
+    body = (REPO_ROOT / _HYDRATION_SECURITY_CROSS_DOC).read_text(encoding="utf-8")
+    assert "Add SECURITY.md" in body
+    assert "# Security Policy" in (REPO_ROOT / "SECURITY.md").read_text(encoding="utf-8")
+    assert "Recipe-Based Agent Orchestration" in (
+        REPO_ROOT / "GOOSE-RECIPES.md"
+    ).read_text(encoding="utf-8")
+
+    # Adjacent tip through #181 / #178 / #176 surface remain green
+    assert vm.validate_changelog_unreleased(REPO_ROOT) == []
+    assert vm.validate_contributing_packaging(REPO_ROOT) == []
+    assert vm.validate_execution_summary(REPO_ROOT) == []
+    assert vm.validate_implementation_guide(REPO_ROOT) == []
+    assert vm.validate_constitution_handoff(REPO_ROOT) == []
+    assert vm.validate_scratchpad(REPO_ROOT) == []
+
+# ---------------------------------------------------------------------------
+# Link-check residual HEAVY fixtures after #184 (hydration↔security +
+# goose-schema tip) / #181 (memory-handoff) / #178 / #176 / #174 / post-#172.
+# EXISTING `link-check` module + inventory locks only — distinct leftover vs
+# merged #184 hydration↔security + goose-schema tip niche, merged
+# #181/#178/#176/#174/#172/#166/#161, and the v10 link-check edge suite.
+# No invented product / inventory bump (still v52 / 196).
 # ---------------------------------------------------------------------------
 
 _LINK_CHECK_RESIDUAL_CI = Path(".github") / "workflows" / "ci.yml"
@@ -22679,7 +23339,7 @@ def _write_link_check_residual_ci(tmp_path: Path, workflow: dict) -> None:
 
 
 def test_link_check_residual_modules_existing_only() -> None:
-    """Slice targets existing link-check + inventory fixture locks after #181."""
+    """Slice targets existing link-check + inventory fixture locks after #184."""
     assert vm.INVENTORY_VERSION == 52
     assert vm.MIN_VALIDATOR_COUNT == 196
     assert len(vm.VALIDATORS) == 196
