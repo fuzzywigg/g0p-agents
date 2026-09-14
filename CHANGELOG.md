@@ -10,6 +10,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Goose recipes **v36** deepeners (post-#84): `goose-orchestration`,
+  `goose-conflicts`, `goose-quantum-task` validators; GOOSE-RECIPES.md
+  Master Orchestration Task STEP locks, Conflict Type PERFORMANCE/SECURITY/
+  TIMELINE + decision outcome locks, and Quantum Algorithm Design Task STEP
+  locks; consistency deepeners for `goose_orchestration_required_phrases` /
+  `goose_conflicts_required_phrases` / `goose_quantum_task_required_phrases`
+  (121 total; historic four only — goose recipes slice, not execution-summary
+  v35, agent prompts v34, hydration/implementation-guide open deepeners,
+  Dependabot, changelog, constitution, security, contributing, README honesty,
+  PR-template, issue-template, scratchpad, postmortem, or routing/identity)
+
 - Execution-summary **v35** deepeners (post-#81): `execution-ide`,
   `execution-innovations`, `execution-next48` validators; EXECUTION-SUMMARY.md
   IDE & Software Setup locks, What Makes This Different / Key Innovations locks,

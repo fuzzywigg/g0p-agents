@@ -25,6 +25,7 @@ Checks structural correctness of:
 - CHANGELOG / postmortem / .gitignore / CLAUDE negative-constraint locks
 - CHANGELOG.md Keep a Changelog format / Unreleased / 0.1.0 release locks
 - GOOSE-RECIPES.md recipe headers / instruction-agent / extension locks
+- GOOSE-RECIPES.md master orchestration / conflicts / quantum-task locks
 - AGENT-PROMPTS.md constraints / escalation-triggers / related-docs locks
 - EXECUTION-SUMMARY.md IDE setup / innovations / next-48-hours locks
 - agentic_flows/scratchpad.txt coordination markers (+ allowed file set)
@@ -167,7 +168,7 @@ REQUIRED_ARCHIVE_DOCS = (
     "README.md",
 )
 
-INVENTORY_VERSION = 35
+INVENTORY_VERSION = 36
 CURSOR_ENVIRONMENT_NAME = "g0p-agents"
 DEPENDABOT_SCHEDULE_INTERVAL = "weekly"
 DEPENDABOT_DIRECTORIES: frozenset[str] = frozenset({"/"})
@@ -946,6 +947,39 @@ GOOSE_EXTENSIONS_REQUIRED_PHRASES: tuple[str, ...] = (
     "timeout: 300",
     "timeout: 600",
 )
+
+GOOSE_ORCHESTRATION_REQUIRED_PHRASES: tuple[str, ...] = (
+    "## Master Orchestration Task: Quantum NFT Mint",
+    "STEP 1: Initialize task in scratchpad",
+    "STEP 2: Run QuantumArchitectAgent recipe",
+    "STEP 3: Run BlockchainArchitectAgent recipe",
+    "STEP 4: Run EdgeSecurityAgent recipe",
+    "STEP 5: Review all three outputs",
+    "STEP 6: Make final decision",
+    "STEP 7: Escalation format (if needed)",
+    "STEP 8: Log decision",
+)
+GOOSE_CONFLICTS_REQUIRED_PHRASES: tuple[str, ...] = (
+    "Check for CONFLICTS:",
+    "Conflict Type 1: PERFORMANCE",
+    "Conflict Type 2: SECURITY",
+    "Conflict Type 3: TIMELINE",
+    "Decision: ✅ APPROVED FOR TESTNET DEPLOYMENT",
+    "Decision: ⚠️ APPROVED WITH MODIFICATIONS",
+    "Decision: 🚨 ESCALATE TO HUMAN",
+    "## Decision: Quantum NFT Mint Deployment",
+)
+GOOSE_QUANTUM_TASK_REQUIRED_PHRASES: tuple[str, ...] = (
+    "## Quantum Algorithm Design Task",
+    "STEP 1: Read the requirement",
+    "PENDING_QUANTUM_DESIGN",
+    "STEP 2: Design the circuit",
+    "Use Google Cirq for circuit construction",
+    "STEP 3: Validate quantum-safety",
+    "STEP 4: Estimate constraints",
+    "STEP 5: Update scratchpad",
+    "Create Python file: ./quantum_circuits/[circuit_name].py",
+)
 PROMPT_ROLES_REQUIRED_PHRASES: tuple[str, ...] = (
     "## 1. QuantumArchitectAgent Prompt Template",
     "You are the Quantum Computing specialist for the FUZZYWIGG-AI ecosystem.",
@@ -1118,7 +1152,7 @@ SCRATCHPAD_STATUS_MARKERS: tuple[str, ...] = (
 SPECIALIST_AGENTS: tuple[str, ...] = DOCUMENTED_AGENTS[:-1]
 
 MIN_COVERAGE_FAIL_UNDER = 99
-MIN_VALIDATOR_COUNT = 118
+MIN_VALIDATOR_COUNT = 121
 
 
 @dataclass(frozen=True)
@@ -2054,6 +2088,29 @@ def validate_packaging_inventory(root: Path) -> list[Finding]:
         findings.append(
             _lock_mismatch(schema_path, "goose_extensions_required_phrases")
         )
+
+    if (
+        tuple(inventory.get("goose_orchestration_required_phrases", ()))
+        != GOOSE_ORCHESTRATION_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "goose_orchestration_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("goose_conflicts_required_phrases", ()))
+        != GOOSE_CONFLICTS_REQUIRED_PHRASES
+    ):
+        findings.append(_lock_mismatch(schema_path, "goose_conflicts_required_phrases"))
+
+    if (
+        tuple(inventory.get("goose_quantum_task_required_phrases", ()))
+        != GOOSE_QUANTUM_TASK_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "goose_quantum_task_required_phrases")
+        )
+
 
     if (
         tuple(inventory.get("prompt_roles_required_phrases", ()))
@@ -4824,6 +4881,112 @@ def _inventory_lock_consistency(
                 )
             )
 
+    orch = list(inventory.get("goose_orchestration_required_phrases", ()))
+    if len(orch) != len(set(orch)):
+        findings.append(
+            Finding(schema_path, "goose_orchestration_required_phrases must be unique")
+        )
+    if not orch:
+        findings.append(
+            Finding(
+                schema_path, "goose_orchestration_required_phrases must not be empty"
+            )
+        )
+    for phrase in orch:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "goose_orchestration_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_orch = {
+            "## Master Orchestration Task: Quantum NFT Mint",
+            "STEP 2: Run QuantumArchitectAgent recipe",
+            "STEP 6: Make final decision",
+        }
+        if orch and not required_orch <= set(orch):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "goose_orchestration_required_phrases must include Master "
+                    "Orchestration/QuantumArchitectAgent recipe/final decision",
+                )
+            )
+
+    conflicts = list(inventory.get("goose_conflicts_required_phrases", ()))
+    if len(conflicts) != len(set(conflicts)):
+        findings.append(
+            Finding(schema_path, "goose_conflicts_required_phrases must be unique")
+        )
+    if not conflicts:
+        findings.append(
+            Finding(schema_path, "goose_conflicts_required_phrases must not be empty")
+        )
+    for phrase in conflicts:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "goose_conflicts_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_conflicts = {
+            "Conflict Type 1: PERFORMANCE",
+            "Conflict Type 2: SECURITY",
+            "Decision: 🚨 ESCALATE TO HUMAN",
+        }
+        if conflicts and not required_conflicts <= set(conflicts):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "goose_conflicts_required_phrases must include PERFORMANCE/"
+                    "SECURITY/ESCALATE TO HUMAN",
+                )
+            )
+
+    qtask = list(inventory.get("goose_quantum_task_required_phrases", ()))
+    if len(qtask) != len(set(qtask)):
+        findings.append(
+            Finding(schema_path, "goose_quantum_task_required_phrases must be unique")
+        )
+    if not qtask:
+        findings.append(
+            Finding(
+                schema_path, "goose_quantum_task_required_phrases must not be empty"
+            )
+        )
+    for phrase in qtask:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "goose_quantum_task_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_qtask = {
+            "## Quantum Algorithm Design Task",
+            "PENDING_QUANTUM_DESIGN",
+            "Use Google Cirq for circuit construction",
+        }
+        if qtask and not required_qtask <= set(qtask):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "goose_quantum_task_required_phrases must include Quantum "
+                    "Algorithm Design Task/PENDING_QUANTUM_DESIGN/Google Cirq",
+                )
+            )
+
 
     return findings
 
@@ -6921,6 +7084,57 @@ def validate_goose_extensions(root: Path) -> list[Finding]:
     return findings
 
 
+def validate_goose_orchestration(root: Path) -> list[Finding]:
+    rel = "GOOSE-RECIPES.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "GOOSE-RECIPES.md missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## Master Orchestration Task: Quantum NFT Mint" not in body:
+        findings.append(Finding(rel, "missing Master Orchestration Task section"))
+    for phrase in GOOSE_ORCHESTRATION_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked goose-orchestration phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_goose_conflicts(root: Path) -> list[Finding]:
+    rel = "GOOSE-RECIPES.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "GOOSE-RECIPES.md missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "Conflict Type 1: PERFORMANCE" not in body:
+        findings.append(Finding(rel, "missing Conflict Type PERFORMANCE section"))
+    for phrase in GOOSE_CONFLICTS_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked goose-conflicts phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_goose_quantum_task(root: Path) -> list[Finding]:
+    rel = "GOOSE-RECIPES.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "GOOSE-RECIPES.md missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## Quantum Algorithm Design Task" not in body:
+        findings.append(Finding(rel, "missing Quantum Algorithm Design Task section"))
+    for phrase in GOOSE_QUANTUM_TASK_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked goose-quantum-task phrase: {phrase}")
+            )
+    return findings
+
+
 def validate_prompt_roles(root: Path) -> list[Finding]:
     rel = "AGENT-PROMPTS.md"
     path = root / rel
@@ -8373,6 +8587,9 @@ VALIDATORS: dict[str, ValidatorFn] = {
     "goose-recipe-headers": validate_goose_recipe_headers,
     "goose-instruction-agents": validate_goose_instruction_agents,
     "goose-extensions": validate_goose_extensions,
+    "goose-orchestration": validate_goose_orchestration,
+    "goose-conflicts": validate_goose_conflicts,
+    "goose-quantum-task": validate_goose_quantum_task,
     "prompt-roles": validate_prompt_roles,
     "prompt-sections": validate_prompt_sections,
     "prompt-usage": validate_prompt_usage,
