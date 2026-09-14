@@ -274,6 +274,42 @@ def _inventory_payload(**overrides: object) -> dict:
         "prompt_escalation_authority_required_phrases": list(
             vm.PROMPT_ESCALATION_AUTHORITY_REQUIRED_PHRASES
         ),
+        "prompt_role_blurbs_required_phrases": list(
+            vm.PROMPT_ROLE_BLURBS_REQUIRED_PHRASES
+        ),
+        "prompt_escalation_format_required_phrases": list(
+            vm.PROMPT_ESCALATION_FORMAT_REQUIRED_PHRASES
+        ),
+        "prompt_living_docs_required_phrases": list(
+            vm.PROMPT_LIVING_DOCS_REQUIRED_PHRASES
+        ),
+        "prompt_constraints_detail_required_phrases": list(
+            vm.PROMPT_CONSTRAINTS_DETAIL_REQUIRED_PHRASES
+        ),
+        "prompt_triggers_detail_required_phrases": list(
+            vm.PROMPT_TRIGGERS_DETAIL_REQUIRED_PHRASES
+        ),
+        "prompt_human_fields_required_phrases": list(
+            vm.PROMPT_HUMAN_FIELDS_REQUIRED_PHRASES
+        ),
+        "prompt_context_detail_required_phrases": list(
+            vm.PROMPT_CONTEXT_DETAIL_REQUIRED_PHRASES
+        ),
+        "prompt_expertise_detail_required_phrases": list(
+            vm.PROMPT_EXPERTISE_DETAIL_REQUIRED_PHRASES
+        ),
+        "prompt_related_health_required_phrases": list(
+            vm.PROMPT_RELATED_HEALTH_REQUIRED_PHRASES
+        ),
+        "prompt_tools_detail_required_phrases": list(
+            vm.PROMPT_TOOLS_DETAIL_REQUIRED_PHRASES
+        ),
+        "prompt_responsibilities_detail_required_phrases": list(
+            vm.PROMPT_RESPONSIBILITIES_DETAIL_REQUIRED_PHRASES
+        ),
+        "prompt_instantiation_required_phrases": list(
+            vm.PROMPT_INSTANTIATION_REQUIRED_PHRASES
+        ),
         "postmortem_intro_required_phrases": list(vm.POSTMORTEM_INTRO_REQUIRED_PHRASES),
         "postmortem_field_required_phrases": list(vm.POSTMORTEM_FIELD_REQUIRED_PHRASES),
         "postmortem_next_steps_required_phrases": list(
@@ -1152,6 +1188,18 @@ def test_validators_registry_covers_all_checks() -> None:
         "prompt-context",
         "prompt-cannot-delegate",
         "prompt-escalation-authority",
+        "prompt-role-blurbs",
+        "prompt-escalation-format",
+        "prompt-living-docs",
+        "prompt-constraints-detail",
+        "prompt-triggers-detail",
+        "prompt-human-fields",
+        "prompt-context-detail",
+        "prompt-expertise-detail",
+        "prompt-related-health",
+        "prompt-tools-detail",
+        "prompt-responsibilities-detail",
+        "prompt-instantiation",
         "hydration-phase2",
         "hydration-phase5",
         "license-mit",
@@ -3163,8 +3211,8 @@ def test_ci_workflow_v5_deepeners(tmp_path: Path) -> None:
 def test_live_v5_validators() -> None:
     assert vm.validate_bug_report_template(REPO_ROOT) == []
     assert vm.validate_feature_request_template(REPO_ROOT) == []
-    assert vm.INVENTORY_VERSION == 50
-    assert len(vm.VALIDATORS) == 172
+    assert vm.INVENTORY_VERSION == 51
+    assert len(vm.VALIDATORS) == 184
     assert vm.MIN_COVERAGE_FAIL_UNDER == 99
 
 
@@ -3173,7 +3221,7 @@ def test_live_v6_validators() -> None:
     assert vm.validate_postmortem_packaging(REPO_ROOT) == []
     assert vm.validate_gitignore_packaging(REPO_ROOT) == []
     assert vm.validate_negative_constraints(REPO_ROOT) == []
-    assert vm.INVENTORY_VERSION == 50
+    assert vm.INVENTORY_VERSION == 51
     assert len(vm.VALIDATORS) >= 43
     assert sorted(vm.VALIDATORS) == json.loads(
         (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
@@ -3184,7 +3232,7 @@ def test_live_v7_validators() -> None:
     assert vm.validate_hydration_report(REPO_ROOT) == []
     assert vm.validate_execution_summary(REPO_ROOT) == []
     assert vm.validate_implementation_guide(REPO_ROOT) == []
-    assert vm.INVENTORY_VERSION == 50
+    assert vm.INVENTORY_VERSION == 51
     assert len(vm.VALIDATORS) >= 43
     assert "Lock inventory" in vm.REQUIRED_MANIFEST_STEP_MARKERS
     assert "INVENTORY_VERSION" in vm.REQUIRED_MANIFEST_STEP_MARKERS
@@ -3205,9 +3253,9 @@ def test_live_v8_validators() -> None:
     assert vm.validate_claude_packaging(REPO_ROOT) == []
     assert vm.validate_recipe_titles(REPO_ROOT) == []
     assert vm.validate_ci_actions(REPO_ROOT) == []
-    assert vm.INVENTORY_VERSION == 50
-    assert len(vm.VALIDATORS) == 172
-    assert vm.MIN_VALIDATOR_COUNT == 172
+    assert vm.INVENTORY_VERSION == 51
+    assert len(vm.VALIDATORS) == 184
+    assert vm.MIN_VALIDATOR_COUNT == 184
     assert vm.PYPROJECT_NAME == "g0p-agents-validation"
     assert set(vm.DEPENDABOT_DIRECTORIES) == {"/"}
     assert dict(vm.RECIPE_TITLES) == json.loads(
@@ -3222,9 +3270,9 @@ def test_live_v9_validators() -> None:
     assert vm.validate_issue_template_names(REPO_ROOT) == []
     assert vm.validate_readme_badges(REPO_ROOT) == []
     assert vm.validate_quarterly_review(REPO_ROOT) == []
-    assert vm.INVENTORY_VERSION == 50
-    assert len(vm.VALIDATORS) == 172
-    assert vm.MIN_VALIDATOR_COUNT == 172
+    assert vm.INVENTORY_VERSION == 51
+    assert len(vm.VALIDATORS) == 184
+    assert vm.MIN_VALIDATOR_COUNT == 184
     assert vm.CI_WORKFLOW_NAME == "CI — Lint, Links & Manifests"
     assert vm.MARKDOWNLINT_MD025 is False
     assert vm.MARKDOWNLINT_MD033 is False
@@ -3250,9 +3298,9 @@ def test_live_v10_validators() -> None:
     assert vm.validate_link_check(REPO_ROOT) == []
     assert vm.validate_ci_job_names(REPO_ROOT) == []
     assert vm.validate_github_agent_description(REPO_ROOT) == []
-    assert vm.INVENTORY_VERSION == 50
-    assert len(vm.VALIDATORS) == 172
-    assert vm.MIN_VALIDATOR_COUNT == 172
+    assert vm.INVENTORY_VERSION == 51
+    assert len(vm.VALIDATORS) == 184
+    assert vm.MIN_VALIDATOR_COUNT == 184
     assert vm.CI_LINK_CHECK_ARGS == "--verbose --no-progress '**/*.md'"
     assert vm.CI_LINK_CHECK_FAIL is True
     assert vm.CI_MARKDOWN_LINT_GLOBS == "**/*.md"
@@ -4758,9 +4806,9 @@ def test_live_v11_validators() -> None:
     assert vm.validate_ci_runs_on(REPO_ROOT) == []
     assert vm.validate_ci_artifacts(REPO_ROOT) == []
     assert vm.validate_actionlint_shell(REPO_ROOT) == []
-    assert vm.INVENTORY_VERSION == 50
-    assert len(vm.VALIDATORS) == 172
-    assert vm.MIN_VALIDATOR_COUNT == 172
+    assert vm.INVENTORY_VERSION == 51
+    assert len(vm.VALIDATORS) == 184
+    assert vm.MIN_VALIDATOR_COUNT == 184
     assert vm.CI_RUNS_ON == "ubuntu-latest"
     assert vm.CI_ARTIFACT_IF_NO_FILES_FOUND == "warn"
     assert tuple(vm.CI_ARTIFACT_PATHS) == (
@@ -4779,7 +4827,7 @@ def test_live_v11_validators() -> None:
     inventory = json.loads(
         (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
     )
-    assert inventory["version"] == 50
+    assert inventory["version"] == 51
     assert inventory["ci_runs_on"] == vm.CI_RUNS_ON
     assert inventory["ci_artifact_paths"] == list(vm.CI_ARTIFACT_PATHS)
     assert inventory["ci_artifact_if_no_files_found"] == vm.CI_ARTIFACT_IF_NO_FILES_FOUND
@@ -5215,9 +5263,9 @@ def test_live_v12_validators() -> None:
     assert vm.validate_ci_setup_python(REPO_ROOT) == []
     assert vm.validate_ci_ruff(REPO_ROOT) == []
     assert vm.validate_license_mit(REPO_ROOT) == []
-    assert vm.INVENTORY_VERSION == 50
-    assert len(vm.VALIDATORS) == 172
-    assert vm.MIN_VALIDATOR_COUNT == 172
+    assert vm.INVENTORY_VERSION == 51
+    assert len(vm.VALIDATORS) == 184
+    assert vm.MIN_VALIDATOR_COUNT == 184
     assert vm.CI_SETUP_PYTHON_CACHE == "pip"
     assert vm.CI_RUFF_CHECK_COMMAND == "ruff check scripts tests"
     assert "MIT License" in vm.LICENSE_REQUIRED_PHRASES
@@ -5226,11 +5274,11 @@ def test_live_v12_validators() -> None:
     inventory = json.loads(
         (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
     )
-    assert inventory["version"] == 50
+    assert inventory["version"] == 51
     assert inventory["ci_setup_python_cache"] == vm.CI_SETUP_PYTHON_CACHE
     assert inventory["ci_ruff_check_command"] == vm.CI_RUFF_CHECK_COMMAND
     assert inventory["license_required_phrases"] == list(vm.LICENSE_REQUIRED_PHRASES)
-    assert inventory["min_validator_count"] == 172
+    assert inventory["min_validator_count"] == 184
     assert sorted(vm.VALIDATORS) == inventory["validator_names"]
     assert "ci-setup-python" in vm.VALIDATORS
     assert "ci-ruff" in vm.VALIDATORS
@@ -5511,9 +5559,9 @@ def test_live_v13_validators() -> None:
     assert vm.validate_ci_pip_install(REPO_ROOT) == []
     assert vm.validate_ci_pip_check(REPO_ROOT) == []
     assert vm.validate_ci_pytest(REPO_ROOT) == []
-    assert vm.INVENTORY_VERSION == 50
-    assert len(vm.VALIDATORS) == 172
-    assert vm.MIN_VALIDATOR_COUNT == 172
+    assert vm.INVENTORY_VERSION == 51
+    assert len(vm.VALIDATORS) == 184
+    assert vm.MIN_VALIDATOR_COUNT == 184
     assert vm.CI_PIP_INSTALL_COMMAND == "python -m pip install -r requirements-dev.txt"
     assert vm.CI_PIP_CHECK_COMMAND == "python -m pip check"
     assert tuple(vm.CI_PYTEST_REQUIRED_MARKERS) == (
@@ -5525,11 +5573,11 @@ def test_live_v13_validators() -> None:
     inventory = json.loads(
         (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
     )
-    assert inventory["version"] == 50
+    assert inventory["version"] == 51
     assert inventory["ci_pip_install_command"] == vm.CI_PIP_INSTALL_COMMAND
     assert inventory["ci_pip_check_command"] == vm.CI_PIP_CHECK_COMMAND
     assert inventory["ci_pytest_required_markers"] == list(vm.CI_PYTEST_REQUIRED_MARKERS)
-    assert inventory["min_validator_count"] == 172
+    assert inventory["min_validator_count"] == 184
     assert sorted(vm.VALIDATORS) == inventory["validator_names"]
     assert "ci-pip-install" in vm.VALIDATORS
     assert "ci-pip-check" in vm.VALIDATORS
@@ -5835,9 +5883,9 @@ def test_live_v14_validators() -> None:
     assert vm.validate_state_residency(REPO_ROOT) == []
     assert vm.validate_key_files(REPO_ROOT) == []
     assert vm.validate_pr_routing(REPO_ROOT) == []
-    assert vm.INVENTORY_VERSION == 50
-    assert len(vm.VALIDATORS) == 172
-    assert vm.MIN_VALIDATOR_COUNT == 172
+    assert vm.INVENTORY_VERSION == 51
+    assert len(vm.VALIDATORS) == 184
+    assert vm.MIN_VALIDATOR_COUNT == 184
     assert tuple(vm.STATE_RESIDENCY_REQUIRED_PHRASES) == (
         "Code, config, workflows",
         "Policies, decisions, rollouts",
@@ -5868,13 +5916,13 @@ def test_live_v14_validators() -> None:
     inventory = json.loads(
         (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
     )
-    assert inventory["version"] == 50
+    assert inventory["version"] == 51
     assert inventory["state_residency_required_phrases"] == list(
         vm.STATE_RESIDENCY_REQUIRED_PHRASES
     )
     assert inventory["key_files_required_entries"] == list(vm.KEY_FILES_REQUIRED_ENTRIES)
     assert inventory["pr_routing_required_fields"] == list(vm.PR_ROUTING_REQUIRED_FIELDS)
-    assert inventory["min_validator_count"] == 172
+    assert inventory["min_validator_count"] == 184
     assert sorted(vm.VALIDATORS) == inventory["validator_names"]
     assert "state-residency" in vm.VALIDATORS
     assert "key-files" in vm.VALIDATORS
@@ -6101,9 +6149,9 @@ def test_live_v15_validators() -> None:
     assert vm.validate_routing_matrix(REPO_ROOT) == []
     assert vm.validate_repo_identity(REPO_ROOT) == []
     assert vm.validate_escalation_format(REPO_ROOT) == []
-    assert vm.INVENTORY_VERSION == 50
-    assert len(vm.VALIDATORS) == 172
-    assert vm.MIN_VALIDATOR_COUNT == 172
+    assert vm.INVENTORY_VERSION == 51
+    assert len(vm.VALIDATORS) == 184
+    assert vm.MIN_VALIDATOR_COUNT == 184
     assert tuple(vm.ROUTING_MATRIX_REQUIRED_PHRASES) == (
         "CI/CD fixes, linting, dependabot",
         "Multi-file code scaffolding (agentic_flows/, contracts/, quantum_circuits/)",
@@ -6130,7 +6178,7 @@ def test_live_v15_validators() -> None:
     inventory = json.loads(
         (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
     )
-    assert inventory["version"] == 50
+    assert inventory["version"] == 51
     assert inventory["routing_matrix_required_phrases"] == list(
         vm.ROUTING_MATRIX_REQUIRED_PHRASES
     )
@@ -6140,7 +6188,7 @@ def test_live_v15_validators() -> None:
     assert inventory["escalation_block_required_phrases"] == list(
         vm.ESCALATION_BLOCK_REQUIRED_PHRASES
     )
-    assert inventory["min_validator_count"] == 172
+    assert inventory["min_validator_count"] == 184
     assert sorted(vm.VALIDATORS) == inventory["validator_names"]
     assert "routing-matrix" in vm.VALIDATORS
     assert "repo-identity" in vm.VALIDATORS
@@ -6374,9 +6422,9 @@ def test_live_v16_validators() -> None:
     assert vm.validate_routing_rationales(REPO_ROOT) == []
     assert vm.validate_claude_metadata(REPO_ROOT) == []
     assert vm.validate_escalation_usage(REPO_ROOT) == []
-    assert vm.INVENTORY_VERSION == 50
-    assert len(vm.VALIDATORS) == 172
-    assert vm.MIN_VALIDATOR_COUNT == 172
+    assert vm.INVENTORY_VERSION == 51
+    assert len(vm.VALIDATORS) == 184
+    assert vm.MIN_VALIDATOR_COUNT == 184
     assert tuple(vm.ROUTING_MATRIX_RATIONALE_PHRASES) == (
         "Single-repo, syntax-level work",
         "Deep coding, long-running, 60–90 min",
@@ -6404,7 +6452,7 @@ def test_live_v16_validators() -> None:
     inventory = json.loads(
         (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
     )
-    assert inventory["version"] == 50
+    assert inventory["version"] == 51
     assert inventory["routing_matrix_rationale_phrases"] == list(
         vm.ROUTING_MATRIX_RATIONALE_PHRASES
     )
@@ -6414,7 +6462,7 @@ def test_live_v16_validators() -> None:
     assert inventory["escalation_usage_required_phrases"] == list(
         vm.ESCALATION_USAGE_REQUIRED_PHRASES
     )
-    assert inventory["min_validator_count"] == 172
+    assert inventory["min_validator_count"] == 184
     assert sorted(vm.VALIDATORS) == inventory["validator_names"]
     assert "routing-rationales" in vm.VALIDATORS
     assert "claude-metadata" in vm.VALIDATORS
@@ -6657,8 +6705,8 @@ def test_v16_routing_identity_escalation_edge_cases(tmp_path: Path) -> None:
 
 
 def test_v17_security_policy_live_locks() -> None:
-    assert vm.INVENTORY_VERSION == 50
-    assert vm.MIN_VALIDATOR_COUNT == 172
+    assert vm.INVENTORY_VERSION == 51
+    assert vm.MIN_VALIDATOR_COUNT == 184
     assert vm.validate_security_supported(REPO_ROOT) == []
     assert vm.validate_security_reporting(REPO_ROOT) == []
     assert vm.validate_security_standards(REPO_ROOT) == []
@@ -6691,7 +6739,7 @@ def test_v17_security_policy_live_locks() -> None:
     inventory = json.loads(
         (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
     )
-    assert inventory["version"] == 50
+    assert inventory["version"] == 51
     assert inventory["security_supported_required_phrases"] == list(
         vm.SECURITY_SUPPORTED_REQUIRED_PHRASES
     )
@@ -6701,7 +6749,7 @@ def test_v17_security_policy_live_locks() -> None:
     assert inventory["security_standards_required_phrases"] == list(
         vm.SECURITY_STANDARDS_REQUIRED_PHRASES
     )
-    assert inventory["min_validator_count"] == 172
+    assert inventory["min_validator_count"] == 184
     assert sorted(vm.VALIDATORS) == inventory["validator_names"]
     assert "security-supported" in vm.VALIDATORS
     assert "security-reporting" in vm.VALIDATORS
@@ -6943,8 +6991,8 @@ def test_v17_security_policy_edge_cases(tmp_path: Path) -> None:
     assert any("security_standards_required_phrases" in f.message for f in findings)
 
 def test_v18_archive_snapshot_live_locks() -> None:
-    assert vm.INVENTORY_VERSION == 50
-    assert vm.MIN_VALIDATOR_COUNT == 172
+    assert vm.INVENTORY_VERSION == 51
+    assert vm.MIN_VALIDATOR_COUNT == 184
     assert vm.validate_implementation_quickstart(REPO_ROOT) == []
     assert vm.validate_execution_specialists(REPO_ROOT) == []
     assert vm.validate_hydration_list_b(REPO_ROOT) == []
@@ -6984,7 +7032,7 @@ def test_v18_archive_snapshot_live_locks() -> None:
     inventory = json.loads(
         (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
     )
-    assert inventory["version"] == 50
+    assert inventory["version"] == 51
     assert inventory["implementation_quickstart_required_phrases"] == list(
         vm.IMPLEMENTATION_QUICKSTART_REQUIRED_PHRASES
     )
@@ -6994,7 +7042,7 @@ def test_v18_archive_snapshot_live_locks() -> None:
     assert inventory["hydration_list_b_required_phrases"] == list(
         vm.HYDRATION_LIST_B_REQUIRED_PHRASES
     )
-    assert inventory["min_validator_count"] == 172
+    assert inventory["min_validator_count"] == 184
     assert sorted(vm.VALIDATORS) == inventory["validator_names"]
     assert "implementation-quickstart" in vm.VALIDATORS
     assert "execution-specialists" in vm.VALIDATORS
@@ -7270,9 +7318,9 @@ def test_live_v19_postmortem_validators() -> None:
     assert vm.validate_postmortem_intro(REPO_ROOT) == []
     assert vm.validate_postmortem_fields(REPO_ROOT) == []
     assert vm.validate_postmortem_next_steps(REPO_ROOT) == []
-    assert vm.INVENTORY_VERSION == 50
-    assert len(vm.VALIDATORS) == 172
-    assert vm.MIN_VALIDATOR_COUNT == 172
+    assert vm.INVENTORY_VERSION == 51
+    assert len(vm.VALIDATORS) == 184
+    assert vm.MIN_VALIDATOR_COUNT == 184
     assert tuple(vm.POSTMORTEM_INTRO_REQUIRED_PHRASES) == (
         "Decision & Incident Log",
         "Every significant decision, conflict, and resolution is logged here",
@@ -7299,7 +7347,7 @@ def test_live_v19_postmortem_validators() -> None:
     inventory = json.loads(
         (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
     )
-    assert inventory["version"] == 50
+    assert inventory["version"] == 51
     assert inventory["postmortem_intro_required_phrases"] == list(
         vm.POSTMORTEM_INTRO_REQUIRED_PHRASES
     )
@@ -7309,7 +7357,7 @@ def test_live_v19_postmortem_validators() -> None:
     assert inventory["postmortem_next_steps_required_phrases"] == list(
         vm.POSTMORTEM_NEXT_STEPS_REQUIRED_PHRASES
     )
-    assert inventory["min_validator_count"] == 172
+    assert inventory["min_validator_count"] == 184
     assert sorted(vm.VALIDATORS) == inventory["validator_names"]
     assert "postmortem-intro" in vm.VALIDATORS
     assert "postmortem-fields" in vm.VALIDATORS
@@ -7558,9 +7606,9 @@ def test_live_v20_scratchpad_validators() -> None:
     assert vm.validate_scratchpad_intro(REPO_ROOT) == []
     assert vm.validate_scratchpad_format(REPO_ROOT) == []
     assert vm.validate_scratchpad_task_meta(REPO_ROOT) == []
-    assert vm.INVENTORY_VERSION == 50
-    assert len(vm.VALIDATORS) == 172
-    assert vm.MIN_VALIDATOR_COUNT == 172
+    assert vm.INVENTORY_VERSION == 51
+    assert len(vm.VALIDATORS) == 184
+    assert vm.MIN_VALIDATOR_COUNT == 184
     assert tuple(vm.SCRATCHPAD_INTRO_REQUIRED_PHRASES) == (
         "Agent Coordination Scratchpad",
         "Updated by each agent after completing their task",
@@ -7582,7 +7630,7 @@ def test_live_v20_scratchpad_validators() -> None:
     inventory = json.loads(
         (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
     )
-    assert inventory["version"] == 50
+    assert inventory["version"] == 51
     assert inventory["scratchpad_intro_required_phrases"] == list(
         vm.SCRATCHPAD_INTRO_REQUIRED_PHRASES
     )
@@ -7592,7 +7640,7 @@ def test_live_v20_scratchpad_validators() -> None:
     assert inventory["scratchpad_task_meta_required_phrases"] == list(
         vm.SCRATCHPAD_TASK_META_REQUIRED_PHRASES
     )
-    assert inventory["min_validator_count"] == 172
+    assert inventory["min_validator_count"] == 184
     assert sorted(vm.VALIDATORS) == inventory["validator_names"]
     assert "scratchpad-intro" in vm.VALIDATORS
     assert "scratchpad-format" in vm.VALIDATORS
@@ -7840,9 +7888,9 @@ def test_live_v21_issue_template_validators() -> None:
     assert vm.validate_issue_metadata(REPO_ROOT) == []
     assert vm.validate_issue_routing(REPO_ROOT) == []
     assert vm.validate_bug_repro(REPO_ROOT) == []
-    assert vm.INVENTORY_VERSION == 50
-    assert len(vm.VALIDATORS) == 172
-    assert vm.MIN_VALIDATOR_COUNT == 172
+    assert vm.INVENTORY_VERSION == 51
+    assert len(vm.VALIDATORS) == 184
+    assert vm.MIN_VALIDATOR_COUNT == 184
     assert tuple(vm.ISSUE_METADATA_REQUIRED_PHRASES) == (
         "Status: ACTIVE",
         "Tier: 1",
@@ -7866,7 +7914,7 @@ def test_live_v21_issue_template_validators() -> None:
     inventory = json.loads(
         (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
     )
-    assert inventory["version"] == 50
+    assert inventory["version"] == 51
     assert inventory["issue_metadata_required_phrases"] == list(
         vm.ISSUE_METADATA_REQUIRED_PHRASES
     )
@@ -7874,7 +7922,7 @@ def test_live_v21_issue_template_validators() -> None:
         vm.ISSUE_ROUTING_REQUIRED_PHRASES
     )
     assert inventory["bug_repro_required_phrases"] == list(vm.BUG_REPRO_REQUIRED_PHRASES)
-    assert inventory["min_validator_count"] == 172
+    assert inventory["min_validator_count"] == 184
     assert sorted(vm.VALIDATORS) == inventory["validator_names"]
     assert "issue-metadata" in vm.VALIDATORS
     assert "issue-routing" in vm.VALIDATORS
@@ -8127,9 +8175,9 @@ def test_live_v22_contributing_validators() -> None:
     assert vm.validate_contributing_who(REPO_ROOT) == []
     assert vm.validate_contributing_branches(REPO_ROOT) == []
     assert vm.validate_contributing_pr(REPO_ROOT) == []
-    assert vm.INVENTORY_VERSION == 50
-    assert len(vm.VALIDATORS) == 172
-    assert vm.MIN_VALIDATOR_COUNT == 172
+    assert vm.INVENTORY_VERSION == 51
+    assert len(vm.VALIDATORS) == 184
+    assert vm.MIN_VALIDATOR_COUNT == 184
     assert tuple(vm.CONTRIBUTING_WHO_REQUIRED_PHRASES) == (
         "## Who Can Contribute",
         "FUZZYWIGG multi-agent ecosystem",
@@ -8158,7 +8206,7 @@ def test_live_v22_contributing_validators() -> None:
     inventory = json.loads(
         (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
     )
-    assert inventory["version"] == 50
+    assert inventory["version"] == 51
     assert inventory["contributing_who_required_phrases"] == list(
         vm.CONTRIBUTING_WHO_REQUIRED_PHRASES
     )
@@ -8168,7 +8216,7 @@ def test_live_v22_contributing_validators() -> None:
     assert inventory["contributing_pr_required_phrases"] == list(
         vm.CONTRIBUTING_PR_REQUIRED_PHRASES
     )
-    assert inventory["min_validator_count"] == 172
+    assert inventory["min_validator_count"] == 184
     assert sorted(vm.VALIDATORS) == inventory["validator_names"]
     assert "contributing-who" in vm.VALIDATORS
     assert "contributing-branches" in vm.VALIDATORS
@@ -8421,9 +8469,9 @@ def test_live_v23_pr_template_validators() -> None:
     assert vm.validate_pr_summary(REPO_ROOT) == []
     assert vm.validate_pr_acceptance(REPO_ROOT) == []
     assert vm.validate_pr_notes(REPO_ROOT) == []
-    assert vm.INVENTORY_VERSION == 50
-    assert len(vm.VALIDATORS) == 172
-    assert vm.MIN_VALIDATOR_COUNT == 172
+    assert vm.INVENTORY_VERSION == 51
+    assert len(vm.VALIDATORS) == 184
+    assert vm.MIN_VALIDATOR_COUNT == 184
     assert tuple(vm.PR_SUMMARY_REQUIRED_PHRASES) == (
         "# Summary",
         "One sentence: what does this PR accomplish?",
@@ -8447,13 +8495,13 @@ def test_live_v23_pr_template_validators() -> None:
     inventory = json.loads(
         (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
     )
-    assert inventory["version"] == 50
+    assert inventory["version"] == 51
     assert inventory["pr_summary_required_phrases"] == list(vm.PR_SUMMARY_REQUIRED_PHRASES)
     assert inventory["pr_acceptance_required_phrases"] == list(
         vm.PR_ACCEPTANCE_REQUIRED_PHRASES
     )
     assert inventory["pr_notes_required_phrases"] == list(vm.PR_NOTES_REQUIRED_PHRASES)
-    assert inventory["min_validator_count"] == 172
+    assert inventory["min_validator_count"] == 184
     assert sorted(vm.VALIDATORS) == inventory["validator_names"]
     assert "pr-summary" in vm.VALIDATORS
     assert "pr-acceptance" in vm.VALIDATORS
@@ -8691,9 +8739,9 @@ def test_live_v24_readme_honesty_validators() -> None:
     assert vm.validate_readme_honesty(REPO_ROOT) == []
     assert vm.validate_readme_historic(REPO_ROOT) == []
     assert vm.validate_readme_contents(REPO_ROOT) == []
-    assert vm.INVENTORY_VERSION == 50
-    assert len(vm.VALIDATORS) == 172
-    assert vm.MIN_VALIDATOR_COUNT == 172
+    assert vm.INVENTORY_VERSION == 51
+    assert len(vm.VALIDATORS) == 184
+    assert vm.MIN_VALIDATOR_COUNT == 184
     assert tuple(vm.README_HONESTY_REQUIRED_PHRASES) == (
         "(archived reference)",
         "This is not a live hive, runtime, or production swarm",
@@ -8722,7 +8770,7 @@ def test_live_v24_readme_honesty_validators() -> None:
     inventory = json.loads(
         (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
     )
-    assert inventory["version"] == 50
+    assert inventory["version"] == 51
     assert inventory["readme_honesty_required_phrases"] == list(
         vm.README_HONESTY_REQUIRED_PHRASES
     )
@@ -8732,7 +8780,7 @@ def test_live_v24_readme_honesty_validators() -> None:
     assert inventory["readme_contents_required_phrases"] == list(
         vm.README_CONTENTS_REQUIRED_PHRASES
     )
-    assert inventory["min_validator_count"] == 172
+    assert inventory["min_validator_count"] == 184
     assert sorted(vm.VALIDATORS) == inventory["validator_names"]
     assert "readme-honesty" in vm.VALIDATORS
     assert "readme-historic" in vm.VALIDATORS
@@ -8978,16 +9026,16 @@ def test_live_v25_goose_recipe_validators() -> None:
     assert vm.validate_goose_howto(REPO_ROOT) == []
     assert vm.validate_goose_state_machine(REPO_ROOT) == []
     assert vm.validate_goose_naming(REPO_ROOT) == []
-    assert vm.INVENTORY_VERSION == 50
-    assert len(vm.VALIDATORS) == 172
-    assert vm.MIN_VALIDATOR_COUNT == 172
+    assert vm.INVENTORY_VERSION == 51
+    assert len(vm.VALIDATORS) == 184
+    assert vm.MIN_VALIDATOR_COUNT == 184
     assert "goose-howto" in vm.VALIDATORS
     assert "goose-state-machine" in vm.VALIDATORS
     assert "goose-naming" in vm.VALIDATORS
     inventory = json.loads(
         (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
     )
-    assert inventory["version"] == 50
+    assert inventory["version"] == 51
     assert inventory["goose_howto_required_phrases"] == list(
         vm.GOOSE_HOWTO_REQUIRED_PHRASES
     )
@@ -8997,7 +9045,7 @@ def test_live_v25_goose_recipe_validators() -> None:
     assert inventory["goose_naming_required_phrases"] == list(
         vm.GOOSE_NAMING_REQUIRED_PHRASES
     )
-    assert inventory["min_validator_count"] == 172
+    assert inventory["min_validator_count"] == 184
     assert sorted(vm.VALIDATORS) == inventory["validator_names"]
     assert vm.VALIDATORS["goose"](REPO_ROOT) == []
     assert vm.validate_readme_honesty(REPO_ROOT) == []
@@ -9203,16 +9251,16 @@ def test_live_v26_agent_prompt_validators() -> None:
     assert vm.validate_prompt_roles(REPO_ROOT) == []
     assert vm.validate_prompt_sections(REPO_ROOT) == []
     assert vm.validate_prompt_usage(REPO_ROOT) == []
-    assert vm.INVENTORY_VERSION == 50
-    assert len(vm.VALIDATORS) == 172
-    assert vm.MIN_VALIDATOR_COUNT == 172
+    assert vm.INVENTORY_VERSION == 51
+    assert len(vm.VALIDATORS) == 184
+    assert vm.MIN_VALIDATOR_COUNT == 184
     assert "prompt-roles" in vm.VALIDATORS
     assert "prompt-sections" in vm.VALIDATORS
     assert "prompt-usage" in vm.VALIDATORS
     inventory = json.loads(
         (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
     )
-    assert inventory["version"] == 50
+    assert inventory["version"] == 51
     assert inventory["prompt_roles_required_phrases"] == list(
         vm.PROMPT_ROLES_REQUIRED_PHRASES
     )
@@ -9222,7 +9270,7 @@ def test_live_v26_agent_prompt_validators() -> None:
     assert inventory["prompt_usage_required_phrases"] == list(
         vm.PROMPT_USAGE_REQUIRED_PHRASES
     )
-    assert inventory["min_validator_count"] == 172
+    assert inventory["min_validator_count"] == 184
     assert sorted(vm.VALIDATORS) == inventory["validator_names"]
     assert vm.VALIDATORS["prompts"](REPO_ROOT) == []
     assert vm.validate_goose_howto(REPO_ROOT) == []
@@ -9434,16 +9482,16 @@ def test_live_v27_implementation_guide_validators() -> None:
     assert vm.validate_implementation_phases(REPO_ROOT) == []
     assert vm.validate_implementation_tools(REPO_ROOT) == []
     assert vm.validate_implementation_success(REPO_ROOT) == []
-    assert vm.INVENTORY_VERSION == 50
-    assert len(vm.VALIDATORS) == 172
-    assert vm.MIN_VALIDATOR_COUNT == 172
+    assert vm.INVENTORY_VERSION == 51
+    assert len(vm.VALIDATORS) == 184
+    assert vm.MIN_VALIDATOR_COUNT == 184
     assert "implementation-phases" in vm.VALIDATORS
     assert "implementation-tools" in vm.VALIDATORS
     assert "implementation-success" in vm.VALIDATORS
     inventory = json.loads(
         (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
     )
-    assert inventory["version"] == 50
+    assert inventory["version"] == 51
     assert inventory["implementation_phases_required_phrases"] == list(
         vm.IMPLEMENTATION_PHASES_REQUIRED_PHRASES
     )
@@ -9453,7 +9501,7 @@ def test_live_v27_implementation_guide_validators() -> None:
     assert inventory["implementation_success_required_phrases"] == list(
         vm.IMPLEMENTATION_SUCCESS_REQUIRED_PHRASES
     )
-    assert inventory["min_validator_count"] == 172
+    assert inventory["min_validator_count"] == 184
     assert sorted(vm.VALIDATORS) == inventory["validator_names"]
     assert vm.VALIDATORS["implementation-guide"](REPO_ROOT) == []
     assert vm.validate_prompt_roles(REPO_ROOT) == []
@@ -9684,16 +9732,16 @@ def test_live_v28_execution_summary_validators() -> None:
     assert vm.validate_execution_timeline(REPO_ROOT) == []
     assert vm.validate_execution_technologies(REPO_ROOT) == []
     assert vm.validate_execution_workflow(REPO_ROOT) == []
-    assert vm.INVENTORY_VERSION == 50
-    assert len(vm.VALIDATORS) == 172
-    assert vm.MIN_VALIDATOR_COUNT == 172
+    assert vm.INVENTORY_VERSION == 51
+    assert len(vm.VALIDATORS) == 184
+    assert vm.MIN_VALIDATOR_COUNT == 184
     assert "execution-timeline" in vm.VALIDATORS
     assert "execution-technologies" in vm.VALIDATORS
     assert "execution-workflow" in vm.VALIDATORS
     inventory = json.loads(
         (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
     )
-    assert inventory["version"] == 50
+    assert inventory["version"] == 51
     assert inventory["execution_timeline_required_phrases"] == list(
         vm.EXECUTION_TIMELINE_REQUIRED_PHRASES
     )
@@ -9703,7 +9751,7 @@ def test_live_v28_execution_summary_validators() -> None:
     assert inventory["execution_workflow_required_phrases"] == list(
         vm.EXECUTION_WORKFLOW_REQUIRED_PHRASES
     )
-    assert inventory["min_validator_count"] == 172
+    assert inventory["min_validator_count"] == 184
     assert sorted(vm.VALIDATORS) == inventory["validator_names"]
     assert vm.VALIDATORS["execution-summary"](REPO_ROOT) == []
     assert vm.validate_implementation_phases(REPO_ROOT) == []
@@ -9922,16 +9970,16 @@ def test_live_v29_contributing_validators() -> None:
     assert vm.validate_contributing_issues(REPO_ROOT) == []
     assert vm.validate_contributing_local(REPO_ROOT) == []
     assert vm.validate_contributing_governance(REPO_ROOT) == []
-    assert vm.INVENTORY_VERSION == 50
-    assert len(vm.VALIDATORS) == 172
-    assert vm.MIN_VALIDATOR_COUNT == 172
+    assert vm.INVENTORY_VERSION == 51
+    assert len(vm.VALIDATORS) == 184
+    assert vm.MIN_VALIDATOR_COUNT == 184
     assert "contributing-issues" in vm.VALIDATORS
     assert "contributing-local" in vm.VALIDATORS
     assert "contributing-governance" in vm.VALIDATORS
     inventory = json.loads(
         (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
     )
-    assert inventory["version"] == 50
+    assert inventory["version"] == 51
     assert inventory["contributing_issues_required_phrases"] == list(
         vm.CONTRIBUTING_ISSUES_REQUIRED_PHRASES
     )
@@ -9941,7 +9989,7 @@ def test_live_v29_contributing_validators() -> None:
     assert inventory["contributing_governance_required_phrases"] == list(
         vm.CONTRIBUTING_GOVERNANCE_REQUIRED_PHRASES
     )
-    assert inventory["min_validator_count"] == 172
+    assert inventory["min_validator_count"] == 184
     assert sorted(vm.VALIDATORS) == inventory["validator_names"]
     assert vm.VALIDATORS["contributing"](REPO_ROOT) == []
     assert vm.validate_execution_timeline(REPO_ROOT) == []
@@ -10159,16 +10207,16 @@ def test_live_v30_security_validators() -> None:
     assert vm.validate_security_header(REPO_ROOT) == []
     assert vm.validate_security_fips(REPO_ROOT) == []
     assert vm.validate_security_known_non_issues(REPO_ROOT) == []
-    assert vm.INVENTORY_VERSION == 50
-    assert len(vm.VALIDATORS) == 172
-    assert vm.MIN_VALIDATOR_COUNT == 172
+    assert vm.INVENTORY_VERSION == 51
+    assert len(vm.VALIDATORS) == 184
+    assert vm.MIN_VALIDATOR_COUNT == 184
     assert "security-header" in vm.VALIDATORS
     assert "security-fips" in vm.VALIDATORS
     assert "security-known-non-issues" in vm.VALIDATORS
     inventory = json.loads(
         (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
     )
-    assert inventory["version"] == 50
+    assert inventory["version"] == 51
     assert inventory["security_header_required_phrases"] == list(
         vm.SECURITY_HEADER_REQUIRED_PHRASES
     )
@@ -10178,7 +10226,7 @@ def test_live_v30_security_validators() -> None:
     assert inventory["security_known_non_issues_required_phrases"] == list(
         vm.SECURITY_KNOWN_NON_ISSUES_REQUIRED_PHRASES
     )
-    assert inventory["min_validator_count"] == 172
+    assert inventory["min_validator_count"] == 184
     assert sorted(vm.VALIDATORS) == inventory["validator_names"]
     assert vm.VALIDATORS["security"](REPO_ROOT) == []
     assert vm.validate_contributing_governance(REPO_ROOT) == []
@@ -10398,16 +10446,16 @@ def test_live_v31_constitution_validators() -> None:
     assert vm.validate_constitution_crypto(REPO_ROOT) == []
     assert vm.validate_constitution_handoff(REPO_ROOT) == []
     assert vm.validate_constitution_escalation_matrix(REPO_ROOT) == []
-    assert vm.INVENTORY_VERSION == 50
-    assert len(vm.VALIDATORS) == 172
-    assert vm.MIN_VALIDATOR_COUNT == 172
+    assert vm.INVENTORY_VERSION == 51
+    assert len(vm.VALIDATORS) == 184
+    assert vm.MIN_VALIDATOR_COUNT == 184
     assert "constitution-crypto" in vm.VALIDATORS
     assert "constitution-handoff" in vm.VALIDATORS
     assert "constitution-escalation-matrix" in vm.VALIDATORS
     inventory = json.loads(
         (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
     )
-    assert inventory["version"] == 50
+    assert inventory["version"] == 51
     assert inventory["constitution_crypto_required_phrases"] == list(
         vm.CONSTITUTION_CRYPTO_REQUIRED_PHRASES
     )
@@ -10417,7 +10465,7 @@ def test_live_v31_constitution_validators() -> None:
     assert inventory["constitution_escalation_matrix_required_phrases"] == list(
         vm.CONSTITUTION_ESCALATION_MATRIX_REQUIRED_PHRASES
     )
-    assert inventory["min_validator_count"] == 172
+    assert inventory["min_validator_count"] == 184
     assert sorted(vm.VALIDATORS) == inventory["validator_names"]
     assert vm.VALIDATORS["constitution"](REPO_ROOT) == []
     assert vm.validate_security_known_non_issues(REPO_ROOT) == []
@@ -10648,16 +10696,16 @@ def test_live_v32_changelog_validators() -> None:
     assert vm.validate_changelog_format(REPO_ROOT) == []
     assert vm.validate_changelog_unreleased(REPO_ROOT) == []
     assert vm.validate_changelog_release(REPO_ROOT) == []
-    assert vm.INVENTORY_VERSION == 50
-    assert len(vm.VALIDATORS) == 172
-    assert vm.MIN_VALIDATOR_COUNT == 172
+    assert vm.INVENTORY_VERSION == 51
+    assert len(vm.VALIDATORS) == 184
+    assert vm.MIN_VALIDATOR_COUNT == 184
     assert "changelog-format" in vm.VALIDATORS
     assert "changelog-unreleased" in vm.VALIDATORS
     assert "changelog-release" in vm.VALIDATORS
     inventory = json.loads(
         (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
     )
-    assert inventory["version"] == 50
+    assert inventory["version"] == 51
     assert inventory["changelog_format_required_phrases"] == list(
         vm.CHANGELOG_FORMAT_REQUIRED_PHRASES
     )
@@ -10667,7 +10715,7 @@ def test_live_v32_changelog_validators() -> None:
     assert inventory["changelog_release_required_phrases"] == list(
         vm.CHANGELOG_RELEASE_REQUIRED_PHRASES
     )
-    assert inventory["min_validator_count"] == 172
+    assert inventory["min_validator_count"] == 184
     assert sorted(vm.VALIDATORS) == inventory["validator_names"]
     assert vm.VALIDATORS["changelog"](REPO_ROOT) == []
     assert vm.validate_constitution_escalation_matrix(REPO_ROOT) == []
@@ -10881,16 +10929,16 @@ def test_live_v33_goose_recipe_validators() -> None:
     assert vm.validate_goose_recipe_headers(REPO_ROOT) == []
     assert vm.validate_goose_instruction_agents(REPO_ROOT) == []
     assert vm.validate_goose_extensions(REPO_ROOT) == []
-    assert vm.INVENTORY_VERSION == 50
-    assert len(vm.VALIDATORS) == 172
-    assert vm.MIN_VALIDATOR_COUNT == 172
+    assert vm.INVENTORY_VERSION == 51
+    assert len(vm.VALIDATORS) == 184
+    assert vm.MIN_VALIDATOR_COUNT == 184
     assert "goose-recipe-headers" in vm.VALIDATORS
     assert "goose-instruction-agents" in vm.VALIDATORS
     assert "goose-extensions" in vm.VALIDATORS
     inventory = json.loads(
         (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
     )
-    assert inventory["version"] == 50
+    assert inventory["version"] == 51
     assert inventory["goose_recipe_headers_required_phrases"] == list(
         vm.GOOSE_RECIPE_HEADERS_REQUIRED_PHRASES
     )
@@ -10900,7 +10948,7 @@ def test_live_v33_goose_recipe_validators() -> None:
     assert inventory["goose_extensions_required_phrases"] == list(
         vm.GOOSE_EXTENSIONS_REQUIRED_PHRASES
     )
-    assert inventory["min_validator_count"] == 172
+    assert inventory["min_validator_count"] == 184
     assert sorted(vm.VALIDATORS) == inventory["validator_names"]
     assert vm.VALIDATORS["goose"](REPO_ROOT) == []
     assert vm.validate_goose_howto(REPO_ROOT) == []
@@ -11128,16 +11176,16 @@ def test_live_v34_prompt_deepener_validators() -> None:
     assert vm.validate_prompt_constraints(REPO_ROOT) == []
     assert vm.validate_prompt_triggers(REPO_ROOT) == []
     assert vm.validate_prompt_related_docs(REPO_ROOT) == []
-    assert vm.INVENTORY_VERSION == 50
-    assert len(vm.VALIDATORS) == 172
-    assert vm.MIN_VALIDATOR_COUNT == 172
+    assert vm.INVENTORY_VERSION == 51
+    assert len(vm.VALIDATORS) == 184
+    assert vm.MIN_VALIDATOR_COUNT == 184
     assert "prompt-constraints" in vm.VALIDATORS
     assert "prompt-triggers" in vm.VALIDATORS
     assert "prompt-related-docs" in vm.VALIDATORS
     inventory = json.loads(
         (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
     )
-    assert inventory["version"] == 50
+    assert inventory["version"] == 51
     assert inventory["prompt_constraints_required_phrases"] == list(
         vm.PROMPT_CONSTRAINTS_REQUIRED_PHRASES
     )
@@ -11147,7 +11195,7 @@ def test_live_v34_prompt_deepener_validators() -> None:
     assert inventory["prompt_related_docs_required_phrases"] == list(
         vm.PROMPT_RELATED_DOCS_REQUIRED_PHRASES
     )
-    assert inventory["min_validator_count"] == 172
+    assert inventory["min_validator_count"] == 184
     assert sorted(vm.VALIDATORS) == inventory["validator_names"]
     assert vm.validate_prompt_roles(REPO_ROOT) == []
     assert vm.validate_prompt_sections(REPO_ROOT) == []
@@ -11375,16 +11423,16 @@ def test_live_v35_execution_summary_deepener_validators() -> None:
     assert vm.validate_execution_ide(REPO_ROOT) == []
     assert vm.validate_execution_innovations(REPO_ROOT) == []
     assert vm.validate_execution_next48(REPO_ROOT) == []
-    assert vm.INVENTORY_VERSION == 50
-    assert len(vm.VALIDATORS) == 172
-    assert vm.MIN_VALIDATOR_COUNT == 172
+    assert vm.INVENTORY_VERSION == 51
+    assert len(vm.VALIDATORS) == 184
+    assert vm.MIN_VALIDATOR_COUNT == 184
     assert "execution-ide" in vm.VALIDATORS
     assert "execution-innovations" in vm.VALIDATORS
     assert "execution-next48" in vm.VALIDATORS
     inventory = json.loads(
         (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
     )
-    assert inventory["version"] == 50
+    assert inventory["version"] == 51
     assert inventory["execution_ide_required_phrases"] == list(
         vm.EXECUTION_IDE_REQUIRED_PHRASES
     )
@@ -11394,7 +11442,7 @@ def test_live_v35_execution_summary_deepener_validators() -> None:
     assert inventory["execution_next48_required_phrases"] == list(
         vm.EXECUTION_NEXT48_REQUIRED_PHRASES
     )
-    assert inventory["min_validator_count"] == 172
+    assert inventory["min_validator_count"] == 184
     assert sorted(vm.VALIDATORS) == inventory["validator_names"]
     assert vm.validate_execution_timeline(REPO_ROOT) == []
     assert vm.validate_execution_technologies(REPO_ROOT) == []
@@ -11611,16 +11659,16 @@ def test_live_v36_goose_recipes_deepener_validators() -> None:
     assert vm.validate_goose_orchestration(REPO_ROOT) == []
     assert vm.validate_goose_conflicts(REPO_ROOT) == []
     assert vm.validate_goose_quantum_task(REPO_ROOT) == []
-    assert vm.INVENTORY_VERSION == 50
-    assert len(vm.VALIDATORS) == 172
-    assert vm.MIN_VALIDATOR_COUNT == 172
+    assert vm.INVENTORY_VERSION == 51
+    assert len(vm.VALIDATORS) == 184
+    assert vm.MIN_VALIDATOR_COUNT == 184
     assert "goose-orchestration" in vm.VALIDATORS
     assert "goose-conflicts" in vm.VALIDATORS
     assert "goose-quantum-task" in vm.VALIDATORS
     inventory = json.loads(
         (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
     )
-    assert inventory["version"] == 50
+    assert inventory["version"] == 51
     assert inventory["goose_orchestration_required_phrases"] == list(
         vm.GOOSE_ORCHESTRATION_REQUIRED_PHRASES
     )
@@ -11630,7 +11678,7 @@ def test_live_v36_goose_recipes_deepener_validators() -> None:
     assert inventory["goose_quantum_task_required_phrases"] == list(
         vm.GOOSE_QUANTUM_TASK_REQUIRED_PHRASES
     )
-    assert inventory["min_validator_count"] == 172
+    assert inventory["min_validator_count"] == 184
     assert sorted(vm.VALIDATORS) == inventory["validator_names"]
     assert vm.validate_goose_howto(REPO_ROOT) == []
     assert vm.validate_goose_state_machine(REPO_ROOT) == []
@@ -11853,16 +11901,16 @@ def test_live_v37_constitution_leftover_validators() -> None:
     assert vm.validate_constitution_on_device(REPO_ROOT) == []
     assert vm.validate_constitution_multichain(REPO_ROOT) == []
     assert vm.validate_constitution_escalation_format(REPO_ROOT) == []
-    assert vm.INVENTORY_VERSION == 50
-    assert len(vm.VALIDATORS) == 172
-    assert vm.MIN_VALIDATOR_COUNT == 172
+    assert vm.INVENTORY_VERSION == 51
+    assert len(vm.VALIDATORS) == 184
+    assert vm.MIN_VALIDATOR_COUNT == 184
     assert "constitution-on-device" in vm.VALIDATORS
     assert "constitution-multichain" in vm.VALIDATORS
     assert "constitution-escalation-format" in vm.VALIDATORS
     inventory = json.loads(
         (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
     )
-    assert inventory["version"] == 50
+    assert inventory["version"] == 51
     assert inventory["constitution_on_device_required_phrases"] == list(
         vm.CONSTITUTION_ON_DEVICE_REQUIRED_PHRASES
     )
@@ -11872,7 +11920,7 @@ def test_live_v37_constitution_leftover_validators() -> None:
     assert inventory["constitution_escalation_format_required_phrases"] == list(
         vm.CONSTITUTION_ESCALATION_FORMAT_REQUIRED_PHRASES
     )
-    assert inventory["min_validator_count"] == 172
+    assert inventory["min_validator_count"] == 184
     assert sorted(vm.VALIDATORS) == inventory["validator_names"]
     assert vm.VALIDATORS["constitution"](REPO_ROOT) == []
     assert vm.validate_constitution_crypto(REPO_ROOT) == []
@@ -12113,16 +12161,16 @@ def test_live_v38_contributing_deepener_validators() -> None:
     assert vm.validate_contributing_metadata(REPO_ROOT) == []
     assert vm.validate_contributing_surfaces(REPO_ROOT) == []
     assert vm.validate_contributing_ci_honesty(REPO_ROOT) == []
-    assert vm.INVENTORY_VERSION == 50
-    assert len(vm.VALIDATORS) == 172
-    assert vm.MIN_VALIDATOR_COUNT == 172
+    assert vm.INVENTORY_VERSION == 51
+    assert len(vm.VALIDATORS) == 184
+    assert vm.MIN_VALIDATOR_COUNT == 184
     assert "contributing-metadata" in vm.VALIDATORS
     assert "contributing-surfaces" in vm.VALIDATORS
     assert "contributing-ci-honesty" in vm.VALIDATORS
     inventory = json.loads(
         (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
     )
-    assert inventory["version"] == 50
+    assert inventory["version"] == 51
     assert inventory["contributing_metadata_required_phrases"] == list(
         vm.CONTRIBUTING_METADATA_REQUIRED_PHRASES
     )
@@ -12132,7 +12180,7 @@ def test_live_v38_contributing_deepener_validators() -> None:
     assert inventory["contributing_ci_honesty_required_phrases"] == list(
         vm.CONTRIBUTING_CI_HONESTY_REQUIRED_PHRASES
     )
-    assert inventory["min_validator_count"] == 172
+    assert inventory["min_validator_count"] == 184
     assert sorted(vm.VALIDATORS) == inventory["validator_names"]
     assert vm.validate_contributing_packaging(REPO_ROOT) == []
     assert vm.validate_contributing_who(REPO_ROOT) == []
@@ -12167,7 +12215,7 @@ def test_v38_contributing_deepener_edge_cases(tmp_path: Path) -> None:
 
     findings = vm.validate_contributing_ci_honesty(tmp_path)
     assert any(
-        "missing Packaging inventory v50 honesty lock" in f.message for f in findings
+        "missing Packaging inventory v51 honesty lock" in f.message for f in findings
     )
     for phrase in vm.CONTRIBUTING_CI_HONESTY_REQUIRED_PHRASES:
         assert any(phrase in f.message for f in findings)
@@ -12362,16 +12410,16 @@ def test_live_v39_security_deepener_validators() -> None:
     assert vm.validate_security_scope(REPO_ROOT) == []
     assert vm.validate_security_reporting_channel(REPO_ROOT) == []
     assert vm.validate_security_compliance_detail(REPO_ROOT) == []
-    assert vm.INVENTORY_VERSION == 50
-    assert len(vm.VALIDATORS) == 172
-    assert vm.MIN_VALIDATOR_COUNT == 172
+    assert vm.INVENTORY_VERSION == 51
+    assert len(vm.VALIDATORS) == 184
+    assert vm.MIN_VALIDATOR_COUNT == 184
     assert "security-scope" in vm.VALIDATORS
     assert "security-reporting-channel" in vm.VALIDATORS
     assert "security-compliance-detail" in vm.VALIDATORS
     inventory = json.loads(
         (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
     )
-    assert inventory["version"] == 50
+    assert inventory["version"] == 51
     assert inventory["security_scope_required_phrases"] == list(
         vm.SECURITY_SCOPE_REQUIRED_PHRASES
     )
@@ -12381,7 +12429,7 @@ def test_live_v39_security_deepener_validators() -> None:
     assert inventory["security_compliance_detail_required_phrases"] == list(
         vm.SECURITY_COMPLIANCE_DETAIL_REQUIRED_PHRASES
     )
-    assert inventory["min_validator_count"] == 172
+    assert inventory["min_validator_count"] == 184
     assert sorted(vm.VALIDATORS) == inventory["validator_names"]
     assert vm.validate_security_supported(REPO_ROOT) == []
     assert vm.validate_security_reporting(REPO_ROOT) == []
@@ -12613,16 +12661,16 @@ def test_live_v40_constitution_leftover_validators() -> None:
     assert vm.validate_constitution_recipe_orchestration(REPO_ROOT) == []
     assert vm.validate_constitution_scratchpad_state(REPO_ROOT) == []
     assert vm.validate_constitution_conflict_matrix(REPO_ROOT) == []
-    assert vm.INVENTORY_VERSION == 50
-    assert len(vm.VALIDATORS) == 172
-    assert vm.MIN_VALIDATOR_COUNT == 172
+    assert vm.INVENTORY_VERSION == 51
+    assert len(vm.VALIDATORS) == 184
+    assert vm.MIN_VALIDATOR_COUNT == 184
     assert "constitution-recipe-orchestration" in vm.VALIDATORS
     assert "constitution-scratchpad-state" in vm.VALIDATORS
     assert "constitution-conflict-matrix" in vm.VALIDATORS
     inventory = json.loads(
         (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
     )
-    assert inventory["version"] == 50
+    assert inventory["version"] == 51
     assert inventory["constitution_recipe_orchestration_required_phrases"] == list(
         vm.CONSTITUTION_RECIPE_ORCHESTRATION_REQUIRED_PHRASES
     )
@@ -12632,7 +12680,7 @@ def test_live_v40_constitution_leftover_validators() -> None:
     assert inventory["constitution_conflict_matrix_required_phrases"] == list(
         vm.CONSTITUTION_CONFLICT_MATRIX_REQUIRED_PHRASES
     )
-    assert inventory["min_validator_count"] == 172
+    assert inventory["min_validator_count"] == 184
     assert sorted(vm.VALIDATORS) == inventory["validator_names"]
     assert vm.VALIDATORS["constitution"](REPO_ROOT) == []
     assert vm.validate_constitution_crypto(REPO_ROOT) == []
@@ -12885,16 +12933,16 @@ def test_live_v41_implementation_guide_leftover_validators() -> None:
     assert vm.validate_implementation_issues(REPO_ROOT) == []
     assert vm.validate_implementation_faq(REPO_ROOT) == []
     assert vm.validate_implementation_support(REPO_ROOT) == []
-    assert vm.INVENTORY_VERSION == 50
-    assert len(vm.VALIDATORS) == 172
-    assert vm.MIN_VALIDATOR_COUNT == 172
+    assert vm.INVENTORY_VERSION == 51
+    assert len(vm.VALIDATORS) == 184
+    assert vm.MIN_VALIDATOR_COUNT == 184
     assert "implementation-issues" in vm.VALIDATORS
     assert "implementation-faq" in vm.VALIDATORS
     assert "implementation-support" in vm.VALIDATORS
     inventory = json.loads(
         (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
     )
-    assert inventory["version"] == 50
+    assert inventory["version"] == 51
     assert inventory["implementation_issues_required_phrases"] == list(
         vm.IMPLEMENTATION_ISSUES_REQUIRED_PHRASES
     )
@@ -12904,7 +12952,7 @@ def test_live_v41_implementation_guide_leftover_validators() -> None:
     assert inventory["implementation_support_required_phrases"] == list(
         vm.IMPLEMENTATION_SUPPORT_REQUIRED_PHRASES
     )
-    assert inventory["min_validator_count"] == 172
+    assert inventory["min_validator_count"] == 184
     assert sorted(vm.VALIDATORS) == inventory["validator_names"]
     assert vm.validate_implementation_guide(REPO_ROOT) == []
     assert vm.validate_implementation_quickstart(REPO_ROOT) == []
@@ -13138,9 +13186,9 @@ def test_live_v42_hydration_leftover_validators() -> None:
     assert vm.validate_hydration_resolved(REPO_ROOT) == []
     assert vm.validate_hydration_phase4(REPO_ROOT) == []
     assert vm.validate_hydration_deferred(REPO_ROOT) == []
-    assert vm.INVENTORY_VERSION == 50
-    assert len(vm.VALIDATORS) == 172
-    assert vm.MIN_VALIDATOR_COUNT == 172
+    assert vm.INVENTORY_VERSION == 51
+    assert len(vm.VALIDATORS) == 184
+    assert vm.MIN_VALIDATOR_COUNT == 184
     assert "hydration-phase1" in vm.VALIDATORS
     assert "hydration-list-a" in vm.VALIDATORS
     assert "hydration-resolved" in vm.VALIDATORS
@@ -13149,7 +13197,7 @@ def test_live_v42_hydration_leftover_validators() -> None:
     inventory = json.loads(
         (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
     )
-    assert inventory["version"] == 50
+    assert inventory["version"] == 51
     assert inventory["hydration_phase1_required_phrases"] == list(
         vm.HYDRATION_PHASE1_REQUIRED_PHRASES
     )
@@ -13165,7 +13213,7 @@ def test_live_v42_hydration_leftover_validators() -> None:
     assert inventory["hydration_deferred_required_phrases"] == list(
         vm.HYDRATION_DEFERRED_REQUIRED_PHRASES
     )
-    assert inventory["min_validator_count"] == 172
+    assert inventory["min_validator_count"] == 184
     assert sorted(vm.VALIDATORS) == inventory["validator_names"]
     assert vm.validate_hydration_report(REPO_ROOT) == []
     assert vm.validate_hydration_list_b(REPO_ROOT) == []
@@ -13403,16 +13451,16 @@ def test_live_v43_readme_leftover_validators() -> None:
     assert vm.validate_readme_lead(REPO_ROOT) == []
     assert vm.validate_readme_blurbs(REPO_ROOT) == []
     assert vm.validate_readme_bootstrap(REPO_ROOT) == []
-    assert vm.INVENTORY_VERSION == 50
-    assert len(vm.VALIDATORS) == 172
-    assert vm.MIN_VALIDATOR_COUNT == 172
+    assert vm.INVENTORY_VERSION == 51
+    assert len(vm.VALIDATORS) == 184
+    assert vm.MIN_VALIDATOR_COUNT == 184
     assert "readme-lead" in vm.VALIDATORS
     assert "readme-blurbs" in vm.VALIDATORS
     assert "readme-bootstrap" in vm.VALIDATORS
     inventory = json.loads(
         (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
     )
-    assert inventory["version"] == 50
+    assert inventory["version"] == 51
     assert inventory["readme_lead_required_phrases"] == list(
         vm.README_LEAD_REQUIRED_PHRASES
     )
@@ -13422,7 +13470,7 @@ def test_live_v43_readme_leftover_validators() -> None:
     assert inventory["readme_bootstrap_required_phrases"] == list(
         vm.README_BOOTSTRAP_REQUIRED_PHRASES
     )
-    assert inventory["min_validator_count"] == 172
+    assert inventory["min_validator_count"] == 184
     assert sorted(vm.VALIDATORS) == inventory["validator_names"]
     assert vm.validate_readme_packaging(REPO_ROOT) == []
     assert vm.validate_readme_badges(REPO_ROOT) == []
@@ -13634,9 +13682,9 @@ def test_live_v44_hydration_deepener_validators() -> None:
     assert vm.validate_hydration_git_detail(REPO_ROOT) == []
     assert vm.validate_hydration_phase2(REPO_ROOT) == []
     assert vm.validate_hydration_phase5(REPO_ROOT) == []
-    assert vm.INVENTORY_VERSION == 50
-    assert len(vm.VALIDATORS) == 172
-    assert vm.MIN_VALIDATOR_COUNT == 172
+    assert vm.INVENTORY_VERSION == 51
+    assert len(vm.VALIDATORS) == 184
+    assert vm.MIN_VALIDATOR_COUNT == 184
     for name in (
         "hydration-meta",
         "hydration-identity-detail",
@@ -13648,8 +13696,8 @@ def test_live_v44_hydration_deepener_validators() -> None:
     inventory = json.loads(
         (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
     )
-    assert inventory["version"] == 50
-    assert inventory["min_validator_count"] == 172
+    assert inventory["version"] == 51
+    assert inventory["min_validator_count"] == 184
     assert inventory["hydration_meta_required_phrases"] == list(
         vm.HYDRATION_META_REQUIRED_PHRASES
     )
@@ -13666,7 +13714,7 @@ def test_live_v44_hydration_deepener_validators() -> None:
         vm.HYDRATION_PHASE5_REQUIRED_PHRASES
     )
     assert sorted(vm.VALIDATORS) == inventory["validator_names"]
-    assert "Packaging inventory v50" in (
+    assert "Packaging inventory v51" in (
         REPO_ROOT / "CONTRIBUTING.md"
     ).read_text(encoding="utf-8")
     assert vm.validate_hydration_phase1(REPO_ROOT) == []
@@ -13843,9 +13891,9 @@ def test_live_v45_constitution_changelog_residual_validators() -> None:
     assert vm.validate_changelog_preamble(REPO_ROOT) == []
     assert vm.validate_changelog_changed(REPO_ROOT) == []
     assert vm.validate_changelog_initial(REPO_ROOT) == []
-    assert vm.INVENTORY_VERSION == 50
-    assert len(vm.VALIDATORS) == 172
-    assert vm.MIN_VALIDATOR_COUNT == 172
+    assert vm.INVENTORY_VERSION == 51
+    assert len(vm.VALIDATORS) == 184
+    assert vm.MIN_VALIDATOR_COUNT == 184
     for name in [
         "constitution-ide-stack",
         "constitution-install-script",
@@ -13860,8 +13908,8 @@ def test_live_v45_constitution_changelog_residual_validators() -> None:
     inventory = json.loads(
         (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
     )
-    assert inventory["version"] == 50
-    assert inventory["min_validator_count"] == 172
+    assert inventory["version"] == 51
+    assert inventory["min_validator_count"] == 184
     assert inventory["constitution_ide_stack_required_phrases"] == list(
         vm.CONSTITUTION_IDE_STACK_REQUIRED_PHRASES
     )
@@ -14131,16 +14179,16 @@ def test_live_v46_prompt_v43_leftover_validators() -> None:
     assert vm.validate_prompt_expertise(REPO_ROOT) == []
     assert vm.validate_prompt_principles(REPO_ROOT) == []
     assert vm.validate_prompt_metrics(REPO_ROOT) == []
-    assert vm.INVENTORY_VERSION == 50
-    assert len(vm.VALIDATORS) == 172
-    assert vm.MIN_VALIDATOR_COUNT == 172
+    assert vm.INVENTORY_VERSION == 51
+    assert len(vm.VALIDATORS) == 184
+    assert vm.MIN_VALIDATOR_COUNT == 184
     for name in ["prompt-expertise", "prompt-principles", "prompt-metrics"]:
         assert name in vm.VALIDATORS
     inventory = json.loads(
         (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
     )
-    assert inventory["version"] == 50
-    assert inventory["min_validator_count"] == 172
+    assert inventory["version"] == 51
+    assert inventory["min_validator_count"] == 184
     assert inventory["prompt_expertise_required_phrases"] == list(
         vm.PROMPT_EXPERTISE_REQUIRED_PHRASES
     )
@@ -14294,9 +14342,9 @@ def test_live_v47_prompt_tools_communication_escalation_validators() -> None:
     assert vm.validate_prompt_tools(REPO_ROOT) == []
     assert vm.validate_prompt_communication(REPO_ROOT) == []
     assert vm.validate_prompt_escalation_identity(REPO_ROOT) == []
-    assert vm.INVENTORY_VERSION == 50
-    assert len(vm.VALIDATORS) == 172
-    assert vm.MIN_VALIDATOR_COUNT == 172
+    assert vm.INVENTORY_VERSION == 51
+    assert len(vm.VALIDATORS) == 184
+    assert vm.MIN_VALIDATOR_COUNT == 184
     for name in [
         "prompt-tools",
         "prompt-communication",
@@ -14306,8 +14354,8 @@ def test_live_v47_prompt_tools_communication_escalation_validators() -> None:
     inventory = json.loads(
         (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
     )
-    assert inventory["version"] == 50
-    assert inventory["min_validator_count"] == 172
+    assert inventory["version"] == 51
+    assert inventory["min_validator_count"] == 184
     assert inventory["prompt_tools_required_phrases"] == list(
         vm.PROMPT_TOOLS_REQUIRED_PHRASES
     )
@@ -14331,10 +14379,10 @@ def test_live_v47_prompt_tools_communication_escalation_validators() -> None:
     assert vm.validate_changelog_preamble(REPO_ROOT) == []
     assert vm.validate_changelog_changed(REPO_ROOT) == []
     assert vm.validate_changelog_initial(REPO_ROOT) == []
-    assert "Packaging inventory v50" in (
+    assert "Packaging inventory v51" in (
         REPO_ROOT / "CONTRIBUTING.md"
     ).read_text(encoding="utf-8")
-    assert "inventory v50 locks" in (REPO_ROOT / "README.md").read_text(
+    assert "inventory v51 locks" in (REPO_ROOT / "README.md").read_text(
         encoding="utf-8"
     )
 
@@ -14477,9 +14525,9 @@ def test_v47_prompt_tools_communication_escalation_edge_cases(tmp_path: Path) ->
 
 def test_v47_inventory_lock_mismatch_and_consistency_matrix(tmp_path: Path) -> None:
     """Large self-test: every v47 phrase key empty/dup/blank/seed + live registry."""
-    assert vm.INVENTORY_VERSION == 50
-    assert vm.MIN_VALIDATOR_COUNT == 172
-    assert len(vm.VALIDATORS) == 172
+    assert vm.INVENTORY_VERSION == 51
+    assert vm.MIN_VALIDATOR_COUNT == 184
+    assert len(vm.VALIDATORS) == 184
     assert sorted(vm.VALIDATORS) == json.loads(
         (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
     )["validator_names"]
@@ -14548,7 +14596,7 @@ def test_v47_inventory_lock_mismatch_and_consistency_matrix(tmp_path: Path) -> N
 
     # contributing honesty still tracks inventory version
     assert any(
-        "Packaging inventory v50" in phrase
+        "Packaging inventory v51" in phrase
         for phrase in vm.CONTRIBUTING_CI_HONESTY_REQUIRED_PHRASES
     )
 
@@ -14557,9 +14605,9 @@ def test_live_v48_prompt_orchestration_monthly_usage_example_validators() -> Non
     assert vm.validate_prompt_orchestration_matrix(REPO_ROOT) == []
     assert vm.validate_prompt_monthly(REPO_ROOT) == []
     assert vm.validate_prompt_usage_example(REPO_ROOT) == []
-    assert vm.INVENTORY_VERSION == 50
-    assert len(vm.VALIDATORS) == 172
-    assert vm.MIN_VALIDATOR_COUNT == 172
+    assert vm.INVENTORY_VERSION == 51
+    assert len(vm.VALIDATORS) == 184
+    assert vm.MIN_VALIDATOR_COUNT == 184
     for name in [
         "prompt-orchestration-matrix",
         "prompt-monthly",
@@ -14569,8 +14617,8 @@ def test_live_v48_prompt_orchestration_monthly_usage_example_validators() -> Non
     inventory = json.loads(
         (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
     )
-    assert inventory["version"] == 50
-    assert inventory["min_validator_count"] == 172
+    assert inventory["version"] == 51
+    assert inventory["min_validator_count"] == 184
     assert inventory["prompt_orchestration_matrix_required_phrases"] == list(
         vm.PROMPT_ORCHESTRATION_MATRIX_REQUIRED_PHRASES
     )
@@ -14594,10 +14642,10 @@ def test_live_v48_prompt_orchestration_monthly_usage_example_validators() -> Non
     assert vm.validate_prompt_constraints(REPO_ROOT) == []
     assert vm.validate_prompt_triggers(REPO_ROOT) == []
     assert vm.validate_prompt_related_docs(REPO_ROOT) == []
-    assert "Packaging inventory v50" in (
+    assert "Packaging inventory v51" in (
         REPO_ROOT / "CONTRIBUTING.md"
     ).read_text(encoding="utf-8")
-    assert "inventory v50 locks" in (REPO_ROOT / "README.md").read_text(
+    assert "inventory v51 locks" in (REPO_ROOT / "README.md").read_text(
         encoding="utf-8"
     )
 
@@ -14759,9 +14807,9 @@ def test_v48_prompt_orchestration_monthly_usage_example_edge_cases(
 
 def test_v48_inventory_lock_mismatch_and_consistency_matrix(tmp_path: Path) -> None:
     """Large self-test: every v48 phrase key empty/dup/blank/seed + live registry."""
-    assert vm.INVENTORY_VERSION == 50
-    assert vm.MIN_VALIDATOR_COUNT == 172
-    assert len(vm.VALIDATORS) == 172
+    assert vm.INVENTORY_VERSION == 51
+    assert vm.MIN_VALIDATOR_COUNT == 184
+    assert len(vm.VALIDATORS) == 184
     assert sorted(vm.VALIDATORS) == json.loads(
         (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
     )["validator_names"]
@@ -14830,7 +14878,7 @@ def test_v48_inventory_lock_mismatch_and_consistency_matrix(tmp_path: Path) -> N
 
     # contributing honesty still tracks inventory version
     assert any(
-        "Packaging inventory v50" in phrase
+        "Packaging inventory v51" in phrase
         for phrase in vm.CONTRIBUTING_CI_HONESTY_REQUIRED_PHRASES
     )
 
@@ -14838,9 +14886,9 @@ def test_live_v49_prompt_responsibilities_decision_integration_validators() -> N
     assert vm.validate_prompt_responsibilities(REPO_ROOT) == []
     assert vm.validate_prompt_decision_authority(REPO_ROOT) == []
     assert vm.validate_prompt_integration(REPO_ROOT) == []
-    assert vm.INVENTORY_VERSION == 50
-    assert len(vm.VALIDATORS) == 172
-    assert vm.MIN_VALIDATOR_COUNT == 172
+    assert vm.INVENTORY_VERSION == 51
+    assert len(vm.VALIDATORS) == 184
+    assert vm.MIN_VALIDATOR_COUNT == 184
     for name in [
         "prompt-responsibilities",
         "prompt-decision-authority",
@@ -14850,8 +14898,8 @@ def test_live_v49_prompt_responsibilities_decision_integration_validators() -> N
     inventory = json.loads(
         (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
     )
-    assert inventory["version"] == 50
-    assert inventory["min_validator_count"] == 172
+    assert inventory["version"] == 51
+    assert inventory["min_validator_count"] == 184
     assert inventory["prompt_responsibilities_required_phrases"] == list(
         vm.PROMPT_RESPONSIBILITIES_REQUIRED_PHRASES
     )
@@ -14878,10 +14926,10 @@ def test_live_v49_prompt_responsibilities_decision_integration_validators() -> N
     assert vm.validate_prompt_constraints(REPO_ROOT) == []
     assert vm.validate_prompt_triggers(REPO_ROOT) == []
     assert vm.validate_prompt_related_docs(REPO_ROOT) == []
-    assert "Packaging inventory v50" in (
+    assert "Packaging inventory v51" in (
         REPO_ROOT / "CONTRIBUTING.md"
     ).read_text(encoding="utf-8")
-    assert "inventory v50 locks" in (REPO_ROOT / "README.md").read_text(
+    assert "inventory v51 locks" in (REPO_ROOT / "README.md").read_text(
         encoding="utf-8"
     )
 
@@ -15045,9 +15093,9 @@ def test_v49_prompt_responsibilities_decision_integration_edge_cases(
 
 def test_v49_inventory_lock_mismatch_and_consistency_matrix(tmp_path: Path) -> None:
     """Large self-test: every v49 phrase key empty/dup/blank/seed + live registry."""
-    assert vm.INVENTORY_VERSION == 50
-    assert vm.MIN_VALIDATOR_COUNT == 172
-    assert len(vm.VALIDATORS) == 172
+    assert vm.INVENTORY_VERSION == 51
+    assert vm.MIN_VALIDATOR_COUNT == 184
+    assert len(vm.VALIDATORS) == 184
     assert sorted(vm.VALIDATORS) == json.loads(
         (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
     )["validator_names"]
@@ -15119,7 +15167,7 @@ def test_v49_inventory_lock_mismatch_and_consistency_matrix(tmp_path: Path) -> N
 
     # contributing honesty still tracks inventory version
     assert any(
-        "Packaging inventory v50" in phrase
+        "Packaging inventory v51" in phrase
         for phrase in vm.CONTRIBUTING_CI_HONESTY_REQUIRED_PHRASES
     )
 
@@ -15128,9 +15176,9 @@ def test_live_v50_prompt_context_cannot_delegate_escalation_authority_validators
     assert vm.validate_prompt_context(REPO_ROOT) == []
     assert vm.validate_prompt_cannot_delegate(REPO_ROOT) == []
     assert vm.validate_prompt_escalation_authority(REPO_ROOT) == []
-    assert vm.INVENTORY_VERSION == 50
-    assert len(vm.VALIDATORS) == 172
-    assert vm.MIN_VALIDATOR_COUNT == 172
+    assert vm.INVENTORY_VERSION == 51
+    assert len(vm.VALIDATORS) == 184
+    assert vm.MIN_VALIDATOR_COUNT == 184
     for name in [
         "prompt-context",
         "prompt-cannot-delegate",
@@ -15140,8 +15188,8 @@ def test_live_v50_prompt_context_cannot_delegate_escalation_authority_validators
     inventory = json.loads(
         (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
     )
-    assert inventory["version"] == 50
-    assert inventory["min_validator_count"] == 172
+    assert inventory["version"] == 51
+    assert inventory["min_validator_count"] == 184
     assert inventory["prompt_context_required_phrases"] == list(
         vm.PROMPT_CONTEXT_REQUIRED_PHRASES
     )
@@ -15171,10 +15219,10 @@ def test_live_v50_prompt_context_cannot_delegate_escalation_authority_validators
     assert vm.validate_prompt_constraints(REPO_ROOT) == []
     assert vm.validate_prompt_triggers(REPO_ROOT) == []
     assert vm.validate_prompt_related_docs(REPO_ROOT) == []
-    assert "Packaging inventory v50" in (
+    assert "Packaging inventory v51" in (
         REPO_ROOT / "CONTRIBUTING.md"
     ).read_text(encoding="utf-8")
-    assert "inventory v50 locks" in (REPO_ROOT / "README.md").read_text(
+    assert "inventory v51 locks" in (REPO_ROOT / "README.md").read_text(
         encoding="utf-8"
     )
 
@@ -15321,9 +15369,9 @@ def test_v50_prompt_context_cannot_delegate_escalation_authority_edge_cases(
 
 def test_v50_inventory_lock_mismatch_and_consistency_matrix(tmp_path: Path) -> None:
     """Large self-test: every v50 phrase key empty/dup/blank/seed + live registry."""
-    assert vm.INVENTORY_VERSION == 50
-    assert vm.MIN_VALIDATOR_COUNT == 172
-    assert len(vm.VALIDATORS) == 172
+    assert vm.INVENTORY_VERSION == 51
+    assert vm.MIN_VALIDATOR_COUNT == 184
+    assert len(vm.VALIDATORS) == 184
     assert sorted(vm.VALIDATORS) == json.loads(
         (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
     )["validator_names"]
@@ -15396,6 +15444,521 @@ def test_v50_inventory_lock_mismatch_and_consistency_matrix(tmp_path: Path) -> N
         assert vm.VALIDATORS[name](REPO_ROOT) == []
 
     assert any(
-        "Packaging inventory v50" in phrase
+        "Packaging inventory v51" in phrase
+        for phrase in vm.CONTRIBUTING_CI_HONESTY_REQUIRED_PHRASES
+    )
+
+
+def test_live_v51_prompt_heavy_leftover_validators() -> None:
+    assert vm.validate_prompt_role_blurbs(REPO_ROOT) == []
+    assert vm.validate_prompt_escalation_format(REPO_ROOT) == []
+    assert vm.validate_prompt_living_docs(REPO_ROOT) == []
+    assert vm.validate_prompt_constraints_detail(REPO_ROOT) == []
+    assert vm.validate_prompt_triggers_detail(REPO_ROOT) == []
+    assert vm.validate_prompt_human_fields(REPO_ROOT) == []
+    assert vm.validate_prompt_context_detail(REPO_ROOT) == []
+    assert vm.validate_prompt_expertise_detail(REPO_ROOT) == []
+    assert vm.validate_prompt_related_health(REPO_ROOT) == []
+    assert vm.validate_prompt_tools_detail(REPO_ROOT) == []
+    assert vm.validate_prompt_responsibilities_detail(REPO_ROOT) == []
+    assert vm.validate_prompt_instantiation(REPO_ROOT) == []
+    assert vm.INVENTORY_VERSION == 51
+    assert len(vm.VALIDATORS) == 184
+    assert vm.MIN_VALIDATOR_COUNT == 184
+    for name in [
+        "prompt-role-blurbs",
+        "prompt-escalation-format",
+        "prompt-living-docs",
+        "prompt-constraints-detail",
+        "prompt-triggers-detail",
+        "prompt-human-fields",
+        "prompt-context-detail",
+        "prompt-expertise-detail",
+        "prompt-related-health",
+        "prompt-tools-detail",
+        "prompt-responsibilities-detail",
+        "prompt-instantiation",
+    ]:
+        assert name in vm.VALIDATORS
+    inventory = json.loads(
+        (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
+    )
+    assert inventory["version"] == 51
+    assert inventory["min_validator_count"] == 184
+    assert inventory["prompt_role_blurbs_required_phrases"] == list(
+        vm.PROMPT_ROLE_BLURBS_REQUIRED_PHRASES
+    )
+    assert inventory["prompt_escalation_format_required_phrases"] == list(
+        vm.PROMPT_ESCALATION_FORMAT_REQUIRED_PHRASES
+    )
+    assert inventory["prompt_living_docs_required_phrases"] == list(
+        vm.PROMPT_LIVING_DOCS_REQUIRED_PHRASES
+    )
+    assert inventory["prompt_constraints_detail_required_phrases"] == list(
+        vm.PROMPT_CONSTRAINTS_DETAIL_REQUIRED_PHRASES
+    )
+    assert inventory["prompt_triggers_detail_required_phrases"] == list(
+        vm.PROMPT_TRIGGERS_DETAIL_REQUIRED_PHRASES
+    )
+    assert inventory["prompt_human_fields_required_phrases"] == list(
+        vm.PROMPT_HUMAN_FIELDS_REQUIRED_PHRASES
+    )
+    assert inventory["prompt_context_detail_required_phrases"] == list(
+        vm.PROMPT_CONTEXT_DETAIL_REQUIRED_PHRASES
+    )
+    assert inventory["prompt_expertise_detail_required_phrases"] == list(
+        vm.PROMPT_EXPERTISE_DETAIL_REQUIRED_PHRASES
+    )
+    assert inventory["prompt_related_health_required_phrases"] == list(
+        vm.PROMPT_RELATED_HEALTH_REQUIRED_PHRASES
+    )
+    assert inventory["prompt_tools_detail_required_phrases"] == list(
+        vm.PROMPT_TOOLS_DETAIL_REQUIRED_PHRASES
+    )
+    assert inventory["prompt_responsibilities_detail_required_phrases"] == list(
+        vm.PROMPT_RESPONSIBILITIES_DETAIL_REQUIRED_PHRASES
+    )
+    assert inventory["prompt_instantiation_required_phrases"] == list(
+        vm.PROMPT_INSTANTIATION_REQUIRED_PHRASES
+    )
+    assert sorted(vm.VALIDATORS) == inventory["validator_names"]
+    # prior prompt leftovers remain green
+    assert vm.validate_prompt_context(REPO_ROOT) == []
+    assert vm.validate_prompt_cannot_delegate(REPO_ROOT) == []
+    assert vm.validate_prompt_escalation_authority(REPO_ROOT) == []
+    assert vm.validate_prompt_responsibilities(REPO_ROOT) == []
+    assert vm.validate_prompt_decision_authority(REPO_ROOT) == []
+    assert vm.validate_prompt_integration(REPO_ROOT) == []
+    assert vm.validate_prompt_orchestration_matrix(REPO_ROOT) == []
+    assert vm.validate_prompt_monthly(REPO_ROOT) == []
+    assert vm.validate_prompt_usage_example(REPO_ROOT) == []
+    assert vm.validate_prompt_tools(REPO_ROOT) == []
+    assert vm.validate_prompt_communication(REPO_ROOT) == []
+    assert vm.validate_prompt_escalation_identity(REPO_ROOT) == []
+    assert vm.validate_prompt_expertise(REPO_ROOT) == []
+    assert vm.validate_prompt_principles(REPO_ROOT) == []
+    assert vm.validate_prompt_metrics(REPO_ROOT) == []
+    assert vm.validate_prompt_roles(REPO_ROOT) == []
+    assert vm.validate_prompt_sections(REPO_ROOT) == []
+    assert vm.validate_prompt_usage(REPO_ROOT) == []
+    assert vm.validate_prompt_constraints(REPO_ROOT) == []
+    assert vm.validate_prompt_triggers(REPO_ROOT) == []
+    assert vm.validate_prompt_related_docs(REPO_ROOT) == []
+    assert "Packaging inventory v51" in (
+        REPO_ROOT / "CONTRIBUTING.md"
+    ).read_text(encoding="utf-8")
+    assert "inventory v51 locks" in (REPO_ROOT / "README.md").read_text(
+        encoding="utf-8"
+    )
+
+
+def test_v51_prompt_heavy_leftover_edge_cases(tmp_path: Path) -> None:
+    for fn in [
+        vm.validate_prompt_role_blurbs,
+        vm.validate_prompt_escalation_format,
+        vm.validate_prompt_living_docs,
+        vm.validate_prompt_constraints_detail,
+        vm.validate_prompt_triggers_detail,
+        vm.validate_prompt_human_fields,
+        vm.validate_prompt_context_detail,
+        vm.validate_prompt_expertise_detail,
+        vm.validate_prompt_related_health,
+        vm.validate_prompt_tools_detail,
+        vm.validate_prompt_responsibilities_detail,
+        vm.validate_prompt_instantiation,
+    ]:
+        assert any("missing" in f.message for f in fn(tmp_path))
+
+    _write(tmp_path / "AGENT-PROMPTS.md", "# Prompts\n\nNo locked content.\n")
+    cases = [
+        (
+            vm.validate_prompt_role_blurbs,
+            "missing System Prompt / role-blurb anchors",
+            vm.PROMPT_ROLE_BLURBS_REQUIRED_PHRASES,
+        ),
+        (
+            vm.validate_prompt_escalation_format,
+            "missing When You Escalate section",
+            vm.PROMPT_ESCALATION_FORMAT_REQUIRED_PHRASES,
+        ),
+        (
+            vm.validate_prompt_living_docs,
+            "missing Agent Prompt Templates header",
+            vm.PROMPT_LIVING_DOCS_REQUIRED_PHRASES,
+        ),
+        (
+            vm.validate_prompt_constraints_detail,
+            "missing constraints-detail Never optimize lock",
+            vm.PROMPT_CONSTRAINTS_DETAIL_REQUIRED_PHRASES,
+        ),
+        (
+            vm.validate_prompt_triggers_detail,
+            "missing triggers-detail Quantum advantage lock",
+            vm.PROMPT_TRIGGERS_DETAIL_REQUIRED_PHRASES,
+        ),
+        (
+            vm.validate_prompt_human_fields,
+            "missing human-fields Situation lock",
+            vm.PROMPT_HUMAN_FIELDS_REQUIRED_PHRASES,
+        ),
+        (
+            vm.validate_prompt_context_detail,
+            "missing context-detail Token standards lock",
+            vm.PROMPT_CONTEXT_DETAIL_REQUIRED_PHRASES,
+        ),
+        (
+            vm.validate_prompt_expertise_detail,
+            "missing expertise-detail Circuit optimization lock",
+            vm.PROMPT_EXPERTISE_DETAIL_REQUIRED_PHRASES,
+        ),
+        (
+            vm.validate_prompt_related_health,
+            "missing related-health Section 5.3 lock",
+            vm.PROMPT_RELATED_HEALTH_REQUIRED_PHRASES,
+        ),
+        (
+            vm.validate_prompt_tools_detail,
+            "missing tools-detail IBM Quantum lock",
+            vm.PROMPT_TOOLS_DETAIL_REQUIRED_PHRASES,
+        ),
+        (
+            vm.validate_prompt_responsibilities_detail,
+            "missing responsibilities-detail Optimize Cirq lock",
+            vm.PROMPT_RESPONSIBILITIES_DETAIL_REQUIRED_PHRASES,
+        ),
+        (
+            vm.validate_prompt_instantiation,
+            "missing instantiation Provide access lock",
+            vm.PROMPT_INSTANTIATION_REQUIRED_PHRASES,
+        ),
+    ]
+    for fn, section_msg, phrases in cases:
+        findings = fn(tmp_path)
+        assert any(section_msg in f.message for f in findings)
+        for phrase in phrases:
+            assert any(phrase in f.message for f in findings)
+
+    _write(
+        tmp_path / "AGENT-PROMPTS.md",
+        "\n".join(
+            [
+                *vm.PROMPT_ROLE_BLURBS_REQUIRED_PHRASES,
+                *vm.PROMPT_ESCALATION_FORMAT_REQUIRED_PHRASES,
+                *vm.PROMPT_LIVING_DOCS_REQUIRED_PHRASES,
+                *vm.PROMPT_CONSTRAINTS_DETAIL_REQUIRED_PHRASES,
+                *vm.PROMPT_TRIGGERS_DETAIL_REQUIRED_PHRASES,
+                *vm.PROMPT_HUMAN_FIELDS_REQUIRED_PHRASES,
+                *vm.PROMPT_CONTEXT_DETAIL_REQUIRED_PHRASES,
+                *vm.PROMPT_EXPERTISE_DETAIL_REQUIRED_PHRASES,
+                *vm.PROMPT_RELATED_HEALTH_REQUIRED_PHRASES,
+                *vm.PROMPT_TOOLS_DETAIL_REQUIRED_PHRASES,
+                *vm.PROMPT_RESPONSIBILITIES_DETAIL_REQUIRED_PHRASES,
+                *vm.PROMPT_INSTANTIATION_REQUIRED_PHRASES,
+                "",
+            ]
+        ),
+    )
+    assert vm.validate_prompt_role_blurbs(tmp_path) == []
+    assert vm.validate_prompt_escalation_format(tmp_path) == []
+    assert vm.validate_prompt_living_docs(tmp_path) == []
+    assert vm.validate_prompt_constraints_detail(tmp_path) == []
+    assert vm.validate_prompt_triggers_detail(tmp_path) == []
+    assert vm.validate_prompt_human_fields(tmp_path) == []
+    assert vm.validate_prompt_context_detail(tmp_path) == []
+    assert vm.validate_prompt_expertise_detail(tmp_path) == []
+    assert vm.validate_prompt_related_health(tmp_path) == []
+    assert vm.validate_prompt_tools_detail(tmp_path) == []
+    assert vm.validate_prompt_responsibilities_detail(tmp_path) == []
+    assert vm.validate_prompt_instantiation(tmp_path) == []
+
+    def _empty(key: str) -> None:
+        payload = _inventory_payload()
+        payload[key] = []
+        findings = vm._inventory_lock_consistency(
+            payload, schema_path="schemas/packaging-inventory.json"
+        )
+        assert any(f"{key} must not be empty" in f.message for f in findings)
+
+    def _dup(key: str, phrases: tuple[str, ...]) -> None:
+        payload = _inventory_payload()
+        payload[key] = [phrases[0], phrases[0], *phrases[1:]]
+        findings = vm._inventory_lock_consistency(
+            payload, schema_path="schemas/packaging-inventory.json"
+        )
+        assert any(f"{key} must be unique" in f.message for f in findings)
+
+    def _blank(key: str) -> None:
+        payload = _inventory_payload()
+        payload[key] = ["ok", "  "]
+        findings = vm._inventory_lock_consistency(
+            payload, schema_path="schemas/packaging-inventory.json"
+        )
+        assert any(
+            f"{key} entries must be non-empty strings" in f.message for f in findings
+        )
+
+    def _missing(key: str, seed: list[str]) -> None:
+        payload = _inventory_payload()
+        payload[key] = seed
+        findings = vm._inventory_lock_consistency(
+            payload, schema_path="schemas/packaging-inventory.json"
+        )
+        assert any(f"{key} must include" in f.message for f in findings)
+
+    for key, phrases, seed in [
+        (
+            "prompt_role_blurbs_required_phrases",
+            vm.PROMPT_ROLE_BLURBS_REQUIRED_PHRASES,
+            ["# QuantumArchitectAgent System Prompt"],
+        ),
+        (
+            "prompt_escalation_format_required_phrases",
+            vm.PROMPT_ESCALATION_FORMAT_REQUIRED_PHRASES,
+            ["## When You Escalate"],
+        ),
+        (
+            "prompt_living_docs_required_phrases",
+            vm.PROMPT_LIVING_DOCS_REQUIRED_PHRASES,
+            ["# Agent Prompt Templates"],
+        ),
+        (
+            "prompt_constraints_detail_required_phrases",
+            vm.PROMPT_CONSTRAINTS_DETAIL_REQUIRED_PHRASES,
+            ["Never optimize beyond device constraints (memory, runtime)"],
+        ),
+        (
+            "prompt_triggers_detail_required_phrases",
+            vm.PROMPT_TRIGGERS_DETAIL_REQUIRED_PHRASES,
+            ["Quantum advantage deadline < 6 months and algorithm not quantum-safe"],
+        ),
+        (
+            "prompt_human_fields_required_phrases",
+            vm.PROMPT_HUMAN_FIELDS_REQUIRED_PHRASES,
+            ["Situation: [What decision needs human input?]"],
+        ),
+        (
+            "prompt_context_detail_required_phrases",
+            vm.PROMPT_CONTEXT_DETAIL_REQUIRED_PHRASES,
+            ["Token standards: ERC-20 (if applicable), ERC-721 (NFT)"],
+        ),
+        (
+            "prompt_expertise_detail_required_phrases",
+            vm.PROMPT_EXPERTISE_DETAIL_REQUIRED_PHRASES,
+            ["Circuit optimization (gate reduction, error mitigation)"],
+        ),
+        (
+            "prompt_related_health_required_phrases",
+            vm.PROMPT_RELATED_HEALTH_REQUIRED_PHRASES,
+            ["See AGENTS.md Section 5.3 (Knowledge & Health Agents)"],
+        ),
+        (
+            "prompt_tools_detail_required_phrases",
+            vm.PROMPT_TOOLS_DETAIL_REQUIRED_PHRASES,
+            ["IBM Quantum Experience (real hardware validation)"],
+        ),
+        (
+            "prompt_responsibilities_detail_required_phrases",
+            vm.PROMPT_RESPONSIBILITIES_DETAIL_REQUIRED_PHRASES,
+            ["Optimize Cirq circuits for target hardware"],
+        ),
+        (
+            "prompt_instantiation_required_phrases",
+            vm.PROMPT_INSTANTIATION_REQUIRED_PHRASES,
+            ["**Provide the agent with access to**:"],
+        ),
+    ]:
+        _empty(key)
+        _dup(key, phrases)
+        _blank(key)
+        _missing(key, seed)
+
+    _copy_schemas(tmp_path)
+    for rel in _inventory_payload()["required_paths"]:
+        target = tmp_path / rel
+        target.parent.mkdir(parents=True, exist_ok=True)
+        if not target.exists():
+            target.write_text("ok\n", encoding="utf-8")
+    (tmp_path / "schemas" / "packaging-inventory.json").write_text(
+        json.dumps(
+            _inventory_payload(
+                prompt_role_blurbs_required_phrases=list(
+                    vm.PROMPT_ROLE_BLURBS_REQUIRED_PHRASES
+                )[:-1]
+                + ["invented role blurbs"],
+                prompt_escalation_format_required_phrases=list(
+                    vm.PROMPT_ESCALATION_FORMAT_REQUIRED_PHRASES
+                )[:-1]
+                + ["invented escalation format"],
+                prompt_living_docs_required_phrases=list(
+                    vm.PROMPT_LIVING_DOCS_REQUIRED_PHRASES
+                )[:-1]
+                + ["invented living docs"],
+                prompt_constraints_detail_required_phrases=list(
+                    vm.PROMPT_CONSTRAINTS_DETAIL_REQUIRED_PHRASES
+                )[:-1]
+                + ["invented constraints detail"],
+                prompt_triggers_detail_required_phrases=list(
+                    vm.PROMPT_TRIGGERS_DETAIL_REQUIRED_PHRASES
+                )[:-1]
+                + ["invented triggers detail"],
+                prompt_human_fields_required_phrases=list(
+                    vm.PROMPT_HUMAN_FIELDS_REQUIRED_PHRASES
+                )[:-1]
+                + ["invented human fields"],
+                prompt_context_detail_required_phrases=list(
+                    vm.PROMPT_CONTEXT_DETAIL_REQUIRED_PHRASES
+                )[:-1]
+                + ["invented context detail"],
+                prompt_expertise_detail_required_phrases=list(
+                    vm.PROMPT_EXPERTISE_DETAIL_REQUIRED_PHRASES
+                )[:-1]
+                + ["invented expertise detail"],
+                prompt_related_health_required_phrases=list(
+                    vm.PROMPT_RELATED_HEALTH_REQUIRED_PHRASES
+                )[:-1]
+                + ["invented related health"],
+                prompt_tools_detail_required_phrases=list(
+                    vm.PROMPT_TOOLS_DETAIL_REQUIRED_PHRASES
+                )[:-1]
+                + ["invented tools detail"],
+                prompt_responsibilities_detail_required_phrases=list(
+                    vm.PROMPT_RESPONSIBILITIES_DETAIL_REQUIRED_PHRASES
+                )[:-1]
+                + ["invented responsibilities detail"],
+                prompt_instantiation_required_phrases=list(
+                    vm.PROMPT_INSTANTIATION_REQUIRED_PHRASES
+                )[:-1]
+                + ["invented instantiation"],
+            )
+        ),
+        encoding="utf-8",
+    )
+    findings = vm.validate_packaging_inventory(tmp_path)
+    for key in [
+        "prompt_role_blurbs_required_phrases",
+        "prompt_escalation_format_required_phrases",
+        "prompt_living_docs_required_phrases",
+        "prompt_constraints_detail_required_phrases",
+        "prompt_triggers_detail_required_phrases",
+        "prompt_human_fields_required_phrases",
+        "prompt_context_detail_required_phrases",
+        "prompt_expertise_detail_required_phrases",
+        "prompt_related_health_required_phrases",
+        "prompt_tools_detail_required_phrases",
+        "prompt_responsibilities_detail_required_phrases",
+        "prompt_instantiation_required_phrases",
+    ]:
+        assert any(key in f.message for f in findings)
+
+
+def test_v51_inventory_lock_mismatch_and_consistency_matrix(tmp_path: Path) -> None:
+    """Large self-test: every v51 heavy phrase key empty/dup/blank/seed + live registry."""
+    assert vm.INVENTORY_VERSION == 51
+    assert vm.MIN_VALIDATOR_COUNT == 184
+    assert len(vm.VALIDATORS) == 184
+    assert sorted(vm.VALIDATORS) == json.loads(
+        (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
+    )["validator_names"]
+
+    keys = [
+        (
+            "prompt_role_blurbs_required_phrases",
+            vm.PROMPT_ROLE_BLURBS_REQUIRED_PHRASES,
+            "role-blurbs/System Prompt/Your Role descriptive blurbs",
+        ),
+        (
+            "prompt_escalation_format_required_phrases",
+            vm.PROMPT_ESCALATION_FORMAT_REQUIRED_PHRASES,
+            "When You Escalate/format/Alternative Path/Timeline",
+        ),
+        (
+            "prompt_living_docs_required_phrases",
+            vm.PROMPT_LIVING_DOCS_REQUIRED_PHRASES,
+            "Agent Prompt Templates/FUZZYWIGG-AI/Task.md/synchronized",
+        ),
+        (
+            "prompt_constraints_detail_required_phrases",
+            vm.PROMPT_CONSTRAINTS_DETAIL_REQUIRED_PHRASES,
+            "Never optimize/Slither must pass/Apple/Google/data isolation",
+        ),
+        (
+            "prompt_triggers_detail_required_phrases",
+            vm.PROMPT_TRIGGERS_DETAIL_REQUIRED_PHRASES,
+            "Quantum advantage/Multi-chain sync/Battery drain/API design conflicts",
+        ),
+        (
+            "prompt_human_fields_required_phrases",
+            vm.PROMPT_HUMAN_FIELDS_REQUIRED_PHRASES,
+            "Situation/Agent Input/Risk Assessment/caveats",
+        ),
+        (
+            "prompt_context_detail_required_phrases",
+            vm.PROMPT_CONTEXT_DETAIL_REQUIRED_PHRASES,
+            "Token standards/HIPAA/GDPR/Deployment target/Key Constraint",
+        ),
+        (
+            "prompt_expertise_detail_required_phrases",
+            vm.PROMPT_EXPERTISE_DETAIL_REQUIRED_PHRASES,
+            "Circuit optimization/Connext/On-device cryptography/HIPAA applicability",
+        ),
+        (
+            "prompt_related_health_required_phrases",
+            vm.PROMPT_RELATED_HEALTH_REQUIRED_PHRASES,
+            "Section 5.3/5.3.1/22.3/12.4.1",
+        ),
+        (
+            "prompt_tools_detail_required_phrases",
+            vm.PROMPT_TOOLS_DETAIL_REQUIRED_PHRASES,
+            "IBM Quantum/Etherscan/React Native/Ledger/libsodium",
+        ),
+        (
+            "prompt_responsibilities_detail_required_phrases",
+            vm.PROMPT_RESPONSIBILITIES_DETAIL_REQUIRED_PHRASES,
+            "Optimize Cirq/Mickey 18/walled garden/Escalate unsolvable",
+        ),
+        (
+            "prompt_instantiation_required_phrases",
+            vm.PROMPT_INSTANTIATION_REQUIRED_PHRASES,
+            "Provide access/scratchpad.txt/Run the agent/Updates scratchpad",
+        ),
+    ]
+    for key, phrases, include_token in keys:
+        payload = _inventory_payload()
+        payload[key] = []
+        findings = vm._inventory_lock_consistency(
+            payload, schema_path="schemas/packaging-inventory.json"
+        )
+        assert any(f"{key} must not be empty" in f.message for f in findings)
+
+        payload = _inventory_payload()
+        payload[key] = [phrases[0], phrases[0], *phrases[1:]]
+        findings = vm._inventory_lock_consistency(
+            payload, schema_path="schemas/packaging-inventory.json"
+        )
+        assert any(f"{key} must be unique" in f.message for f in findings)
+
+        payload = _inventory_payload()
+        payload[key] = ["ok", ""]
+        findings = vm._inventory_lock_consistency(
+            payload, schema_path="schemas/packaging-inventory.json"
+        )
+        assert any(
+            f"{key} entries must be non-empty strings" in f.message for f in findings
+        )
+
+        payload = _inventory_payload()
+        payload[key] = [phrases[0]]
+        findings = vm._inventory_lock_consistency(
+            payload, schema_path="schemas/packaging-inventory.json"
+        )
+        assert any(f"{key} must include" in f.message for f in findings)
+        assert any(
+            include_token.split("/")[0] in f.message or include_token in f.message
+            for f in findings
+        )
+
+    # contributing honesty still tracks inventory version
+    assert any(
+        "Packaging inventory v51" in phrase
         for phrase in vm.CONTRIBUTING_CI_HONESTY_REQUIRED_PHRASES
     )
