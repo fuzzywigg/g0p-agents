@@ -10,6 +10,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Hydration residual **tests-only** deepeners after **#151** tip / post-#156
+  (EXISTING eleven `hydration-*` phrase-lock fixtures plus the live `hydration`
+  report lock — no invented product / inventory bump): concurrent validate races,
+  empty/whitespace/header-only `docs/agent-hydration.md`, invalid/invented
+  timeout+v53 keys, per-phrase drop matrix, inventory mismatch matrix,
+  cross-isolation, and historic-four report fixture edges. Historic four only;
+  inventory unchanged (v52 / 196). Distinct from merged #156 (constitution),
+  merged #151 (prompt-pre-v52), merged #147 (goose-recipe), merged #144 (v52
+  prompt residuals), and closed CONFLICTING #152 timeout invent.
+
 - Constitution residual **tests-only** deepeners after **#151** (EXISTING fourteen
   `constitution-*` phrase-lock validators only — no invented product / inventory
   bump): concurrent validate races, empty/whitespace/header-only AGENTS-v2.2,

@@ -18440,3 +18440,384 @@ def test_constitution_residual_live_green() -> None:
     assert vm.validate_prompt_orchestration_matrix(REPO_ROOT) == []
     assert vm.validate_prompt_metrics_detail(REPO_ROOT) == []
     assert vm.validate_scratchpad(REPO_ROOT) == []
+
+
+# ---------------------------------------------------------------------------
+# Hydration residual HEAVY edges after #151 / post-#156.
+# EXISTING eleven hydration-* phrase-lock fixtures + live hydration report
+# lock — no invented timeout / v53 product / inventory bump. Distinct from
+# merged #156 (constitution), #151 (prompt-pre-v52), #147 (goose-recipe),
+# #144 (v52 prompts), and closed CONFLICTING #152 timeout invent.
+# ---------------------------------------------------------------------------
+
+_HYDRATION_DOC = Path("docs") / "agent-hydration.md"
+
+
+def _hydration_residual_modules() -> list[tuple[str, object, tuple[str, ...], str]]:
+    """Map every live hydration-* phrase-lock validator to phrase tuple + key."""
+    modules: list[tuple[str, object, tuple[str, ...], str]] = []
+    for name in sorted(n for n in vm.VALIDATORS if n.startswith("hydration-")):
+        suffix = name.removeprefix("hydration-").replace("-", "_")
+        const_name = f"HYDRATION_{suffix.upper()}_REQUIRED_PHRASES"
+        fn_name = f"validate_{name.replace('-', '_')}"
+        inv_key = f"hydration_{suffix}_required_phrases"
+        modules.append(
+            (name, getattr(vm, fn_name), getattr(vm, const_name), inv_key)
+        )
+    return modules
+
+
+def _hydration_residual_locked_text() -> str:
+    """Union of locked phrases + required section anchors for hydration docs."""
+    lines: list[str] = []
+    seen: set[str] = set()
+    ordered: list[str] = []
+    for _name, _fn, phrases, _key in _hydration_residual_modules():
+        ordered.extend(phrases)
+    ordered.extend(vm.HYDRATION_REQUIRED_SECTIONS)
+    for phrase in sorted(ordered, key=len, reverse=True):
+        if phrase not in seen:
+            seen.add(phrase)
+            lines.append(phrase)
+    return "\n".join(lines) + "\n"
+
+
+def test_hydration_residual_modules_existing_only() -> None:
+    """Slice targets eleven hydration-* fixtures — not #151/#156/#152 siblings."""
+    modules = _hydration_residual_modules()
+    assert len(modules) == 11
+    assert vm.INVENTORY_VERSION == 52
+    assert vm.MIN_VALIDATOR_COUNT == 196
+    assert len(vm.VALIDATORS) == 196
+    assert "hydration" in vm.VALIDATORS
+    assert "hydration" not in {m[0] for m in modules}
+
+    for invented in (
+        "hydration-timeouts",
+        "hydration-deadlines",
+        "hydration-v53-invented",
+        "goose-timeouts",
+        "goose-timeout-detail",
+        "constitution-deadlines",
+        "constitution-deadline-detail",
+        "implementation-timeouts",
+        "implementation-timeout-detail",
+        "prompt-v53-invented",
+    ):
+        assert invented not in vm.VALIDATORS
+
+    inventory = json.loads(
+        (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    assert inventory["version"] == 52
+    assert inventory["min_validator_count"] == 196
+    assert sorted(vm.VALIDATORS) == inventory["validator_names"]
+
+    for name, _fn, phrases, inv_key in modules:
+        assert name in vm.VALIDATORS
+        assert name in inventory["validator_names"]
+        assert inv_key in inventory
+        assert inventory[inv_key] == list(phrases)
+        assert len(phrases) >= 2
+
+
+def test_hydration_residual_empty_maps_and_empty_doc(tmp_path: Path) -> None:
+    """Empty / whitespace / header-only hydration report + empty phrase maps."""
+    modules = _hydration_residual_modules()
+    for name, fn, _phrases, _key in modules:
+        findings = fn(tmp_path)
+        assert any("missing" in f.message for f in findings), name
+
+    _write(tmp_path / _HYDRATION_DOC, "\n\t  \n")
+    for name, fn, phrases, _key in modules:
+        findings = fn(tmp_path)
+        assert findings, name
+        assert any(
+            phrase in f.message or "missing" in f.message
+            for f in findings
+            for phrase in phrases[:1]
+        ) or any("missing" in f.message for f in findings)
+
+    _write(tmp_path / _HYDRATION_DOC, "# Agent Hydration Report\n")
+    for name, fn, phrases, _key in modules:
+        findings = fn(tmp_path)
+        phrase_hits = [f for f in findings if any(p in f.message for p in phrases)]
+        assert phrase_hits, name
+
+    for _name, _fn, _phrases, key in modules:
+        payload = _inventory_payload()
+        payload[key] = []
+        findings = vm._inventory_lock_consistency(
+            payload, schema_path="schemas/packaging-inventory.json"
+        )
+        assert any(f"{key} must not be empty" in f.message for f in findings), key
+
+
+def test_hydration_residual_invalid_keys(tmp_path: Path) -> None:
+    """Reject invented timeout / v53 keys; live hydration names stay selectable."""
+    with pytest.raises(KeyError):
+        _ = vm.VALIDATORS["hydration-timeouts"]
+    with pytest.raises(KeyError):
+        _ = vm.VALIDATORS["implementation-timeout-detail"]
+    with pytest.raises(ValueError, match="unknown validator"):
+        vm.run_all_validations(REPO_ROOT, only=["goose-timeouts"])
+    with pytest.raises(ValueError, match="unknown validator"):
+        vm.run_all_validations(REPO_ROOT, only=["hydration-v53-invented"])
+
+    findings = vm.run_all_validations(
+        REPO_ROOT,
+        only=[
+            "hydration-list-b",
+            "hydration-phase5",
+            "hydration-meta",
+            "hydration",
+        ],
+    )
+    assert findings == []
+
+    _copy_schemas(tmp_path)
+    for rel in _inventory_payload()["required_paths"]:
+        target = tmp_path / rel
+        target.parent.mkdir(parents=True, exist_ok=True)
+        if not target.exists():
+            target.write_text("ok\n", encoding="utf-8")
+
+    bad = _inventory_payload()
+    bad["invented_hydration_residual_map"] = {"slot": "x"}
+    (tmp_path / "schemas" / "packaging-inventory.json").write_text(
+        json.dumps(bad),
+        encoding="utf-8",
+    )
+    findings = vm.validate_packaging_inventory(tmp_path)
+    assert findings
+
+    bad2 = _inventory_payload()
+    bad2["hydration_list_b_required_phrases"] = "not-a-list"
+    (tmp_path / "schemas" / "packaging-inventory.json").write_text(
+        json.dumps(bad2),
+        encoding="utf-8",
+    )
+    findings = vm.validate_packaging_inventory(tmp_path)
+    assert findings
+
+
+def test_hydration_residual_per_phrase_drop_matrix(tmp_path: Path) -> None:
+    """Drop each locked phrase independently across all eleven hydration modules."""
+    base = _hydration_residual_locked_text()
+    _write(tmp_path / _HYDRATION_DOC, base)
+    modules = _hydration_residual_modules()
+    for name, fn, _phrases, _key in modules:
+        assert fn(tmp_path) == [], name
+
+    for name, fn, phrases, _key in modules:
+        for phrase in phrases:
+            mangled = base.replace(phrase, "ABSENT_PHRASE_TOKEN")
+            assert phrase not in mangled, (name, phrase)
+            _write(tmp_path / _HYDRATION_DOC, mangled)
+            findings = fn(tmp_path)
+            assert any(phrase in f.message for f in findings), (name, phrase)
+
+    _write(tmp_path / _HYDRATION_DOC, base)
+    for name, fn, _phrases, _key in modules:
+        assert fn(tmp_path) == [], name
+
+
+def test_hydration_residual_inventory_mismatch_matrix() -> None:
+    """Empty / dup / blank / seed mismatches for every hydration_* inventory key."""
+    modules = _hydration_residual_modules()
+    for _name, _fn, phrases, key in modules:
+        payload = _inventory_payload()
+        payload[key] = []
+        findings = vm._inventory_lock_consistency(
+            payload, schema_path="schemas/packaging-inventory.json"
+        )
+        assert any(f"{key} must not be empty" in f.message for f in findings), key
+
+        payload = _inventory_payload()
+        payload[key] = [phrases[0], phrases[0], *phrases[1:]]
+        findings = vm._inventory_lock_consistency(
+            payload, schema_path="schemas/packaging-inventory.json"
+        )
+        assert any(f"{key} must be unique" in f.message for f in findings), key
+
+        payload = _inventory_payload()
+        payload[key] = ["ok", "  "]
+        findings = vm._inventory_lock_consistency(
+            payload, schema_path="schemas/packaging-inventory.json"
+        )
+        assert any(
+            f"{key} entries must be non-empty strings" in f.message for f in findings
+        ), key
+
+        payload = _inventory_payload()
+        payload[key] = [phrases[0]]
+        findings = vm._inventory_lock_consistency(
+            payload, schema_path="schemas/packaging-inventory.json"
+        )
+        assert any(
+            f"{key} must include" in f.message or f"{key} must mention" in f.message
+            for f in findings
+        ), key
+
+
+def test_hydration_residual_concurrent_validate_races(tmp_path: Path) -> None:
+    """Concurrent readers/writers against agent-hydration.md must not crash."""
+    modules = _hydration_residual_modules()
+    live_fns = [fn for _name, fn, _phrases, _key in modules]
+
+    def _read_live() -> list[vm.Finding]:
+        out: list[vm.Finding] = []
+        for fn in live_fns:
+            out.extend(fn(REPO_ROOT))
+        return out
+
+    errors: list[BaseException] = []
+    with ThreadPoolExecutor(max_workers=16) as pool:
+        futures = [pool.submit(_read_live) for _ in range(48)]
+        for fut in as_completed(futures):
+            try:
+                assert fut.result() == []
+            except BaseException as exc:  # noqa: BLE001 — collect race failures
+                errors.append(exc)
+    assert errors == []
+
+    locked = _hydration_residual_locked_text()
+    path = tmp_path / _HYDRATION_DOC
+    _write(path, locked)
+    for name, fn, _phrases, _key in modules:
+        assert fn(tmp_path) == [], name
+
+    stop = threading.Event()
+    race_errors: list[BaseException] = []
+
+    def _writer() -> None:
+        flip = False
+        while not stop.is_set():
+            try:
+                if flip:
+                    path.write_text(locked, encoding="utf-8")
+                else:
+                    path.write_text("\n", encoding="utf-8")
+                flip = not flip
+            except BaseException as exc:  # noqa: BLE001
+                race_errors.append(exc)
+                return
+
+    def _reader() -> None:
+        while not stop.is_set():
+            try:
+                for fn in live_fns:
+                    fn(tmp_path)
+            except BaseException as exc:  # noqa: BLE001
+                race_errors.append(exc)
+                return
+
+    threads = [
+        threading.Thread(target=_writer),
+        threading.Thread(target=_reader),
+        threading.Thread(target=_reader),
+        threading.Thread(target=_reader),
+    ]
+    for t in threads:
+        t.start()
+    time.sleep(0.35)
+    stop.set()
+    for t in threads:
+        t.join(timeout=2.0)
+    assert race_errors == []
+
+    def _empty_map_check(key: str) -> bool:
+        payload = _inventory_payload()
+        payload[key] = []
+        findings = vm._inventory_lock_consistency(
+            payload, schema_path="schemas/packaging-inventory.json"
+        )
+        return any(f"{key} must not be empty" in f.message for f in findings)
+
+    keys = [key for _n, _f, _p, key in modules]
+    with ThreadPoolExecutor(max_workers=8) as pool:
+        futs = [pool.submit(_empty_map_check, k) for k in keys for _ in range(2)]
+        assert all(fut.result() for fut in as_completed(futs))
+
+
+def test_hydration_residual_cross_isolation(tmp_path: Path) -> None:
+    """Dropping one hydration module's phrases must not falsely green that module."""
+    base = _hydration_residual_locked_text()
+    modules = _hydration_residual_modules()
+    targets = [
+        "hydration-list-b",
+        "hydration-phase1",
+        "hydration-deferred",
+        "hydration-meta",
+        "hydration-phase4",
+        "hydration-resolved",
+        "hydration-git-detail",
+        "hydration-phase2",
+    ]
+    by_name = {name: (fn, phrases) for name, fn, phrases, _key in modules}
+    for target in targets:
+        fn, phrases = by_name[target]
+        mangled = base
+        for phrase in phrases:
+            mangled = mangled.replace(phrase, "GONE_PHRASE_TOKEN")
+            assert phrase not in mangled, (target, phrase)
+        _write(tmp_path / _HYDRATION_DOC, mangled)
+        findings = fn(tmp_path)
+        assert findings, target
+        assert any(p in f.message for f in findings for p in phrases), target
+        # Unrelated live root + #151/#147/#156 siblings stay green
+        assert by_name["hydration-phase5"][0](REPO_ROOT) == []
+        assert vm.validate_prompt_orchestration_matrix(REPO_ROOT) == []
+        assert vm.validate_goose_orchestration(REPO_ROOT) == []
+        assert vm.validate_constitution_crypto(REPO_ROOT) == []
+
+
+def test_hydration_residual_report_fixture_edges(tmp_path: Path) -> None:
+    """Base hydration report: required sections green; invented fifth agent refused."""
+    sections = "\n".join(vm.HYDRATION_REQUIRED_SECTIONS) + "\n"
+    _write(tmp_path / _HYDRATION_DOC, sections)
+    assert vm.validate_hydration_report(tmp_path) == []
+
+    invented = sections + "TimeoutHydrationAgent\n"
+    _write(tmp_path / _HYDRATION_DOC, invented)
+    findings = vm.validate_hydration_report(tmp_path)
+    assert any(
+        "invented" in f.message and "TimeoutHydrationAgent" in f.message
+        for f in findings
+    )
+
+    missing = "\n".join(vm.HYDRATION_REQUIRED_SECTIONS[:-1]) + "\n"
+    _write(tmp_path / _HYDRATION_DOC, missing)
+    findings = vm.validate_hydration_report(tmp_path)
+    assert findings
+    assert any("missing required section" in f.message for f in findings)
+
+
+def test_hydration_residual_live_green() -> None:
+    """All eleven live hydration-* validators remain clean; inventory v52/196."""
+    modules = _hydration_residual_modules()
+    assert len(modules) == 11
+    for name, fn, _phrases, _key in modules:
+        assert fn(REPO_ROOT) == [], name
+        assert vm.VALIDATORS[name](REPO_ROOT) == [], name
+
+    assert vm.validate_hydration_report(REPO_ROOT) == []
+    assert vm.INVENTORY_VERSION == 52
+    assert vm.MIN_VALIDATOR_COUNT == 196
+    assert len(vm.VALIDATORS) == 196
+    body = (REPO_ROOT / _HYDRATION_DOC).read_text(encoding="utf-8")
+    assert "# Agent Hydration Report — g0p-agents" in body
+    assert "LIST B" in body
+    assert "Packaging inventory v52" in (
+        REPO_ROOT / "CONTRIBUTING.md"
+    ).read_text(encoding="utf-8")
+    assert "inventory v52 locks" in (REPO_ROOT / "README.md").read_text(
+        encoding="utf-8"
+    )
+    # Adjacent #151 / #147 / #156 slices remain green
+    assert vm.validate_prompt_orchestration_matrix(REPO_ROOT) == []
+    assert vm.validate_goose_howto(REPO_ROOT) == []
+    assert vm.validate_constitution_crypto(REPO_ROOT) == []
+    assert vm.validate_scratchpad(REPO_ROOT) == []
