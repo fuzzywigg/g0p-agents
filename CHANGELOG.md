@@ -10,6 +10,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Agent prompts **v34** deepeners (post-#80): `prompt-constraints`,
+  `prompt-triggers`, `prompt-related-docs` validators; AGENT-PROMPTS.md
+  never-violate constraint locks across specialists, escalation-trigger /
+  human-escalation locks, and AGENTS.md Section 22 related-docs / Remember
+  locks; consistency deepeners for `prompt_constraints_required_phrases` /
+  `prompt_triggers_required_phrases` / `prompt_related_docs_required_phrases`
+  (115 total; historic four only — agent prompts slice, not goose recipes,
+  changelog, hydration, constitution, security policy, contributing,
+  execution-summary, implementation guide, README honesty, PR-template,
+  issue-template, scratchpad, postmortem, archive snapshot, routing/identity,
+  or Dependabot)
+
 - Goose recipes **v33** deepeners (post-#78): `goose-recipe-headers`,
   `goose-instruction-agents`, `goose-extensions` validators; GOOSE-RECIPES.md
   Recipe 1–4 heading / File-path locks, historic four instruction-agent identity

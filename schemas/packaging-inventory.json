@@ -1,5 +1,5 @@
 {
-  "version": 33,
+  "version": 34,
   "documented_agents": [
     "QuantumArchitectAgent",
     "BlockchainArchitectAgent",
@@ -252,11 +252,11 @@
   "hydration_required_sections": [
     "## PHASE 1: FINDINGS REPORT",
     "## PHASE 2: QUESTIONS",
-    "### LIST B — Requires Andrew (HITL)",
+    "### LIST B \u2014 Requires Andrew (HITL)",
     "## PHASE 3: RESOLVED (LIST A)",
     "## PHASE 4: ISSUES GENERATED",
     "## PHASE 5: Roadmap",
-    "## LIST B — Deferred to Andrew"
+    "## LIST B \u2014 Deferred to Andrew"
   ],
   "execution_summary_required_phrases": [
     "EXECUTION SUMMARY",
@@ -350,8 +350,11 @@
     "pr-routing",
     "pr-summary",
     "pr-template",
+    "prompt-constraints",
+    "prompt-related-docs",
     "prompt-roles",
     "prompt-sections",
+    "prompt-triggers",
     "prompt-usage",
     "prompts",
     "pyproject",
@@ -384,7 +387,7 @@
     "yaml-configs"
   ],
   "min_coverage_fail_under": 99,
-  "min_validator_count": 112,
+  "min_validator_count": 115,
   "required_paths": [
     "README.md",
     "LICENSE",
@@ -505,7 +508,7 @@
     "Notion Master Index sync",
     "postmortem.md incident review"
   ],
-  "ci_workflow_name": "CI — Lint, Links & Manifests",
+  "ci_workflow_name": "CI \u2014 Lint, Links & Manifests",
   "ci_required_text_markers": [
     "download-actionlint.bash",
     "actionlint",
@@ -633,7 +636,7 @@
   ],
   "routing_matrix_rationale_phrases": [
     "Single-repo, syntax-level work",
-    "Deep coding, long-running, 60–90 min",
+    "Deep coding, long-running, 60\u201390 min",
     "Cross-system state, Notion truth",
     "UI-only settings",
     "Test automation",
@@ -703,7 +706,7 @@
     "YAML recipes, Docker Compose"
   ],
   "hydration_list_b_required_phrases": [
-    "### LIST B — Requires Andrew (HITL)",
+    "### LIST B \u2014 Requires Andrew (HITL)",
     "Is g0p-agents meant to be activated into a runnable codebase",
     "What is PikoClaw exactly",
     "Should actual Solidity, Python (Cirq), and React Native code be implemented",
@@ -728,7 +731,7 @@
     "**Next Steps**:"
   ],
   "postmortem_next_steps_required_phrases": [
-    "Andrew answers LIST B (B1–B5) in docs/agent-hydration.md",
+    "Andrew answers LIST B (B1\u2013B5) in docs/agent-hydration.md",
     "browser-claude or claude-cowork creates GitHub issues",
     "claude-cowork creates/updates Notion page under Active Sprint Work",
     "geryon scaffolds agentic_flows/ once B1 is answered"
@@ -958,14 +961,14 @@
     "### Step 1: Single Agent Task",
     "### Step 2: Multi-Agent Workflow",
     "### Step 3: Escalation (If Conflict)",
-    "Agents Disagree → OrchestrationAgent Reviews"
+    "Agents Disagree \u2192 OrchestrationAgent Reviews"
   ],
   "contributing_issues_required_phrases": [
     "## Issue Reporting",
     "Use the appropriate issue template",
-    "**Bug** — something broken",
-    "**Feature** — new capability needed",
-    "**Agent Task** — structured work",
+    "**Bug** \u2014 something broken",
+    "**Feature** \u2014 new capability needed",
+    "**Agent Task** \u2014 structured work",
     "metadata header defined in CLAUDE.md"
   ],
   "contributing_local_required_phrases": [
@@ -1025,7 +1028,7 @@
     "**Phase 2: Contract Design**",
     "**Phase 3: Implementation**",
     "**Phase 4: Orchestration Decision**",
-    "QuantumArchitectAgent → BlockchainArchitectAgent",
+    "QuantumArchitectAgent \u2192 BlockchainArchitectAgent",
     "Logs decision in postmortem.md"
   ],
   "constitution_escalation_matrix_required_phrases": [
@@ -1054,10 +1057,10 @@
   ],
   "changelog_release_required_phrases": [
     "### Changed",
-    "## [0.1.0] — 2025-12-13",
-    "`AGENTS-v2.2.md` — agent constitution",
-    "`AGENT-PROMPTS.md` — specialist agent system prompts (4 agents)",
-    "`GOOSE-RECIPES.md` — Goose YAML recipe templates"
+    "## [0.1.0] \u2014 2025-12-13",
+    "`AGENTS-v2.2.md` \u2014 agent constitution",
+    "`AGENT-PROMPTS.md` \u2014 specialist agent system prompts (4 agents)",
+    "`GOOSE-RECIPES.md` \u2014 Goose YAML recipe templates"
   ],
   "goose_recipe_headers_required_phrases": [
     "## Recipe 1: Quantum Algorithm Design",
@@ -1080,5 +1083,35 @@
     "name: developer",
     "timeout: 300",
     "timeout: 600"
+  ],
+  "prompt_constraints_required_phrases": [
+    "Never claim quantum-safety without formal verification",
+    "Never design algorithms without NIST-standardized post-quantum validation",
+    "Never deploy without post-quantum cryptography threat modeling",
+    "Never skip security audit before mainnet deployment",
+    "Never expose plaintext keys in RAM or logs",
+    "Never block UI thread for crypto operations (async/background only)",
+    "Never implement on-device crypto without HSM/secure enclave consideration",
+    "Always include fallback to classical simulation"
+  ],
+  "prompt_triggers_required_phrases": [
+    "Circuit depth exceeds device constraints by >20%",
+    "Error rate > 2% (unacceptable for security-critical ops)",
+    "Security audit finds critical vulnerability",
+    "Gas cost exceeds 10M (Ethereum network limit)",
+    "Crypto operations > 500ms on target device",
+    "Device memory < 2MB for circuit state",
+    "## When You Escalate to Human",
+    "ESCALATION TO HUMAN REQUIRED"
+  ],
+  "prompt_related_docs_required_phrases": [
+    "See AGENTS.md Section 22 (Quantum-Blockchain Integration Standards)",
+    "See AGENTS.md Section 22.4 (Agent Coordination Protocol)",
+    "See AGENTS.md Section 22.5 (Recipe-Based Orchestration)",
+    "See AGENTS.md Section 12.4 (Smart Contract Approval Matrix)",
+    "See AGENTS.md Section 22.2 (On-Device Quantum Logic Execution)",
+    "See AGENTS.md Section 22.7 (Conflict Resolution Matrix)",
+    "Remember: You are not working alone",
+    "Remember: You are the last line of defense before user devices"
   ]
 }
