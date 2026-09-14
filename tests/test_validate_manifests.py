@@ -40242,7 +40242,8 @@ def test_prompts_flows_after279_ci_nineteen_smoke() -> None:
     assert "Lock inventory" in ci_text
     assert vm.validate_ci_workflow(REPO_ROOT) == []
     assert vm.validate_ci_actions(REPO_ROOT) == []
-    # #279 CI/markdownlint + #270/#264 goose-schema + #265 Claude/routing niches stay green; not invent-product.
+    # #279 CI/markdownlint + #270/#264 goose-schema + #265 Claude/routing
+    # niches stay green; not invent-product.
     assert vm.validate_goose_recipes(REPO_ROOT) == []
     assert vm.validate_recipe_titles(REPO_ROOT) == []
     assert vm.validate_recipe_agent_bindings(REPO_ROOT) == []
