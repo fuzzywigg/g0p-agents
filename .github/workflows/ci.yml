@@ -79,7 +79,7 @@ jobs:
       - name: List packaging validators
         run: |
           python scripts/validate_manifests.py --list-validators | tee validators.txt
-          test "$(wc -l < validators.txt)" -ge 172
+          test "$(wc -l < validators.txt)" -ge 175
       - name: Lock inventory version and validator registry
         run: |
           PYTHONPATH=scripts python - <<'PY'
@@ -88,9 +88,9 @@ jobs:
           import validate_manifests as vm
 
           inv = json.loads(Path("schemas/packaging-inventory.json").read_text())
-          assert inv["version"] == vm.INVENTORY_VERSION == 50
+          assert inv["version"] == vm.INVENTORY_VERSION == 51
           assert sorted(vm.VALIDATORS) == inv["validator_names"]
-          assert len(vm.VALIDATORS) >= inv["min_validator_count"] >= 172
+          assert len(vm.VALIDATORS) >= inv["min_validator_count"] >= 175
           print(f"inventory v{inv['version']}; validators={len(vm.VALIDATORS)}")
           PY
       - name: Validate documented manifests (JSON report)

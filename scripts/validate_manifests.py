@@ -183,7 +183,7 @@ REQUIRED_ARCHIVE_DOCS = (
     "README.md",
 )
 
-INVENTORY_VERSION = 50
+INVENTORY_VERSION = 51
 CURSOR_ENVIRONMENT_NAME = "g0p-agents"
 DEPENDABOT_SCHEDULE_INTERVAL = "weekly"
 DEPENDABOT_DIRECTORIES: frozenset[str] = frozenset({"/"})
@@ -836,7 +836,7 @@ CONTRIBUTING_CI_HONESTY_REQUIRED_PHRASES: tuple[str, ...] = (
     "markdown lint, link check, actionlint",
     "manifest validate on Python 3.11/3.12/3.13",
     "Andrew or designated reviewer",
-    "Packaging inventory v50",
+    "Packaging inventory v51",
     "refuse invented recipes",
     "orphan on-disk YAML",
     "unknown `*Agent` tokens",
@@ -1077,6 +1077,46 @@ PROMPT_ESCALATION_AUTHORITY_REQUIRED_PHRASES: tuple[str, ...] = (
     "Risk exceeds acceptable threshold",
     "Timeline pressure conflicts with quality requirements",
     "Budget constraints conflict with scope",
+)
+
+PROMPT_ROLE_BLURBS_REQUIRED_PHRASES: tuple[str, ...] = (
+    "You design quantum algorithms, optimize quantum circuits, and ensure "
+    "quantum-safe cryptographic properties for all FUZZYWIGG operations.",
+    "You design multi-chain smart contract architecture, implement "
+    "quantum-resistant consensus logic, and manage cross-chain state "
+    "synchronization.",
+    "You implement quantum-safe cryptography on mobile devices, design "
+    '"walled garden" data isolation, and optimize for device constraints.',
+    "You orchestrate the three specialist agents (Quantum, Blockchain, "
+    "On-Device), resolve conflicts, make final architectural decisions, "
+    "and keep the team aligned on vision.",
+    "# QuantumArchitectAgent System Prompt",
+    "# BlockchainArchitectAgent System Prompt",
+    "# EdgeSecurityAgent System Prompt",
+    "# OrchestrationAgent System Prompt",
+)
+
+PROMPT_ESCALATION_FORMAT_REQUIRED_PHRASES: tuple[str, ...] = (
+    "## When You Escalate",
+    "Use this format:",
+    "Conflict: [What constraint am I hitting?]",
+    "Recommendation: [How should we resolve this?]",
+    "Timeline: [How long until decision needed?]",
+    "Alternative Path: [If primary path is blocked]",
+)
+
+PROMPT_LIVING_DOCS_REQUIRED_PHRASES: tuple[str, ...] = (
+    "# Agent Prompt Templates",
+    "## FUZZYWIGG-AI Quantum-Blockchain System",
+    "Use these prompts when instantiating each specialist agent. Customize "
+    "with project-specific context.",
+    "These prompts are **living documents**. Update them whenever:",
+    "AGENTS.md constraints change",
+    "A new escalation pattern emerges",
+    "New tools become available",
+    "Paste into the LLM's system prompt",
+    "AGENTS.md (the constitution)",
+    "Task.md (current sprint)",
 )
 
 
@@ -1681,7 +1721,7 @@ SCRATCHPAD_STATUS_MARKERS: tuple[str, ...] = (
 SPECIALIST_AGENTS: tuple[str, ...] = DOCUMENTED_AGENTS[:-1]
 
 MIN_COVERAGE_FAIL_UNDER = 99
-MIN_VALIDATOR_COUNT = 172
+MIN_VALIDATOR_COUNT = 175
 
 
 @dataclass(frozen=True)
@@ -2803,6 +2843,30 @@ def validate_packaging_inventory(root: Path) -> list[Finding]:
     ):
         findings.append(
             _lock_mismatch(schema_path, "prompt_escalation_authority_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("prompt_role_blurbs_required_phrases", ()))
+        != PROMPT_ROLE_BLURBS_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "prompt_role_blurbs_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("prompt_escalation_format_required_phrases", ()))
+        != PROMPT_ESCALATION_FORMAT_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "prompt_escalation_format_required_phrases")
+        )
+
+    if (
+        tuple(inventory.get("prompt_living_docs_required_phrases", ()))
+        != PROMPT_LIVING_DOCS_REQUIRED_PHRASES
+    ):
+        findings.append(
+            _lock_mismatch(schema_path, "prompt_living_docs_required_phrases")
         )
 
     if (
@@ -5125,6 +5189,130 @@ def _inventory_lock_consistency(
                 )
             )
 
+    prompt_role_blurbs = list(
+        inventory.get("prompt_role_blurbs_required_phrases", ())
+    )
+    if len(prompt_role_blurbs) != len(set(prompt_role_blurbs)):
+        findings.append(
+            Finding(schema_path, "prompt_role_blurbs_required_phrases must be unique")
+        )
+    if not prompt_role_blurbs:
+        findings.append(
+            Finding(
+                schema_path, "prompt_role_blurbs_required_phrases must not be empty"
+            )
+        )
+    for phrase in prompt_role_blurbs:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_role_blurbs_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_prompt_role_blurbs = {
+            "# QuantumArchitectAgent System Prompt",
+            "# BlockchainArchitectAgent System Prompt",
+            "# EdgeSecurityAgent System Prompt",
+            "# OrchestrationAgent System Prompt",
+        }
+        if prompt_role_blurbs and not required_prompt_role_blurbs <= set(
+            prompt_role_blurbs
+        ):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_role_blurbs_required_phrases must include "
+                    "four System Prompt titles",
+                )
+            )
+
+    prompt_escalation_format = list(
+        inventory.get("prompt_escalation_format_required_phrases", ())
+    )
+    if len(prompt_escalation_format) != len(set(prompt_escalation_format)):
+        findings.append(
+            Finding(
+                schema_path, "prompt_escalation_format_required_phrases must be unique"
+            )
+        )
+    if not prompt_escalation_format:
+        findings.append(
+            Finding(
+                schema_path,
+                "prompt_escalation_format_required_phrases must not be empty",
+            )
+        )
+    for phrase in prompt_escalation_format:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_escalation_format_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_prompt_escalation_format = {
+            "## When You Escalate",
+            "Use this format:",
+            "Conflict: [What constraint am I hitting?]",
+            "Alternative Path: [If primary path is blocked]",
+        }
+        if prompt_escalation_format and not required_prompt_escalation_format <= set(
+            prompt_escalation_format
+        ):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_escalation_format_required_phrases must include "
+                    "When You Escalate/Use this format/Conflict/Alternative Path",
+                )
+            )
+
+    prompt_living_docs = list(inventory.get("prompt_living_docs_required_phrases", ()))
+    if len(prompt_living_docs) != len(set(prompt_living_docs)):
+        findings.append(
+            Finding(schema_path, "prompt_living_docs_required_phrases must be unique")
+        )
+    if not prompt_living_docs:
+        findings.append(
+            Finding(
+                schema_path, "prompt_living_docs_required_phrases must not be empty"
+            )
+        )
+    for phrase in prompt_living_docs:
+        if not isinstance(phrase, str) or not phrase.strip():
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_living_docs_required_phrases entries must be "
+                    "non-empty strings",
+                )
+            )
+            break
+    else:
+        required_prompt_living_docs = {
+            "# Agent Prompt Templates",
+            "## FUZZYWIGG-AI Quantum-Blockchain System",
+            "These prompts are **living documents**. Update them whenever:",
+            "Task.md (current sprint)",
+        }
+        if prompt_living_docs and not required_prompt_living_docs <= set(
+            prompt_living_docs
+        ):
+            findings.append(
+                Finding(
+                    schema_path,
+                    "prompt_living_docs_required_phrases must include "
+                    "Agent Prompt Templates/FUZZYWIGG-AI/living documents/Task.md",
+                )
+            )
+
     intro = list(inventory.get("postmortem_intro_required_phrases", ()))
     if len(intro) != len(set(intro)):
         findings.append(
@@ -6968,7 +7156,7 @@ def _inventory_lock_consistency(
     else:
         required_ci_honesty = {
             "markdown lint, link check, actionlint",
-            "Packaging inventory v50",
+            "Packaging inventory v51",
             "refuse invented recipes",
         }
         if ci_honesty and not required_ci_honesty <= set(ci_honesty):
@@ -6976,7 +7164,7 @@ def _inventory_lock_consistency(
                 Finding(
                     schema_path,
                     "contributing_ci_honesty_required_phrases must include "
-                    "CI checks/Packaging inventory v50/refuse invented recipes",
+                    "CI checks/Packaging inventory v51/refuse invented recipes",
                 )
             )
 
@@ -9477,6 +9665,60 @@ def validate_prompt_escalation_authority(root: Path) -> list[Finding]:
     return findings
 
 
+
+
+def validate_prompt_role_blurbs(root: Path) -> list[Finding]:
+    rel = "AGENT-PROMPTS.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "prompts missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "# QuantumArchitectAgent System Prompt" not in body:
+        findings.append(Finding(rel, "missing QuantumArchitectAgent System Prompt"))
+    for phrase in PROMPT_ROLE_BLURBS_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked prompt-role-blurbs phrase: {phrase}")
+            )
+    return findings
+
+
+def validate_prompt_escalation_format(root: Path) -> list[Finding]:
+    rel = "AGENT-PROMPTS.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "prompts missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "## When You Escalate" not in body:
+        findings.append(Finding(rel, "missing When You Escalate section"))
+    for phrase in PROMPT_ESCALATION_FORMAT_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(
+                    rel, f"missing locked prompt-escalation-format phrase: {phrase}"
+                )
+            )
+    return findings
+
+
+def validate_prompt_living_docs(root: Path) -> list[Finding]:
+    rel = "AGENT-PROMPTS.md"
+    path = root / rel
+    if not path.is_file():
+        return [Finding(rel, "prompts missing")]
+    body = path.read_text(encoding="utf-8")
+    findings: list[Finding] = []
+    if "# Agent Prompt Templates" not in body:
+        findings.append(Finding(rel, "missing Agent Prompt Templates heading"))
+    for phrase in PROMPT_LIVING_DOCS_REQUIRED_PHRASES:
+        if phrase not in body:
+            findings.append(
+                Finding(rel, f"missing locked prompt-living-docs phrase: {phrase}")
+            )
+    return findings
+
 def validate_changelog_initial(root: Path) -> list[Finding]:
     rel = "CHANGELOG.md"
     path = root / rel
@@ -10606,8 +10848,8 @@ def validate_contributing_ci_honesty(root: Path) -> list[Finding]:
         return [Finding(rel, "CONTRIBUTING.md missing")]
     text = path.read_text(encoding="utf-8")
     findings: list[Finding] = []
-    if "Packaging inventory v50" not in text:
-        findings.append(Finding(rel, "missing Packaging inventory v50 honesty lock"))
+    if "Packaging inventory v51" not in text:
+        findings.append(Finding(rel, "missing Packaging inventory v51 honesty lock"))
     for phrase in CONTRIBUTING_CI_HONESTY_REQUIRED_PHRASES:
         if phrase not in text:
             findings.append(
@@ -12545,6 +12787,9 @@ VALIDATORS: dict[str, ValidatorFn] = {
     "prompt-context": validate_prompt_context,
     "prompt-cannot-delegate": validate_prompt_cannot_delegate,
     "prompt-escalation-authority": validate_prompt_escalation_authority,
+    "prompt-role-blurbs": validate_prompt_role_blurbs,
+    "prompt-escalation-format": validate_prompt_escalation_format,
+    "prompt-living-docs": validate_prompt_living_docs,
     "hydration-phase2": validate_hydration_phase2,
     "hydration-phase5": validate_hydration_phase5,
     "link-check": validate_link_check,

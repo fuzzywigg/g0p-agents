@@ -10,6 +10,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Prompts residual **v51** deepeners / **v50 leftovers continued** (post-#128 prompts context/cannot-delegate/escalation-authority v50):
+  `prompt-role-blurbs`, `prompt-escalation-format`, `prompt-living-docs` validators; AGENT-PROMPTS.md
+  System Prompt role blurbs / specialist When You Escalate format / living-documents leftovers; consistency deepeners
+  for matching `*_required_phrases` inventory keys
+  (Packaging inventory 175 total; historic four only — prompts role-blurbs/escalation-format/living-docs
+  leftovers slice, not constitution/changelog v45, hydration, README, implementation-guide,
+  security, contributing, goose recipes, postmortem, or Dependabot)
+
 - Prompts residual **v50** deepeners / **v49 leftovers continued** (post-#124 prompts responsibilities/decision/integration v49):
   `prompt-context`, `prompt-cannot-delegate`, `prompt-escalation-authority` validators; AGENT-PROMPTS.md
   Current Project Context / CANNOT Delegate / Escalation Authority leftovers; consistency deepeners
