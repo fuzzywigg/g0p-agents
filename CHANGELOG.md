@@ -10,6 +10,28 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Hydration↔security + handoff residual **tests-only** leftover deepeners after
+  tip through **#265** (Claude/routing leftover after #264) / **#264**
+  (goose-schema leftover after #258) / **#258** (hydration/security+handoff
+  leftover after #248) / **#253** / **#248** / **#242** / **#236** / **#229** /
+  **#224** / **#219** / **#209** (EXISTING twenty-two fixtures —
+  `hydration-phase4`, ten `security*`, seven handoff-cluster `constitution-*`,
+  and four `scratchpad*` — no invented product / inventory bump): exact
+  missing-file Finding equality (≠ #258 directory-not-file), section-present /
+  phrases-absent matrix across PHASE 4 / security sections / handoff-escalation
+  and on-device / scratchpad Format+Task, soft-hyphen / NBSP / ideographic-space /
+  combining-accent lookalikes beyond #258 ZWSP/tab/CRLF/fullwidth, first-phrase
+  exact drop matrix for all twenty-two, packaging vs locked-* phrase asymmetry and
+  invented/documented agent isolation, empty/whitespace/header-only docs and
+  empty/dup/blank/seed inventory, null / list-of-int inventory leftovers beyond
+  #258 bool/float, `run_all --only` subset, cross-isolation vs #265 Claude/
+  routing and #264 goose and #258 siblings, concurrent four-doc races, and tip
+  live-green. Historic four only; Packaging inventory unchanged (v52 / 196).
+  Distinct from merged #258 (prior hydration/security leftover), #265
+  (Claude/routing), #264 (goose-schema), #253 (prompts+flows), #248
+  (actionlint/linkcheck), and closed CONFLICTING #252/#247/#241 (same leftover
+  on stale tips).
+
 - Claude/routing governance residual **tests-only** leftover deepeners after tip
   through **#264** (goose-schema leftover after #258) / **#258** / **#253** /
   **#248** / **#242** / **#236** / **#229** / **#224** / **#219** / **#209** /
