@@ -10,6 +10,32 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Actionlint/workflow + link-check residual **tests-only** leftover deepeners
+  after tip through **#264** (goose-schema leftover after #258) / **#258** /
+  **#253** / **#248** (actionlint/linkcheck leftover after #242) / **#242** /
+  **#236** / **#229** / **#224** / **#219** / **#209** / **#208** / **#202** /
+  **#200** / **#195** / **#188** (EXISTING seven CI fixtures — `ci` /
+  `ci-actions` / `link-check` / `actionlint-shell` / `ci-job-names` /
+  `ci-runs-on` / `ci-artifacts` — no invented product / inventory bump; prefer
+  actionlint+linkcheck niche, not markdownlint / prompts+flows / goose /
+  hydration): root sequence exact equality across seven modules, cancel-false /
+  fail-fast-true bool flips (≠ #248 string forms), `on: {}` + `Alpha` branch +
+  group int/null, permissions scalar + non-dict `link-check: true` green/fail
+  split, ZWSP / fullwidth / soft-hyphen lookalikes beyond #248 BOM/NBSP/case,
+  lychee fail:false|null + args list|null, config case/null + cache-path null
+  via `link-check`, runs-on case/null/list-mixed + all-four `Ubuntu-latest`,
+  job name null|int, path mapping|bool + upload `with: {}` + if-null, upload-if
+  absent + artifact-prefix + matrix-no-py + step-marker drop, drop markdown-lint
+  + dual drop link+actionlint + rename orphan, actionlint `steps: true` + id-int
+  + shell `sh`, ci-actions upload pin drop + jobs null, dual-surface +
+  concurrent races, inventory null/bool leftovers + `run_all --only`, tip
+  isolation vs #264/#258/#253/#248/#242/#236 siblings. Historic four only;
+  inventory unchanged (v52 / 196). Distinct from merged #248 (after236 leftover
+  suite), #264 (goose-schema), #258 (hydration/security+handoff), #253
+  (prompts+flows), #242/#236/#229/#195/#188/#186 (prior leftovers), closed
+  #256 (same leftover on pre-#264 tip), closed CONFLICTING
+  #244/#232/#226/#218/#215/#211/#206, and historic v10/v11 edges.
+
 - Goose-recipe schema leftover **tests-only** deepeners after tip through **#258**
   (hydration/security+handoff leftover after #248) / **#253** (prompts+flows
   after #248) / **#248** / **#242** / **#236** / **#229** / **#224** / **#219**
