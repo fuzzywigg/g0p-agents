@@ -10,6 +10,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Execution residual **tests-only** deepeners after **#147** (EXISTING eight
+  `execution-*` phrase-lock validators only — no invented product / inventory
+  bump): concurrent validate races, empty/whitespace/header-only
+  EXECUTION-SUMMARY, invalid/invented execution-timeout sibling keys,
+  per-phrase drop matrix, inventory mismatch matrix, cross-isolation, and
+  historic-four invented-agent fixture edges against `execution-summary` /
+  `execution-specialists` / `execution-timeline` / `execution-technologies` /
+  `execution-workflow` / `execution-ide` / `execution-innovations` /
+  `execution-next48`. Historic four only; inventory unchanged (v52 / 196).
+  Distinct from goose-recipe #147, orch-timeout drafts (#145/#146), and
+  prompts v51/v52 / prompt-validator #144.
+
 - Goose-recipe residual **tests-only** deepeners after **#144** (EXISTING nine
   `goose-*` phrase-lock validators only — no invented product / inventory bump):
   concurrent validate races, empty/whitespace/header-only GOOSE-RECIPES,
