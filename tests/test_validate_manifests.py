@@ -45948,6 +45948,9 @@ _PROMPTS_FLOWS_AFTER337_INVENT_NAMES: tuple[str, ...] = (
     "prompts-flows-after337-timeouts",
     "prompts-flows-after342-timeouts",
     "prompts-flows-after338-timeouts",
+    "prompts-flows-after353-timeouts",
+    "prompts-flows-after361-timeouts",
+    "prompts-flows-after359-timeouts",
     "prompts-flows-after330-timeouts",
     "prompts-flows-after331-timeouts",
     "prompts-flows-after324-timeouts",
@@ -45964,10 +45967,14 @@ _PROMPTS_FLOWS_AFTER337_INVENT_NAMES: tuple[str, ...] = (
     "figure-space-security-timeouts",
     "ogham-prompts-flows-timeouts",
     "mid-bom-prompts-flows-timeouts",
+    "actionlint-linkcheck-after337-timeouts",
     "actionlint-linkcheck-after307-timeouts",
     "actionlint-linkcheck-after300-timeouts",
     "actionlint-linkcheck-after302-timeouts",
     "actionlint-linkcheck-after294-timeouts",
+    "ci-markdownlint-after337-timeouts",
+    "goose-schema-after337-timeouts",
+    "claude-routing-after337-timeouts",
     "prompts-flows-after289-timeouts",
     "prompts-flows-after279-timeouts",
     "prompts-flows-after270-timeouts",
@@ -48371,6 +48378,209 @@ def test_prompts_flows_after337_tip_live_green_vs_337() -> None:
         assert invented not in vm.VALIDATORS
         with pytest.raises(ValueError, match="unknown validator"):
             vm.run_all_validations(REPO_ROOT, only=[invented])
+
+    assert vm.validate_prompt_usage(REPO_ROOT) == []
+    assert vm.validate_scratchpad(REPO_ROOT) == []
+    assert vm.validate_goose_recipes(REPO_ROOT) == []
+    assert vm.validate_hydration_phase4(REPO_ROOT) == []
+    assert vm.validate_security_packaging(REPO_ROOT) == []
+    assert vm.validate_actionlint_shell(REPO_ROOT) == []
+    assert vm.validate_link_check(REPO_ROOT) == []
+    assert vm.validate_markdownlint(REPO_ROOT) == []
+    assert vm.validate_claude_packaging(REPO_ROOT) == []
+    assert vm.validate_routing_surfaces(REPO_ROOT) == []
+    assert vm.validate_packaging_inventory(REPO_ROOT) == []
+    assert vm.validate_changelog_unreleased(REPO_ROOT) == []
+
+
+def test_prompts_flows_after337_isolation_vs_open_after337_sibling_niches(
+    tmp_path: Path,
+) -> None:
+    """HEAVIER than #353: local prompts fail; live tip siblings stay green; invent refuse."""
+    _write_prompts_flows_after337_docs(tmp_path)
+    mangled = _listform_prompt_locked_text().replace(
+        "## Usage Instructions",
+        "ABSENT_USAGE_AFTER337_VS_OPEN_SIBLINGS",
+    )
+    _write(tmp_path / "AGENT-PROMPTS.md", mangled)
+    assert vm.validate_prompt_usage(tmp_path)
+    assert vm.validate_scratchpad(tmp_path) == []
+    assert vm.validate_goose_recipes(tmp_path) == []
+
+    # Live registered tip siblings stay green (not invent niches).
+    assert vm.run_all_validations(
+        REPO_ROOT, only=list(_HYDRATION_SECURITY_HANDOFF_AFTER322_FIGURE_NAMES)
+    ) == []
+    assert vm.run_all_validations(
+        REPO_ROOT, only=list(_ACTIONLINT_LINKCHECK_RESIDUAL_NAMES)
+    ) == []
+    assert vm.run_all_validations(
+        REPO_ROOT, only=list(_CLAUDE_ROUTING_AFTER289_NAMES)
+    ) == []
+    assert vm.run_all_validations(
+        REPO_ROOT, only=list(_CI_MARKDOWNLINT_RESIDUAL_NAMES)
+    ) == []
+    assert vm.run_all_validations(
+        REPO_ROOT, only=list(_GOOSE_SCHEMA_RESIDUAL_NAMES)
+    ) == []
+    assert vm.validate_actionlint_shell(REPO_ROOT) == []
+    assert vm.validate_link_check(REPO_ROOT) == []
+    assert vm.validate_markdownlint(REPO_ROOT) == []
+    assert vm.validate_claude_packaging(REPO_ROOT) == []
+    assert vm.validate_routing_surfaces(REPO_ROOT) == []
+    assert vm.validate_hydration_phase4(REPO_ROOT) == []
+    assert vm.validate_security_packaging(REPO_ROOT) == []
+
+    for invented in (
+        "prompts-flows-after353-timeouts",
+        "prompts-flows-after361-timeouts",
+        "prompts-flows-after359-timeouts",
+        "actionlint-linkcheck-after337-timeouts",
+        "ci-markdownlint-after337-timeouts",
+        "goose-schema-after337-timeouts",
+        "claude-routing-after337-timeouts",
+        "hydration-security-handoff-after337-timeouts",
+    ):
+        assert invented not in vm.VALIDATORS
+
+
+def test_prompts_flows_after337_run_only_vs_open_after337_sibling_invent() -> None:
+    """HEAVIER than #353: `--only` nineteen vs open after337 sibling invent refuse."""
+    names = [n for n, _ in _prompts_flows_after337_modules()]
+    assert len(names) == 19
+    assert vm.run_all_validations(REPO_ROOT, only=names) == []
+
+    combined = (
+        names
+        + list(_HYDRATION_SECURITY_HANDOFF_AFTER322_FIGURE_NAMES)
+        + list(_ACTIONLINT_LINKCHECK_RESIDUAL_NAMES)
+        + list(_CLAUDE_ROUTING_AFTER289_NAMES)
+        + list(_CI_MARKDOWNLINT_RESIDUAL_NAMES)
+        + list(_GOOSE_SCHEMA_RESIDUAL_NAMES)
+    )
+    assert vm.run_all_validations(REPO_ROOT, only=combined) == []
+
+    for invented in (
+        "prompts-flows-after353-timeouts",
+        "prompts-flows-after361-timeouts",
+        "actionlint-linkcheck-after337-timeouts",
+        "ci-markdownlint-after337-timeouts",
+        "goose-schema-after337-timeouts",
+        "claude-routing-after337-timeouts",
+        "hydration-security-handoff-after337-timeouts",
+    ):
+        with pytest.raises(ValueError, match="unknown validator"):
+            vm.run_all_validations(REPO_ROOT, only=[invented])
+
+    proc = subprocess.run(
+        ["python3", "scripts/validate_manifests.py", "--list-validators"],
+        cwd=REPO_ROOT,
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    listed = {line.strip() for line in proc.stdout.splitlines() if line.strip()}
+    for name in names:
+        assert name in listed
+    for invented in (
+        "prompts-flows-after353-timeouts",
+        "actionlint-linkcheck-after337-timeouts",
+        "ci-markdownlint-after337-timeouts",
+        "goose-schema-after337-timeouts",
+        "claude-routing-after337-timeouts",
+    ):
+        assert invented not in listed
+
+
+def test_prompts_flows_after337_simultaneous_prompt_figure_goose_exact_drops(
+    tmp_path: Path,
+) -> None:
+    """HEAVIER than #353: simultaneous prompt + figure-security + goose exact Findings."""
+    _write_prompts_flows_after337_docs(tmp_path)
+    sec_live = (REPO_ROOT / "SECURITY.md").read_text(encoding="utf-8")
+    _write(tmp_path / "SECURITY.md", sec_live)
+    prompt_base = _listform_prompt_locked_text()
+    goose_base = (tmp_path / "GOOSE-RECIPES.md").read_text(encoding="utf-8")
+
+    _write(
+        tmp_path / "AGENT-PROMPTS.md",
+        prompt_base.replace("## Usage Instructions", "ABSENT_AFTER337_TRIPLE_USAGE"),
+    )
+    phrase = "Never commit secrets"
+    assert phrase in sec_live
+    _write(tmp_path / "SECURITY.md", sec_live.replace(phrase, "ABSENT_AFTER337_TRIPLE_SEC"))
+    # Drop a locked goose docs phrase while keeping yaml fences present.
+    goose_phrase = vm.GOOSE_DOCS_REQUIRED_PHRASES[0]
+    assert goose_phrase in goose_base
+    _write(
+        tmp_path / "GOOSE-RECIPES.md",
+        goose_base.replace(goose_phrase, "ABSENT_AFTER337_TRIPLE_GOOSE_TITLE", 1),
+    )
+
+    usage = vm.validate_prompt_usage(tmp_path)
+    security = vm.validate_security_packaging(tmp_path)
+    titles = vm.validate_recipe_titles(tmp_path)
+    assert any(f.message == "missing Usage Instructions section" for f in usage)
+    assert any(
+        f.message == f"SECURITY.md missing packaging phrase: {phrase}" for f in security
+    )
+    assert any(
+        f.message == f"GOOSE-RECIPES missing packaging phrase: {goose_phrase}"
+        for f in titles
+    )
+    assert vm.validate_scratchpad(tmp_path) == []
+    assert vm.run_all_validations(
+        REPO_ROOT, only=list(_HYDRATION_SECURITY_HANDOFF_AFTER322_FIGURE_NAMES)
+    ) == []
+    assert vm.run_all_validations(
+        REPO_ROOT, only=list(_ACTIONLINT_LINKCHECK_RESIDUAL_NAMES)
+    ) == []
+
+
+def test_prompts_flows_after337_tip_live_green_vs_open_after337_siblings() -> None:
+    """HEAVIER than #353: live prompts/flows + all tip sibling niches stay green."""
+    modules = _prompts_flows_after337_modules()
+    for name, fn in modules:
+        assert fn(REPO_ROOT) == [], name
+
+    assert vm.INVENTORY_VERSION == 52
+    assert vm.MIN_VALIDATOR_COUNT == 196
+    assert len(vm.VALIDATORS) == 196
+    only_names = [
+        *_LISTFORM_PROMPT_RESIDUAL_NAMES,
+        *_AGENTIC_FLOWS_RESIDUAL_NAMES,
+    ]
+    assert vm.run_all_validations(REPO_ROOT, only=only_names) == []
+    assert vm.run_all_validations(
+        REPO_ROOT, only=list(_HYDRATION_SECURITY_HANDOFF_AFTER322_FIGURE_NAMES)
+    ) == []
+    assert vm.run_all_validations(
+        REPO_ROOT, only=list(_HYDRATION_SECURITY_HANDOFF_AFTER307_NAMES)
+    ) == []
+    assert vm.run_all_validations(
+        REPO_ROOT, only=list(_ACTIONLINT_LINKCHECK_RESIDUAL_NAMES)
+    ) == []
+    assert vm.run_all_validations(
+        REPO_ROOT, only=list(_CLAUDE_ROUTING_AFTER289_NAMES)
+    ) == []
+    assert vm.run_all_validations(
+        REPO_ROOT, only=list(_CI_MARKDOWNLINT_RESIDUAL_NAMES)
+    ) == []
+    assert vm.run_all_validations(
+        REPO_ROOT, only=list(_GOOSE_SCHEMA_RESIDUAL_NAMES)
+    ) == []
+
+    for invented in (
+        "prompts-flows-after353-timeouts",
+        "prompts-flows-after361-timeouts",
+        "prompts-flows-after359-timeouts",
+        "actionlint-linkcheck-after337-timeouts",
+        "ci-markdownlint-after337-timeouts",
+        "goose-schema-after337-timeouts",
+        "claude-routing-after337-timeouts",
+        "hydration-security-handoff-after337-timeouts",
+    ):
+        assert invented not in vm.VALIDATORS
 
     assert vm.validate_prompt_usage(REPO_ROOT) == []
     assert vm.validate_scratchpad(REPO_ROOT) == []

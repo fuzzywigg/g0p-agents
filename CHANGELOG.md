@@ -20,8 +20,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   **#200** (EXISTING nineteen fixtures — twelve list-form sibling `prompt-*` +
   seven agentic_flows `goose` / `recipe-agents` / `recipe-titles` /
   `scratchpad*` — no invented v53 list-form product / inventory bump;
-  tip-relaunch of CONFLICTING **#342** / **#338** / **#331** / **#330** /
-  **#324** / **#315** / **#311** / **#303** / **#301** / **#298** / **#296** /
+  HEAVIER than open MERGEABLE **#353** (adds isolation vs open after337
+  sibling niches + simultaneous prompt/figure/goose exact drops + invent
+  refuse for #353/#361/#359 / actionlint / ci-markdownlint / goose-schema /
+  Claude-routing after337 invent keys); tip-relaunch of CONFLICTING **#361**
+  / **#359** / **#342** / **#338** / **#331** / **#330** / **#324** /
+  **#315** / **#311** / **#303** / **#301** / **#298** / **#296** /
   **#291** / **#290** / **#284** / **#272** / **#269**; not a markdownlint,
   actionlint, goose-schema, hydration, or Claude/routing niche redo): exact
   fence-count leftovers for found 0/2/3/5/6 plus tip-after-#307 found-7,
@@ -51,7 +55,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   tip-after-#337 deepeners (Ogham space / mid-BOM lookalikes mirroring #337
   figure theme onto prompts+flows, exact dual prompt+security Findings vs live
   figure surface, isolation vs #337 figure twenty-two, `--only` nineteen vs
-  figure invent refuse, quad-surface races vs live figure, live-green).
+  figure invent refuse, quad-surface races vs live figure, live-green),
+  plus HEAVIER tip deepeners beyond open #353 (isolation vs open after337
+  sibling niches, `--only` nineteen vs sibling invent refuse, simultaneous
+  prompt+figure-security+goose exact Findings, live-green vs open siblings).
   Historic four only; Packaging inventory unchanged (v52 / 196); no schema /
   validators / Dependabot bumps. Distinct from merged #337 (hydration/security
   FIGURE niche), #322 (hydration/security+handoff niche), #307
@@ -60,9 +67,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   niche), #264 (goose-schema niche), #258 (hydration/security+handoff), #253
   (fence/File-bind/first-phrase/fullwidth), #242
   (ZWSP/on-disk/checkbox/inventory-types), #236/#229/#224/#219 siblings, and
-  CONFLICTING #342/#338/#331/#330/#324/#315/#311/#303/#301/#298/#296/#291/
-  #290/#284/#272/#269/#251/#243/#238/#235/#230/#221/#223 (same leftover vs
-  stale tips).
+  CONFLICTING #361/#359/#342/#338/#331/#330/#324/#315/#311/#303/#301/#298/#296/
+  #291/#290/#284/#272/#269/#251/#243/#238/#235/#230/#221/#223 and thinner open
+  #353 (same leftover; this draft is HEAVIER).
 
 - Hydration↔security + handoff residual **tests-only** FIGURE leftover
   deepeners after tip through **#322** (hydration/security leftover after
