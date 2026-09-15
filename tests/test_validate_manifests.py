@@ -41667,16 +41667,15 @@ def test_claude_routing_after289_run_only_vs_289_ci_md_and_invent_refuse() -> No
     assert vm.INVENTORY_VERSION == 52
 
 # TOKENMAXX HEAVY leftover deepen: actionlint/workflow + link-check after tip
-# through #300 (Claude/routing leftover after #289) / #289 (CI/markdownlint
-# leftover after #279) / #279 / #270 / #265 / #264 / #258 / #253 / #248.
-# Distinct unsaturated residual edges beyond merged #248 after236 suite /
-# #300 / #289 / #279 / #270 / #265 / #264 / #258 / #253 / #242 / #236 / #229 /
-# #224 / #219 / #209 / #208 / #202 / #200 / #195 / #188. EXISTING seven CI
-# fixtures only (v52 / 196). Prefer actionlint + linkcheck niche only (not
-# markdownlint / not prompts+flows / not goose / not hydration / not
-# Claude-routing). Tip-relaunch of closed CONFLICTING #302/#294/#280/#283/
-# #274/#266/#256 (same leftover on pre-#300 / pre-#289 / pre-#279 / pre-#270 /
-# pre-#265 / pre-#264 tips).
+# through #300 (Claude/routing leftover after #289) / #289 / #279 / #270 /
+# #265 / #264 / #258 / #253 / #248. Distinct unsaturated residual edges beyond
+# merged #248 after236 suite / #300 / #289 / #279 / #270 / #265 / #264 / #258 /
+# #253 / #242 / #236 / #229 / #224 / #219 / #209 / #208 / #202 / #200 / #195 /
+# #188. EXISTING seven CI fixtures only (v52 / 196). Prefer actionlint +
+# linkcheck niche only (not markdownlint / not prompts+flows / not goose /
+# not hydration / not Claude-routing). Supersedes closed CONFLICTING
+# #302/#294/#280/#283/#274/#266/#256 (same leftover on pre-#300 / pre-#289 /
+# pre-#279 / pre-#270 / pre-#265 / pre-#264 tips).
 # ---------------------------------------------------------------------------
 
 def _replace_ci_job_with_scalar(text: str, job_id: str, value: str) -> str:
@@ -42575,6 +42574,7 @@ def test_actionlint_linkcheck_after300_run_only_and_inventory_null_bool(
         )
     assert "actionlint-linkcheck-after300-timeouts" not in vm.VALIDATORS
     assert "actionlint-linkcheck-after302-timeouts" not in vm.VALIDATORS
+    assert "actionlint-linkcheck-after294-timeouts" not in vm.VALIDATORS
     assert "actionlint-linkcheck-after289-timeouts" not in vm.VALIDATORS
     assert "claude-routing-after300-timeouts" not in vm.VALIDATORS
     assert "actionlint-linkcheck-after248-timeouts" not in vm.VALIDATORS
@@ -42665,8 +42665,8 @@ def test_actionlint_linkcheck_after300_cross_isolation_vs_289_siblings(
     for name, fn in _actionlint_linkcheck_residual_modules():
         assert fn(REPO_ROOT) == [], name
 
-    # Merged #300 Claude/routing + #289/#279 CI/markdownlint + #270 goose +
-    # #265/#264/#258/#253/#248 siblings stay green
+    # Merged #279 CI/markdownlint + #270 goose + #265 Claude/routing +
+    # #264/#258/#253/#248 siblings stay green
     assert vm.validate_prompt_usage(REPO_ROOT) == []
     assert vm.validate_prompt_monthly(REPO_ROOT) == []
     assert vm.validate_prompt_cannot_delegate(REPO_ROOT) == []
@@ -42705,7 +42705,7 @@ def test_actionlint_linkcheck_after300_cross_isolation_vs_289_siblings(
     assert "prompt-usage" not in _ACTIONLINT_LINKCHECK_RESIDUAL_NAMES
     assert "scratchpad" not in _ACTIONLINT_LINKCHECK_RESIDUAL_NAMES
 
-    # #289/#279 own CI/markdownlint niche — stay registered but excluded from this residual.
+    # #279 owns CI/markdownlint niche — stay registered but excluded from this residual.
     assert vm.validate_markdownlint(REPO_ROOT) == []
     assert vm.validate_ci_setup_python(REPO_ROOT) == []
     assert vm.validate_ci_ruff(REPO_ROOT) == []
@@ -42754,6 +42754,7 @@ def test_actionlint_linkcheck_after300_leftover_live_green() -> None:
     assert "link-check-timeouts" not in vm.VALIDATORS
     assert "actionlint-linkcheck-after300-timeouts" not in vm.VALIDATORS
     assert "actionlint-linkcheck-after302-timeouts" not in vm.VALIDATORS
+    assert "actionlint-linkcheck-after294-timeouts" not in vm.VALIDATORS
     assert "actionlint-linkcheck-after289-timeouts" not in vm.VALIDATORS
     assert "claude-routing-after300-timeouts" not in vm.VALIDATORS
     assert "actionlint-linkcheck-after274-timeouts" not in vm.VALIDATORS
@@ -42803,7 +42804,7 @@ def test_actionlint_linkcheck_after300_leftover_live_green() -> None:
 def test_actionlint_linkcheck_after300_tab_ideographic_wj_lookalikes(
     tmp_path: Path,
 ) -> None:
-    """Tip-after-#279/#289: tab/ideographic/word-joiner lookalikes beyond #280 ZWSP."""
+    """Tip-after-#279: tab/ideographic/word-joiner lookalikes beyond #280 ZWSP."""
     base = _actionlint_linkcheck_locked_ci_yaml()
     rel = _ACTIONLINT_LINKCHECK_CI_REL
 
@@ -42979,7 +42980,7 @@ def test_actionlint_linkcheck_after300_concurrency_absent_and_perms_write_one(
 def test_actionlint_linkcheck_after300_isolation_vs_289_ci_markdownlint(
     tmp_path: Path,
 ) -> None:
-    """Tip isolation vs merged #289/#279 CI/markdownlint niche — seven fixtures only."""
+    """Tip isolation vs merged #279 CI/markdownlint niche — seven fixtures only."""
     base = _actionlint_linkcheck_locked_ci_yaml()
 
     # Mangle lychee fail — actionlint/linkcheck niche fails; markdownlint CI fixtures
@@ -42994,7 +42995,7 @@ def test_actionlint_linkcheck_after300_isolation_vs_289_ci_markdownlint(
     for name, fn in _actionlint_linkcheck_residual_modules():
         assert fn(REPO_ROOT) == [], name
 
-    # #289/#279 CI/markdownlint six fixtures remain live-green on tip.
+    # #279 CI/markdownlint six fixtures remain live-green on tip.
     assert vm.validate_markdownlint(REPO_ROOT) == []
     assert vm.validate_ci_setup_python(REPO_ROOT) == []
     assert vm.validate_ci_ruff(REPO_ROOT) == []
@@ -43022,6 +43023,7 @@ def test_actionlint_linkcheck_after300_isolation_vs_289_ci_markdownlint(
     assert "markdownlint-after300-v53" not in vm.VALIDATORS
     assert "actionlint-linkcheck-after300-timeouts" not in vm.VALIDATORS
     assert "actionlint-linkcheck-after302-timeouts" not in vm.VALIDATORS
+    assert "actionlint-linkcheck-after294-timeouts" not in vm.VALIDATORS
     assert "actionlint-linkcheck-after289-timeouts" not in vm.VALIDATORS
     assert "claude-routing-after300-timeouts" not in vm.VALIDATORS
     assert "actionlint-linkcheck-after294-timeouts" not in vm.VALIDATORS
@@ -43036,7 +43038,7 @@ def test_actionlint_linkcheck_after300_isolation_vs_289_ci_markdownlint(
 def test_actionlint_linkcheck_after300_triple_surface_concurrent_races(
     tmp_path: Path,
 ) -> None:
-    """Tip-after-#279/#289: concurrent triple mangle (link args + shell + runs-on)."""
+    """Tip-after-#279: concurrent triple mangle (link args + shell + runs-on)."""
     modules = _actionlint_linkcheck_residual_modules()
     fns = [fn for _n, fn in modules]
     base = _actionlint_linkcheck_locked_ci_yaml()
@@ -43436,8 +43438,9 @@ def test_actionlint_linkcheck_after300_quad_surface_concurrent_races(
 def test_actionlint_linkcheck_after300_isolation_vs_300_claude_routing(
     tmp_path: Path,
 ) -> None:
-    """Tip-after-#300: mangle CI locally; #300 Claude/routing twelve stay green."""
+    """Tip isolation vs merged #300 Claude/routing niche — seven CI fixtures only."""
     base = _actionlint_linkcheck_locked_ci_yaml()
+
     fail_false = base.replace("          fail: true\n", "          fail: false\n")
     _write_ci_yaml(tmp_path, fail_false)
     assert vm.validate_link_check(tmp_path)
@@ -43446,25 +43449,120 @@ def test_actionlint_linkcheck_after300_isolation_vs_300_claude_routing(
     for name, fn in _actionlint_linkcheck_residual_modules():
         assert fn(REPO_ROOT) == [], name
 
-    # Merged #300 Claude/routing twelve fixtures remain live-green on tip.
-    for name, fn, _phrases, _key in _claude_routing_after289_modules():
-        assert fn(REPO_ROOT) == [], name
+    # #300 Claude/routing twelve fixtures remain live-green on tip.
+    assert vm.validate_claude_packaging(REPO_ROOT) == []
+    assert vm.validate_claude_metadata(REPO_ROOT) == []
+    assert vm.validate_routing_surfaces(REPO_ROOT) == []
+    assert vm.validate_routing_matrix(REPO_ROOT) == []
+    assert vm.validate_routing_rationales(REPO_ROOT) == []
+    assert vm.validate_repo_identity(REPO_ROOT) == []
+    assert vm.validate_state_residency(REPO_ROOT) == []
+    assert vm.validate_key_files(REPO_ROOT) == []
+    assert vm.validate_escalation_format(REPO_ROOT) == []
+    assert vm.validate_escalation_usage(REPO_ROOT) == []
+    assert vm.validate_quarterly_review(REPO_ROOT) == []
+    assert vm.validate_negative_constraints(REPO_ROOT) == []
     assert vm.run_all_validations(
-        REPO_ROOT, only=list(_CLAUDE_ROUTING_AFTER289_NAMES)
+        REPO_ROOT,
+        only=[
+            "claude",
+            "claude-metadata",
+            "routing",
+            "routing-matrix",
+            "routing-rationales",
+            "repo-identity",
+            "state-residency",
+            "key-files",
+            "escalation-format",
+            "escalation-usage",
+            "quarterly-review",
+            "negative-constraints",
+        ],
     ) == []
-
     assert "claude" not in _ACTIONLINT_LINKCHECK_RESIDUAL_NAMES
     assert "routing" not in _ACTIONLINT_LINKCHECK_RESIDUAL_NAMES
     assert "claude-routing-after300-timeouts" not in vm.VALIDATORS
-    assert "claude-routing-after289-timeouts" not in vm.VALIDATORS
     assert "actionlint-linkcheck-after300-timeouts" not in vm.VALIDATORS
     assert "actionlint-linkcheck-after302-timeouts" not in vm.VALIDATORS
+    assert "actionlint-linkcheck-after294-timeouts" not in vm.VALIDATORS
+    assert "ci-markdownlint-after300-timeouts" not in vm.VALIDATORS
 
     _write_ci_yaml(tmp_path, base)
     assert vm.validate_link_check(tmp_path) == []
 
 
-def test_actionlint_linkcheck_after300_ls_ps_obj_replacement_lookalikes(
+def test_actionlint_linkcheck_after300_soft_hyphen_id_and_warn_lookalike(
+    tmp_path: Path,
+) -> None:
+    """Tip-after-#300: soft-hyphen step-id + if-no-files-found case lookalike."""
+    base = _actionlint_linkcheck_locked_ci_yaml()
+    rel = _ACTIONLINT_LINKCHECK_CI_REL
+
+    soft_id = base.replace(
+        f"id: {vm.CI_ACTIONLINT_STEP_ID}",
+        "id: get\u00adactionlint",
+    )
+    _write_ci_yaml(tmp_path, soft_id)
+    assert vm.validate_actionlint_shell(tmp_path) == [
+        vm.Finding(
+            rel,
+            f"actionlint job must include step id {vm.CI_ACTIONLINT_STEP_ID!r}",
+        )
+    ]
+    assert vm.validate_link_check(tmp_path) == []
+
+    warn_upper = base.replace(
+        f"if-no-files-found: {vm.CI_ARTIFACT_IF_NO_FILES_FOUND}",
+        "if-no-files-found: WARN",
+    )
+    _write_ci_yaml(tmp_path, warn_upper)
+    assert (
+        vm.Finding(
+            rel,
+            (
+                "upload-artifact if-no-files-found must be "
+                f"{vm.CI_ARTIFACT_IF_NO_FILES_FOUND!r}, found 'WARN'"
+            ),
+        )
+        in vm.validate_ci_artifacts(tmp_path)
+    )
+    assert vm.validate_actionlint_shell(tmp_path) == []
+    assert vm.validate_ci_job_names(tmp_path) == []
+
+    _write_ci_yaml(tmp_path, base)
+    assert vm.validate_actionlint_shell(tmp_path) == []
+    assert vm.validate_ci_artifacts(tmp_path) == []
+
+
+def test_actionlint_linkcheck_after300_run_only_subset_vs_300_claude() -> None:
+    """Tip-after-#300: --only seven residual modules excludes Claude/routing."""
+    names = list(_ACTIONLINT_LINKCHECK_RESIDUAL_NAMES)
+    assert vm.run_all_validations(REPO_ROOT, only=names) == []
+    assert vm.run_all_validations(REPO_ROOT, only=["claude", "routing"]) == []
+    assert vm.run_all_validations(
+        REPO_ROOT, only=["markdownlint", "ci-setup-python", "ci-pytest"]
+    ) == []
+    with pytest.raises(ValueError, match="unknown validator"):
+        vm.run_all_validations(
+            REPO_ROOT, only=["actionlint-linkcheck-after300-timeouts"]
+        )
+    with pytest.raises(ValueError, match="unknown validator"):
+        vm.run_all_validations(REPO_ROOT, only=["claude-routing-after300-timeouts"])
+    assert "actionlint-linkcheck-after302-timeouts" not in vm.VALIDATORS
+    assert "actionlint-linkcheck-after294-timeouts" not in vm.VALIDATORS
+
+
+
+# TOKENMAXX HEAVY leftover deepen: actionlint/workflow + link-check after tip
+# through #307 (actionlint/linkcheck leftover after #300) / #300 (Claude/routing
+# leftover after #289) / #289 / #279 / #270 / #265 / #264 / #258 / #253 / #248.
+# Distinct unsaturated residual edges beyond merged #307 after300 suite.
+# EXISTING seven CI fixtures only (v52 / 196). Prefer actionlint + linkcheck
+# niche only. Tip-relaunch of closed CONFLICTING #310 onto post-#307 tip
+# (unique LS/PS/obj + NEL/ZWNBSP + dual/quad Claude-isolation deepeners).
+# ---------------------------------------------------------------------------
+
+def test_actionlint_linkcheck_after307_ls_ps_obj_replacement_lookalikes(
     tmp_path: Path,
 ) -> None:
     """Tip-after-#300: LS/PS/object-replacement lookalikes (mirror #300 Claude theme).
@@ -43525,7 +43623,7 @@ def test_actionlint_linkcheck_after300_ls_ps_obj_replacement_lookalikes(
     assert vm.validate_link_check(tmp_path) == []
 
 
-def test_actionlint_linkcheck_after300_run_only_vs_300_claude_and_invent_refuse() -> None:
+def test_actionlint_linkcheck_after307_run_only_vs_300_claude_and_invent_refuse() -> None:
     """Tip-after-#300: --only seven vs #300 twelve + invent-key refuse."""
     al_names = list(_ACTIONLINT_LINKCHECK_RESIDUAL_NAMES)
     claude_names = list(_CLAUDE_ROUTING_AFTER289_NAMES)
@@ -43536,24 +43634,26 @@ def test_actionlint_linkcheck_after300_run_only_vs_300_claude_and_invent_refuse(
 
     with pytest.raises(ValueError, match="unknown validator"):
         vm.run_all_validations(
-            REPO_ROOT, only=["actionlint-linkcheck-after300-timeouts"]
+            REPO_ROOT, only=["actionlint-linkcheck-after307-timeouts"]
         )
     with pytest.raises(ValueError, match="unknown validator"):
         vm.run_all_validations(
-            REPO_ROOT, only=["claude-routing-after300-timeouts"]
+            REPO_ROOT, only=["claude-routing-after307-timeouts"]
         )
     with pytest.raises(KeyError):
         _ = vm.VALIDATORS["actionlint-linkcheck-after302-timeouts"]
     with pytest.raises(KeyError):
         _ = vm.VALIDATORS["actionlint-linkcheck-after289-timeouts"]
 
+    assert "actionlint-linkcheck-after307-timeouts" not in vm.VALIDATORS
     assert "actionlint-linkcheck-after300-timeouts" not in vm.VALIDATORS
-    assert "claude-routing-after300-timeouts" not in vm.VALIDATORS
+    assert "actionlint-linkcheck-after310-timeouts" not in vm.VALIDATORS
+    assert "claude-routing-after307-timeouts" not in vm.VALIDATORS
     assert len(vm.VALIDATORS) == 196
     assert vm.INVENTORY_VERSION == 52
 
 
-def test_actionlint_linkcheck_after300_exact_ci_and_shell_dual_vs_claude(
+def test_actionlint_linkcheck_after307_exact_ci_and_shell_dual_vs_claude(
     tmp_path: Path,
 ) -> None:
     """Tip-after-#300: exact dual link+shell Findings; Claude tip fixtures stay green."""
@@ -43562,7 +43662,7 @@ def test_actionlint_linkcheck_after300_exact_ci_and_shell_dual_vs_claude(
 
     mangled = base.replace(
         vm.CI_LINK_CHECK_ARGS,
-        "--after300-dual-verbose --no-progress '**/*.md'",
+        "--after307-dual-verbose --no-progress '**/*.md'",
     ).replace(
         f"shell: {vm.CI_ACTIONLINT_SHELL}",
         "shell: powershell",
@@ -43588,7 +43688,7 @@ def test_actionlint_linkcheck_after300_exact_ci_and_shell_dual_vs_claude(
     assert vm.validate_actionlint_shell(tmp_path) == []
 
 
-def test_actionlint_linkcheck_after300_nel_zwnbsp_via_linkcheck_and_shell(
+def test_actionlint_linkcheck_after307_nel_zwnbsp_via_linkcheck_and_shell(
     tmp_path: Path,
 ) -> None:
     """Tip-after-#300: NEL/ZWNBSP lookalikes via link-check + actionlint-shell only."""
@@ -43623,7 +43723,7 @@ def test_actionlint_linkcheck_after300_nel_zwnbsp_via_linkcheck_and_shell(
     assert vm.validate_actionlint_shell(tmp_path) == []
 
 
-def test_actionlint_linkcheck_after300_quad_race_with_claude_live_green(
+def test_actionlint_linkcheck_after307_quad_race_with_claude_live_green(
     tmp_path: Path,
 ) -> None:
     """Tip-after-#300: quad-surface CI races while #300 Claude twelve stay live-green."""
@@ -43632,7 +43732,7 @@ def test_actionlint_linkcheck_after300_quad_race_with_claude_live_green(
     base = _actionlint_linkcheck_locked_ci_yaml()
     variants = (
         base,
-        base.replace(vm.CI_LINK_CHECK_ARGS, "--after300-quad-race"),
+        base.replace(vm.CI_LINK_CHECK_ARGS, "--after307-quad-race"),
         base.replace(f"shell: {vm.CI_ACTIONLINT_SHELL}", "shell: pwsh", 1),
         base.replace("runs-on: ubuntu-latest", "runs-on: Ubuntu-latest", 1),
         base.replace("          fail: true\n", "          fail: false\n"),
