@@ -10,6 +10,45 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Claude/routing governance residual **tests-only** leftover deepeners after tip
+  through **#337** (hydration/security FIGURE leftover after #322) / **#322** /
+  **#307** (actionlint/linkcheck leftover after #300) / **#300** (Claude/routing
+  leftover after #289) / **#289** / **#279** / **#270** / **#265** / **#264** /
+  **#258** / **#253** / **#248** (EXISTING twelve CLAUDE.md fixtures — `claude` /
+  `claude-metadata` / `routing` / `routing-matrix` / `routing-rationales` /
+  `repo-identity` / `state-residency` / `key-files` / `escalation-format` /
+  `escalation-usage` / `quarterly-review` / `negative-constraints` — historic
+  v14–v16 + merged **#300** / **#265** residual; tip-relaunch of closed
+  CONFLICTING **#347** / **#346** / **#344** / **#328** / **#326** / **#319**;
+  no invented product / inventory bump): CI `--list-validators` / `--only` /
+  `--json` twelve + required Manifest Validate step-marker smoke, exact
+  key-files / repo-identity / matrix / rationale Finding equality,
+  escalation-usage vs escalation-format isolation (banner vs bracketed usage
+  forms), packaging↔repo-identity shared phrase dual Finding formats,
+  per-metadata Tier/Created/Edit/Canonical exact drops, empty-file +
+  directory-not-file exact multi-Finding leftovers, inventory type/empty/dup
+  leftovers for matrix/metadata/key-files/repo-identity/escalation locks, LRM /
+  ZWJ / soft-hyphen / VT / form-feed lookalikes beyond #300/#289 set,
+  simultaneous matrix+rationale+metadata triple exact drops, three-agent
+  simultaneous drop matrix, concurrent CLAUDE.md races, tip isolation against
+  #337 FIGURE / #322 hydration/security / #307 actionlint/linkcheck / #300
+  after289 symbols / #289 CI/markdownlint / #270 goose-schema / #265/#264
+  siblings, tip-after-#337 deepeners (EN QUAD / PUNCTUATION SPACE / MMSP +
+  FOUR-PER-EM / SIX-PER-EM / OGHAM + THREE-PER-EM / Braille blank / WJ header
+  lookalikes beyond closed #347/#328 sets; packaging and escalation and
+  negative and key-files/quarterly/state triple exact drops; `--only` twelve
+  vs #337 FIGURE and #322 hydration and #307 actionlint residuals and
+  invent-key refuse; BOM mid / NEL / symlink-follow / escalation-banner
+  soft-hyphen isolation; state and quarterly per-phrase and
+  negative+documented-agent dual Finding), and tip live-green. Historic four
+  only; Packaging inventory unchanged (v52 / 196). Distinct from merged #337
+  (hydration/security FIGURE), #322 (hydration/security), #307
+  (actionlint/linkcheck), #300 (prior Claude/routing after #289), #289
+  (CI/markdownlint), #279, #270 (goose-schema), #265 (prior Claude/routing),
+  #264/#258/#253/#248 siblings, and closed CONFLICTING
+  #347/#346/#344/#328/#326/#319/#293/#282/#271/#278/#260/#192 (same niche on
+  stale / pre-#337 tips).
+
 - Hydration↔security + handoff residual **tests-only** FIGURE leftover
   deepeners after tip through **#322** (hydration/security leftover after
   #307) / **#307** (actionlint/linkcheck leftover after #300) / **#300** /
