@@ -10,6 +10,28 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Actionlint/workflow + link-check residual **tests-only** leftover deepeners
+  after tip through **#337** (hydration/security figure leftover after #322) /
+  **#322** / **#307** (actionlint/linkcheck leftover after #300) / **#300** /
+  **#289** / **#279** / **#270** / **#265** / **#264** / **#258** / **#253** /
+  **#248** (EXISTING seven CI fixtures — `ci` / `ci-actions` / `link-check` /
+  `actionlint-shell` / `ci-job-names` / `ci-runs-on` / `ci-artifacts` — no
+  invented product / inventory bump; prefer actionlint+linkcheck niche):
+  tip-after-#337 deepeners beyond merged #307 after300 suite — LS / PS /
+  object-replacement lookalikes via quoted YAML scalars, NEL (quoted; PyYAML
+  NEL→space) + ZWNBSP via link-check+shell, Ogham space + mid-BOM lookalikes
+  (mirror #337 figure; leading BOM stays green), vertical-tab YAML
+  parse-error exact Finding (≠ after300 WJ), `--only` seven vs #337 figure
+  twenty-two + invent-key refuse, exact dual link+shell Findings vs #337
+  figure live-green, isolation vs #337 figure residual, quad-surface CI races
+  with #337 figure + #322 hyd + #300 Claude live-green, tip live-green.
+  Historic four only; inventory unchanged (v52 / 196). Distinct from merged
+  #337 (hydration/security figure), #322 (hydration/security), #307 (after300
+  leftover suite), #300 (Claude/routing), #289 (CI/markdownlint), #248
+  (after236 leftover), and closed CONFLICTING
+  #343/#341/#332/#310/#302/#294/#280/#283/#274/#266/#256 (same leftover on
+  stale tips).
+
 - Hydration↔security + handoff residual **tests-only** FIGURE leftover
   deepeners after tip through **#322** (hydration/security leftover after
   #307) / **#307** (actionlint/linkcheck leftover after #300) / **#300** /
