@@ -47469,16 +47469,17 @@ def test_hydration_security_handoff_after354_run_only_and_concurrent_live_green(
 
 # ---------------------------------------------------------------------------
 # TOKENMAXX evening goose-schema leftovers after #369 (hydration/security
-# leftover after #354) / #354 (actionlint/linkcheck leftover after #337). Complementary HEAVY tests-only deepeners for
-# unsaturated goose / recipe-agents / recipe-titles edges beyond merged #270
-# and beyond open overnight after354 (#373) which already absorbs Ogham /
-# mid-BOM / quad name rejects. EXISTING three fixtures only — no invented
-# product / inventory bump. Tip-relaunch of closed CONFLICTING #374/#367/#357/
-# #352 unique typed/bound/ACCEPT/docs-phrase leftovers onto post-#354 tip
-# plus evening punctuation lookalike name rejects omitted from #373.
-# Distinct from merged #354 actionlint, open overnight #373 after354,
-# #337 figure hyd/sec, #322 hyd/sec, #307 actionlint, #300 Claude,
-# #289/#279 CI/markdownlint, #270/#264 goose-schema.
+# leftover after #354) / #354 (actionlint/linkcheck leftover after #337).
+# Complementary HEAVY tests-only deepeners for unsaturated goose /
+# recipe-agents / recipe-titles edges beyond merged #270 and beyond open
+# overnight after354 (#373) which already absorbs Ogham / mid-BOM / quad
+# name rejects. EXISTING three fixtures only — no invented product /
+# inventory bump. Tip-relaunch of closed CONFLICTING #374/#367/#357/#352
+# unique typed/bound/ACCEPT/docs-phrase leftovers onto post-#369 tip plus
+# evening punctuation lookalike name rejects omitted from #373. Distinct
+# from merged #369 hydration, #354 actionlint, open overnight #373
+# after354, #337 figure hyd/sec, #322 hyd/sec, #307 actionlint, #300
+# Claude, #289/#279 CI/markdownlint, #270/#264 goose-schema.
 # ---------------------------------------------------------------------------
 
 _GOOSE_SCHEMA_EVENING_AFTER354_INVENT_NAMES: tuple[str, ...] = (
