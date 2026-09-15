@@ -47644,7 +47644,7 @@ def test_goose_schema_after354_isolation_vs_289_ci_markdownlint() -> None:
 
 
 def test_goose_schema_after354_ogham_quad_mid_bom_rejects() -> None:
-    """Unsaturated name lookalikes omitted from overnight after337 reject matrices (relaunched after #354).
+    """Ogham/mid-BOM/quad name rejects omitted from overnight after337 matrices.
 
     Ogham / mid-BOM / em-quad / en-quad / thin / hair / MMSP / punctuation-space /
     three-/four-/six-per-em spaces + Arabic/fullwidth digit mid-name rejects —
