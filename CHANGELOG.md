@@ -10,6 +10,34 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- CI/markdownlint residual **tests-only** leftover deepeners after tip through
+  **#322** (hydration/security leftover after #307) / **#307**
+  (actionlint/linkcheck leftover after #300) / **#300** (Claude/routing leftover
+  after #289) / **#289** (CI/markdownlint leftover after #279) / **#279** /
+  **#270** / **#265** / **#264** / **#258** / **#253** / **#248** (EXISTING six
+  fixtures — `markdownlint` / `ci-setup-python` / `ci-ruff` / `ci-pip-install` /
+  `ci-pip-check` / `ci-pytest` — no invented product / workflow / inventory bump):
+  tip-after-#322 HEAVY deepeners beyond merged #289 after-#279 set + closed
+  CONFLICTING #323/#318/#316 after-#307/#300/#289 unsaturated edges — isolation
+  vs #322 hydration/security + #307 actionlint/linkcheck + #300 Claude/routing,
+  PS / object-replacement lookalikes, Ogham / Em-space / Hair-space / LS +
+  thin/punct lookalikes, ZWNBSP / Braille-pattern lookalikes, pip-check +
+  pip-install exact + setup-python cache/cache-dep case lookalikes, schema
+  MD024.siblings_only const mangle, MD013.line_length string exact + MD013 null /
+  MD025 null / MD025/MD033 string/float leftovers, setup-python cache key drop +
+  uses-step drop exact, pytest mid-marker + all-markers exact drops, inventory
+  ci_markdown_lint config/globs case + cache-dep type leftovers and
+  ruff/pip/setup-python type leftovers, simultaneous MD013 nested triple exact,
+  dual pip-check+ruff exact, isolation vs #289 CI/markdownlint / #270 goose /
+  #265/#264/#258/#253/#248 siblings, `--only` subset vs #322 hyd/#300 Claude/
+  #307 actionlint + invent refuse, quad/quintuple-surface concurrent races,
+  live-green. Historic four only; inventory unchanged (v52 / 196). Distinct from
+  merged #322 (hydration/security), #307 (actionlint/linkcheck), #300
+  (Claude/routing), #289/#279 CI/markdownlint, closed CONFLICTING
+  #323/#318/#316/#306/#305/#288/#286/#276/#275/#267/#257/#250/#240/#237/#233/
+  #220/#214/#210/#204/#201/#196 (same leftover vs stale tips), and historic
+  v12/v13 setup-python/ruff/pip/pytest edges.
+
 - Hydration↔security + handoff residual **tests-only** leftover deepeners after
   tip through **#307** (actionlint/linkcheck leftover after #300) / **#300**
   (Claude/routing leftover after #289) / **#289** (CI/markdownlint leftover
