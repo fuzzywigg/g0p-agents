@@ -24,7 +24,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   MD013.line_length string exact + MD013 null / MD025/MD033 string leftovers,
   setup-python cache key drop + uses-step drop exact, pytest mid-marker +
   all-markers exact drops, inventory ci_markdown_lint config/globs case leftovers
-  + ruff/pip/setup-python type leftovers, simultaneous MD013 nested triple exact,
+  and ruff/pip/setup-python type leftovers, simultaneous MD013 nested triple exact,
   dual pip-check+ruff exact, isolation vs #289 CI/markdownlint / #270 goose /
   #265/#264/#258/#253/#248 siblings, `--only` subset vs #300 Claude/#307
   actionlint + invent refuse, quad/quintuple-surface concurrent races, live-green.

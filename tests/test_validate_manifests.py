@@ -44449,7 +44449,7 @@ def test_ci_markdownlint_after307_quintuple_surface_concurrent_races(
 
 
 def test_ci_markdownlint_after307_run_only_subset_vs_307_siblings() -> None:
-    """Leftover after #307: --only residual subset vs #300 Claude/#307 actionlint + invent refuse."""
+    """Leftover after #307: --only subset vs #300 Claude/#307 actionlint invent refuse."""
     assert (
         vm.run_all_validations(
             REPO_ROOT, only=list(_CI_MARKDOWNLINT_RESIDUAL_NAMES)
