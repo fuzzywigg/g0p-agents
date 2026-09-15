@@ -10,6 +10,26 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Prompts listform + agentic_flows residual **tests-only** leftover deepeners
+  after tip through **#354** (actionlint/linkcheck leftover after #337) /
+  **#337** / **#322** / **#307** / **#300** / **#289** / **#279** / **#270** /
+  **#265** / **#264** / **#258** / **#253** / **#248** / **#242** / **#236**
+  (EXISTING nineteen fixtures — twelve `prompt-*` listform siblings + seven
+  agentic_flows `goose` / `recipe-*` / `scratchpad*` — no invented product /
+  inventory bump; prefer prompts+flows niche): tip-after-#354 e2fe deepeners
+  beyond merged #253 after248 suite — LS / PS / object-replacement lookalikes
+  on prompts+scratchpad (mirror #354 CI theme), Ogham space + mid-BOM
+  lookalikes (leading BOM stays green), vertical-tab YAML parse-error exact
+  Finding on goose fences, exact dual prompt+shell Findings (≠ dual
+  prompt+link), exact dual prompt+scratchpad Findings, isolation vs #354
+  actionlint seven + inverse CI fail while prompts stay tip-green, `--only`
+  nineteen vs invent-key refuse + quad-surface races, tip live-green.
+  Historic four only; inventory unchanged (v52 / 196). Distinct from merged
+  #354 (actionlint/linkcheck), #337 (hydration/security figure), #253
+  (prompts+flows after248), and closed CONFLICTING
+  #365/#361/#360/#359/#353/#350/#349/#342/#338/#331/#330/#324/#315/#311/#303/
+  #301/#298/#296/#291/#290/#284/#272/#269 (same leftover on stale tips).
+
 - Actionlint/workflow + link-check residual **tests-only** leftover deepeners
   after tip through **#337** (hydration/security figure leftover after #322) /
   **#322** / **#307** (actionlint/linkcheck leftover after #300) / **#300** /

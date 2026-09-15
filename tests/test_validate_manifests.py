@@ -46385,3 +46385,467 @@ def test_actionlint_linkcheck_after337_leftover_live_green() -> None:
     assert "actionlint-linkcheck-after322-timeouts" not in vm.VALIDATORS
     assert "hydration-security-handoff-after322-figure" not in vm.VALIDATORS
     assert "ogham-actionlint-timeouts" not in vm.VALIDATORS
+
+
+# ---------------------------------------------------------------------------
+# TOKENMAXX prompts+agentic_flows tip-after-#354 residual deepeners (e2fe)
+# Distinct leftover vs open sibling #370 after354_* (dual prompt+link / NEL) and
+# merged #354 actionlint/linkcheck / #253 after248 suite. Nineteen existing
+# fixtures only — no invent-product / inventory bump (still v52 / 196).
+# ---------------------------------------------------------------------------
+
+_PROMPTS_FLOWS_AFTER354_E2FE_INVENT_NAMES: tuple[str, ...] = (
+    "prompts-flows-after354-e2fe-timeouts",
+    "prompts-flows-after354-timeouts",
+    "prompts-flows-after353-timeouts",
+    "prompts-flows-after337-timeouts",
+    "prompts-flows-after370-timeouts",
+    "actionlint-linkcheck-after354-timeouts",
+    "ogham-prompts-flows-e2fe-timeouts",
+    "mid-bom-prompts-flows-e2fe-timeouts",
+    "ls-ps-orc-prompts-flows-timeouts",
+    "vtab-goose-prompts-flows-timeouts",
+)
+
+
+def _prompts_flows_after354_e2fe_modules() -> list[tuple[str, object]]:
+    """Reuse the nineteen existing listform + agentic_flows tip validators."""
+    return _prompts_flows_after248_c85e_modules()
+
+
+def _write_prompts_flows_after354_e2fe_docs(tmp_path: Path) -> None:
+    """Seed AGENT-PROMPTS + scratchpad + GOOSE-RECIPES with locked fixture text."""
+    _write_prompts_flows_after248_c85e_docs(tmp_path)
+
+
+def test_prompts_flows_after354_e2fe_modules_existing_only() -> None:
+    """Tip-after-#354 e2fe: nineteen existing fixtures — not invent-product."""
+    assert vm.INVENTORY_VERSION == 52
+    assert vm.MIN_VALIDATOR_COUNT == 196
+    assert len(vm.VALIDATORS) == 196
+
+    modules = _prompts_flows_after354_e2fe_modules()
+    assert len(modules) == 19
+    names = [n for n, _ in modules]
+    # after248 helper order: twelve listform + four scratchpad* + three goose*.
+    assert names == [
+        *_LISTFORM_PROMPT_RESIDUAL_NAMES,
+        "scratchpad",
+        "scratchpad-intro",
+        "scratchpad-format",
+        "scratchpad-task-meta",
+        "goose",
+        "recipe-agents",
+        "recipe-titles",
+    ]
+    assert set(names) == set(_LISTFORM_PROMPT_RESIDUAL_NAMES) | set(
+        _AGENTIC_FLOWS_RESIDUAL_NAMES
+    )
+    for invented in _PROMPTS_FLOWS_AFTER354_E2FE_INVENT_NAMES:
+        assert invented not in vm.VALIDATORS
+        with pytest.raises(ValueError, match="unknown validator"):
+            vm.run_all_validations(REPO_ROOT, only=[invented])
+
+    inventory = json.loads(
+        (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
+    )
+    assert inventory["version"] == 52
+    assert inventory["min_validator_count"] == 196
+    assert sorted(vm.VALIDATORS) == inventory["validator_names"]
+
+    # Adjacent #354 actionlint seven stay registered but excluded from this niche.
+    assert "ci" in vm.VALIDATORS
+    assert "link-check" in vm.VALIDATORS
+    assert "actionlint-shell" in vm.VALIDATORS
+    name_set = set(names)
+    assert "ci" not in name_set
+    assert "link-check" not in name_set
+    assert "actionlint-shell" not in name_set
+    assert "markdownlint" not in name_set
+    assert "hydration-phase4" not in name_set
+    assert "claude" not in name_set
+
+
+def test_prompts_flows_after354_e2fe_ls_ps_orc_lookalikes(tmp_path: Path) -> None:
+    """Tip-after-#354: LS/PS/ORC lookalikes on prompts+scratchpad (mirror #354 CI).
+
+    Distinct from open #370 after354 NEL/ZWNBSP prompt slice and after337 LS/PS.
+    """
+    _write_prompts_flows_after354_e2fe_docs(tmp_path)
+    prompt_base = _listform_prompt_locked_text()
+    scratch_base = _locked_scratchpad_text()
+
+    # Line Separator (U+2028) mid Usage Instructions token.
+    ls = prompt_base.replace("## Usage Instructions", "## Usa\u2028ge Instructions")
+    _write(tmp_path / "AGENT-PROMPTS.md", ls)
+    findings = vm.validate_prompt_usage(tmp_path)
+    assert any(f.message == "missing Usage Instructions section" for f in findings)
+    assert vm.validate_scratchpad(tmp_path) == []
+    assert vm.validate_goose_recipes(tmp_path) == []
+
+    # Paragraph Separator (U+2029) mid scratchpad identifying phrase.
+    ps = scratch_base.replace("source of truth", "source of\u2029truth", 1)
+    _write(tmp_path / "AGENT-PROMPTS.md", prompt_base)
+    _write(tmp_path / "agentic_flows" / "scratchpad.txt", ps)
+    scratch_findings = vm.validate_scratchpad(tmp_path)
+    assert any(
+        f.message == "scratchpad missing required phrase: source of truth"
+        for f in scratch_findings
+    )
+    assert vm.validate_prompt_usage(tmp_path) == []
+
+    # Object Replacement Character (U+FFFC) mid Usage Instructions.
+    orc = prompt_base.replace("## Usage Instructions", "## Usa\ufffcge Instructions")
+    _write(tmp_path / "AGENT-PROMPTS.md", orc)
+    _write(tmp_path / "agentic_flows" / "scratchpad.txt", scratch_base)
+    findings = vm.validate_prompt_usage(tmp_path)
+    assert any(f.message == "missing Usage Instructions section" for f in findings)
+    assert vm.validate_scratchpad(tmp_path) == []
+
+    # Restore green.
+    _write(tmp_path / "AGENT-PROMPTS.md", prompt_base)
+    assert vm.validate_prompt_usage(tmp_path) == []
+    assert vm.validate_scratchpad(tmp_path) == []
+    assert vm.run_all_validations(
+        REPO_ROOT, only=list(_ACTIONLINT_LINKCHECK_RESIDUAL_NAMES)
+    ) == []
+
+
+def test_prompts_flows_after354_e2fe_ogham_mid_bom_lookalikes(tmp_path: Path) -> None:
+    """Tip-after-#354: Ogham + mid-BOM lookalikes on prompts (mirror #354 CI theme)."""
+    _write_prompts_flows_after354_e2fe_docs(tmp_path)
+    base = _listform_prompt_locked_text()
+
+    ogham = base.replace("## Usage Instructions", "## Usa\u1680ge Instructions")
+    _write(tmp_path / "AGENT-PROMPTS.md", ogham)
+    findings = vm.validate_prompt_usage(tmp_path)
+    assert any(f.message == "missing Usage Instructions section" for f in findings)
+    assert vm.validate_scratchpad(tmp_path) == []
+    assert vm.validate_goose_recipes(tmp_path) == []
+
+    mid_bom = base.replace("## Usage Instructions", "## Usa\ufeffge Instructions")
+    _write(tmp_path / "AGENT-PROMPTS.md", mid_bom)
+    findings = vm.validate_prompt_usage(tmp_path)
+    assert any(f.message == "missing Usage Instructions section" for f in findings)
+
+    # Leading BOM on whole prompts file stays green (mirror #354 leading BOM green).
+    lead_bom = "\ufeff" + base
+    _write(tmp_path / "AGENT-PROMPTS.md", lead_bom)
+    assert vm.validate_prompt_usage(tmp_path) == []
+    assert vm.validate_scratchpad(tmp_path) == []
+    assert vm.run_all_validations(
+        REPO_ROOT, only=list(_ACTIONLINT_LINKCHECK_RESIDUAL_NAMES)
+    ) == []
+
+
+def test_prompts_flows_after354_e2fe_vtab_goose_parse_error_exact(
+    tmp_path: Path,
+) -> None:
+    """Tip-after-#354: vertical-tab YAML parse-error exact Finding on goose fences."""
+    _write_prompts_flows_after354_e2fe_docs(tmp_path)
+    doc = (tmp_path / "GOOSE-RECIPES.md").read_text(encoding="utf-8")
+    # Inject VT into first locked recipe name scalar via quoted form.
+    mangled = doc.replace(
+        "name: quantum_algorithm_design_workflow",
+        'name: "quantum_algorithm_desig\u000bn_workflow"',
+        1,
+    )
+    assert mangled != doc
+    _write(tmp_path / "GOOSE-RECIPES.md", mangled)
+    findings = vm.validate_goose_recipes(tmp_path)
+    assert findings
+    assert any(
+        "YAML parse error" in f.message and "#x000b" in f.message for f in findings
+    )
+    parse_hits = [
+        f for f in findings if "YAML parse error" in f.message and "#x000b" in f.message
+    ]
+    assert parse_hits
+    assert parse_hits[0].path.startswith("GOOSE-RECIPES.md#recipe-")
+    # Listform + scratchpad stay green when only goose fence YAML is illegal.
+    assert vm.validate_prompt_usage(tmp_path) == []
+    assert vm.validate_scratchpad(tmp_path) == []
+    assert vm.run_all_validations(
+        REPO_ROOT, only=list(_ACTIONLINT_LINKCHECK_RESIDUAL_NAMES)
+    ) == []
+
+
+def test_prompts_flows_after354_e2fe_exact_dual_prompt_and_shell(
+    tmp_path: Path,
+) -> None:
+    """Tip-after-#354: exact dual prompt+shell Findings (≠ #370 dual prompt+link)."""
+    _write_prompts_flows_after354_e2fe_docs(tmp_path)
+    prompt_base = _listform_prompt_locked_text()
+    ci_base = _actionlint_linkcheck_locked_ci_yaml()
+    rel = _ACTIONLINT_LINKCHECK_CI_REL
+
+    _write(
+        tmp_path / "AGENT-PROMPTS.md",
+        prompt_base.replace("## Usage Instructions", "ABSENT_AFTER354_E2FE_DUAL_USAGE"),
+    )
+    mangled_ci = ci_base.replace(
+        f"shell: {vm.CI_ACTIONLINT_SHELL}",
+        "shell: powershell",
+        1,
+    )
+    _write_ci_yaml(tmp_path, mangled_ci)
+
+    usage = vm.validate_prompt_usage(tmp_path)
+    shell = vm.validate_actionlint_shell(tmp_path)
+    assert any(f.message == "missing Usage Instructions section" for f in usage)
+    assert any("shell must be" in f.message for f in shell)
+    assert (
+        vm.Finding(
+            rel,
+            (
+                "actionlint step shell must be "
+                f"{vm.CI_ACTIONLINT_SHELL!r}, found 'powershell'"
+            ),
+        )
+        in shell
+    )
+    assert vm.validate_scratchpad(tmp_path) == []
+    assert vm.validate_goose_recipes(tmp_path) == []
+    # Live #354 actionlint seven stay green on REPO_ROOT.
+    assert vm.run_all_validations(
+        REPO_ROOT, only=list(_ACTIONLINT_LINKCHECK_RESIDUAL_NAMES)
+    ) == []
+    assert vm.validate_link_check(REPO_ROOT) == []
+    assert vm.validate_actionlint_shell(REPO_ROOT) == []
+
+
+def test_prompts_flows_after354_e2fe_exact_dual_prompt_and_scratchpad(
+    tmp_path: Path,
+) -> None:
+    """Tip-after-#354: exact dual prompt+scratchpad Findings; goose+CI live-green."""
+    _write_prompts_flows_after354_e2fe_docs(tmp_path)
+    prompt_base = _listform_prompt_locked_text()
+    scratch_base = _locked_scratchpad_text()
+
+    _write(
+        tmp_path / "AGENT-PROMPTS.md",
+        prompt_base.replace(
+            "## Usage Instructions",
+            "ABSENT_AFTER354_E2FE_DUAL_PROMPT_SCRATCH",
+        ),
+    )
+    _write(
+        tmp_path / "agentic_flows" / "scratchpad.txt",
+        scratch_base.replace("source of truth", "ABSENT_SOURCE_AFTER354_E2FE", 1),
+    )
+
+    usage = vm.validate_prompt_usage(tmp_path)
+    scratch = vm.validate_scratchpad(tmp_path)
+    assert any(f.message == "missing Usage Instructions section" for f in usage)
+    assert any(
+        f.message == "scratchpad missing required phrase: source of truth"
+        for f in scratch
+    )
+    assert vm.validate_goose_recipes(tmp_path) == []
+    assert vm.validate_recipe_titles(tmp_path) == []
+    assert vm.run_all_validations(
+        REPO_ROOT, only=list(_ACTIONLINT_LINKCHECK_RESIDUAL_NAMES)
+    ) == []
+    assert vm.validate_markdownlint(REPO_ROOT) == []
+
+
+def test_prompts_flows_after354_e2fe_isolation_vs_354_and_inverse(
+    tmp_path: Path,
+) -> None:
+    """Tip-after-#354: local prompts fail / inverse CI fail; live siblings green."""
+    _write_prompts_flows_after354_e2fe_docs(tmp_path)
+    mangled = _listform_prompt_locked_text().replace(
+        "## Usage Instructions",
+        "ABSENT_USAGE_AFTER354_E2FE_VS_ACTIONLINT",
+    )
+    _write(tmp_path / "AGENT-PROMPTS.md", mangled)
+    assert vm.validate_prompt_usage(tmp_path)
+    assert vm.validate_scratchpad(tmp_path) == []
+    assert vm.validate_goose_recipes(tmp_path) == []
+
+    for name in _ACTIONLINT_LINKCHECK_RESIDUAL_NAMES:
+        assert vm.run_all_validations(REPO_ROOT, only=[name]) == []
+    assert vm.validate_link_check(REPO_ROOT) == []
+    assert vm.validate_actionlint_shell(REPO_ROOT) == []
+    assert vm.validate_claude_packaging(REPO_ROOT) == []
+    assert vm.validate_markdownlint(REPO_ROOT) == []
+    assert vm.validate_hydration_phase4(REPO_ROOT) == []
+
+    # Inverse: mangle CI fail locally; prompts nineteen stay green on tip.
+    _write(tmp_path / "AGENT-PROMPTS.md", _listform_prompt_locked_text())
+    ci_base = _actionlint_linkcheck_locked_ci_yaml()
+    fail_false = ci_base.replace("          fail: true\n", "          fail: false\n")
+    _write_ci_yaml(tmp_path, fail_false)
+    assert vm.validate_link_check(tmp_path)
+    for name, fn in _prompts_flows_after354_e2fe_modules():
+        assert fn(REPO_ROOT) == [], name
+
+    for invented in _PROMPTS_FLOWS_AFTER354_E2FE_INVENT_NAMES[:6]:
+        assert invented not in vm.VALIDATORS
+
+
+def test_prompts_flows_after354_e2fe_run_only_quad_races(
+    tmp_path: Path,
+) -> None:
+    """Tip-after-#354: `--only` nineteen vs #354 invent refuse + quad-surface races."""
+    names = [n for n, _ in _prompts_flows_after354_e2fe_modules()]
+    assert len(names) == 19
+    assert vm.run_all_validations(REPO_ROOT, only=names) == []
+    assert vm.run_all_validations(
+        REPO_ROOT, only=list(_ACTIONLINT_LINKCHECK_RESIDUAL_NAMES)
+    ) == []
+    combined = names + list(_ACTIONLINT_LINKCHECK_RESIDUAL_NAMES)
+    assert vm.run_all_validations(REPO_ROOT, only=combined) == []
+    combined_figure = names + list(_HYDRATION_SECURITY_HANDOFF_AFTER322_FIGURE_NAMES)
+    assert vm.run_all_validations(REPO_ROOT, only=combined_figure) == []
+
+    for invented in _PROMPTS_FLOWS_AFTER354_E2FE_INVENT_NAMES:
+        with pytest.raises(ValueError, match="unknown validator"):
+            vm.run_all_validations(REPO_ROOT, only=[invented])
+        assert invented not in vm.VALIDATORS
+
+    proc = subprocess.run(
+        ["python3", "scripts/validate_manifests.py", "--list-validators"],
+        cwd=REPO_ROOT,
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    listed = {line.strip() for line in proc.stdout.splitlines() if line.strip()}
+    for name in names:
+        assert name in listed
+    for invented in _PROMPTS_FLOWS_AFTER354_E2FE_INVENT_NAMES:
+        assert invented not in listed
+
+    modules = _prompts_flows_after354_e2fe_modules()
+    live_fns = [fn for _n, fn in modules]
+    actionlint_fns = [
+        vm.VALIDATORS[name] for name in _ACTIONLINT_LINKCHECK_RESIDUAL_NAMES
+    ]
+
+    def _read_live() -> None:
+        for fn in live_fns:
+            assert fn(REPO_ROOT) == []
+        for fn in actionlint_fns:
+            assert fn(REPO_ROOT) == []
+
+    errors: list[BaseException] = []
+    with ThreadPoolExecutor(max_workers=16) as pool:
+        futures = [pool.submit(_read_live) for _ in range(24)]
+        for fut in as_completed(futures):
+            try:
+                fut.result()
+            except BaseException as exc:  # noqa: BLE001
+                errors.append(exc)
+    assert errors == []
+
+    prompt_locked = _listform_prompt_locked_text()
+    scratch_locked = _locked_scratchpad_text()
+    goose_locked = _goose_schema_residual_locked_doc()
+    _write(tmp_path / "AGENT-PROMPTS.md", prompt_locked)
+    _write(tmp_path / "agentic_flows" / "scratchpad.txt", scratch_locked)
+    _write(tmp_path / "GOOSE-RECIPES.md", goose_locked)
+    _copy_schemas(tmp_path)
+
+    stop = threading.Event()
+    race_errors: list[BaseException] = []
+    prompt_path = tmp_path / "AGENT-PROMPTS.md"
+    scratch_path = tmp_path / "agentic_flows" / "scratchpad.txt"
+    goose_path = tmp_path / "GOOSE-RECIPES.md"
+
+    def _writer() -> None:
+        flip = False
+        while not stop.is_set():
+            try:
+                if flip:
+                    prompt_path.write_text(prompt_locked, encoding="utf-8")
+                    scratch_path.write_text(scratch_locked, encoding="utf-8")
+                    goose_path.write_text(goose_locked, encoding="utf-8")
+                else:
+                    prompt_path.write_text("\n", encoding="utf-8")
+                    scratch_path.write_text("\n", encoding="utf-8")
+                    goose_path.write_text("\n", encoding="utf-8")
+                flip = not flip
+            except BaseException as exc:  # noqa: BLE001
+                race_errors.append(exc)
+                return
+
+    def _reader_tmp() -> None:
+        while not stop.is_set():
+            try:
+                for fn in live_fns:
+                    fn(tmp_path)
+            except BaseException as exc:  # noqa: BLE001
+                race_errors.append(exc)
+                return
+
+    def _reader_live_actionlint() -> None:
+        while not stop.is_set():
+            try:
+                for fn in actionlint_fns:
+                    fn(REPO_ROOT)
+            except BaseException as exc:  # noqa: BLE001
+                race_errors.append(exc)
+                return
+
+    threads = [
+        threading.Thread(target=_writer),
+        threading.Thread(target=_reader_tmp),
+        threading.Thread(target=_reader_tmp),
+        threading.Thread(target=_reader_live_actionlint),
+    ]
+    for t in threads:
+        t.start()
+    time.sleep(0.35)
+    stop.set()
+    for t in threads:
+        t.join(timeout=2.0)
+    assert race_errors == []
+
+    for name, fn in modules:
+        assert fn(REPO_ROOT) == [], name
+    assert vm.run_all_validations(
+        REPO_ROOT, only=list(_ACTIONLINT_LINKCHECK_RESIDUAL_NAMES)
+    ) == []
+    assert vm.INVENTORY_VERSION == 52
+    assert len(vm.VALIDATORS) == 196
+
+
+def test_prompts_flows_after354_e2fe_tip_live_green() -> None:
+    """Live prompts/flows + #354 actionlint + tip siblings stay green; invent refuse."""
+    modules = _prompts_flows_after354_e2fe_modules()
+    for name, fn in modules:
+        assert fn(REPO_ROOT) == [], name
+
+    assert vm.INVENTORY_VERSION == 52
+    assert vm.MIN_VALIDATOR_COUNT == 196
+    assert len(vm.VALIDATORS) == 196
+    only_names = [
+        *_LISTFORM_PROMPT_RESIDUAL_NAMES,
+        *_AGENTIC_FLOWS_RESIDUAL_NAMES,
+    ]
+    assert vm.run_all_validations(REPO_ROOT, only=only_names) == []
+    assert vm.run_all_validations(
+        REPO_ROOT, only=list(_ACTIONLINT_LINKCHECK_RESIDUAL_NAMES)
+    ) == []
+    assert vm.run_all_validations(
+        REPO_ROOT, only=list(_HYDRATION_SECURITY_HANDOFF_AFTER322_FIGURE_NAMES)
+    ) == []
+    assert vm.run_all_validations(
+        REPO_ROOT, only=list(_HYDRATION_SECURITY_HANDOFF_AFTER307_NAMES)
+    ) == []
+    assert vm.run_all_validations(
+        REPO_ROOT, only=list(_CLAUDE_ROUTING_AFTER289_NAMES)
+    ) == []
+    assert vm.run_all_validations(
+        REPO_ROOT, only=list(_CI_MARKDOWNLINT_RESIDUAL_NAMES)
+    ) == []
+    assert vm.run_all_validations(
+        REPO_ROOT, only=list(_GOOSE_SCHEMA_RESIDUAL_NAMES)
+    ) == []
+
+    for invented in _PROMPTS_FLOWS_AFTER354_E2FE_INVENT_NAMES:
+        assert invented not in vm.VALIDATORS
+        with pytest.raises(ValueError, match="unknown validator"):
+            vm.run_all_validations(REPO_ROOT, only=[invented])
+
