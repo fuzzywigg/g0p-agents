@@ -10,6 +10,32 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Actionlint/workflow + link-check residual **tests-only** HEAVY leftover
+  deepeners after tip through **#337** (hydration/security figure leftover
+  after #322) / **#322** / **#307** (actionlint/linkcheck leftover after
+  #300) / **#300** / **#289** / **#279** / **#270** / **#265** / **#264** /
+  **#258** / **#253** / **#248** (EXISTING seven CI fixtures — `ci` /
+  `ci-actions` / `link-check` / `actionlint-shell` / `ci-job-names` /
+  `ci-runs-on` / `ci-artifacts` — no invented product / inventory bump;
+  prefer actionlint+linkcheck niche): tip-after-#337 HEAVY deepeners beyond
+  merged #307 after300 suite and beyond open draft #354 LS/PS/obj/NEL/
+  ZWNBSP/Ogham/mid-BOM/VT slice — em/en/thin/hair + punctuation/math space
+  lookalikes, RLM/LRM bidi, form-feed (U+000C) YAML parse-error exact
+  (≠ #354 VT), fail string/int types with YAML `yes` alias green control,
+  shell list + args sequence types, lychee@v1 pin drop via ci-actions,
+  contents:write exact on actionlint job, ZWNJ/ZWJ step-id + NBSP runs-on,
+  exact dual args+fail Findings + empty/int job-name + coverage.xml drop,
+  `--only` seven vs #289 CI/markdownlint six + #337 figure twenty-two +
+  invent-key refuse (incl. after354), isolation vs #289 mdl + #337 figure,
+  quintuple concurrent CI races with siblings live-green, tip live-green.
+  Historic four only; inventory unchanged (v52 / 196). Distinct from merged
+  #337 (hydration/security figure), #322 (hydration/security), #307
+  (after300 leftover suite), #300 (Claude/routing), #289 (CI/markdownlint),
+  #248 (after236 leftover), open draft #354 (LS/PS/Ogham/NEL/VT after337
+  slice), and closed CONFLICTING
+  #343/#341/#332/#310/#302/#294/#280/#283/#274/#266/#256 (same leftover on
+  stale tips).
+
 - Hydration↔security + handoff residual **tests-only** FIGURE leftover
   deepeners after tip through **#322** (hydration/security leftover after
   #307) / **#307** (actionlint/linkcheck leftover after #300) / **#300** /
