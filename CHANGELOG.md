@@ -11,6 +11,36 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 
 - Hydration↔security + handoff residual **tests-only** leftover deepeners after
+  tip through **#369** (hydration/security leftover after #354) / **#354**
+  (actionlint/linkcheck leftover after #337) / **#337** (hydration/security
+  FIGURE leftover after #322) / **#322** / **#307** / **#300** / **#289** /
+  **#279** / **#270** / **#265** / **#264** / **#258** (EXISTING twenty-two
+  fixtures — `hydration-phase4` + ten `security` / `security-*` + seven
+  handoff-cluster `constitution-*` + four `scratchpad*` — no invented product /
+  inventory bump): tip-relaunch of closed CONFLICTING #363 after337_ci
+  unsaturated niches onto post-#369 tip — EN QUAD / EM QUAD / THREE-PER-EM /
+  FOUR-PER-EM / SIX-PER-EM lookalikes beyond #337 figure/NNBSP and #369
+  thin/hair/en/em, invisible separator / function application / invisible
+  times lookalikes, LRO / RLO bidi override lookalikes (≠ #369
+  LRE/RLE/LRI/RLI), form-feed lookalikes, third-phrase exact drop matrix
+  (≠ #337 middle; ≠ #369 second; ≠ #322 first/last), empty-file exact Findings
+  (≠ after307 missing-file), CI `--list-validators` / `--only` twenty-two +
+  Manifest Validate step-marker smoke (no workflow YAML edits), inventory
+  string-scalar + missing-key leftovers beyond #337 dict / #322 packaging,
+  isolation vs #369 after354 + #337 figure + #354 actionlint/linkcheck + #322
+  after307 + #307 actionlint + #300 Claude/routing + #289 CI/markdownlint,
+  `run_all --only` subset + concurrent four-doc races + tip live-green +
+  invent-key refuse. Historic four only; inventory unchanged (v52 / 196).
+  Distinct from merged #369 (obj/thin/RLM/bidi-isolate/second/triple/symlink
+  after #354), #354 (actionlint/linkcheck after337), #337
+  (figure/NNBSP/LS/PS/middle/dual/mid-BOM after #322), #322
+  (soft-hyphen/NEL/first+last after #307), closed CONFLICTING
+  #363/#356/#335/#334/#327/#321/#320/#314/#312/#309/#308/#304/#297/#295/#287/
+  #281/#277 (same leftover vs stale / pre-#369 tips), #307
+  (actionlint/linkcheck), #300 (Claude/routing), #289/#279 (CI/markdownlint),
+  #270 (goose-schema), and #258 (hydration/security+handoff).
+
+- Hydration↔security + handoff residual **tests-only** leftover deepeners after
   tip through **#354** (actionlint/linkcheck leftover after #337) / **#337**
   (hydration/security FIGURE leftover after #322) / **#322** / **#307** /
   **#300** / **#289** / **#279** / **#270** / **#265** / **#264** / **#258**
@@ -30,12 +60,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   subset + concurrent four-doc races + tip live-green + invent-key refuse.
   Historic four only; inventory unchanged (v52 / 196). Distinct from merged
   #354 (actionlint/linkcheck after337), #337 (figure/NNBSP/LS/PS/middle/dual/
-  mid-BOM after #322), #322 (soft-hyphen/NEL/first+last after #307), open #363
-  (after337_ci en/em-quad/invisible/third/empty), closed CONFLICTING
-  #356/#335/#334/#327/#321/#320/#314/#312/#309/#308/#304/#297/#295/#287/#281/
-  #277 (same leftover vs stale / pre-#354 tips), #307 (actionlint/linkcheck),
-  #300 (Claude/routing), #289/#279 (CI/markdownlint), #270 (goose-schema),
-  and #258 (hydration/security+handoff).
+  mid-BOM after #322), #322 (soft-hyphen/NEL/first+last after #307), closed
+  CONFLICTING #363 (after337_ci en/em-quad/invisible/third/empty), closed
+  CONFLICTING #356/#335/#334/#327/#321/#320/#314/#312/#309/#308/#304/#297/
+  #295/#287/#281/#277 (same leftover vs stale / pre-#354 tips), #307
+  (actionlint/linkcheck), #300 (Claude/routing), #289/#279 (CI/markdownlint),
+  #270 (goose-schema), and #258 (hydration/security+handoff).
 
 - Actionlint/workflow + link-check residual **tests-only** leftover deepeners
   after tip through **#337** (hydration/security figure leftover after #322) /
