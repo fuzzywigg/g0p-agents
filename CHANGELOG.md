@@ -10,6 +10,34 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- CI/markdownlint residual **tests-only** leftover deepeners after tip through
+  **#369** (hydration/security leftover after #354) / **#354**
+  (actionlint/linkcheck leftover after #337) / **#337** / **#322** / **#307** /
+  **#300** / **#289** (CI/markdownlint leftover after #279) / **#279** /
+  **#270** / **#265** / **#264** / **#258** / **#253** / **#248** (EXISTING
+  six fixtures — `markdownlint` / `ci-setup-python` / `ci-ruff` /
+  `ci-pip-install` / `ci-pip-check` / `ci-pytest` — no invented product /
+  workflow / inventory bump): tip-after-#369 HEAVY deepeners rebasing closed
+  CONFLICTING **#368** / **#355** / **#364** / **#339** / **#323** / **#318**
+  unsaturated edges onto post-#369 tip — RLM / LRM / ZWJ / ZWNJ lookalikes
+  (mirror #369 hyd theme onto CI/md; ≠ #368 PS/obj/ogham/em/hair), LRE / RLE /
+  LRI / RLI + FSI / PDI bidi isolate lookalikes (≠ #368 space/BOM set),
+  symlink follow green + dangling + symlink-to-directory missing-file equality,
+  second pytest marker exact drop (≠ #279 last; ≠ #368 first/mid/all), schema
+  MD025 / MD033 const mangle (≠ #368 line_length/siblings_only), dual
+  MD024.siblings_only + pip-install exact Findings, nested MD013.line_length +
+  MD024.siblings_only key-drop exact, inventory ci_pip_check +
+  markdownlint_default type leftovers, isolation vs #369 hyd/sec after354 +
+  #354 actionlint + #337 FIGURE + #289 CI/markdownlint + #300 Claude + #270
+  goose, `--only` six vs #369 twenty-two + invent refuse, quad-surface
+  concurrent races + tip live-green. Historic four only; inventory unchanged
+  (v52 / 196). Distinct from merged #369 (hydration/security after354), #354
+  (actionlint/linkcheck), #337 (hydration/security FIGURE), #289/#279
+  CI/markdownlint, closed CONFLICTING
+  #368/#355/#364/#339/#323/#318/#316/#306/#305/#288/#286/#276/#275/#267/#257/
+  #250/#240/#237/#233/#220/#214/#210/#204/#201/#196 (same leftover vs stale /
+  pre-#369 tips), and historic v12/v13 setup-python/ruff/pip/pytest edges.
+
 - Hydration↔security + handoff residual **tests-only** leftover deepeners after
   tip through **#354** (actionlint/linkcheck leftover after #337) / **#337**
   (hydration/security FIGURE leftover after #322) / **#322** / **#307** /
