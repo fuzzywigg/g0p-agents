@@ -47470,7 +47470,7 @@ def test_hydration_security_handoff_after354_run_only_and_concurrent_live_green(
 
 # ---------------------------------------------------------------------------
 # TOKENMAXX HEAVY leftovers after tip #369 (hydration/security leftover after
-# #354) — tip-relaunch of closed CONFLICTING #363 after369 unsaturated
+# #354) — tip-relaunch of closed CONFLICTING #363 after337_ci unsaturated
 # niches onto post-#369 tip beyond merged #369 after354 obj/thin/RLM/bidi/
 # second/triple/symlink suite + #337 figure + #354 actionlint.
 # EXISTING twenty-two fixtures only; inventory unchanged (v52 / 196).
