@@ -47286,7 +47286,10 @@ def test_ci_markdownlint_after337_isolation_vs_337_figure_hydration(
         "test_hydration_security_handoff_after322_figure_run_only_and_concurrent_live_green"
         in tip_tests
     )
-    assert "test_hydration_security_handoff_after322_figure_middle_phrase_exact_drop_matrix" in tip_tests
+    assert (
+        "test_hydration_security_handoff_after322_figure_middle_phrase_exact_drop_matrix"
+        in tip_tests
+    )
     assert "test_ci_markdownlint_after279_leftover_live_green" in tip_tests
 
     for invented in (
@@ -47322,14 +47325,20 @@ def test_ci_markdownlint_after337_paragraph_sep_mongolian_ci_lookalikes(
     key_findings = vm.validate_markdownlint(tmp_path)
     assert key_findings
 
-    # CI pytest marker with paragraph separator must miss substring lock
+    # CI pytest marker with Mongolian vowel separator must miss substring lock
+    # (U+2029 in the workflow YAML would break parsing; keep a parseable mapping).
     base = _actionlint_linkcheck_locked_ci_yaml()
     marker = vm.CI_PYTEST_REQUIRED_MARKERS[0]
-    pytest_ps = base.replace(marker, marker.replace("-", "\u2029", 1))
-    _write_ci_yaml(tmp_path, pytest_ps)
-    findings = vm.validate_ci_pytest(tmp_path)
-    assert findings
-    assert any(marker in f.message for f in findings)
+    pytest_mongolian = base.replace(
+        marker, marker.replace("-", "\u180e", 1)
+    )
+    _write_ci_yaml(tmp_path, pytest_mongolian)
+    assert vm.validate_ci_pytest(tmp_path) == [
+        vm.Finding(
+            ".github/workflows/ci.yml",
+            f"manifest-validate pytest step missing marker {marker!r}",
+        )
+    ]
     assert vm.validate_ci_ruff(tmp_path) == []
     assert vm.validate_ci_pip_install(tmp_path) == []
     assert vm.validate_hydration_phase4(REPO_ROOT) == []
