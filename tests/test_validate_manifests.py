@@ -43467,36 +43467,57 @@ def test_actionlint_linkcheck_after300_isolation_vs_300_claude_routing(
 def test_actionlint_linkcheck_after300_ls_ps_obj_replacement_lookalikes(
     tmp_path: Path,
 ) -> None:
-    """Tip-after-#300: LS/PS/object-replacement lookalikes (mirror #300 Claude theme)."""
-    base = _actionlint_linkcheck_locked_ci_yaml()
+    """Tip-after-#300: LS/PS/object-replacement lookalikes (mirror #300 Claude theme).
 
+    YAML plain scalars treat U+2028/U+2029 as line breaks, so use double-quoted
+    scalars to keep the lookalike inside the parsed string value.
+    """
+    base = _actionlint_linkcheck_locked_ci_yaml()
+    rel = _ACTIONLINT_LINKCHECK_CI_REL
+
+    # Line Separator (U+2028) mid shell token via quoted scalar.
     ls_shell = base.replace(
         f"shell: {vm.CI_ACTIONLINT_SHELL}",
-        "shell: bash\u2028",
+        'shell: "ba\u2028sh"',
         1,
     )
     _write_ci_yaml(tmp_path, ls_shell)
+    ls_shell_value = "ba\u2028sh"
     findings = vm.validate_actionlint_shell(tmp_path)
-    assert findings, "LS lookalike shell must fail actionlint-shell"
+    assert (
+        vm.Finding(
+            rel,
+            (
+                "actionlint step shell must be "
+                f"{vm.CI_ACTIONLINT_SHELL!r}, found {ls_shell_value!r}"
+            ),
+        )
+        in findings
+    )
     assert vm.validate_link_check(tmp_path) == []
 
+    # Paragraph Separator (U+2029) mid lychee args via quoted scalar.
     ps_args = base.replace(
-        vm.CI_LINK_CHECK_ARGS,
-        vm.CI_LINK_CHECK_ARGS.replace("--verbose", "--ver\u2029bose"),
+        f"args: {vm.CI_LINK_CHECK_ARGS}",
+        'args: "--ver\u2029bose --no-progress \'**/*.md\'"',
     )
     _write_ci_yaml(tmp_path, ps_args)
     findings = vm.validate_link_check(tmp_path)
     assert any("link-check args must be" in f.message for f in findings)
+    assert vm.Finding(rel, "link-check lychee args lock not found") in findings
     assert vm.validate_actionlint_shell(tmp_path) == []
 
+    # Object Replacement Character (U+FFFC) mid actionlint step id.
     obj_id = base.replace(
         f"id: {vm.CI_ACTIONLINT_STEP_ID}",
-        f"id: {vm.CI_ACTIONLINT_STEP_ID}\ufffc",
+        'id: "get_action\ufffclint"',
         1,
     )
     _write_ci_yaml(tmp_path, obj_id)
     findings = vm.validate_actionlint_shell(tmp_path)
-    assert findings, "object-replacement step id must fail actionlint-shell"
+    assert any(
+        "get_actionlint" in f.message or "\ufffc" in f.message for f in findings
+    )
     assert vm.validate_link_check(tmp_path) == []
 
     _write_ci_yaml(tmp_path, base)
