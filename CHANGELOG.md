@@ -10,6 +10,45 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Goose-recipe schema leftover **tests-only** deepeners after tip through **#369**
+  (hydration/security leftover after #354) / **#354** (actionlint/linkcheck
+  leftover after #337) / **#337** (hydration/security figure leftover after
+  #322) / **#322** / **#307** / **#300** / **#289** / **#279** / **#270**
+  (goose-schema leftover after #265) / **#265** / **#264** / **#258** /
+  **#253** / **#248** / **#242** / **#236** / **#229** / **#224** / **#219** /
+  **#209** / **#208** / **#202** / **#200** / **#195** / **#188** / **#187** /
+  **#186** / **#184** / **#172** (EXISTING three fixtures — `goose` /
+  `recipe-agents` / `recipe-titles` plus `schemas/goose-recipe.schema.json` +
+  `GOOSE-RECIPES.md` — tip-relaunch of closed CONFLICTING **#373** / **#374** /
+  **#367** / **#357** / **#352** / **#351** / **#348** / **#345** / **#340** /
+  **#336** / **#333** / **#329** / **#325** / **#317** / **#313** / **#299** /
+  **#292** / **#285** / **#273** plus evening **#367**/**#374** Ogham/mid-BOM
+  unique rejects; no invented product / inventory bump): unsaturated reject
+  leftovers beyond #270 plus tip-after-#289/#300/#307/#337/#354/#369 lookalikes
+  (ZWSP/NBSP/tab/CRLF/soft-hyphen/fullwidth/NEL/figure/NNBSP/Mongolian/word-
+  joiner/ideographic/BOM/vtab + LS/PS/object-replacement/ZWNBSP/RLM/LRM/ZWJ +
+  bidi embedding/override/isolate + EM/EN/thin/hair/math-space + invisible
+  operators + Ogham/mid-BOM/em-quad/en-quad/thin/hair/MMSP/punctuation-space/
+  per-em + Arabic/fullwidth digit), invent-key KeyError / `run_all --only`
+  ValueError (+ #369 hydration/security / #354 actionlint / #337 hydration
+  figure / #322 hydration / #307 actionlint / #300 Claude / #289 CI invent
+  refuse), ACCEPT leftovers, missing-doc / File-inventory / fence / phrase /
+  run leftovers, on-disk invent / historic / parse leftovers, titles/agents/
+  inventory leftovers, CI `--list-validators` / `--only` goose-trio + Manifest
+  Validate step-marker smoke, concurrent races, tip isolation against #369
+  hydration/security and #354 actionlint/linkcheck and #337 hydration figure
+  and #322/#307/#300/#289 siblings, simultaneous goose+titles+agents triple
+  exact drops, titles vs agents exact Finding isolation, `--only` goose trio
+  vs #369 hydration residual and invent-key refuse, GOOSE mangle vs live CI
+  isolation, quad-surface concurrent races. Historic four only; Packaging
+  inventory unchanged (v52 / 196 validators). Distinct from merged #369
+  (hydration/security leftover), merged #354 (actionlint/linkcheck leftover),
+  merged #337 (hydration/security figure leftover), merged #322/#307/#300/
+  #289/#279, merged #270 (prior goose-schema leftover), closed CONFLICTING
+  #373/#374/#367/#357/#352/#351/#348/#345/#340/#336/#333/#329/#325/#317/#313/
+  #299/#292/#285/#273 (same leftover on stale / pre-#369 tips), and not a v53
+  invent sibling or Dependabot bump.
+
 - Hydration↔security + handoff residual **tests-only** leftover deepeners after
   tip through **#354** (actionlint/linkcheck leftover after #337) / **#337**
   (hydration/security FIGURE leftover after #322) / **#322** / **#307** /
