@@ -47473,18 +47473,15 @@ def test_hydration_security_handoff_after354_run_only_and_concurrent_live_green(
 # through #369 (hydration/security leftover after #354) / #354 (actionlint/
 # linkcheck leftover after #337) / #337 / #322 / #307 / #300 / #289 / #279 /
 # #270 / #265 / #264 / #258 / #253 / #248. Distinct unsaturated residual
-# edges beyond merged #354 after337 LS/PS/obj/NEL/ZWNBSP/Ogham/mid-BOM/VT
-# suite AND beyond merged #307 after300 suite AND beyond closed CONFLICTING
-# #372/#366 unsaturated claim on pre-#369 tips — em/en/thin/hair/punct/mmsp
-# spaces, RLM/LRM bidi, form-feed parse-error (≠ #354 VT), fail string/int
-# + YAML yes-alias green, shell list + args list types, lychee@v1 pin,
-# contents:write exact, ZWNJ/ZWJ id, NBSP runs-on, LRE/RLE/LRI/RLI + braille
-# blank lookalikes (mirror #369 hyd onto CI), dual args+fail Findings,
-# isolation vs #369 hyd/sec + #289 mdl + #337 figure, quintuple races,
-# invent refuse incl. after372/after369/after366/after354.
+# edges beyond merged #354 after337 + #307 after300 + closed #372/#366 +
+# closed #377 RED + open #381 — em/en/thin/hair/punct/mmsp, RLM/LRM, form-
+# feed, fail string/int + yes-alias, shell/args list types, lychee@v1,
+# contents:write, ZWNJ/ZWJ id, NBSP runs-on, LRE/RLI + braille, dual Findings,
+# port open #381 em/en-quad/FSI/LRO/invisible/symlink/triple/float, plus
+# UNIQUE beyond #381: four/six-per-em + ALM/PDF, empty/null shell types,
+# isolation vs #369 hyd + invent refuse incl. after381/after377.
 # EXISTING seven CI fixtures only (v52 / 196). Prefer actionlint +
-# linkcheck niche only. Tip-relaunch of CONFLICTING #372/#366/#343/#341/
-# #332/#310 onto post-#369 tip with unique HEAVY edges vs merged #354 + #369.
+# linkcheck niche only. Tip-relaunch onto post-#369 tip beyond open #381.
 # ---------------------------------------------------------------------------
 
 
@@ -47903,6 +47900,14 @@ def test_actionlint_linkcheck_after369_run_only_vs_mdl_figure_and_invent_refuse(
         "actionlint-linkcheck-after369-formfeed-timeouts",
         "actionlint-linkcheck-after369-bidi-timeouts",
         "actionlint-linkcheck-after369-braille-timeouts",
+        "actionlint-linkcheck-after369-emquad-timeouts",
+        "actionlint-linkcheck-after369-lro-timeouts",
+        "actionlint-linkcheck-after369-symlink-timeouts",
+        "actionlint-linkcheck-after369-invisible-timeouts",
+        "actionlint-linkcheck-after369-fourperem-timeouts",
+        "actionlint-linkcheck-after369-empty-shell-timeouts",
+        "actionlint-linkcheck-after381-timeouts",
+        "actionlint-linkcheck-after377-timeouts",
         "actionlint-linkcheck-after372-timeouts",
         "actionlint-linkcheck-after369-timeouts",
         "actionlint-linkcheck-after366-timeouts",
@@ -47914,10 +47919,18 @@ def test_actionlint_linkcheck_after369_run_only_vs_mdl_figure_and_invent_refuse(
         "actionlint-linkcheck-after322-timeouts",
         "actionlint-linkcheck-after307-timeouts",
         "em-space-actionlint-timeouts",
+        "em-quad-actionlint-timeouts",
+        "four-per-em-actionlint-timeouts",
         "form-feed-linkcheck-timeouts",
         "bidi-actionlint-timeouts",
         "braille-blank-actionlint-timeouts",
         "lre-linkcheck-timeouts",
+        "lro-actionlint-timeouts",
+        "fsi-linkcheck-timeouts",
+        "invisible-op-actionlint-timeouts",
+        "symlink-ci-actionlint-timeouts",
+        "alm-actionlint-timeouts",
+        "empty-shell-actionlint-timeouts",
         "hydration-security-handoff-after369",
     )
     for key in invent_keys:
@@ -48075,6 +48088,335 @@ def test_actionlint_linkcheck_after369_quintuple_race_with_siblings_live_green(
     ) == []
 
 
+def test_actionlint_linkcheck_after369_em_en_quad_ideographic_lookalikes(
+    tmp_path: Path,
+) -> None:
+    """Tip-after-#369: em/en-quad + three-per-em + ideographic (port open #381).
+
+    Distinct from tip em/en SPACE (U+2003/U+2002) and from hyd #363 en/em-quad.
+    """
+    base = _actionlint_linkcheck_locked_ci_yaml()
+    rel = _ACTIONLINT_LINKCHECK_CI_REL
+
+    for label, ch in (
+        ("em-quad", "\u2001"),
+        ("en-quad", "\u2000"),
+        ("three-per-em", "\u2004"),
+        ("ideographic", "\u3000"),
+    ):
+        text = base.replace(
+            f"shell: {vm.CI_ACTIONLINT_SHELL}",
+            f'shell: "ba{ch}sh"',
+            1,
+        )
+        _write_ci_yaml(tmp_path, text)
+        found = f"ba{ch}sh"
+        assert (
+            vm.Finding(
+                rel,
+                (
+                    "actionlint step shell must be "
+                    f"{vm.CI_ACTIONLINT_SHELL!r}, found {found!r}"
+                ),
+            )
+            in vm.validate_actionlint_shell(tmp_path)
+        ), label
+        assert vm.validate_link_check(tmp_path) == [], label
+
+    emq_args = base.replace("--verbose", "--ver\u2001bose")
+    _write_ci_yaml(tmp_path, emq_args)
+    assert any(
+        "link-check args must be" in f.message for f in vm.validate_link_check(tmp_path)
+    )
+    assert vm.validate_actionlint_shell(tmp_path) == []
+
+    for name, fn, _phrases, _key in _hydration_security_handoff_after354_modules():
+        assert fn(REPO_ROOT) == [], name
+
+    _write_ci_yaml(tmp_path, base)
+    assert vm.validate_actionlint_shell(tmp_path) == []
+    assert vm.validate_link_check(tmp_path) == []
+
+
+def test_actionlint_linkcheck_after369_fsi_pdi_lro_rlo_and_invisible_ops(
+    tmp_path: Path,
+) -> None:
+    """Tip-after-#369: FSI/PDI/LRO/RLO + invisible operators (port open #381).
+
+    ≠ tip LRE/RLE/LRI/RLI; ≠ hyd #363 LRO/RLO; invisible ops ≠ braille blank.
+    """
+    base = _actionlint_linkcheck_locked_ci_yaml()
+    rel = _ACTIONLINT_LINKCHECK_CI_REL
+
+    for label, ch in (
+        ("fsi", "\u2068"),  # first strong isolate
+        ("pdi", "\u2069"),  # pop directional isolate
+        ("lro", "\u202d"),  # left-to-right override
+        ("rlo", "\u202e"),  # right-to-left override
+        ("inv-func", "\u2061"),  # function application
+        ("inv-times", "\u2062"),  # invisible times
+        ("inv-sep", "\u2063"),  # invisible separator
+        ("inv-plus", "\u2064"),  # invisible plus
+    ):
+        text = base.replace(
+            f"shell: {vm.CI_ACTIONLINT_SHELL}",
+            f'shell: "ba{ch}sh"',
+            1,
+        )
+        _write_ci_yaml(tmp_path, text)
+        found = f"ba{ch}sh"
+        assert (
+            vm.Finding(
+                rel,
+                (
+                    "actionlint step shell must be "
+                    f"{vm.CI_ACTIONLINT_SHELL!r}, found {found!r}"
+                ),
+            )
+            in vm.validate_actionlint_shell(tmp_path)
+        ), label
+        assert vm.validate_link_check(tmp_path) == [], label
+
+    lro_args = base.replace("--verbose", "--ver\u202dbose")
+    _write_ci_yaml(tmp_path, lro_args)
+    assert any(
+        "link-check args must be" in f.message for f in vm.validate_link_check(tmp_path)
+    )
+    assert vm.validate_actionlint_shell(tmp_path) == []
+
+    for name, fn, _phrases, _key in _hydration_security_handoff_after354_modules():
+        assert fn(REPO_ROOT) == [], name
+
+    _write_ci_yaml(tmp_path, base)
+    assert vm.validate_actionlint_shell(tmp_path) == []
+    assert vm.validate_link_check(tmp_path) == []
+
+
+def test_actionlint_linkcheck_after369_symlink_follow_dangling_dir(
+    tmp_path: Path,
+) -> None:
+    """Tip-after-#369: ci.yml symlink follow + dangling + dir (port open #381).
+
+    Mirror #369 hyd symlink theme onto CI surface; equality with missing.
+    """
+    rel = _ACTIONLINT_LINKCHECK_CI_REL
+    base = _actionlint_linkcheck_locked_ci_yaml()
+    missing = [vm.Finding(rel, "CI workflow missing")]
+
+    # Follow green: symlink to real locked YAML.
+    real = tmp_path / ".github" / "workflows" / "real-ci.yml"
+    real.parent.mkdir(parents=True, exist_ok=True)
+    real.write_text(base, encoding="utf-8")
+    link = tmp_path / rel
+    if link.exists() or link.is_symlink():
+        link.unlink()
+    link.symlink_to(real)
+    assert link.is_symlink()
+    assert link.is_file()
+    for name, fn in _actionlint_linkcheck_residual_modules():
+        assert fn(tmp_path) == [], name
+
+    # Dangling symlink → same exact Finding as missing across seven fixtures.
+    link.unlink()
+    link.symlink_to(tmp_path / ".github" / "workflows" / "absent-ci.yml")
+    assert link.is_symlink()
+    assert not link.is_file()
+    for name, fn in _actionlint_linkcheck_residual_modules():
+        assert fn(tmp_path) == missing, name
+
+    # Symlink-to-directory → same missing equality.
+    link.unlink()
+    ci_dir = tmp_path / ".github" / "workflows" / "ci-as-dir"
+    ci_dir.mkdir()
+    link.symlink_to(ci_dir)
+    assert link.is_dir()
+    assert not link.is_file()
+    for name, fn in _actionlint_linkcheck_residual_modules():
+        assert fn(tmp_path) == missing, name
+
+    # Restore plain file; #369 hyd stays live-green.
+    link.unlink()
+    _write_ci_yaml(tmp_path, base)
+    for name, fn in _actionlint_linkcheck_residual_modules():
+        assert fn(tmp_path) == [], name
+    for name, fn, _phrases, _key in _hydration_security_handoff_after354_modules():
+        assert fn(REPO_ROOT) == [], name
+
+
+def test_actionlint_linkcheck_after369_triple_surface_and_fail_float(
+    tmp_path: Path,
+) -> None:
+    """Tip-after-#369: triple args+fail+shell + fail float 1.0 (port open #381).
+
+    Dual args+fail already in tip-relaunch; float ≠ string/int/#372 yes-alias.
+    """
+    base = _actionlint_linkcheck_locked_ci_yaml()
+    rel = _ACTIONLINT_LINKCHECK_CI_REL
+
+    triple = (
+        base.replace("--verbose", "--TRIPLE369")
+        .replace("          fail: true\n", "          fail: false\n")
+        .replace(f"shell: {vm.CI_ACTIONLINT_SHELL}", "shell: pwsh", 1)
+    )
+    _write_ci_yaml(tmp_path, triple)
+    link_findings = vm.validate_link_check(tmp_path)
+    shell_findings = vm.validate_actionlint_shell(tmp_path)
+    assert (
+        vm.Finding(
+            rel,
+            (
+                "link-check args must be "
+                f"{vm.CI_LINK_CHECK_ARGS!r}, found "
+                "\"--TRIPLE369 --no-progress '**/*.md'\""
+            ),
+        )
+        in link_findings
+    )
+    assert vm.Finding(rel, "link-check fail must be True, found False") in link_findings
+    assert (
+        vm.Finding(
+            rel,
+            "actionlint step shell must be 'bash', found 'pwsh'",
+        )
+        in shell_findings
+    )
+    assert vm.validate_ci_job_names(tmp_path) == []
+
+    fail_float = base.replace("          fail: true\n", "          fail: 1.0\n")
+    _write_ci_yaml(tmp_path, fail_float)
+    findings = vm.validate_link_check(tmp_path)
+    assert vm.Finding(rel, "link-check fail must be True, found 1.0") in findings
+    assert vm.Finding(rel, "link-check lychee fail lock not found") in findings
+    assert vm.validate_actionlint_shell(tmp_path) == []
+
+    for name, fn, _phrases, _key in _hydration_security_handoff_after354_modules():
+        assert fn(REPO_ROOT) == [], name
+
+    _write_ci_yaml(tmp_path, base)
+    assert vm.validate_link_check(tmp_path) == []
+    assert vm.validate_actionlint_shell(tmp_path) == []
+
+def test_actionlint_linkcheck_after369_four_six_per_em_and_alm_pdf_lookalikes(
+    tmp_path: Path,
+) -> None:
+    """Tip-after-#369 beyond open #381: four/six-per-em + ALM/PDF lookalikes.
+
+    ≠ #381 three-per-em (U+2004); ≠ #381 FSI/PDI/LRO/RLO; ALM/PDF ≠ LRE/RLI.
+    """
+    base = _actionlint_linkcheck_locked_ci_yaml()
+    rel = _ACTIONLINT_LINKCHECK_CI_REL
+
+    for label, ch in (
+        ("four-per-em", "\u2005"),
+        ("six-per-em", "\u2006"),
+        ("alm", "\u061c"),  # Arabic letter mark
+        ("pdf", "\u202c"),  # pop directional formatting
+    ):
+        text_ci = base.replace(
+            f"shell: {vm.CI_ACTIONLINT_SHELL}",
+            f'shell: "ba{ch}sh"',
+            1,
+        )
+        _write_ci_yaml(tmp_path, text_ci)
+        found = f"ba{ch}sh"
+        assert (
+            vm.Finding(
+                rel,
+                (
+                    "actionlint step shell must be "
+                    f"{vm.CI_ACTIONLINT_SHELL!r}, found {found!r}"
+                ),
+            )
+            in vm.validate_actionlint_shell(tmp_path)
+        ), label
+        assert vm.validate_link_check(tmp_path) == [], label
+
+    six_args = base.replace("--verbose", "--ver\u2006bose")
+    _write_ci_yaml(tmp_path, six_args)
+    assert any(
+        "link-check args must be" in f.message for f in vm.validate_link_check(tmp_path)
+    )
+    assert vm.validate_actionlint_shell(tmp_path) == []
+
+    for name, fn, _phrases, _key in _hydration_security_handoff_after354_modules():
+        assert fn(REPO_ROOT) == [], name
+
+    _write_ci_yaml(tmp_path, base)
+    assert vm.validate_actionlint_shell(tmp_path) == []
+    assert vm.validate_link_check(tmp_path) == []
+
+
+def test_actionlint_linkcheck_after369_empty_shell_and_null_shell_types(
+    tmp_path: Path,
+) -> None:
+    """Tip-after-#369 beyond open #381: empty-string shell + null shell types.
+
+    Empty '' exact Finding; YAML null omits shell on get_actionlint step while
+    a later step keeps bash green-path asymmetry (≠ list [bash] / float fail).
+    """
+    base = _actionlint_linkcheck_locked_ci_yaml()
+    rel = _ACTIONLINT_LINKCHECK_CI_REL
+
+    empty_shell = base.replace(
+        f"shell: {vm.CI_ACTIONLINT_SHELL}",
+        'shell: ""',
+        1,
+    )
+    _write_ci_yaml(tmp_path, empty_shell)
+    assert (
+        vm.Finding(
+            rel,
+            "actionlint step shell must be 'bash', found ''",
+        )
+        in vm.validate_actionlint_shell(tmp_path)
+    )
+    assert vm.validate_link_check(tmp_path) == []
+
+    # Null shell on get_actionlint step only — second run step still bash.
+    # Replace only the shell immediately after the get_actionlint id block.
+    lines = base.splitlines(keepends=True)
+    out: list[str] = []
+    nullified = False
+    for i, line in enumerate(lines):
+        if (
+            not nullified
+            and line.strip() == f"shell: {vm.CI_ACTIONLINT_SHELL}"
+            and i > 0
+            and f"id: {vm.CI_ACTIONLINT_STEP_ID}" in lines[i - 2]
+        ):
+            out.append("        shell: null\n")
+            nullified = True
+        else:
+            out.append(line)
+    assert nullified
+    null_shell = "".join(out)
+    _write_ci_yaml(tmp_path, null_shell)
+    # get_actionlint shell is null (skipped); later bash step keeps found_shell True.
+    assert vm.validate_actionlint_shell(tmp_path) == []
+    assert vm.validate_link_check(tmp_path) == []
+
+    # Both shells null → missing bash shell Finding.
+    both_null = base.replace(
+        f"shell: {vm.CI_ACTIONLINT_SHELL}",
+        "shell: null",
+    )
+    _write_ci_yaml(tmp_path, both_null)
+    assert vm.validate_actionlint_shell(tmp_path) == [
+        vm.Finding(
+            rel,
+            "actionlint job must set shell: 'bash' on a step",
+        )
+    ]
+
+    for name, fn, _phrases, _key in _hydration_security_handoff_after354_modules():
+        assert fn(REPO_ROOT) == [], name
+
+    _write_ci_yaml(tmp_path, base)
+    assert vm.validate_actionlint_shell(tmp_path) == []
+    assert vm.validate_link_check(tmp_path) == []
+
+
+
 def test_actionlint_linkcheck_after369_heavy_leftover_live_green() -> None:
     """Tip-after-#369 HEAVY: seven CI fixtures + inventory honesty stay live-green."""
     for name, fn in _actionlint_linkcheck_residual_modules():
@@ -48094,6 +48436,13 @@ def test_actionlint_linkcheck_after369_heavy_leftover_live_green() -> None:
     assert vm.INVENTORY_VERSION == 52
     assert vm.MIN_VALIDATOR_COUNT == 196
     assert "actionlint-linkcheck-after369-em-timeouts" not in vm.VALIDATORS
+    assert "actionlint-linkcheck-after369-emquad-timeouts" not in vm.VALIDATORS
+    assert "actionlint-linkcheck-after369-lro-timeouts" not in vm.VALIDATORS
+    assert "actionlint-linkcheck-after369-symlink-timeouts" not in vm.VALIDATORS
+    assert "actionlint-linkcheck-after369-fourperem-timeouts" not in vm.VALIDATORS
+    assert "actionlint-linkcheck-after369-empty-shell-timeouts" not in vm.VALIDATORS
+    assert "actionlint-linkcheck-after381-timeouts" not in vm.VALIDATORS
+    assert "actionlint-linkcheck-after377-timeouts" not in vm.VALIDATORS
     assert "actionlint-linkcheck-after372-timeouts" not in vm.VALIDATORS
     assert "actionlint-linkcheck-after369-timeouts" not in vm.VALIDATORS
     assert "actionlint-linkcheck-after366-timeouts" not in vm.VALIDATORS
@@ -48102,8 +48451,15 @@ def test_actionlint_linkcheck_after369_heavy_leftover_live_green() -> None:
     assert "actionlint-linkcheck-after343-timeouts" not in vm.VALIDATORS
     assert "actionlint-linkcheck-after341-timeouts" not in vm.VALIDATORS
     assert "em-space-actionlint-timeouts" not in vm.VALIDATORS
+    assert "em-quad-actionlint-timeouts" not in vm.VALIDATORS
+    assert "four-per-em-actionlint-timeouts" not in vm.VALIDATORS
     assert "form-feed-linkcheck-timeouts" not in vm.VALIDATORS
     assert "bidi-actionlint-timeouts" not in vm.VALIDATORS
     assert "braille-blank-actionlint-timeouts" not in vm.VALIDATORS
     assert "lre-linkcheck-timeouts" not in vm.VALIDATORS
+    assert "lro-actionlint-timeouts" not in vm.VALIDATORS
+    assert "invisible-op-actionlint-timeouts" not in vm.VALIDATORS
+    assert "symlink-ci-actionlint-timeouts" not in vm.VALIDATORS
+    assert "alm-actionlint-timeouts" not in vm.VALIDATORS
+    assert "empty-shell-actionlint-timeouts" not in vm.VALIDATORS
     assert "hydration-security-handoff-after369" not in vm.VALIDATORS
