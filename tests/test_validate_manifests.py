@@ -49941,12 +49941,16 @@ def test_claude_routing_after369_symlink_dir_and_quad_surface_exact(
     claude_dir.mkdir()
     (claude_dir / "nested.txt").write_text("nope\n", encoding="utf-8")
     (dir_root / "CLAUDE.md").symlink_to(claude_dir)
-    missing = vm.Finding("CLAUDE.md", "CLAUDE.md missing")
-    # Some validators say "missing" with section context; accept any CLAUDE.md finding.
+    # Symlink-to-directory is not a readable file → CLAUDE.md missing Findings.
     for name, fn, _phrases, _key in _claude_routing_after369_modules():
         findings = fn(dir_root)
         assert findings, name
         assert all(f.path == "CLAUDE.md" for f in findings), (name, findings)
+        assert any(
+            f.message == "CLAUDE.md missing"
+            or "missing" in f.message.lower()
+            for f in findings
+        ), (name, findings)
 
     # Quad-surface simultaneous exact drops on packaging + routing + key-files + negative.
     linked = tmp_path / "quad_root"
@@ -50014,15 +50018,13 @@ def test_claude_routing_after369_triple_invented_agent_exact(
             ]
         )
     )
-    # Packaging invent-scan reports sorted join.
+    # Packaging invent-scan reports sorted join; routing/negative do not invent-scan.
     pkg = vm.validate_claude_packaging(tmp_path)
     assert any(
         f.message == f"invented or unknown agent token(s): {expected}" for f in pkg
     ), pkg[:5]
-    routing = vm.validate_routing_surfaces(tmp_path)
-    assert any(
-        f.message == f"invented or unknown agent token(s): {expected}" for f in routing
-    ), routing[:5]
+    assert vm.validate_routing_surfaces(tmp_path) == []
+    assert vm.validate_negative_constraints(tmp_path) == []
     # Hyd/sec invent-scan is SECURITY.md-scoped — tip SECURITY stays green.
     assert vm.validate_security_packaging(REPO_ROOT) == []
     assert vm.validate_hydration_phase4(REPO_ROOT) == []
@@ -50039,6 +50041,7 @@ def test_claude_routing_after369_triple_invented_agent_exact(
         f.message == "invented or unknown agent token(s): LoneFakeAfter369Agent"
         for f in vm.validate_claude_packaging(tmp_path)
     )
+    assert vm.validate_routing_surfaces(tmp_path) == []
     assert vm.validate_repo_identity(tmp_path) == []
 
     _write(tmp_path / "CLAUDE.md", base)
