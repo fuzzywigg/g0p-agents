@@ -10,8 +10,35 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Hydration↔security + handoff residual **tests-only** leftover deepeners after
+  tip through **#354** (actionlint/linkcheck leftover after #337) / **#337**
+  (hydration/security FIGURE leftover after #322) / **#322** / **#307** /
+  **#300** / **#289** / **#279** / **#270** / **#265** / **#264** / **#258**
+  (EXISTING twenty-two fixtures — `hydration-phase4` + ten `security` /
+  `security-*` + seven handoff-cluster `constitution-*` + four `scratchpad*` —
+  no invented product / inventory bump): tip-relaunch of closed CONFLICTING
+  #356 unsaturated niches onto post-#354 tip — object-replacement / thin /
+  hair / en / em space lookalikes beyond #337 figure/NNBSP/Ogham/LS/PS, RLM /
+  LRM / ZWJ / ZWNJ lookalikes (mirror goose/claude theme), bidi
+  embedding/isolate (LRE/RLE/LRI/RLI) lookalikes, braille-blank / medium-math /
+  punctuation-space lookalikes, second-or-penultimate phrase exact drop matrix
+  (≠ #337 middle; ≠ #322 first/last), triple invented-agent exact Finding
+  (≠ #337 dual), symlink follow + dangling + symlink-to-directory missing-file
+  equality, four-doc simultaneous exact Findings, isolation vs #354
+  actionlint/linkcheck after337 residual + #337 figure + #322 after307 + #307
+  actionlint + #300 Claude/routing + #289 CI/markdownlint, `run_all --only`
+  subset + concurrent four-doc races + tip live-green + invent-key refuse.
+  Historic four only; inventory unchanged (v52 / 196). Distinct from merged
+  #354 (actionlint/linkcheck after337), #337 (figure/NNBSP/LS/PS/middle/dual/
+  mid-BOM after #322), #322 (soft-hyphen/NEL/first+last after #307), open #363
+  (after337_ci en/em-quad/invisible/third/empty), closed CONFLICTING
+  #356/#335/#334/#327/#321/#320/#314/#312/#309/#308/#304/#297/#295/#287/#281/
+  #277 (same leftover vs stale / pre-#354 tips), #307 (actionlint/linkcheck),
+  #300 (Claude/routing), #289/#279 (CI/markdownlint), #270 (goose-schema),
+  and #258 (hydration/security+handoff).
+
 - Prompts listform + agentic_flows residual **tests-only** leftover deepeners
-  after tip through **#354** (actionlint/linkcheck leftover after #337) /
+  after tip through **#369** (hydration/security leftover after #354) / **#354** (actionlint/linkcheck leftover after #337) /
   **#337** / **#322** / **#307** / **#300** / **#289** / **#279** / **#270** /
   **#265** / **#264** / **#258** / **#253** / **#248** / **#242** / **#236**
   (EXISTING nineteen fixtures — twelve `prompt-*` listform siblings + seven
@@ -25,10 +52,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   actionlint seven + inverse CI fail while prompts stay tip-green, `--only`
   nineteen vs invent-key refuse + quad-surface races, tip live-green.
   Historic four only; inventory unchanged (v52 / 196). Distinct from merged
-  #354 (actionlint/linkcheck), #337 (hydration/security figure), #253
+  #369 (hydration/security after354), #354 (actionlint/linkcheck), #337 (hydration/security figure), #253
   (prompts+flows after248), and closed CONFLICTING
-  #365/#361/#360/#359/#353/#350/#349/#342/#338/#331/#330/#324/#315/#311/#303/
-  #301/#298/#296/#291/#290/#284/#272/#269 (same leftover on stale tips).
+  #370/#365/#361/#360/#359/#353/#350/#349/#342/#338/#331/#330/#324/#315/#311/#303/
+  #301/#298/#296/#291/#290/#284/#272/#269 (same leftover on stale / racing tips).
 
 - Actionlint/workflow + link-check residual **tests-only** leftover deepeners
   after tip through **#337** (hydration/security figure leftover after #322) /

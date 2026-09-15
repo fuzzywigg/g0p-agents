@@ -46386,6 +46386,1086 @@ def test_actionlint_linkcheck_after337_leftover_live_green() -> None:
     assert "hydration-security-handoff-after322-figure" not in vm.VALIDATORS
     assert "ogham-actionlint-timeouts" not in vm.VALIDATORS
 
+# ---------------------------------------------------------------------------
+# TOKENMAXX HEAVY leftovers after tip #354 (actionlint/linkcheck leftover after
+# #337) — hydration↔security + handoff unsaturated residual edges beyond merged
+# #337 after322_figure + tip isolation vs #354 actionlint after337 suite.
+# Tip-relaunch of closed CONFLICTING #356 onto post-#354 tip.
+# EXISTING twenty-two fixtures only; inventory unchanged (v52 / 196).
+# Distinct from open #363 after337_ci (en/em-quad / invisible / third / empty).
+# ---------------------------------------------------------------------------
+
+_HYDRATION_SECURITY_HANDOFF_AFTER354_NAMES: tuple[str, ...] = (
+    "hydration-phase4",
+    *_SECURITY_RESIDUAL_NAMES,
+    *_MEMORY_HANDOFF_CONSTITUTION_NAMES,
+    *_MEMORY_HANDOFF_SCRATCHPAD_NAMES,
+)
+
+_HYDRATION_SECURITY_HANDOFF_AFTER354_INVENT_NAMES: tuple[str, ...] = (
+    "hydration-security-handoff-after337",
+    "hydration-security-handoff-after337-heavy",
+    "hydration-security-handoff-after337-ci",
+    "hydration-security-handoff-after354-ci",
+    "actionlint-linkcheck-after354-timeouts",
+    "hydration-security-handoff-after354",
+    "hydration-security-handoff-after354-heavy",
+    "hydration-security-handoff-after354-figure",
+    "hydration-security-handoff-after322-figure",
+    "hydration-security-handoff-after322",
+    "hydration-security-handoff-after307-figure",
+    "hydration-security-handoff-after307",
+    "hydration-security-handoff-after327-figure",
+    "hydration-security-handoff-after300-figure",
+    "hydration-security-handoff-after300",
+    "hydration-security-handoff-after289",
+    "hydration-security-handoff-after279",
+    "hydration-security-handoff-after270",
+    "hydration-security-handoff-after265",
+    "hydration-security-handoff-after258",
+    "object-replacement-security-timeouts",
+    "thin-space-hydration-timeouts",
+    "hair-space-scratchpad-timeouts",
+    "en-space-handoff-timeouts",
+    "em-space-security-timeouts",
+    "rlm-hydration-timeouts",
+    "lrm-scratchpad-timeouts",
+    "zwj-handoff-timeouts",
+    "zwnj-security-timeouts",
+    "lre-hydration-timeouts",
+    "rle-scratchpad-timeouts",
+    "lri-handoff-timeouts",
+    "rli-security-timeouts",
+    "braille-blank-hydration-timeouts",
+    "mmsp-scratchpad-timeouts",
+    "punctuation-space-handoff-timeouts",
+    "symlink-dir-security-timeouts",
+    "dangling-symlink-hydration-timeouts",
+    "penultimate-phrase-security-timeouts",
+    "second-phrase-handoff-timeouts",
+    "triple-invented-agent-timeouts",
+    "quad-surface-hyd-sec-timeouts",
+    "claude-routing-after337-timeouts",
+    "claude-routing-after322-timeouts",
+    "claude-routing-after307-timeouts",
+    "goose-schema-after337-timeouts",
+    "goose-schema-after322-timeouts",
+    "goose-schema-after307-timeouts",
+    "actionlint-linkcheck-after337-timeouts",
+    "actionlint-linkcheck-after322-timeouts",
+    "actionlint-linkcheck-after307-timeouts",
+    "ci-markdownlint-after337-timeouts",
+    "ci-markdownlint-after322-timeouts",
+    "ci-markdownlint-after307-timeouts",
+    "prompts-flows-after337-timeouts",
+    "markdownlint-after337-v53",
+    "memory-slot-v53",
+    "agent-handoff-lru",
+)
+
+
+def _hydration_security_handoff_after354_modules() -> list[
+    tuple[str, object, tuple[str, ...], str]
+]:
+    """Map the twenty-two existing hydration/security/handoff tip validators."""
+    return _hydration_security_handoff_after322_figure_modules()
+
+
+def _write_hydration_security_handoff_after354_docs(tmp_path: Path) -> None:
+    """Seed the four tip docs with locked residual fixture text."""
+    _write_hydration_security_handoff_after322_figure_docs(tmp_path)
+
+
+def _hydration_security_handoff_after354_phrase_message(name: str, phrase: str) -> str:
+    """Exact locked-phrase Finding message for the twenty-two tip modules."""
+    return _hydration_security_handoff_after322_figure_phrase_message(name, phrase)
+
+
+def test_hydration_security_handoff_after354_modules_existing_only() -> None:
+    """After #354 leftover niche: twenty-two existing fixtures — invent-key refuse."""
+    assert vm.INVENTORY_VERSION == 52
+    assert vm.MIN_VALIDATOR_COUNT == 196
+    assert len(vm.VALIDATORS) == 196
+
+    modules = _hydration_security_handoff_after354_modules()
+    assert len(modules) == 22
+    assert [n for n, _fn, _p, _k in modules] == list(
+        _HYDRATION_SECURITY_HANDOFF_AFTER354_NAMES
+    )
+    assert _HYDRATION_SECURITY_HANDOFF_AFTER354_NAMES == (
+        _HYDRATION_SECURITY_HANDOFF_AFTER322_FIGURE_NAMES
+    )
+    assert _HYDRATION_SECURITY_HANDOFF_AFTER354_NAMES == (
+        _HYDRATION_SECURITY_HANDOFF_AFTER248_NAMES
+    )
+    assert len(_SECURITY_RESIDUAL_NAMES) == 10
+    assert len(_MEMORY_HANDOFF_CONSTITUTION_NAMES) == 7
+    assert len(_MEMORY_HANDOFF_SCRATCHPAD_NAMES) == 4
+
+    for invented in _HYDRATION_SECURITY_HANDOFF_AFTER354_INVENT_NAMES:
+        assert invented not in vm.VALIDATORS
+    with pytest.raises(KeyError):
+        _ = vm.VALIDATORS["object-replacement-security-timeouts"]
+    with pytest.raises(ValueError, match="unknown validator"):
+        vm.run_all_validations(REPO_ROOT, only=["thin-space-hydration-timeouts"])
+    with pytest.raises(ValueError, match="unknown validator"):
+        vm.run_all_validations(
+            REPO_ROOT, only=["hydration-security-handoff-after354"]
+        )
+    with pytest.raises(ValueError, match="unknown validator"):
+        vm.run_all_validations(
+            REPO_ROOT, only=["hydration-security-handoff-after337"]
+        )
+    with pytest.raises(ValueError, match="unknown validator"):
+        vm.run_all_validations(
+            REPO_ROOT, only=["hydration-security-handoff-after337-ci"]
+        )
+
+    inventory = json.loads(
+        (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
+    )
+    assert inventory["version"] == 52
+    assert inventory["min_validator_count"] == 196
+    assert sorted(vm.VALIDATORS) == inventory["validator_names"]
+
+    for name, _fn, phrases, inv_key in modules:
+        assert name in vm.VALIDATORS
+        assert name in inventory["validator_names"]
+        assert inv_key in inventory
+        assert inventory[inv_key] == list(phrases)
+        assert len(phrases) >= 2
+
+    for key in sorted(_HYDRATION_SECURITY_HANDOFF_AFTER322_FIGURE_PACKAGING_KEYS):
+        assert key in inventory
+    assert inventory["security_required_phrases"] == list(vm.SECURITY_REQUIRED_PHRASES)
+    assert inventory["scratchpad_required_phrases"] == list(vm.SCRATCHPAD_REQUIRED_PHRASES)
+
+    names = {m[0] for m in modules}
+    for sibling in (
+        "claude",
+        "routing",
+        "key-files",
+        "goose",
+        "recipe-agents",
+        "prompt-usage",
+        "ci",
+        "link-check",
+        "actionlint-shell",
+        "markdownlint",
+        "contributing",
+        "changelog",
+    ):
+        assert sibling in vm.VALIDATORS
+        assert sibling not in names
+
+    assert "Add SECURITY.md" in vm.HYDRATION_PHASE4_REQUIRED_PHRASES
+    assert "Never commit secrets" in vm.SECURITY_REQUIRED_PHRASES
+    assert "Gas cost exceeds 10M" in vm.CONSTITUTION_ESCALATION_MATRIX_REQUIRED_PHRASES
+    assert "Circuit execution: < 500ms" in vm.CONSTITUTION_ON_DEVICE_REQUIRED_PHRASES
+    assert "Agent Coordination Scratchpad" in vm.SCRATCHPAD_INTRO_REQUIRED_PHRASES
+
+
+def test_hydration_security_handoff_after354_obj_thin_hair_en_em_space_lookalikes(
+    tmp_path: Path,
+) -> None:
+    """Unsaturated spaces beyond #337 figure/NNBSP/Ogham/LS/PS: ORC + thin/hair/en/em."""
+    hyd_base = _hydration_residual_locked_text()
+    sec_base = _security_residual_locked_text()
+    agents_base = _memory_handoff_constitution_locked_text()
+    scratch_base = _locked_scratchpad_text()
+    _write_hydration_security_handoff_after354_docs(tmp_path)
+    for name, fn, _phrases, _key in _hydration_security_handoff_after354_modules():
+        assert fn(tmp_path) == [], name
+
+    # Object replacement (U+FFFC) in Add SECURITY.md hydration lock.
+    orc = hyd_base.replace("Add SECURITY.md", "Add\ufffcSECURITY.md")
+    assert "Add SECURITY.md" not in orc
+    _write(tmp_path / _HYDRATION_SECURITY_CROSS_DOC, orc)
+    assert any(
+        f.message == "missing locked hydration-phase4 phrase: Add SECURITY.md"
+        for f in vm.validate_hydration_phase4(tmp_path)
+    )
+    assert vm.validate_security_packaging(tmp_path) == []
+    assert vm.validate_constitution_handoff(tmp_path) == []
+    assert vm.validate_markdownlint(REPO_ROOT) == []
+
+    # Thin space (U+2009) in Never commit secrets packaging lock.
+    _write(tmp_path / _HYDRATION_SECURITY_CROSS_DOC, hyd_base)
+    thin = sec_base.replace("Never commit secrets", "Never\u2009commit secrets")
+    assert "Never commit secrets" not in thin
+    _write(tmp_path / "SECURITY.md", thin)
+    assert any(
+        f.message == "SECURITY.md missing packaging phrase: Never commit secrets"
+        for f in vm.validate_security_packaging(tmp_path)
+    )
+    assert vm.validate_security_fips(tmp_path) == []
+    assert vm.validate_hydration_phase4(tmp_path) == []
+
+    # Hair space (U+200A) inside Security Policy heading.
+    _write(tmp_path / "SECURITY.md", sec_base)
+    hair = sec_base.replace("# Security Policy", "# Security\u200aPolicy")
+    assert "# Security Policy" not in hair
+    _write(tmp_path / "SECURITY.md", hair)
+    assert any(
+        f.message == "missing Security Policy heading"
+        for f in vm.validate_security_header(tmp_path)
+    )
+    assert "Never commit secrets" in hair
+    assert vm.validate_security_packaging(tmp_path) == []
+    assert vm.validate_hydration_phase4(tmp_path) == []
+
+    # En space (U+2002) in Handoff Sequence section header.
+    _write(tmp_path / "SECURITY.md", sec_base)
+    en = agents_base.replace(
+        "#### 22.4.1 Handoff Sequence",
+        "#### 22.4.1 Handoff\u2002Sequence",
+    )
+    assert "#### 22.4.1 Handoff Sequence" not in en
+    _write(tmp_path / _MEMORY_HANDOFF_DOC, en)
+    assert any(
+        f.message == "missing Handoff Sequence section"
+        for f in vm.validate_constitution_handoff(tmp_path)
+    )
+    assert vm.validate_constitution_escalation_matrix(tmp_path) == []
+    assert vm.validate_security_packaging(tmp_path) == []
+
+    # Em space (U+2003) in Circuit execution on-device lock.
+    _write(tmp_path / _MEMORY_HANDOFF_DOC, agents_base)
+    em = agents_base.replace(
+        "Circuit execution: < 500ms",
+        "Circuit execution:\u2003< 500ms",
+    )
+    assert "Circuit execution: < 500ms" not in em
+    _write(tmp_path / _MEMORY_HANDOFF_DOC, em)
+    assert any(
+        f.message
+        == "missing locked constitution-on-device phrase: Circuit execution: < 500ms"
+        for f in vm.validate_constitution_on_device(tmp_path)
+    )
+    assert vm.validate_constitution_handoff(tmp_path) == []
+
+    # Thin space in scratchpad Format legend token.
+    _write(tmp_path / _MEMORY_HANDOFF_DOC, agents_base)
+    scratch_thin = scratch_base.replace("Format:", "Format\u2009:")
+    assert "Format:" not in scratch_thin
+    _write(tmp_path / _MEMORY_HANDOFF_SCRATCHPAD_DOC, scratch_thin)
+    assert any(
+        f.message == "missing Format legend section"
+        for f in vm.validate_scratchpad_format(tmp_path)
+    )
+    assert vm.validate_scratchpad_intro(tmp_path) == []
+    assert vm.validate_ci_pytest(REPO_ROOT) == []
+    assert vm.validate_goose_recipes(REPO_ROOT) == []
+
+    _write_hydration_security_handoff_after354_docs(tmp_path)
+    for name, fn, _phrases, _key in _hydration_security_handoff_after354_modules():
+        assert fn(tmp_path) == [], name
+
+
+def test_hydration_security_handoff_after354_rlm_lrm_zwj_zwnj_lookalikes(
+    tmp_path: Path,
+) -> None:
+    """Mirror goose/claude RLM/LRM/ZWJ/ZWNJ lookalike theme onto hyd/sec/handoff docs."""
+    hyd_base = _hydration_residual_locked_text()
+    sec_base = _security_residual_locked_text()
+    agents_base = _memory_handoff_constitution_locked_text()
+    scratch_base = _locked_scratchpad_text()
+    _write_hydration_security_handoff_after354_docs(tmp_path)
+
+    # RLM (U+200F) inside Add CONTRIBUTING.md hydration lock.
+    rlm = hyd_base.replace("Add CONTRIBUTING.md", "Add CONTRIBUTING\u200f.md")
+    assert "Add CONTRIBUTING.md" not in rlm
+    _write(tmp_path / _HYDRATION_SECURITY_CROSS_DOC, rlm)
+    assert any(
+        f.message == "missing locked hydration-phase4 phrase: Add CONTRIBUTING.md"
+        for f in vm.validate_hydration_phase4(tmp_path)
+    )
+    assert vm.validate_security_packaging(tmp_path) == []
+
+    # LRM (U+200E) inside Never expose plaintext keys packaging lock.
+    _write(tmp_path / _HYDRATION_SECURITY_CROSS_DOC, hyd_base)
+    lrm = sec_base.replace(
+        "Never expose plaintext keys",
+        "Never expose plaintext\u200ekeys",
+    )
+    assert "Never expose plaintext keys" not in lrm
+    _write(tmp_path / "SECURITY.md", lrm)
+    assert any(
+        f.message
+        == "SECURITY.md missing packaging phrase: Never expose plaintext keys"
+        for f in vm.validate_security_packaging(tmp_path)
+    )
+    assert vm.validate_hydration_phase4(tmp_path) == []
+
+    # ZWJ (U+200D) in Gas cost escalation lock.
+    _write(tmp_path / "SECURITY.md", sec_base)
+    zwj = agents_base.replace(
+        "Gas cost exceeds 10M",
+        "Gas cost exceeds\u200d10M",
+    )
+    assert "Gas cost exceeds 10M" not in zwj
+    _write(tmp_path / _MEMORY_HANDOFF_DOC, zwj)
+    assert any(
+        f.message
+        == "missing locked constitution-escalation-matrix phrase: Gas cost exceeds 10M"
+        for f in vm.validate_constitution_escalation_matrix(tmp_path)
+    )
+    assert vm.validate_constitution_handoff(tmp_path) == []
+
+    # ZWNJ (U+200C) in scratchpad Never delete entries lock.
+    _write(tmp_path / _MEMORY_HANDOFF_DOC, agents_base)
+    zwnj = scratch_base.replace(
+        "Never delete entries",
+        "Never delete\u200centries",
+    )
+    assert "Never delete entries" not in zwnj
+    _write(tmp_path / _MEMORY_HANDOFF_SCRATCHPAD_DOC, zwnj)
+    assert any(
+        f.message == "scratchpad missing required phrase: Never delete entries"
+        for f in vm.validate_scratchpad(tmp_path)
+    )
+    assert vm.validate_scratchpad_intro(tmp_path) == []
+    assert vm.validate_ci_pip_install(REPO_ROOT) == []
+
+    _write_hydration_security_handoff_after354_docs(tmp_path)
+    for name, fn, _phrases, _key in _hydration_security_handoff_after354_modules():
+        assert fn(tmp_path) == [], name
+
+
+def test_hydration_security_handoff_after354_bidi_isolate_lookalikes(
+    tmp_path: Path,
+) -> None:
+    """Bidi embedding/isolate leftovers (LRE/RLE/LRI/RLI) beyond #337 LS/PS + mid-BOM."""
+    hyd_base = _hydration_residual_locked_text()
+    sec_base = _security_residual_locked_text()
+    agents_base = _memory_handoff_constitution_locked_text()
+    scratch_base = _locked_scratchpad_text()
+    _write_hydration_security_handoff_after354_docs(tmp_path)
+
+    # LRE (U+202A) in PHASE 4 section header.
+    lre = hyd_base.replace(
+        "## PHASE 4: ISSUES GENERATED",
+        "## PHASE\u202a4: ISSUES GENERATED",
+    )
+    assert "## PHASE 4: ISSUES GENERATED" not in lre
+    _write(tmp_path / _HYDRATION_SECURITY_CROSS_DOC, lre)
+    assert any(
+        f.message == "missing PHASE 4 issues generated section"
+        for f in vm.validate_hydration_phase4(tmp_path)
+    )
+    assert vm.validate_security_packaging(tmp_path) == []
+
+    # RLE (U+202B) in ML-KEM/FIPS packaging-adjacent FIPS lock.
+    _write(tmp_path / _HYDRATION_SECURITY_CROSS_DOC, hyd_base)
+    rle = sec_base.replace("ML-KEM/FIPS 203", "ML-KEM/FIPS\u202b203")
+    assert "ML-KEM/FIPS 203" not in rle
+    _write(tmp_path / "SECURITY.md", rle)
+    assert any(
+        f.message == "missing locked security-fips phrase: ML-KEM/FIPS 203"
+        for f in vm.validate_security_fips(tmp_path)
+    )
+    assert vm.validate_hydration_phase4(tmp_path) == []
+
+    # LRI (U+2066) in Handoff Sequence header.
+    _write(tmp_path / "SECURITY.md", sec_base)
+    lri = agents_base.replace(
+        "#### 22.4.1 Handoff Sequence",
+        "#### 22.4.1 Handoff\u2066Sequence",
+    )
+    assert "#### 22.4.1 Handoff Sequence" not in lri
+    _write(tmp_path / _MEMORY_HANDOFF_DOC, lri)
+    assert any(
+        f.message == "missing Handoff Sequence section"
+        for f in vm.validate_constitution_handoff(tmp_path)
+    )
+    assert vm.validate_constitution_escalation_matrix(tmp_path) == []
+
+    # RLI (U+2067) in scratchpad Current blocker: lock.
+    _write(tmp_path / _MEMORY_HANDOFF_DOC, agents_base)
+    rli = scratch_base.replace("Current blocker:", "Current\u2067blocker:")
+    assert "Current blocker:" not in rli
+    _write(tmp_path / _MEMORY_HANDOFF_SCRATCHPAD_DOC, rli)
+    assert any(
+        f.message == "missing locked scratchpad-task-meta phrase: Current blocker:"
+        for f in vm.validate_scratchpad_task_meta(tmp_path)
+    )
+    assert vm.validate_scratchpad_intro(tmp_path) == []
+    assert vm.validate_ci_ruff(REPO_ROOT) == []
+
+    _write_hydration_security_handoff_after354_docs(tmp_path)
+    for name, fn, _phrases, _key in _hydration_security_handoff_after354_modules():
+        assert fn(tmp_path) == [], name
+
+
+def test_hydration_security_handoff_after354_second_phrase_exact_drop_matrix(
+    tmp_path: Path,
+) -> None:
+    """Second-phrase exact drop for all twenty-two (≠ #337 middle; ≠ #322 first/last)."""
+    hyd_base = _hydration_residual_locked_text()
+    sec_base = _security_residual_locked_text()
+    agents_base = _memory_handoff_constitution_locked_text()
+    scratch_base = _locked_scratchpad_text()
+    _write_hydration_security_handoff_after354_docs(tmp_path)
+
+    doc_by_name = {
+        "hydration-phase4": (_HYDRATION_SECURITY_CROSS_DOC, hyd_base),
+        **{n: (Path("SECURITY.md"), sec_base) for n in _SECURITY_RESIDUAL_NAMES},
+        **{
+            n: (Path(_MEMORY_HANDOFF_DOC), agents_base)
+            for n in _MEMORY_HANDOFF_CONSTITUTION_NAMES
+        },
+        **{
+            n: (Path(_MEMORY_HANDOFF_SCRATCHPAD_DOC), scratch_base)
+            for n in _MEMORY_HANDOFF_SCRATCHPAD_NAMES
+        },
+    }
+
+    for name, fn, phrases, _key in _hydration_security_handoff_after354_modules():
+        rel, base = doc_by_name[name]
+        phrase = phrases[1]
+        mid = phrases[len(phrases) // 2]
+        # Prefer second when it differs from middle; else use penultimate.
+        if phrase == mid and len(phrases) >= 3:
+            phrase = phrases[-2]
+        if phrase not in base:
+            continue
+        mangled = base.replace(phrase, f"ABSENT_SECOND_AFTER354_{name}")
+        assert phrase not in mangled, (name, phrase)
+        _write(tmp_path / rel, mangled)
+        findings = fn(tmp_path)
+        expected = _hydration_security_handoff_after354_phrase_message(name, phrase)
+        assert any(f.message == expected for f in findings), (
+            name,
+            phrase,
+            expected,
+            findings[:3],
+        )
+        _write(tmp_path / rel, base)
+        if name != "hydration-phase4":
+            assert vm.validate_hydration_phase4(tmp_path) == []
+        if name not in _SECURITY_RESIDUAL_NAMES:
+            assert vm.validate_security_packaging(tmp_path) == []
+        if name not in _MEMORY_HANDOFF_CONSTITUTION_NAMES:
+            assert vm.validate_constitution_handoff(tmp_path) == []
+        if name not in _MEMORY_HANDOFF_SCRATCHPAD_NAMES:
+            assert vm.validate_scratchpad(tmp_path) == []
+
+    _write_hydration_security_handoff_after354_docs(tmp_path)
+    for name, fn, _phrases, _key in _hydration_security_handoff_after354_modules():
+        assert fn(tmp_path) == [], name
+
+
+def test_hydration_security_handoff_after354_triple_invented_agent_exact(
+    tmp_path: Path,
+) -> None:
+    """Triple invented-agent exact Finding (sorted join) beyond #337 dual."""
+    sec_base = _security_residual_locked_text()
+    hyd_base = _hydration_residual_locked_text()
+    agents_base = _memory_handoff_constitution_locked_text()
+    scratch_base = _locked_scratchpad_text()
+    _write_hydration_security_handoff_after354_docs(tmp_path)
+
+    triple = (
+        sec_base
+        + "\nZebraFakeAfter337Agent and AlphaFakeAfter337Agent and "
+        + "MikeFakeAfter337Agent must never ship.\n"
+    )
+    _write(tmp_path / "SECURITY.md", triple)
+    expected = ", ".join(
+        sorted(
+            [
+                "AlphaFakeAfter337Agent",
+                "MikeFakeAfter337Agent",
+                "ZebraFakeAfter337Agent",
+            ]
+        )
+    )
+    assert vm.validate_security_packaging(tmp_path) == [
+        vm.Finding(
+            "SECURITY.md",
+            f"invented or unknown agent token(s): {expected}",
+        )
+    ]
+    assert vm.validate_hydration_phase4(tmp_path) == []
+    assert vm.validate_constitution_handoff(tmp_path) == []
+    assert vm.validate_scratchpad(tmp_path) == []
+    assert vm.validate_security_fips(tmp_path) == []
+    assert vm.validate_security_supported(tmp_path) == []
+    assert vm.validate_security_known_non_issues(tmp_path) == []
+
+    # Historic four + one invented → only the invented token is reported.
+    mixed = (
+        sec_base
+        + "\n"
+        + " ".join(vm.DOCUMENTED_AGENTS)
+        + "\nLoneFakeAfter337Agent leftover.\n"
+    )
+    _write(tmp_path / "SECURITY.md", mixed)
+    assert vm.validate_security_packaging(tmp_path) == [
+        vm.Finding(
+            "SECURITY.md",
+            "invented or unknown agent token(s): LoneFakeAfter337Agent",
+        )
+    ]
+    assert vm.validate_security_header(tmp_path) == []
+
+    # Invented agent token in AGENTS / hydration / scratchpad does not invent-scan.
+    _write(tmp_path / "SECURITY.md", sec_base)
+    _write(
+        tmp_path / _HYDRATION_SECURITY_CROSS_DOC,
+        hyd_base + "\nGhostFakeAfter337HydrationAgent notes.\n",
+    )
+    _write(
+        tmp_path / _MEMORY_HANDOFF_DOC,
+        agents_base + "\nGhostFakeAfter337HandoffAgent notes.\n",
+    )
+    _write(
+        tmp_path / _MEMORY_HANDOFF_SCRATCHPAD_DOC,
+        scratch_base + "\nGhostFakeAfter337ScratchAgent notes.\n",
+    )
+    assert vm.validate_hydration_phase4(tmp_path) == []
+    assert vm.validate_constitution_handoff(tmp_path) == []
+    assert vm.validate_scratchpad(tmp_path) == []
+    assert vm.validate_security_packaging(tmp_path) == []
+
+    _write_hydration_security_handoff_after354_docs(tmp_path)
+    for name, fn, _phrases, _key in _hydration_security_handoff_after354_modules():
+        assert fn(tmp_path) == [], name
+
+
+def test_hydration_security_handoff_after354_symlink_follow_dangling_dir(
+    tmp_path: Path,
+) -> None:
+    """Symlink follow green + dangling/dir-symlink missing (mirror Claude #289 theme)."""
+    hyd_base = _hydration_residual_locked_text()
+    sec_base = _security_residual_locked_text()
+    agents_base = _memory_handoff_constitution_locked_text()
+    scratch_base = _locked_scratchpad_text()
+
+    # Valid symlink targets stay green for all twenty-two.
+    linked = tmp_path / "linked_root"
+    linked.mkdir()
+    (linked / "docs").mkdir()
+    (linked / "agentic_flows").mkdir()
+    real_hyd = tmp_path / "real_hyd.md"
+    real_sec = tmp_path / "real_sec.md"
+    real_agents = tmp_path / "real_agents.md"
+    real_scratch = tmp_path / "real_scratch.txt"
+    _write(real_hyd, hyd_base)
+    _write(real_sec, sec_base)
+    _write(real_agents, agents_base)
+    _write(real_scratch, scratch_base)
+    (linked / _HYDRATION_SECURITY_CROSS_DOC).symlink_to(real_hyd)
+    (linked / "SECURITY.md").symlink_to(real_sec)
+    (linked / _MEMORY_HANDOFF_DOC).symlink_to(real_agents)
+    (linked / _MEMORY_HANDOFF_SCRATCHPAD_DOC).symlink_to(real_scratch)
+    for name, fn, _phrases, _key in _hydration_security_handoff_after354_modules():
+        assert fn(linked) == [], name
+
+    # Dangling symlinks report exact missing-file Findings.
+    dangling = tmp_path / "dangling_root"
+    dangling.mkdir()
+    (dangling / "docs").mkdir()
+    (dangling / "agentic_flows").mkdir()
+    (dangling / _HYDRATION_SECURITY_CROSS_DOC).symlink_to(tmp_path / "missing_hyd.md")
+    (dangling / "SECURITY.md").symlink_to(tmp_path / "missing_sec.md")
+    (dangling / _MEMORY_HANDOFF_DOC).symlink_to(tmp_path / "missing_agents.md")
+    (dangling / _MEMORY_HANDOFF_SCRATCHPAD_DOC).symlink_to(
+        tmp_path / "missing_scratch.txt"
+    )
+    assert vm.validate_hydration_phase4(dangling) == [
+        vm.Finding("docs/agent-hydration.md", "hydration report missing")
+    ]
+    for name, fn, _phrases, _key in _security_residual_modules():
+        assert fn(dangling) == [vm.Finding("SECURITY.md", "SECURITY.md missing")], name
+    for name, fn, _phrases, _key in _memory_handoff_constitution_modules():
+        assert fn(dangling) == [
+            vm.Finding("AGENTS-v2.2.md", "constitution missing")
+        ], name
+    missing_scratch = vm.Finding(
+        "agentic_flows/scratchpad.txt",
+        "scratchpad coordination file missing",
+    )
+    for name, fn, _phrases, _key in _memory_handoff_scratchpad_modules():
+        assert fn(dangling) == [missing_scratch], name
+
+    # Symlink-to-directory is not a readable file → same missing Findings.
+    dir_root = tmp_path / "dir_symlink_root"
+    dir_root.mkdir()
+    (dir_root / "docs").mkdir()
+    (dir_root / "agentic_flows").mkdir()
+    hyd_dir = tmp_path / "hyd_as_dir"
+    sec_dir = tmp_path / "sec_as_dir"
+    agents_dir = tmp_path / "agents_as_dir"
+    scratch_dir = tmp_path / "scratch_as_dir"
+    for d in (hyd_dir, sec_dir, agents_dir, scratch_dir):
+        d.mkdir()
+        (d / "nested.txt").write_text("nope\n", encoding="utf-8")
+    (dir_root / _HYDRATION_SECURITY_CROSS_DOC).symlink_to(hyd_dir)
+    (dir_root / "SECURITY.md").symlink_to(sec_dir)
+    (dir_root / _MEMORY_HANDOFF_DOC).symlink_to(agents_dir)
+    (dir_root / _MEMORY_HANDOFF_SCRATCHPAD_DOC).symlink_to(scratch_dir)
+    assert vm.validate_hydration_phase4(dir_root) == [
+        vm.Finding("docs/agent-hydration.md", "hydration report missing")
+    ]
+    assert vm.validate_security_packaging(dir_root) == [
+        vm.Finding("SECURITY.md", "SECURITY.md missing")
+    ]
+    assert vm.validate_constitution_handoff(dir_root) == [
+        vm.Finding("AGENTS-v2.2.md", "constitution missing")
+    ]
+    assert vm.validate_scratchpad(dir_root) == [missing_scratch]
+
+    # Live tip stays green.
+    for name, fn, _phrases, _key in _hydration_security_handoff_after354_modules():
+        assert fn(REPO_ROOT) == [], name
+
+
+def test_hydration_security_handoff_after354_braille_mmsp_punct_space_lookalikes(
+    tmp_path: Path,
+) -> None:
+    """Braille blank / medium-math / punctuation-space lookalikes beyond #337 figure set."""
+    hyd_base = _hydration_residual_locked_text()
+    sec_base = _security_residual_locked_text()
+    agents_base = _memory_handoff_constitution_locked_text()
+    scratch_base = _locked_scratchpad_text()
+    _write_hydration_security_handoff_after354_docs(tmp_path)
+
+    # Braille pattern blank (U+2800) in Add LICENSE file hydration lock.
+    braille = hyd_base.replace("Add LICENSE file", "Add\u2800LICENSE file")
+    assert "Add LICENSE file" not in braille
+    _write(tmp_path / _HYDRATION_SECURITY_CROSS_DOC, braille)
+    assert any(
+        f.message == "missing locked hydration-phase4 phrase: Add LICENSE file"
+        for f in vm.validate_hydration_phase4(tmp_path)
+    )
+    assert vm.validate_security_packaging(tmp_path) == []
+
+    # Medium mathematical space (U+205F) in acknowledgment packaging lock.
+    _write(tmp_path / _HYDRATION_SECURITY_CROSS_DOC, hyd_base)
+    mmsp = sec_base.replace(
+        "acknowledgment within 48 hours",
+        "acknowledgment within\u205f48 hours",
+    )
+    assert "acknowledgment within 48 hours" not in mmsp
+    _write(tmp_path / "SECURITY.md", mmsp)
+    assert any(
+        f.message
+        == "SECURITY.md missing packaging phrase: acknowledgment within 48 hours"
+        for f in vm.validate_security_packaging(tmp_path)
+    )
+    assert vm.validate_hydration_phase4(tmp_path) == []
+
+    # Punctuation space (U+2008) in Memory footprint on-device lock.
+    _write(tmp_path / "SECURITY.md", sec_base)
+    punct = agents_base.replace(
+        "Memory footprint: < 2MB",
+        "Memory footprint:\u2008< 2MB",
+    )
+    assert "Memory footprint: < 2MB" not in punct
+    _write(tmp_path / _MEMORY_HANDOFF_DOC, punct)
+    assert any(
+        f.message
+        == "missing locked constitution-on-device phrase: Memory footprint: < 2MB"
+        for f in vm.validate_constitution_on_device(tmp_path)
+    )
+    assert vm.validate_constitution_handoff(tmp_path) == []
+
+    # Braille blank in scratchpad source of truth lock.
+    _write(tmp_path / _MEMORY_HANDOFF_DOC, agents_base)
+    scratch_braille = scratch_base.replace(
+        "source of truth",
+        "source\u2800of truth",
+    )
+    assert "source of truth" not in scratch_braille
+    _write(tmp_path / _MEMORY_HANDOFF_SCRATCHPAD_DOC, scratch_braille)
+    assert any(
+        f.message == "scratchpad missing required phrase: source of truth"
+        for f in vm.validate_scratchpad(tmp_path)
+    )
+    assert vm.validate_scratchpad_format(tmp_path) == []
+    assert vm.validate_ci_setup_python(REPO_ROOT) == []
+
+    _write_hydration_security_handoff_after354_docs(tmp_path)
+    for name, fn, _phrases, _key in _hydration_security_handoff_after354_modules():
+        assert fn(tmp_path) == [], name
+
+
+def test_hydration_security_handoff_after354_quad_surface_exact_findings(
+    tmp_path: Path,
+) -> None:
+    """Simultaneous four-doc exact Findings across hyd / security / handoff / scratch."""
+    hyd_base = _hydration_residual_locked_text()
+    sec_base = _security_residual_locked_text()
+    agents_base = _memory_handoff_constitution_locked_text()
+    scratch_base = _locked_scratchpad_text()
+    _write_hydration_security_handoff_after354_docs(tmp_path)
+
+    hyd = hyd_base.replace(
+        "## PHASE 4: ISSUES GENERATED",
+        "## ABSENT PHASE 4 AFTER354 QUAD",
+    )
+    sec = sec_base.replace("Never commit secrets", "ABSENT_SECRETS_AFTER354_QUAD")
+    agents = agents_base.replace(
+        "Gas cost exceeds 10M",
+        "ABSENT_GAS_AFTER354_QUAD",
+    )
+    scratch = scratch_base.replace(
+        "Never delete entries",
+        "ABSENT_DELETE_AFTER354_QUAD",
+    )
+    _write(tmp_path / _HYDRATION_SECURITY_CROSS_DOC, hyd)
+    _write(tmp_path / "SECURITY.md", sec)
+    _write(tmp_path / _MEMORY_HANDOFF_DOC, agents)
+    _write(tmp_path / _MEMORY_HANDOFF_SCRATCHPAD_DOC, scratch)
+
+    hyd_findings = vm.validate_hydration_phase4(tmp_path)
+    assert any(
+        f.message == "missing PHASE 4 issues generated section" for f in hyd_findings
+    )
+    assert any(
+        f.message == "missing locked hydration-phase4 phrase: ## PHASE 4: ISSUES GENERATED"
+        for f in hyd_findings
+    )
+    assert vm.validate_security_packaging(tmp_path) == [
+        vm.Finding(
+            "SECURITY.md",
+            "SECURITY.md missing packaging phrase: Never commit secrets",
+        )
+    ]
+    assert any(
+        f.message
+        == "missing locked constitution-escalation-matrix phrase: Gas cost exceeds 10M"
+        for f in vm.validate_constitution_escalation_matrix(tmp_path)
+    )
+    assert vm.validate_scratchpad(tmp_path) == [
+        vm.Finding(
+            "agentic_flows/scratchpad.txt",
+            "scratchpad missing required phrase: Never delete entries",
+        )
+    ]
+
+    # Sibling niches stay live-green while local quad fails.
+    assert vm.validate_markdownlint(REPO_ROOT) == []
+    assert vm.validate_ci_workflow(REPO_ROOT) == []
+    assert vm.validate_link_check(REPO_ROOT) == []
+    assert vm.validate_actionlint_shell(REPO_ROOT) == []
+    assert vm.validate_claude_packaging(REPO_ROOT) == []
+    assert vm.validate_routing_surfaces(REPO_ROOT) == []
+    assert vm.validate_goose_recipes(REPO_ROOT) == []
+
+    _write_hydration_security_handoff_after354_docs(tmp_path)
+    for name, fn, _phrases, _key in _hydration_security_handoff_after354_modules():
+        assert fn(tmp_path) == [], name
+
+
+def test_hydration_security_handoff_after354_isolation_vs_354_siblings(
+    tmp_path: Path,
+) -> None:
+    """Local hyd/sec fail; live #337 figure + #354 actionlint + #322 after307 stay green."""
+    _write_hydration_security_handoff_after354_docs(tmp_path)
+    for name, fn, _phrases, _key in _hydration_security_handoff_after354_modules():
+        assert fn(tmp_path) == [], name
+
+    hyd = _hydration_residual_locked_text().replace(
+        "## PHASE 4: ISSUES GENERATED", "## ABSENT PHASE 4 AFTER354"
+    )
+    _write(tmp_path / _HYDRATION_SECURITY_CROSS_DOC, hyd)
+    assert vm.validate_hydration_phase4(tmp_path)
+    for name, fn in _ci_markdownlint_residual_modules():
+        assert fn(REPO_ROOT) == [], name
+    assert vm.run_all_validations(
+        REPO_ROOT, only=list(_CI_MARKDOWNLINT_RESIDUAL_NAMES)
+    ) == []
+    assert vm.validate_markdownlint(REPO_ROOT) == []
+    assert vm.validate_ci_ruff(REPO_ROOT) == []
+    assert vm.validate_ci_pip_install(REPO_ROOT) == []
+    assert vm.validate_ci_pytest(REPO_ROOT) == []
+    assert vm.validate_goose_recipes(REPO_ROOT) == []
+    assert vm.validate_claude_packaging(REPO_ROOT) == []
+    assert vm.validate_routing_surfaces(REPO_ROOT) == []
+    assert vm.validate_key_files(REPO_ROOT) == []
+    # #337 figure / #322 after307 live tip + #354 actionlint after337 stay green.
+    assert vm.run_all_validations(
+        REPO_ROOT, only=list(_HYDRATION_SECURITY_HANDOFF_AFTER322_FIGURE_NAMES)
+    ) == []
+    assert vm.run_all_validations(
+        REPO_ROOT, only=list(_HYDRATION_SECURITY_HANDOFF_AFTER307_NAMES)
+    ) == []
+    assert vm.validate_ci_workflow(REPO_ROOT) == []
+    assert vm.validate_link_check(REPO_ROOT) == []
+    assert vm.validate_actionlint_shell(REPO_ROOT) == []
+    assert vm.validate_ci_actions(REPO_ROOT) == []
+    assert vm.validate_ci_job_names(REPO_ROOT) == []
+    assert vm.validate_ci_runs_on(REPO_ROOT) == []
+    assert vm.validate_ci_artifacts(REPO_ROOT) == []
+    # #354 tip actionlint/linkcheck residual seven fixtures stay live-green.
+    assert vm.run_all_validations(
+        REPO_ROOT, only=[n for n, _fn in _actionlint_linkcheck_residual_modules()]
+    ) == []
+    assert len(_actionlint_linkcheck_residual_modules()) == 7
+    assert "actionlint-linkcheck-after337-timeouts" not in vm.VALIDATORS
+    assert "actionlint-linkcheck-after354-timeouts" not in vm.VALIDATORS
+
+    # Restore hyd; mangle markdownlint locally — hyd/sec/handoff stay green.
+    _write(tmp_path / _HYDRATION_SECURITY_CROSS_DOC, _hydration_residual_locked_text())
+    _write_markdownlint_yaml(
+        tmp_path,
+        _locked_markdownlint_yaml().replace("default: true", "default: false"),
+    )
+    assert vm.validate_markdownlint(tmp_path)
+    for name, fn, _phrases, _key in _hydration_security_handoff_after354_modules():
+        assert fn(tmp_path) == [], name
+
+    # Mangle ci.yml ruff — CI red; hyd/sec stay green.
+    _write_ci_yaml(
+        tmp_path,
+        _actionlint_linkcheck_locked_ci_yaml().replace(
+            vm.CI_RUFF_CHECK_COMMAND, "ruff check scripts only"
+        ),
+    )
+    assert vm.validate_ci_ruff(tmp_path)
+    assert vm.validate_hydration_phase4(tmp_path) == []
+    assert vm.validate_security_packaging(tmp_path) == []
+    assert vm.validate_constitution_handoff(tmp_path) == []
+    assert vm.validate_scratchpad(tmp_path) == []
+
+    for invented in (
+        "hydration-security-handoff-after354",
+        "hydration-security-handoff-after354-heavy",
+        "object-replacement-security-timeouts",
+        "thin-space-hydration-timeouts",
+        "rlm-hydration-timeouts",
+        "lre-hydration-timeouts",
+        "braille-blank-hydration-timeouts",
+        "symlink-dir-security-timeouts",
+        "triple-invented-agent-timeouts",
+        "hydration-security-handoff-after322-figure",
+        "hydration-security-handoff-after322",
+        "hydration-security-handoff-after307-figure",
+        "claude-routing-after337-timeouts",
+        "actionlint-linkcheck-after337-timeouts",
+        "ci-markdownlint-after337-timeouts",
+        "goose-schema-after337-timeouts",
+        "markdownlint-after337-v53",
+    ):
+        assert invented not in vm.VALIDATORS
+
+
+def test_hydration_security_handoff_after354_run_only_and_concurrent_live_green(
+    tmp_path: Path,
+) -> None:
+    """run_all --only subset + concurrent four-doc races + live twenty-two green."""
+    modules = _hydration_security_handoff_after354_modules()
+    only_names = list(_HYDRATION_SECURITY_HANDOFF_AFTER354_NAMES)
+    assert vm.run_all_validations(REPO_ROOT, only=only_names) == []
+
+    for invented in _HYDRATION_SECURITY_HANDOFF_AFTER354_INVENT_NAMES[:10]:
+        with pytest.raises(ValueError, match="unknown validator"):
+            vm.run_all_validations(REPO_ROOT, only=[invented])
+
+    _write_hydration_security_handoff_after354_docs(tmp_path)
+    agents_base = _memory_handoff_constitution_locked_text()
+    mangled = agents_base.replace("Gas cost exceeds 10M", "ABSENT_GAS_AFTER354")
+    _write(tmp_path / _MEMORY_HANDOFF_DOC, mangled)
+    only_esc = vm.run_all_validations(
+        tmp_path, only=["constitution-escalation-matrix"]
+    )
+    assert only_esc
+    assert all(f.path == "AGENTS-v2.2.md" for f in only_esc)
+    assert vm.run_all_validations(tmp_path, only=["hydration-phase4"]) == []
+    assert vm.run_all_validations(tmp_path, only=["security"]) == []
+    assert vm.run_all_validations(tmp_path, only=["security-fips"]) == []
+    assert vm.run_all_validations(tmp_path, only=["constitution-handoff"]) == []
+    assert vm.run_all_validations(tmp_path, only=["scratchpad-format"]) == []
+    assert "claude" not in only_names
+    assert "goose" not in only_names
+    assert "markdownlint" not in only_names
+    assert vm.run_all_validations(REPO_ROOT, only=["claude"]) == []
+    assert vm.run_all_validations(REPO_ROOT, only=["goose"]) == []
+    assert vm.run_all_validations(REPO_ROOT, only=["markdownlint"]) == []
+    # Twenty-two vs #337 invent refuse + #307 actionlint live-green.
+    assert vm.run_all_validations(
+        REPO_ROOT, only=list(_HYDRATION_SECURITY_HANDOFF_AFTER322_FIGURE_NAMES)
+    ) == []
+    assert vm.validate_ci_workflow(REPO_ROOT) == []
+    assert vm.validate_link_check(REPO_ROOT) == []
+    assert vm.validate_actionlint_shell(REPO_ROOT) == []
+
+    leftover_fns = [fn for _n, fn, _p, _k in modules]
+
+    def _read_live() -> list[vm.Finding]:
+        out: list[vm.Finding] = []
+        for fn in leftover_fns:
+            out.extend(fn(REPO_ROOT))
+        return out
+
+    errors: list[BaseException] = []
+    with ThreadPoolExecutor(max_workers=16) as pool:
+        futures = [pool.submit(_read_live) for _ in range(48)]
+        for fut in as_completed(futures):
+            try:
+                assert fut.result() == []
+            except BaseException as exc:  # noqa: BLE001 — collect race failures
+                errors.append(exc)
+    assert errors == []
+
+    hyd_path = tmp_path / _HYDRATION_SECURITY_CROSS_DOC
+    sec_path = tmp_path / "SECURITY.md"
+    agents_path = tmp_path / _MEMORY_HANDOFF_DOC
+    scratch_path = tmp_path / _MEMORY_HANDOFF_SCRATCHPAD_DOC
+    hyd_locked = _hydration_residual_locked_text()
+    sec_locked = _security_residual_locked_text()
+    agents_locked = _memory_handoff_constitution_locked_text()
+    scratch_locked = _locked_scratchpad_text()
+    _write_hydration_security_handoff_after354_docs(tmp_path)
+    for name, fn, _phrases, _key in modules:
+        assert fn(tmp_path) == [], name
+
+    stop = threading.Event()
+    race_errors: list[BaseException] = []
+
+    def _writer() -> None:
+        flip = False
+        while not stop.is_set():
+            try:
+                if flip:
+                    hyd_path.write_text(hyd_locked, encoding="utf-8")
+                    sec_path.write_text(sec_locked, encoding="utf-8")
+                    agents_path.write_text(agents_locked, encoding="utf-8")
+                    scratch_path.write_text(scratch_locked, encoding="utf-8")
+                else:
+                    hyd_path.write_text(
+                        hyd_locked.replace(
+                            "## PHASE 4: ISSUES GENERATED",
+                            "## ABSENT PHASE RACE AFTER354",
+                        ),
+                        encoding="utf-8",
+                    )
+                    sec_path.write_text(
+                        sec_locked.replace(
+                            "Never commit secrets",
+                            "ABSENT_SECRETS_RACE_AFTER354",
+                        ),
+                        encoding="utf-8",
+                    )
+                    agents_path.write_text(
+                        agents_locked.replace(
+                            "Gas cost exceeds 10M",
+                            "ABSENT_GAS_RACE_AFTER354",
+                        ),
+                        encoding="utf-8",
+                    )
+                    scratch_path.write_text(
+                        scratch_locked.replace(
+                            "Never delete entries",
+                            "ABSENT_DELETE_RACE_AFTER354",
+                        ),
+                        encoding="utf-8",
+                    )
+                flip = not flip
+            except BaseException as exc:  # noqa: BLE001
+                race_errors.append(exc)
+                return
+
+    def _reader() -> None:
+        while not stop.is_set():
+            try:
+                for fn in leftover_fns:
+                    fn(tmp_path)
+            except BaseException as exc:  # noqa: BLE001
+                race_errors.append(exc)
+                return
+
+    with ThreadPoolExecutor(max_workers=8) as pool:
+        futures = [pool.submit(_writer)] + [pool.submit(_reader) for _ in range(7)]
+        time.sleep(0.35)
+        stop.set()
+        for fut in as_completed(futures):
+            fut.result()
+    assert race_errors == []
+
+    _write_hydration_security_handoff_after354_docs(tmp_path)
+    for name, fn, _phrases, _key in modules:
+        assert fn(tmp_path) == [], name
+
+    assert (
+        vm.run_all_validations(
+            REPO_ROOT, only=list(_HYDRATION_SECURITY_HANDOFF_AFTER354_NAMES)
+        )
+        == []
+    )
+
+    hyd = (REPO_ROOT / _HYDRATION_SECURITY_CROSS_DOC).read_text(encoding="utf-8")
+    assert "Add SECURITY.md" in hyd
+    assert "## PHASE 4: ISSUES GENERATED" in hyd
+    sec = (REPO_ROOT / "SECURITY.md").read_text(encoding="utf-8")
+    assert "# Security Policy" in sec
+    assert "Never expose plaintext keys" in sec
+    assert "ML-KEM/FIPS 203" in sec
+    agents = (REPO_ROOT / _MEMORY_HANDOFF_DOC).read_text(encoding="utf-8")
+    assert "Gas cost exceeds 10M" in agents
+    assert "Circuit execution: < 500ms" in agents
+    assert "#### 22.4.1 Handoff Sequence" in agents
+    scratch = (REPO_ROOT / _MEMORY_HANDOFF_SCRATCHPAD_DOC).read_text(encoding="utf-8")
+    assert "Agent Coordination Scratchpad" in scratch
+    assert "[!] = BLOCKED/ESCALATED" in scratch
+    assert "Current blocker:" in scratch
+
+    for invented in _HYDRATION_SECURITY_HANDOFF_AFTER354_INVENT_NAMES:
+        assert invented not in vm.VALIDATORS
+
+    assert vm.validate_claude_packaging(REPO_ROOT) == []
+    assert vm.validate_routing_surfaces(REPO_ROOT) == []
+    assert vm.validate_key_files(REPO_ROOT) == []
+    assert vm.validate_goose_recipes(REPO_ROOT) == []
+    assert vm.validate_recipe_agent_bindings(REPO_ROOT) == []
+    assert vm.validate_recipe_titles(REPO_ROOT) == []
+    assert vm.validate_prompt_usage(REPO_ROOT) == []
+    assert vm.validate_ci_workflow(REPO_ROOT) == []
+    assert vm.validate_link_check(REPO_ROOT) == []
+    assert vm.validate_actionlint_shell(REPO_ROOT) == []
+    assert vm.validate_markdownlint(REPO_ROOT) == []
+    assert vm.validate_changelog_unreleased(REPO_ROOT) == []
+    assert vm.validate_packaging_inventory(REPO_ROOT) == []
+    assert vm.run_all_validations(
+        REPO_ROOT, only=list(_CI_MARKDOWNLINT_RESIDUAL_NAMES)
+    ) == []
+    assert vm.run_all_validations(
+        REPO_ROOT, only=list(_GOOSE_SCHEMA_RESIDUAL_NAMES)
+    ) == []
+    claude_names = [n for n, *_ in _claude_routing_after264_modules()]
+    assert vm.run_all_validations(REPO_ROOT, only=claude_names) == []
+    assert vm.run_all_validations(
+        REPO_ROOT, only=list(_HYDRATION_SECURITY_HANDOFF_AFTER248_NAMES)
+    ) == []
+    assert vm.run_all_validations(
+        REPO_ROOT, only=list(_HYDRATION_SECURITY_HANDOFF_AFTER322_FIGURE_NAMES)
+    ) == []
+    with pytest.raises(ValueError, match="unknown validator"):
+        vm.run_all_validations(
+            REPO_ROOT, only=["hydration-security-handoff-after354"]
+        )
+    with pytest.raises(ValueError, match="unknown validator"):
+        vm.run_all_validations(
+            REPO_ROOT, only=["hydration-security-handoff-after337"]
+        )
+    with pytest.raises(ValueError, match="unknown validator"):
+        vm.run_all_validations(
+            REPO_ROOT, only=["hydration-security-handoff-after337-ci"]
+        )
+    with pytest.raises(KeyError):
+        _ = vm.VALIDATORS["object-replacement-security-timeouts"]
+    assert "thin-space-hydration-timeouts" not in vm.VALIDATORS
+    assert "actionlint-linkcheck-after337-timeouts" not in vm.VALIDATORS
+    assert "actionlint-linkcheck-after354-timeouts" not in vm.VALIDATORS
+    assert "hydration-security-handoff-after354" not in vm.VALIDATORS
+    assert "hydration-security-handoff-after337-ci" not in vm.VALIDATORS
+    assert "braille-blank-hydration-timeouts" not in vm.VALIDATORS
+    # #354 tip seven CI fixtures remain live-green alongside hyd leftover.
+    assert vm.run_all_validations(
+        REPO_ROOT, only=[n for n, _fn in _actionlint_linkcheck_residual_modules()]
+    ) == []
 
 # ---------------------------------------------------------------------------
 # TOKENMAXX prompts+agentic_flows tip-after-#354 residual deepeners (e2fe)
@@ -46670,6 +47750,9 @@ def test_prompts_flows_after354_e2fe_isolation_vs_354_and_inverse(
     assert vm.validate_claude_packaging(REPO_ROOT) == []
     assert vm.validate_markdownlint(REPO_ROOT) == []
     assert vm.validate_hydration_phase4(REPO_ROOT) == []
+    assert vm.run_all_validations(
+        REPO_ROOT, only=list(_HYDRATION_SECURITY_HANDOFF_AFTER354_NAMES)
+    ) == []
 
     # Inverse: mangle CI fail locally; prompts nineteen stay green on tip.
     _write(tmp_path / "AGENT-PROMPTS.md", _listform_prompt_locked_text())
@@ -46679,6 +47762,9 @@ def test_prompts_flows_after354_e2fe_isolation_vs_354_and_inverse(
     assert vm.validate_link_check(tmp_path)
     for name, fn in _prompts_flows_after354_e2fe_modules():
         assert fn(REPO_ROOT) == [], name
+    assert vm.run_all_validations(
+        REPO_ROOT, only=list(_HYDRATION_SECURITY_HANDOFF_AFTER354_NAMES)
+    ) == []
 
     for invented in _PROMPTS_FLOWS_AFTER354_E2FE_INVENT_NAMES[:6]:
         assert invented not in vm.VALIDATORS
@@ -46698,6 +47784,8 @@ def test_prompts_flows_after354_e2fe_run_only_quad_races(
     assert vm.run_all_validations(REPO_ROOT, only=combined) == []
     combined_figure = names + list(_HYDRATION_SECURITY_HANDOFF_AFTER322_FIGURE_NAMES)
     assert vm.run_all_validations(REPO_ROOT, only=combined_figure) == []
+    combined_hyd354 = names + list(_HYDRATION_SECURITY_HANDOFF_AFTER354_NAMES)
+    assert vm.run_all_validations(REPO_ROOT, only=combined_hyd354) == []
 
     for invented in _PROMPTS_FLOWS_AFTER354_E2FE_INVENT_NAMES:
         with pytest.raises(ValueError, match="unknown validator"):
@@ -46827,6 +47915,9 @@ def test_prompts_flows_after354_e2fe_tip_live_green() -> None:
     assert vm.run_all_validations(REPO_ROOT, only=only_names) == []
     assert vm.run_all_validations(
         REPO_ROOT, only=list(_ACTIONLINT_LINKCHECK_RESIDUAL_NAMES)
+    ) == []
+    assert vm.run_all_validations(
+        REPO_ROOT, only=list(_HYDRATION_SECURITY_HANDOFF_AFTER354_NAMES)
     ) == []
     assert vm.run_all_validations(
         REPO_ROOT, only=list(_HYDRATION_SECURITY_HANDOFF_AFTER322_FIGURE_NAMES)
