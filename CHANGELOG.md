@@ -10,6 +10,30 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Goose-recipe schema leftover **tests-only** deepeners after tip through **#337**
+  (hydration/security FIGURE leftover after #322) / **#322** / **#307**
+  (actionlint/linkcheck leftover after #300) / **#300** / **#289** / **#279** /
+  **#270** (goose-schema leftover after #265) / **#265** / **#264** / **#258** /
+  **#253** / **#248** / **#242** / **#236** / **#229** / **#224** / **#219** /
+  **#209** / **#208** / **#202** / **#200** / **#195** / **#188** / **#184** /
+  **#172** (EXISTING three fixtures — `goose` / `recipe-agents` /
+  `recipe-titles` plus `schemas/goose-recipe.schema.json` + `GOOSE-RECIPES.md` —
+  tip-relaunch of closed CONFLICTING **#348** / **#345** / **#340** / **#336** /
+  **#333** / **#329** / **#325** / **#317** / **#313** / **#299** / **#292** /
+  **#285** and earlier stale-tip drafts; no invented product / inventory bump):
+  unsaturated reject / ACCEPT / docs / on-disk / titles-agents-inventory / CI
+  leftovers beyond #270 plus tip-after-#337 Ogham / mid-BOM / em-quad / en-quad /
+  thin / hair / MMSP name lookalikes mirroring #337 FIGURE theme onto goose name
+  pattern, LS/PS/ORC/ZWNBSP/RLM deepeners, docs phrase Ogham/figure-space
+  lookalikes, simultaneous triple-surface exact drops, titles vs agents exact
+  Finding isolation, invent-key refuse, concurrent races, tip isolation against
+  #337 figure hyd/sec + #322/#307/#300/#289/#279 siblings. Historic four only;
+  inventory unchanged (v52 / 196). Distinct from merged #337 (hydration/security
+  FIGURE), #322 (hydration/security), #307 (actionlint/linkcheck), #300
+  (Claude/routing), #289/#279 (CI/markdownlint), #270/#264 (prior goose-schema),
+  closed CONFLICTING #348/#345/#340/#336/#333/#329/#325/#317/#313/#299/#292/#285
+  (same leftover on stale / pre-#337 tips), and not a v53 invent sibling.
+
 - Hydration↔security + handoff residual **tests-only** FIGURE leftover
   deepeners after tip through **#322** (hydration/security leftover after
   #307) / **#307** (actionlint/linkcheck leftover after #300) / **#300** /
