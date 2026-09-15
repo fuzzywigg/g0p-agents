@@ -44954,3 +44954,355 @@ def test_hydration_security_handoff_after307_run_only_subset_vs_307_actionlint()
     for invented in _HYDRATION_SECURITY_HANDOFF_AFTER307_INVENT_NAMES[:8]:
         with pytest.raises(ValueError, match="unknown validator"):
             vm.run_all_validations(REPO_ROOT, only=[invented])
+
+
+# TOKENMAXX HEAVY leftover deepen: actionlint/workflow + link-check after tip
+# through #322 (hydration/security leftover after #307) / #307 (actionlint/
+# linkcheck leftover after #300) / #300 (Claude/routing leftover after #289) /
+# #289 / #279 / #270 / #265 / #264 / #258 / #253 / #248. Distinct unsaturated
+# residual edges beyond merged #307 after300 suite + tip isolation vs #322
+# hydration. EXISTING seven CI fixtures only (v52 / 196). Prefer actionlint +
+# linkcheck niche only. Tip-relaunch of closed CONFLICTING #332/#310 onto
+# post-#322 tip (unique LS/PS/obj + NEL/ZWNBSP + dual/quad Claude-isolation +
+# hydration twenty-two isolation deepeners).
+# ---------------------------------------------------------------------------
+
+
+def test_actionlint_linkcheck_after322_ls_ps_obj_replacement_lookalikes(
+    tmp_path: Path,
+) -> None:
+    """Tip-after-#322: LS/PS/object-replacement lookalikes (mirror #300 Claude theme).
+
+    YAML plain scalars treat U+2028/U+2029 as line breaks, so use double-quoted
+    scalars to keep the lookalike inside the parsed string value.
+    """
+    base = _actionlint_linkcheck_locked_ci_yaml()
+    rel = _ACTIONLINT_LINKCHECK_CI_REL
+
+    # Line Separator (U+2028) mid shell token via quoted scalar.
+    ls_shell = base.replace(
+        f"shell: {vm.CI_ACTIONLINT_SHELL}",
+        'shell: "ba\u2028sh"',
+        1,
+    )
+    _write_ci_yaml(tmp_path, ls_shell)
+    ls_shell_value = "ba\u2028sh"
+    findings = vm.validate_actionlint_shell(tmp_path)
+    assert (
+        vm.Finding(
+            rel,
+            (
+                "actionlint step shell must be "
+                f"{vm.CI_ACTIONLINT_SHELL!r}, found {ls_shell_value!r}"
+            ),
+        )
+        in findings
+    )
+    assert vm.validate_link_check(tmp_path) == []
+
+    # Paragraph Separator (U+2029) mid lychee args via quoted scalar.
+    ps_args = base.replace(
+        f"args: {vm.CI_LINK_CHECK_ARGS}",
+        'args: "--ver\u2029bose --no-progress \'**/*.md\'"',
+    )
+    _write_ci_yaml(tmp_path, ps_args)
+    findings = vm.validate_link_check(tmp_path)
+    assert any("link-check args must be" in f.message for f in findings)
+    assert vm.Finding(rel, "link-check lychee args lock not found") in findings
+    assert vm.validate_actionlint_shell(tmp_path) == []
+
+    # Object Replacement Character (U+FFFC) mid actionlint step id.
+    obj_id = base.replace(
+        f"id: {vm.CI_ACTIONLINT_STEP_ID}",
+        'id: "get_action\ufffclint"',
+        1,
+    )
+    _write_ci_yaml(tmp_path, obj_id)
+    findings = vm.validate_actionlint_shell(tmp_path)
+    assert any(
+        "get_actionlint" in f.message or "\ufffc" in f.message for f in findings
+    )
+    assert vm.validate_link_check(tmp_path) == []
+
+    _write_ci_yaml(tmp_path, base)
+    assert vm.validate_actionlint_shell(tmp_path) == []
+    assert vm.validate_link_check(tmp_path) == []
+
+
+def test_actionlint_linkcheck_after322_run_only_vs_322_hydration_and_invent_refuse() -> None:
+    """Tip-after-#322: --only seven vs #322 twenty-two + invent-key refuse."""
+    al_names = list(_ACTIONLINT_LINKCHECK_RESIDUAL_NAMES)
+    hyd_names = list(_HYDRATION_SECURITY_HANDOFF_AFTER307_NAMES)
+    claude_names = list(_CLAUDE_ROUTING_AFTER289_NAMES)
+    assert vm.run_all_validations(REPO_ROOT, only=al_names) == []
+    assert vm.run_all_validations(REPO_ROOT, only=hyd_names) == []
+    assert vm.run_all_validations(REPO_ROOT, only=claude_names) == []
+    combined = al_names + hyd_names
+    assert vm.run_all_validations(REPO_ROOT, only=combined) == []
+
+    invent_keys = (
+        "actionlint-linkcheck-after322-timeouts",
+        "actionlint-linkcheck-after332-timeouts",
+        "actionlint-linkcheck-after307-timeouts",
+        "actionlint-linkcheck-after310-timeouts",
+        "actionlint-linkcheck-after300-timeouts",
+        "hydration-security-handoff-after322",
+        "hydration-security-handoff-after307",
+        "claude-routing-after322-timeouts",
+    )
+    for key in invent_keys:
+        with pytest.raises(ValueError, match="unknown validator"):
+            vm.run_all_validations(REPO_ROOT, only=[key])
+        with pytest.raises(KeyError):
+            _ = vm.VALIDATORS[key]
+        assert key not in vm.VALIDATORS
+
+    assert "actionlint-linkcheck-after302-timeouts" not in vm.VALIDATORS
+    assert "actionlint-linkcheck-after289-timeouts" not in vm.VALIDATORS
+    assert len(vm.VALIDATORS) == 196
+    assert vm.INVENTORY_VERSION == 52
+    assert len(al_names) == 7
+    assert len(hyd_names) == 22
+
+
+def test_actionlint_linkcheck_after322_exact_dual_link_shell_vs_hydration(
+    tmp_path: Path,
+) -> None:
+    """Tip-after-#322: exact dual link+shell Findings; #322 hyd fixtures stay green."""
+    base = _actionlint_linkcheck_locked_ci_yaml()
+    rel = _ACTIONLINT_LINKCHECK_CI_REL
+
+    mangled = base.replace(
+        vm.CI_LINK_CHECK_ARGS,
+        "--after322-dual-verbose --no-progress '**/*.md'",
+    ).replace(
+        f"shell: {vm.CI_ACTIONLINT_SHELL}",
+        "shell: powershell",
+        1,
+    )
+    _write_ci_yaml(tmp_path, mangled)
+    link_findings = vm.validate_link_check(tmp_path)
+    shell_findings = vm.validate_actionlint_shell(tmp_path)
+    assert any("link-check args must be" in f.message for f in link_findings)
+    assert any("shell must be" in f.message for f in shell_findings)
+    assert vm.Finding(rel, "link-check lychee args lock not found") in link_findings
+
+    for name, fn, _phrases, _key in _hydration_security_handoff_after307_modules():
+        assert fn(REPO_ROOT) == [], name
+    for name, fn, _phrases, _key in _claude_routing_after289_modules():
+        assert fn(REPO_ROOT) == [], name
+    assert vm.validate_claude_packaging(REPO_ROOT) == []
+    assert vm.validate_routing_surfaces(REPO_ROOT) == []
+    assert vm.validate_markdownlint(REPO_ROOT) == []
+
+    _write_ci_yaml(tmp_path, base)
+    assert vm.validate_link_check(tmp_path) == []
+    assert vm.validate_actionlint_shell(tmp_path) == []
+
+
+def test_actionlint_linkcheck_after322_nel_zwnbsp_via_linkcheck_and_shell(
+    tmp_path: Path,
+) -> None:
+    """Tip-after-#322: NEL/ZWNBSP lookalikes via link-check + actionlint-shell only."""
+    base = _actionlint_linkcheck_locked_ci_yaml()
+
+    # ZWNBSP (U+FEFF) mid-token in lychee args — niche stays actionlint/linkcheck.
+    zwnbsp_args = base.replace(
+        vm.CI_LINK_CHECK_ARGS,
+        vm.CI_LINK_CHECK_ARGS.replace("--verbose", "--ver\ufeffbose"),
+    )
+    _write_ci_yaml(tmp_path, zwnbsp_args)
+    findings = vm.validate_link_check(tmp_path)
+    assert any("link-check args must be" in f.message for f in findings)
+    assert vm.validate_actionlint_shell(tmp_path) == []
+    assert vm.validate_markdownlint(REPO_ROOT) == []
+
+    zwnbsp_shell = base.replace(
+        f"shell: {vm.CI_ACTIONLINT_SHELL}",
+        "shell: bash\ufeff",
+        1,
+    )
+    _write_ci_yaml(tmp_path, zwnbsp_shell)
+    findings = vm.validate_actionlint_shell(tmp_path)
+    assert findings
+    assert vm.validate_link_check(tmp_path) == []
+
+    for name, fn, _phrases, _key in _hydration_security_handoff_after307_modules():
+        assert fn(REPO_ROOT) == [], name
+    for name, fn, _phrases, _key in _claude_routing_after289_modules():
+        assert fn(REPO_ROOT) == [], name
+
+    _write_ci_yaml(tmp_path, base)
+    assert vm.validate_link_check(tmp_path) == []
+    assert vm.validate_actionlint_shell(tmp_path) == []
+
+
+def test_actionlint_linkcheck_after322_isolation_vs_322_hydration(
+    tmp_path: Path,
+) -> None:
+    """Tip-after-#322: CI fail locally while #322 hydration twenty-two stay green."""
+    base = _actionlint_linkcheck_locked_ci_yaml()
+
+    fail_false = base.replace("          fail: true\n", "          fail: false\n")
+    _write_ci_yaml(tmp_path, fail_false)
+    assert vm.validate_link_check(tmp_path)
+    assert vm.validate_actionlint_shell(tmp_path) == []
+    for name, fn, _phrases, _key in _hydration_security_handoff_after307_modules():
+        assert fn(REPO_ROOT) == [], name
+
+    # Inverse: mangle SECURITY.md locally; actionlint residual stays green on tip.
+    _write_ci_yaml(tmp_path, base)
+    mangled_sec = _security_residual_locked_text().replace(
+        "Never commit secrets", "ABSENT_SECRETS_AFTER322_VS_ACTIONLINT"
+    )
+    _write(tmp_path / "SECURITY.md", mangled_sec)
+    assert vm.validate_security_packaging(tmp_path)
+    for name in _ACTIONLINT_LINKCHECK_RESIDUAL_NAMES:
+        assert vm.VALIDATORS[name](REPO_ROOT) == [], name
+    assert vm.validate_claude_packaging(REPO_ROOT) == []
+    assert vm.validate_markdownlint(REPO_ROOT) == []
+
+    assert "hydration-phase4" not in _ACTIONLINT_LINKCHECK_RESIDUAL_NAMES
+    assert "security" not in _ACTIONLINT_LINKCHECK_RESIDUAL_NAMES
+    assert "scratchpad" not in _ACTIONLINT_LINKCHECK_RESIDUAL_NAMES
+    assert "claude" not in _ACTIONLINT_LINKCHECK_RESIDUAL_NAMES
+    assert "markdownlint" not in _ACTIONLINT_LINKCHECK_RESIDUAL_NAMES
+
+    _write(tmp_path / "SECURITY.md", _security_residual_locked_text())
+    assert vm.validate_link_check(tmp_path) == []
+    assert vm.validate_security_packaging(tmp_path) == []
+
+
+def test_actionlint_linkcheck_after322_quad_race_with_hydration_live_green(
+    tmp_path: Path,
+) -> None:
+    """Tip-after-#322: quad-surface CI races while #322 hyd twenty-two stay live-green."""
+    modules = _actionlint_linkcheck_residual_modules()
+    fns = [fn for _n, fn in modules]
+    base = _actionlint_linkcheck_locked_ci_yaml()
+    variants = (
+        base,
+        base.replace(vm.CI_LINK_CHECK_ARGS, "--after322-quad-race"),
+        base.replace(f"shell: {vm.CI_ACTIONLINT_SHELL}", "shell: pwsh", 1),
+        base.replace("runs-on: ubuntu-latest", "runs-on: Ubuntu-latest", 1),
+        base.replace("          fail: true\n", "          fail: false\n"),
+    )
+    ci_path = tmp_path / _ACTIONLINT_LINKCHECK_CI_REL
+    _write(ci_path, base)
+    for name, fn in modules:
+        assert fn(tmp_path) == [], name
+
+    stop = threading.Event()
+    race_errors: list[BaseException] = []
+
+    def _writer() -> None:
+        flip = 0
+        while not stop.is_set():
+            try:
+                ci_path.write_text(variants[flip % len(variants)], encoding="utf-8")
+                flip += 1
+            except BaseException as exc:  # noqa: BLE001
+                race_errors.append(exc)
+                return
+
+    def _reader() -> None:
+        while not stop.is_set():
+            try:
+                for fn in fns:
+                    fn(tmp_path)
+            except BaseException as exc:  # noqa: BLE001
+                race_errors.append(exc)
+                return
+
+    threads = [
+        threading.Thread(target=_writer),
+        threading.Thread(target=_reader),
+        threading.Thread(target=_reader),
+        threading.Thread(target=_reader),
+    ]
+    for t in threads:
+        t.start()
+    time.sleep(0.45)
+    stop.set()
+    for t in threads:
+        t.join(timeout=2.0)
+    assert race_errors == []
+
+    # Live tip: actionlint seven + #322 hydration twenty-two + #300 Claude twelve.
+    assert vm.run_all_validations(
+        REPO_ROOT, only=list(_ACTIONLINT_LINKCHECK_RESIDUAL_NAMES)
+    ) == []
+    assert vm.run_all_validations(
+        REPO_ROOT, only=list(_HYDRATION_SECURITY_HANDOFF_AFTER307_NAMES)
+    ) == []
+    assert vm.run_all_validations(
+        REPO_ROOT, only=list(_CLAUDE_ROUTING_AFTER289_NAMES)
+    ) == []
+    for name, fn, _phrases, _key in _hydration_security_handoff_after307_modules():
+        assert fn(REPO_ROOT) == [], name
+
+
+def test_actionlint_linkcheck_after322_vtab_wj_via_shell_and_job_name(
+    tmp_path: Path,
+) -> None:
+    """Tip-after-#322: vertical-tab / word-joiner lookalikes (mirror #322 hyd theme)."""
+    base = _actionlint_linkcheck_locked_ci_yaml()
+    rel = _ACTIONLINT_LINKCHECK_CI_REL
+
+    # Vertical tab (U+000B) is unacceptable in YAML — residual parse-error edge.
+    vtab_shell = base.replace(
+        f"shell: {vm.CI_ACTIONLINT_SHELL}",
+        'shell: "ba\u000bsh"',
+        1,
+    )
+    _write_ci_yaml(tmp_path, vtab_shell)
+    findings = vm.validate_actionlint_shell(tmp_path)
+    assert findings
+    assert any("YAML parse error" in f.message and "#x000b" in f.message for f in findings)
+    assert findings == [
+        vm.Finding(rel, findings[0].message),
+    ]
+    # link-check shares the same parse failure surface when YAML is illegal.
+    link_findings = vm.validate_link_check(tmp_path)
+    assert any("YAML parse error" in f.message for f in link_findings)
+
+    # Word joiner (U+2060) mid link-check job name — ci-job-names niche.
+    wj_name = base.replace(
+        "name: Link Check",
+        'name: "Link\u2060 Check"',
+        1,
+    )
+    _write_ci_yaml(tmp_path, wj_name)
+    findings = vm.validate_ci_job_names(tmp_path)
+    assert findings
+    # name!r ASCII-escapes U+2060 as \\u2060 in the Finding message.
+    assert any(
+        "Link\\u2060 Check" in f.message or "\\u2060" in f.message for f in findings
+    )
+    assert vm.validate_actionlint_shell(tmp_path) == []
+    assert vm.validate_link_check(tmp_path) == []
+
+    for name, fn, _phrases, _key in _hydration_security_handoff_after307_modules():
+        assert fn(REPO_ROOT) == [], name
+
+    _write_ci_yaml(tmp_path, base)
+    assert vm.validate_actionlint_shell(tmp_path) == []
+    assert vm.validate_ci_job_names(tmp_path) == []
+
+
+def test_actionlint_linkcheck_after322_leftover_live_green() -> None:
+    """Tip-after-#322: seven CI fixtures + inventory honesty stay live-green."""
+    for name, fn in _actionlint_linkcheck_residual_modules():
+        assert fn(REPO_ROOT) == [], name
+    assert vm.run_all_validations(
+        REPO_ROOT, only=list(_ACTIONLINT_LINKCHECK_RESIDUAL_NAMES)
+    ) == []
+    assert vm.validate_ci_workflow(REPO_ROOT) == []
+    assert vm.validate_link_check(REPO_ROOT) == []
+    assert vm.validate_actionlint_shell(REPO_ROOT) == []
+    assert len(_actionlint_linkcheck_residual_modules()) == 7
+    assert len(vm.VALIDATORS) == 196
+    assert vm.INVENTORY_VERSION == 52
+    assert "actionlint-linkcheck-after322-timeouts" not in vm.VALIDATORS
+    assert "actionlint-linkcheck-after332-timeouts" not in vm.VALIDATORS
+    assert "hydration-security-handoff-after322" not in vm.VALIDATORS
