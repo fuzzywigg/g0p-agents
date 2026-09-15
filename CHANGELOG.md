@@ -10,6 +10,30 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Hydration↔security + handoff residual **tests-only** leftover deepeners after
+  tip through **#337** (hydration/security FIGURE leftover after #322) /
+  **#322** / **#307** / **#300** / **#289** / **#279** / **#270** / **#265** /
+  **#264** / **#258** (EXISTING twenty-two fixtures — `hydration-phase4` + ten
+  `security` / `security-*` + seven handoff-cluster `constitution-*` + four
+  `scratchpad*` — no invented product / inventory bump): unsaturated object-
+  replacement / thin / hair / en / em space lookalikes beyond #337
+  figure/NNBSP/Ogham/LS/PS, RLM / LRM / ZWJ / ZWNJ lookalikes (mirror
+  goose/claude theme), bidi embedding/isolate (LRE/RLE/LRI/RLI) lookalikes,
+  braille-blank / medium-math / punctuation-space lookalikes, second-or-
+  penultimate phrase exact drop matrix (≠ #337 middle; ≠ #322 first/last),
+  triple invented-agent exact Finding (≠ #337 dual), symlink follow +
+  dangling + symlink-to-directory missing-file equality, four-doc simultaneous
+  exact Findings, isolation vs #337 figure + #322 after307 + #307
+  actionlint/linkcheck + #300 Claude/routing + #289 CI/markdownlint,
+  `run_all --only` subset + concurrent four-doc races + tip live-green +
+  invent-key refuse. Historic four only; inventory unchanged (v52 / 196).
+  Distinct from merged #337 (figure/NNBSP/LS/PS/middle/dual/mid-BOM after
+  #322), #322 (soft-hyphen/NEL/first+last after #307), closed CONFLICTING
+  #335/#334/#327/#321/#320/#314/#312/#309/#308/#304/#297/#295/#287/#281/#277
+  (same leftover vs stale / pre-#337 tips), #307 (actionlint/linkcheck),
+  #300 (Claude/routing), #289/#279 (CI/markdownlint), #270 (goose-schema),
+  and #258 (hydration/security+handoff).
+
 - Hydration↔security + handoff residual **tests-only** FIGURE leftover
   deepeners after tip through **#322** (hydration/security leftover after
   #307) / **#307** (actionlint/linkcheck leftover after #300) / **#300** /
