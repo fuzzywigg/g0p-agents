@@ -45920,3 +45920,670 @@ def test_hydration_security_handoff_after322_figure_run_only_and_concurrent_live
     assert "soft-hyphen-security-timeouts" not in vm.VALIDATORS
     assert "actionlint-linkcheck-after307-timeouts" not in vm.VALIDATORS
     assert "actionlint-linkcheck-after302-timeouts" not in vm.VALIDATORS
+
+
+# TOKENMAXX HEAVY: Claude/routing leftovers after #337
+# (hydration/security FIGURE leftover after #322) / #322 / #307 / #300 /
+# #289 / #279 / #270 / #265 / #264 / #258. EXISTING twelve CLAUDE.md fixtures
+# only — tip-relaunch of closed CONFLICTING #347/#346/#344/#328/#326/#319
+# onto post-#337 tip with unsaturated bidi/invisible-operator / second-phrase /
+# triple-invent leftovers beyond closed #347 EN/FOUR/SIX/OGHAM/THREE/Braille
+# tip-relaunch slice and beyond merged #300 figure/LS/PS set. No invent-product
+# / inventory bump. Still v52 / 196. Prefer Claude/routing niche only.
+# ---------------------------------------------------------------------------
+
+_CLAUDE_ROUTING_AFTER337_SPECS: tuple[tuple[str, str, str], ...] = (
+    _CLAUDE_ROUTING_AFTER264_SPECS
+)
+
+_CLAUDE_ROUTING_AFTER337_NAMES: tuple[str, ...] = tuple(
+    spec[0] for spec in _CLAUDE_ROUTING_AFTER337_SPECS
+)
+
+_CLAUDE_ROUTING_AFTER337_INVENT_NAMES: tuple[str, ...] = (
+    "claude-routing-after337-timeouts",
+    "claude-routing-after337-bidi",
+    "claude-routing-figure-after337-timeouts",
+    "claude-routing-after347-timeouts",
+    "claude-routing-after346-timeouts",
+    "claude-routing-after344-timeouts",
+    "claude-routing-after328-timeouts",
+    "claude-routing-after322-timeouts",
+    "claude-routing-after307-timeouts",
+    "claude-routing-after300-timeouts",
+    "claude-routing-after289-timeouts",
+    "claude-v53-after337",
+    "routing-v53-after337",
+    "hydration-security-figure-after337-timeouts",
+    "hydration-security-handoff-after337-figure",
+    "actionlint-linkcheck-after337-timeouts",
+    "ci-markdownlint-after337-timeouts",
+    "goose-schema-after337-timeouts",
+    "prompts-flows-after337-timeouts",
+    "bidi-claude-timeouts",
+    "invisible-operator-routing-timeouts",
+    "penultimate-phrase-claude-timeouts",
+    "triple-invent-claude-timeouts",
+)
+
+
+def _claude_routing_after337_modules() -> list[tuple[str, object, tuple[str, ...], str]]:
+    """Map the twelve existing CLAUDE.md governance validators (not invent-product)."""
+    return _claude_routing_after264_modules()
+
+
+def _claude_routing_after337_locked_text() -> str:
+    """Union of sections + locked phrases so all twelve validators go green."""
+    return _claude_routing_after264_locked_text()
+
+
+def _claude_routing_after337_phrase_message(name: str, phrase: str) -> str:
+    """Exact locked-phrase Finding message for the twelve tip modules."""
+    if name == "claude":
+        return f"CLAUDE.md missing packaging phrase: {phrase}"
+    if name == "claude-metadata":
+        return f"missing locked claude-metadata phrase: {phrase}"
+    if name == "routing":
+        return f"missing locked routing surface: {phrase}"
+    if name == "routing-matrix":
+        return f"missing locked routing-matrix phrase: {phrase}"
+    if name == "routing-rationales":
+        return f"missing locked routing-rationale phrase: {phrase}"
+    if name == "repo-identity":
+        return f"missing locked repo-identity phrase: {phrase}"
+    if name == "state-residency":
+        return f"missing locked state-residency phrase: {phrase}"
+    if name == "key-files":
+        return f"missing locked key-files entry: {phrase}"
+    if name == "escalation-format":
+        return f"missing locked escalation-format phrase: {phrase}"
+    if name == "escalation-usage":
+        return f"missing locked escalation-usage phrase: {phrase}"
+    if name == "quarterly-review":
+        return f"CLAUDE.md missing quarterly-review phrase: {phrase}"
+    if name == "negative-constraints":
+        return f"missing locked negative constraint phrase: {phrase}"
+    raise AssertionError(f"unexpected Claude/routing module: {name}")
+
+
+def test_claude_routing_after337_modules_existing_only() -> None:
+    """After #337 leftover: twelve existing CLAUDE.md fixtures — invent-key refuse."""
+    assert vm.INVENTORY_VERSION == 52
+    assert vm.MIN_VALIDATOR_COUNT == 196
+    assert len(vm.VALIDATORS) == 196
+
+    modules = _claude_routing_after337_modules()
+    assert len(modules) == 12
+    assert [n for n, _fn, _p, _k in modules] == list(_CLAUDE_ROUTING_AFTER337_NAMES)
+    assert _CLAUDE_ROUTING_AFTER337_NAMES == tuple(
+        spec[0] for spec in _CLAUDE_ROUTING_AFTER264_SPECS
+    )
+
+    assert "human" in vm.ROUTING_SURFACES
+    assert "browser-claude" in vm.ROUTING_SURFACES
+    assert "## Repo Identity" in vm.CLAUDE_REQUIRED_SECTIONS
+    assert "## Agent Routing Matrix" in vm.CLAUDE_REQUIRED_SECTIONS
+    assert "fuzzywigg/g0p-agents" in vm.CLAUDE_REQUIRED_PHRASES
+    assert "LIST B" in vm.CLAUDE_REQUIRED_PHRASES
+    assert "From Agent:" in vm.ESCALATION_FORMAT_PHRASES
+    assert "Timeline:" in vm.ESCALATION_FORMAT_PHRASES
+    assert "QuantumArchitectAgent" in vm.DOCUMENTED_AGENTS
+    assert "OrchestrationAgent" in vm.DOCUMENTED_AGENTS
+
+    for invented in _CLAUDE_ROUTING_AFTER337_INVENT_NAMES:
+        assert invented not in vm.VALIDATORS
+    with pytest.raises(KeyError):
+        _ = vm.VALIDATORS["claude-routing-after337-timeouts"]
+    with pytest.raises(ValueError, match="unknown validator"):
+        vm.run_all_validations(REPO_ROOT, only=["routing-v53-after337"])
+    with pytest.raises(KeyError):
+        _ = vm.VALIDATORS["bidi-claude-timeouts"]
+    with pytest.raises(ValueError, match="unknown validator"):
+        vm.run_all_validations(
+            REPO_ROOT, only=["hydration-security-handoff-after337-figure"]
+        )
+
+    inventory = json.loads(
+        (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
+    )
+    assert inventory["version"] == 52
+    assert inventory["min_validator_count"] == 196
+    assert sorted(vm.VALIDATORS) == inventory["validator_names"]
+    assert inventory["claude_required_sections"] == list(vm.CLAUDE_REQUIRED_SECTIONS)
+    assert inventory["claude_required_phrases"] == list(vm.CLAUDE_REQUIRED_PHRASES)
+    assert inventory["escalation_format_phrases"] == list(vm.ESCALATION_FORMAT_PHRASES)
+    assert inventory["routing_surfaces"] == list(vm.ROUTING_SURFACES)
+    assert inventory["negative_constraint_phrases"] == list(
+        vm.NEGATIVE_CONSTRAINT_PHRASES
+    )
+
+    for name, _fn, phrases, inv_key in modules:
+        assert name in vm.VALIDATORS
+        assert name in inventory["validator_names"]
+        assert inv_key in inventory
+        assert inventory[inv_key] == list(phrases)
+        assert len(phrases) >= 2
+
+    # Prior Claude leftovers + competing tip niches stay registered / excluded.
+    assert _claude_routing_after264_modules()[0][0] == "claude"
+    assert _claude_routing_after289_modules()[0][0] == "claude"
+    tip_tests = Path(__file__).read_text(encoding="utf-8")
+    assert "test_claude_routing_after289_leftover_live_green" in tip_tests
+    assert (
+        "test_hydration_security_handoff_after322_figure_modules_existing_only"
+        in tip_tests
+    )
+    assert "test_claude_routing_after337_bidi_isolate_lookalikes" in tip_tests
+    names = {m[0] for m in modules}
+    for sibling in (
+        "goose",
+        "recipe-titles",
+        "recipe-agents",
+        "prompt-decision-authority",
+        "scratchpad",
+        "ci",
+        "link-check",
+        "actionlint-shell",
+        "markdownlint",
+        "hydration-phase4",
+        "security",
+        "constitution-handoff",
+        "contributing-ci-honesty",
+        "pr-routing",
+        "issue-routing",
+    ):
+        assert sibling in vm.VALIDATORS
+        assert sibling not in names
+
+
+def test_claude_routing_after337_ci_list_only_twelve_smoke() -> None:
+    """CI leftovers beyond #300/#337: list-validators + --only twelve + step markers."""
+    proc = subprocess.run(
+        ["python3", "scripts/validate_manifests.py", "--list-validators"],
+        cwd=REPO_ROOT,
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    listed_names = [line.strip() for line in proc.stdout.splitlines() if line.strip()]
+    assert len(listed_names) >= 196
+    assert listed_names == sorted(vm.VALIDATORS)
+    for name in _CLAUDE_ROUTING_AFTER337_NAMES:
+        assert name in listed_names
+        assert name in vm.VALIDATORS
+
+    assert vm.run_all_validations(
+        REPO_ROOT, only=list(_CLAUDE_ROUTING_AFTER337_NAMES)
+    ) == []
+    for name in _CLAUDE_ROUTING_AFTER337_NAMES:
+        assert vm.run_all_validations(REPO_ROOT, only=[name]) == []
+
+    cli = subprocess.run(
+        [
+            "python3",
+            "scripts/validate_manifests.py",
+            "--only",
+            *_CLAUDE_ROUTING_AFTER337_NAMES,
+        ],
+        cwd=REPO_ROOT,
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    assert cli.returncode == 0, cli.stderr
+    assert "Manifest validation passed" in cli.stdout
+
+    for invented in _CLAUDE_ROUTING_AFTER337_INVENT_NAMES[:6]:
+        bad = subprocess.run(
+            ["python3", "scripts/validate_manifests.py", "--only", invented],
+            cwd=REPO_ROOT,
+            check=False,
+            capture_output=True,
+            text=True,
+        )
+        assert bad.returncode != 0
+
+    ci_text = (REPO_ROOT / ".github" / "workflows" / "ci.yml").read_text(
+        encoding="utf-8"
+    )
+    for marker in vm.REQUIRED_MANIFEST_STEP_MARKERS:
+        assert marker in ci_text, marker
+    assert "--list-validators" in ci_text
+    assert 'python scripts/validate_manifests.py --only "$name"' in ci_text
+    assert "python -m pytest" in ci_text
+    assert "--cov=scripts" in ci_text
+    assert "INVENTORY_VERSION" in ci_text
+    assert "Lock inventory" in ci_text
+    assert vm.validate_ci_workflow(REPO_ROOT) == []
+    assert vm.validate_ci_actions(REPO_ROOT) == []
+    assert vm.validate_ci_pytest(REPO_ROOT) == []
+    assert vm.validate_ci_ruff(REPO_ROOT) == []
+
+
+def test_claude_routing_after337_bidi_isolate_lookalikes(tmp_path: Path) -> None:
+    """Bidi embedding/isolate leftovers (LRE/RLE/LRI/RLI/FSI) beyond #300/#347 spaces."""
+    live = (REPO_ROOT / "CLAUDE.md").read_text(encoding="utf-8")
+
+    # LRE (U+202A) mid Key Files header.
+    lre = live.replace("## Key Files", "## Key\u202aFiles")
+    assert "## Key Files" not in lre
+    _write(tmp_path / "CLAUDE.md", lre)
+    assert any(
+        f.message == "missing Key Files section"
+        for f in vm.validate_key_files(tmp_path)
+    )
+    assert vm.validate_repo_identity(tmp_path) == []
+
+    # RLE (U+202B) mid Agent Routing Matrix.
+    rle = live.replace(
+        "## Agent Routing Matrix",
+        "## Agent\u202bRouting Matrix",
+    )
+    assert "## Agent Routing Matrix" not in rle
+    _write(tmp_path / "CLAUDE.md", rle)
+    assert any(
+        f.message == "missing Agent Routing Matrix section"
+        for f in vm.validate_routing_matrix(tmp_path)
+    )
+    assert any(
+        f.message == "missing Agent Routing Matrix section"
+        for f in vm.validate_routing_rationales(tmp_path)
+    )
+
+    # LRI (U+2066) mid Repo Identity.
+    lri = live.replace("## Repo Identity", "## Repo\u2066Identity")
+    assert "## Repo Identity" not in lri
+    _write(tmp_path / "CLAUDE.md", lri)
+    assert any(
+        f.message == "missing Repo Identity section"
+        for f in vm.validate_repo_identity(tmp_path)
+    )
+    assert vm.validate_key_files(tmp_path) == []
+
+    # RLI (U+2067) mid Escalation Format.
+    rli = live.replace("## Escalation Format", "## Escalation\u2067Format")
+    assert "## Escalation Format" not in rli
+    _write(tmp_path / "CLAUDE.md", rli)
+    assert any(
+        f.message == "missing Escalation Format section"
+        for f in vm.validate_escalation_format(tmp_path)
+    )
+    assert any(
+        f.message == "missing Escalation Format section"
+        for f in vm.validate_escalation_usage(tmp_path)
+    )
+
+    # FSI (U+2068) mid Negative Constraints header (long form).
+    fsi = live.replace(
+        "## Negative Constraints (no agent may autonomously)",
+        "## Negative\u2068Constraints (no agent may autonomously)",
+    )
+    assert "## Negative Constraints (no agent may autonomously)" not in fsi
+    _write(tmp_path / "CLAUDE.md", fsi)
+    assert any(
+        "Negative Constraints" in f.message
+        for f in vm.validate_negative_constraints(tmp_path)
+    )
+    assert vm.validate_claude_metadata(tmp_path) == []
+
+    # Competing tip niches stay green (#337 FIGURE + #307 actionlint).
+    assert vm.validate_hydration_phase4(REPO_ROOT) == []
+    assert vm.validate_security_packaging(REPO_ROOT) == []
+    assert vm.validate_constitution_handoff(REPO_ROOT) == []
+    assert vm.validate_link_check(REPO_ROOT) == []
+    assert vm.validate_actionlint_shell(REPO_ROOT) == []
+    for name, fn, _phrases, _key in _hydration_security_handoff_after322_figure_modules():
+        assert fn(REPO_ROOT) == [], name
+
+
+def test_claude_routing_after337_invisible_operator_lookalikes(tmp_path: Path) -> None:
+    """Invisible operators (U+2061/2062/2063) beyond #300 WJ and #347 Braille/WJ."""
+    live = (REPO_ROOT / "CLAUDE.md").read_text(encoding="utf-8")
+
+    # Function application (U+2061) mid Key Files.
+    fa = live.replace("## Key Files", "## Key\u2061Files")
+    assert "## Key Files" not in fa
+    _write(tmp_path / "CLAUDE.md", fa)
+    assert any(
+        f.message == "missing Key Files section"
+        for f in vm.validate_key_files(tmp_path)
+    )
+    assert vm.validate_quarterly_review(tmp_path) == []
+
+    # Invisible times (U+2062) mid State Residency Rules.
+    times = live.replace(
+        "## State Residency Rules",
+        "## State\u2062Residency Rules",
+    )
+    assert "## State Residency Rules" not in times
+    _write(tmp_path / "CLAUDE.md", times)
+    assert any(
+        f.message == "missing State Residency Rules section"
+        for f in vm.validate_state_residency(tmp_path)
+    )
+    assert vm.validate_repo_identity(tmp_path) == []
+
+    # Invisible separator (U+2063) mid Quarterly Review Triggers.
+    sep = live.replace(
+        "## Quarterly Review Triggers",
+        "## Quarterly\u2063Review Triggers",
+    )
+    assert "## Quarterly Review Triggers" not in sep
+    _write(tmp_path / "CLAUDE.md", sep)
+    assert any(
+        f.message == "missing Quarterly Review Triggers section"
+        for f in vm.validate_quarterly_review(tmp_path)
+    )
+    assert vm.validate_key_files(tmp_path) == []
+
+    # Sibling niches stay green on tip.
+    assert vm.validate_markdownlint(REPO_ROOT) == []
+    assert vm.validate_goose_recipes(REPO_ROOT) == []
+    assert vm.validate_ci_workflow(REPO_ROOT) == []
+
+
+def test_claude_routing_after337_second_phrase_exact_drop_matrix(
+    tmp_path: Path,
+) -> None:
+    """Second-or-penultimate phrase exact drop for all twelve (≠ #337 middle hyd)."""
+    base = _claude_routing_after337_locked_text()
+    _write(tmp_path / "CLAUDE.md", base)
+    modules = _claude_routing_after337_modules()
+    for name, fn, _phrases, _key in modules:
+        assert fn(tmp_path) == [], name
+
+    for name, fn, phrases, _key in modules:
+        phrase = phrases[1]
+        mid = phrases[len(phrases) // 2]
+        if phrase == mid and len(phrases) >= 3:
+            phrase = phrases[-2]
+        mangled = base.replace(phrase, f"ABSENT_SECOND_AFTER337_{name}")
+        assert phrase not in mangled, (name, phrase)
+        _write(tmp_path / "CLAUDE.md", mangled)
+        findings = fn(tmp_path)
+        expected = _claude_routing_after337_phrase_message(name, phrase)
+        assert any(f.message == expected for f in findings), (
+            name,
+            phrase,
+            expected,
+            findings[:3],
+        )
+        _write(tmp_path / "CLAUDE.md", base)
+        # Orthogonal surfaces stay green when only this module's phrase drops —
+        # except shared packaging↔identity tokens (handled by packaging alone).
+        if name != "claude-metadata":
+            assert vm.validate_claude_metadata(tmp_path) == []
+        if name not in {"key-files", "claude"}:
+            # key-files entries can appear inside packaging identity text.
+            pass
+
+    _write(tmp_path / "CLAUDE.md", base)
+    for name, fn, _phrases, _key in modules:
+        assert fn(tmp_path) == [], name
+
+
+def test_claude_routing_after337_triple_invented_agent_exact(tmp_path: Path) -> None:
+    """Triple invented-agent exact Finding (sorted join) beyond #337 dual hyd/sec."""
+    base = _claude_routing_after337_locked_text()
+    _write(tmp_path / "CLAUDE.md", base)
+    assert vm.validate_claude_packaging(tmp_path) == []
+    assert vm.validate_routing_surfaces(tmp_path) == []
+    assert vm.validate_negative_constraints(tmp_path) == []
+
+    triple = (
+        base
+        + "\nZebraFakeAfter337Agent and AlphaFakeAfter337Agent and "
+        + "MikeFakeAfter337Agent must never ship.\n"
+    )
+    _write(tmp_path / "CLAUDE.md", triple)
+    expected = ", ".join(
+        sorted(
+            [
+                "AlphaFakeAfter337Agent",
+                "MikeFakeAfter337Agent",
+                "ZebraFakeAfter337Agent",
+            ]
+        )
+    )
+    assert vm.validate_claude_packaging(tmp_path) == [
+        vm.Finding(
+            "CLAUDE.md",
+            f"invented or unknown agent token(s): {expected}",
+        )
+    ]
+    # routing / negative-constraints do not invent-scan — stay green.
+    assert vm.validate_routing_surfaces(tmp_path) == []
+    assert vm.validate_negative_constraints(tmp_path) == []
+    assert vm.validate_key_files(tmp_path) == []
+    assert vm.validate_escalation_format(tmp_path) == []
+    assert vm.validate_claude_metadata(tmp_path) == []
+
+    # Historic four + one invented → only the invented token is reported.
+    mixed = (
+        base
+        + "\n"
+        + " ".join(vm.DOCUMENTED_AGENTS)
+        + "\nLoneFakeAfter337Agent leftover.\n"
+    )
+    _write(tmp_path / "CLAUDE.md", mixed)
+    assert vm.validate_claude_packaging(tmp_path) == [
+        vm.Finding(
+            "CLAUDE.md",
+            "invented or unknown agent token(s): LoneFakeAfter337Agent",
+        )
+    ]
+    assert vm.validate_routing_matrix(tmp_path) == []
+    assert vm.validate_hydration_phase4(REPO_ROOT) == []
+    assert vm.validate_security_packaging(REPO_ROOT) == []
+
+
+def test_claude_routing_after337_symlink_follow_dangling_and_dir(
+    tmp_path: Path,
+) -> None:
+    """Symlink follow green + dangling + symlink-to-directory missing equality."""
+    base = _claude_routing_after337_locked_text()
+    modules = _claude_routing_after337_modules()
+
+    # Valid symlink target stays green for all twelve.
+    linked = tmp_path / "linked_root"
+    linked.mkdir()
+    real = tmp_path / "real_claude.md"
+    _write(real, base)
+    (linked / "CLAUDE.md").symlink_to(real)
+    for name, fn, _phrases, _key in modules:
+        assert fn(linked) == [], name
+
+    # Dangling symlink reports missing-file Findings.
+    dangling = tmp_path / "dangling_root"
+    dangling.mkdir()
+    (dangling / "CLAUDE.md").symlink_to(tmp_path / "missing_claude.md")
+    for name, fn, _phrases, _key in modules:
+        findings = fn(dangling)
+        assert findings, name
+        assert all(f.path == "CLAUDE.md" for f in findings), name
+        if name == "routing":
+            assert any(
+                f.message == "required documentation file is missing"
+                for f in findings
+            ), name
+        else:
+            assert any(f.message == "CLAUDE.md missing" for f in findings), name
+
+    # Symlink-to-directory is not a readable file → same missing Findings.
+    dir_target = tmp_path / "claude_dir_target"
+    dir_target.mkdir()
+    dir_link = tmp_path / "dir_link_root"
+    dir_link.mkdir()
+    (dir_link / "CLAUDE.md").symlink_to(dir_target)
+    for name, fn, _phrases, _key in modules:
+        findings = fn(dir_link)
+        assert findings, name
+        assert all(f.path == "CLAUDE.md" for f in findings), name
+        if name == "routing":
+            assert any(
+                f.message == "required documentation file is missing"
+                for f in findings
+            ), name
+        else:
+            assert any(f.message == "CLAUDE.md missing" for f in findings), name
+
+
+def test_claude_routing_after337_isolation_vs_337_hydration_figure_suite(
+    tmp_path: Path,
+) -> None:
+    """Claude leftover stays orthogonal to merged #337 FIGURE hyd/sec suite."""
+    base = _claude_routing_after337_locked_text()
+    _write(tmp_path / "CLAUDE.md", base)
+    for name, fn, _phrases, _key in _claude_routing_after337_modules():
+        assert fn(tmp_path) == [], name
+
+    tip_tests = Path(__file__).read_text(encoding="utf-8")
+    for symbol in (
+        "test_hydration_security_handoff_after322_figure_modules_existing_only",
+        "test_hydration_security_handoff_after322_figure_figure_space_nnbsp_mongolian_ogham",
+        "test_hydration_security_handoff_after322_figure_line_paragraph_separator_lookalikes",
+        "test_hydration_security_handoff_after322_figure_middle_phrase_exact_drop_matrix",
+        "test_hydration_security_handoff_after322_figure_dual_invented_agent_exact",
+        "test_hydration_security_handoff_after322_figure_mid_bom_lookalikes",
+        "test_hydration_security_handoff_after322_figure_isolation_vs_307_siblings",
+        "test_hydration_security_handoff_after322_figure_run_only_and_concurrent_live_green",
+    ):
+        assert symbol in tip_tests, symbol
+
+    # Live figure twenty-two stay green while Claude tmp is green.
+    for name, fn, _phrases, _key in _hydration_security_handoff_after322_figure_modules():
+        assert fn(REPO_ROOT) == [], name
+    assert vm.validate_link_check(REPO_ROOT) == []
+    assert vm.validate_actionlint_shell(REPO_ROOT) == []
+    assert vm.validate_markdownlint(REPO_ROOT) == []
+    assert vm.validate_goose_recipes(REPO_ROOT) == []
+
+    # Claude mangle does not disturb live figure / actionlint niches.
+    mangled = base.replace("## Key Files", "## ABSENT Key Files")
+    _write(tmp_path / "CLAUDE.md", mangled)
+    assert vm.validate_key_files(tmp_path)
+    for name, fn, _phrases, _key in _hydration_security_handoff_after322_figure_modules():
+        assert fn(REPO_ROOT) == [], name
+    for name, fn in _actionlint_linkcheck_residual_modules():
+        assert fn(REPO_ROOT) == [], name
+
+    # Inverse: live SECURITY mangle fails figure security while Claude stays green.
+    _write(tmp_path / "CLAUDE.md", base)
+    for name, fn, _phrases, _key in _claude_routing_after337_modules():
+        assert fn(tmp_path) == [], name
+    assert "claude-routing-after337-timeouts" not in vm.VALIDATORS
+    assert "hydration-security-handoff-after337-figure" not in vm.VALIDATORS
+    assert "figure-space-security-timeouts" not in vm.VALIDATORS
+
+
+def test_claude_routing_after337_run_only_vs_337_figure_and_invent_refuse() -> None:
+    """Tip-after-#337: --only twelve vs #337 FIGURE residual + invent-key refuse."""
+    only_names = list(_CLAUDE_ROUTING_AFTER337_NAMES)
+    assert vm.run_all_validations(REPO_ROOT, only=only_names) == []
+    figure_names = list(_HYDRATION_SECURITY_HANDOFF_AFTER322_FIGURE_NAMES)
+    assert vm.run_all_validations(REPO_ROOT, only=figure_names) == []
+    combined = only_names + figure_names
+    assert vm.run_all_validations(REPO_ROOT, only=combined) == []
+    for invented in _CLAUDE_ROUTING_AFTER337_INVENT_NAMES[:12]:
+        with pytest.raises(ValueError, match="unknown validator"):
+            vm.run_all_validations(REPO_ROOT, only=[invented])
+        with pytest.raises(KeyError):
+            _ = vm.VALIDATORS[invented]
+    assert "claude-routing-after347-timeouts" not in vm.VALIDATORS
+    assert "claude-routing-after322-timeouts" not in vm.VALIDATORS
+    assert "claude-routing-after300-timeouts" not in vm.VALIDATORS
+    assert "hydration-security-handoff-after307-figure" not in vm.VALIDATORS
+    assert "actionlint-linkcheck-after300-timeouts" not in vm.VALIDATORS
+    assert len(vm.VALIDATORS) == 196
+    assert vm.INVENTORY_VERSION == 52
+
+
+def test_claude_routing_after337_concurrent_races_and_cross_isolation(
+    tmp_path: Path,
+) -> None:
+    """Concurrent CLAUDE.md races + isolation vs #337/#322/#307/#300/#289 siblings."""
+    modules = _claude_routing_after337_modules()
+    locked = _claude_routing_after337_locked_text()
+    _write(tmp_path / "CLAUDE.md", locked)
+    for name, fn, _phrases, _key in modules:
+        assert fn(tmp_path) == [], name
+
+    def _race(seed: int) -> list[str]:
+        local = tmp_path / f"race_{seed}"
+        local.mkdir()
+        body = locked if seed % 2 == 0 else locked.replace(
+            "## Key Files", "## ABSENT Key Files"
+        )
+        _write(local / "CLAUDE.md", body)
+        failed: list[str] = []
+        for name, fn, _phrases, _key in modules:
+            findings = fn(local)
+            if seed % 2 == 0:
+                assert findings == [], name
+            elif name == "key-files":
+                assert findings, name
+                failed.append(name)
+        return failed
+
+    with ThreadPoolExecutor(max_workers=4) as pool:
+        results = list(pool.map(_race, range(8)))
+    assert any(results)
+    assert all(isinstance(row, list) for row in results)
+
+    # Sibling tip niches stay green concurrently with Claude green root.
+    assert vm.validate_hydration_phase4(REPO_ROOT) == []
+    assert vm.validate_security_packaging(REPO_ROOT) == []
+    assert vm.validate_constitution_handoff(REPO_ROOT) == []
+    assert vm.validate_markdownlint(REPO_ROOT) == []
+    assert vm.validate_goose_recipes(REPO_ROOT) == []
+    assert vm.validate_link_check(REPO_ROOT) == []
+    assert vm.validate_actionlint_shell(REPO_ROOT) == []
+    for name, fn, _phrases, _key in _hydration_security_handoff_after322_figure_modules():
+        assert fn(REPO_ROOT) == [], name
+    for name, fn, _phrases, _key in _claude_routing_after289_modules():
+        assert fn(REPO_ROOT) == [], name
+
+
+def test_claude_routing_after337_leftover_live_green() -> None:
+    """Live twelve CLAUDE.md fixtures stay green after #337; inventory unchanged."""
+    for name, fn, _phrases, _key in _claude_routing_after337_modules():
+        assert fn(REPO_ROOT) == [], name
+
+    inventory = json.loads(
+        (REPO_ROOT / "schemas" / "packaging-inventory.json").read_text(encoding="utf-8")
+    )
+    assert inventory["version"] == 52
+    assert inventory["min_validator_count"] == 196
+    assert len(vm.VALIDATORS) == 196
+    assert sorted(vm.VALIDATORS) == inventory["validator_names"]
+    assert vm.validate_packaging_inventory(REPO_ROOT) == []
+    assert vm.validate_changelog_unreleased(REPO_ROOT) == []
+
+    tip_tests = Path(__file__).read_text(encoding="utf-8")
+    assert "test_claude_routing_after337_bidi_isolate_lookalikes" in tip_tests
+    assert "test_claude_routing_after337_invisible_operator_lookalikes" in tip_tests
+    assert "test_claude_routing_after337_second_phrase_exact_drop_matrix" in tip_tests
+    assert "test_claude_routing_after337_triple_invented_agent_exact" in tip_tests
+    assert "test_claude_routing_after337_symlink_follow_dangling_and_dir" in tip_tests
+    assert (
+        "test_claude_routing_after337_isolation_vs_337_hydration_figure_suite"
+        in tip_tests
+    )
+    assert (
+        "test_claude_routing_after337_run_only_vs_337_figure_and_invent_refuse"
+        in tip_tests
+    )
+    assert "test_claude_routing_after289_leftover_live_green" in tip_tests
+    assert (
+        "test_hydration_security_handoff_after322_figure_run_only_and_concurrent_live_green"
+        in tip_tests
+    )
+
+    assert vm.run_all_validations(
+        REPO_ROOT, only=list(_CLAUDE_ROUTING_AFTER337_NAMES)
+    ) == []
+    assert vm.validate_claude_packaging(REPO_ROOT) == []
+    assert vm.validate_routing_surfaces(REPO_ROOT) == []
+    assert vm.validate_key_files(REPO_ROOT) == []
+    assert vm.validate_escalation_format(REPO_ROOT) == []
+    assert vm.validate_negative_constraints(REPO_ROOT) == []

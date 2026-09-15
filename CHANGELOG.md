@@ -10,6 +10,33 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Claude/routing governance residual **tests-only** leftover deepeners after
+  tip through **#337** (hydration/security FIGURE leftover after #322) /
+  **#322** / **#307** / **#300** (Claude/routing leftover after #289) /
+  **#289** / **#279** / **#270** / **#265** / **#264** / **#258** (EXISTING
+  twelve CLAUDE.md fixtures — `claude` / `claude-metadata` / `routing` /
+  `routing-matrix` / `routing-rationales` / `repo-identity` /
+  `state-residency` / `key-files` / `escalation-format` / `escalation-usage` /
+  `quarterly-review` / `negative-constraints` — historic v14–v16 + merged
+  **#300** / **#265** residual; tip-relaunch of closed CONFLICTING **#347** /
+  **#346** / **#344** / **#328** / **#326** / **#319**; no invented product /
+  inventory bump): unsaturated bidi embedding/isolate (LRE/RLE/LRI/RLI/FSI)
+  and invisible-operator (U+2061/2062/2063) header lookalikes beyond merged
+  #300 figure/NNBSP/Mongolian/LS/PS and beyond closed #347 EN/FOUR/SIX/
+  OGHAM/THREE/Braille tip-relaunch slice, second-or-penultimate phrase exact
+  drop matrix for all twelve (≠ #300 packaging/metadata matrices; ≠ #337
+  middle / #322 first/last hyd/sec), triple invented-agent exact Finding
+  (sorted join) beyond #337 dual hyd/sec, symlink follow green + dangling +
+  symlink-to-directory missing-file equality, CI `--list-validators` /
+  `--only` twelve + Manifest Validate step-marker smoke, isolation vs #337
+  FIGURE suite symbols + `--only` twelve vs figure invent refuse, concurrent
+  CLAUDE.md races + tip live-green. Historic four only; inventory unchanged
+  (v52 / 196). Distinct from merged #337 (hydration/security FIGURE), #322
+  (hydration/security), #307 (actionlint/linkcheck), #300 (Claude/routing),
+  #289/#279 (CI/markdownlint), #270 (goose-schema), #265 (Claude/routing),
+  and closed CONFLICTING #347/#346/#344/#328/#326/#319/#293/#282/#271/#278
+  (same leftover vs stale / pre-#337 tips).
+
 - Hydration↔security + handoff residual **tests-only** FIGURE leftover
   deepeners after tip through **#322** (hydration/security leftover after
   #307) / **#307** (actionlint/linkcheck leftover after #300) / **#300** /
