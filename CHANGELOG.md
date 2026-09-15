@@ -10,6 +10,37 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Goose-recipe schema leftover **tests-only** evening deepeners after tip
+  through **#369** (hydration/security leftover after #354) / **#354** (actionlint/linkcheck leftover after #337) / **#337** /
+  **#322** / **#307** / **#300** / **#289** / **#279** / **#270** (goose-schema
+  leftover after #265) / **#265** / **#264** / **#258** (EXISTING three
+  fixtures — `goose` / `recipe-agents` / `recipe-titles` plus
+  `schemas/goose-recipe.schema.json` and `GOOSE-RECIPES.md` — complementary to
+  open overnight after354 **#373** which absorbs Ogham/mid-BOM/quad name
+  rejects; tip-relaunch of closed CONFLICTING **#374**/**#367**/**#357**/**#352**
+  unique typed/bound/ACCEPT/docs-phrase leftovers onto post-#354 tip; no
+  invented product / inventory bump): unsaturated punctuation lookalike name
+  rejects omitted from overnight #373 matrices (middle-dot / en-dash / em-dash /
+  minus / fullwidth hyphen / fullwidth A / hyphenation-point / hyphen-bullet /
+  katakana middle-dot), typed/bound/extra rejects (timeout 0/-1/-2/86401,
+  BuiltIn/Stdio/HTTP/SSE/`streamable-http`, settings/recipe/root extra keys,
+  wrong provider/model, empty extensions, title 257 / name 129), ACCEPT
+  leftovers (extension `additionalProperties` invent prop, all four transports,
+  name/title mins), docs phrase Ogham/figure/thin lookalikes, first-run drop /
+  `.yml` File / duplicate fence name / missing-doc exact Finding, on-disk invent
+  `.yml` and historic provider/version exacts, titles/agents/inventory
+  (`recipe_titles` / `recipe_primary_agents` / `expected_recipe_files`) leftovers,
+  CI `--list-validators` / `--only` goose-trio and Manifest Validate markers,
+  concurrent races, isolation vs #369 hydration + #354 overnight (#373) + #354 actionlint +
+  #337 figure + #307/#300/#289 siblings, simultaneous goose+titles+agents triple drops
+  and `--only` invent refuse, tip live-green. Historic four only; Packaging
+  inventory unchanged (v52 / 196). Distinct from merged #369 (hydration/security after #354), #354
+  (actionlint/linkcheck after #337), open overnight #373 after354, #337
+  (hydration/security figure), #322, #307 (actionlint/linkcheck), #300
+  (Claude/routing), #289/#279 (CI/markdownlint), #270/#264 (prior goose-schema),
+  closed CONFLICTING #374/#367/#357/#352/#351/#348/#345/#340/#336/#333/#329/#325/
+  #317/#313/#299/#292/#285, and not a v53 invent sibling.
+
 - Hydration↔security + handoff residual **tests-only** leftover deepeners after
   tip through **#354** (actionlint/linkcheck leftover after #337) / **#337**
   (hydration/security FIGURE leftover after #322) / **#322** / **#307** /
