@@ -10,6 +10,26 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- CI/markdownlint residual **tests-only** evening leftover deepeners after tip
+  through **#337** (hydration/security FIGURE leftover after #322) / **#322** /
+  **#307** / **#300** / **#289** / **#279** (EXISTING six fixtures —
+  `markdownlint` / `ci-setup-python` / `ci-ruff` / `ci-pip-install` /
+  `ci-pip-check` / `ci-pytest` — no invented product / workflow / inventory
+  bump): evening HEAVY residual beyond open overnight **#355** after337 set —
+  En-quad / En-space / Three-per-em + Four/Six-per-em / medium-math-space
+  lookalikes, schema MD013.tables/code_blocks const mangle, pytest first-marker
+  exact drop (≠ #355 mid / #279 last), MD013 nested null triple exact, float
+  `200.0` green vs bool/list line_length exact, triple pip-check+pip-install+
+  setup-python exact, inventory markdownlint_* type leftovers, setup-python
+  `with:` null / empty exact, simultaneous default+MD024+MD025+MD033 exact,
+  soft-hyphen / word-joiner CI command lookalikes, empty MD013/MD024 exact
+  Finding equality (≠ #248 any()), dual MD033+pip-check exact, sextuple-surface
+  concurrent races, isolation vs overnight after337 suite + invent refuse +
+  tip live-green. Historic four only; inventory unchanged (v52 / 196). Distinct
+  from open overnight #355 after337 set, merged #337 FIGURE / #322 / #307 /
+  #300 / #289/#279, closed CONFLICTING #339/#323/#318/#316/#306/#305/#288/#286,
+  and sibling niches.
+
 - CI/markdownlint residual **tests-only** leftover deepeners after tip through
   **#337** (hydration/security FIGURE leftover after #322) / **#322**
   (hydration/security leftover after #307) / **#307** (actionlint/linkcheck
