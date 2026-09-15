@@ -10,6 +10,57 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Prompts listform + agentic_flows residual **tests-only** leftover deepeners
+  after tip through **#369** (hydration/security leftover after #354) /
+  **#354** (actionlint/linkcheck leftover after #337) / **#337** /
+  **#322** / **#307** / **#300** / **#289** / **#279** / **#270** / **#265** /
+  **#264** / **#258** / **#253** (prompts+flows after #248) / **#248** /
+  **#242** / **#236** / **#229** / **#224** / **#219** / **#209** / **#208** /
+  **#202** / **#200** (EXISTING nineteen fixtures — twelve list-form sibling
+  `prompt-*` + seven agentic_flows `goose` / `recipe-agents` /
+  `recipe-titles` / `scratchpad*` — no invented v53 list-form product /
+  inventory bump; tip-relaunch of closed CONFLICTING **#370** / **#365** /
+  **#361** / **#360** / **#359** / **#353** / **#350** / **#342** / **#338** /
+  **#331** / **#330** / **#324** / **#315** / **#311** / **#303** / **#301** /
+  **#298** / **#296** / **#291** / **#290** / **#284** / **#272** / **#269**;
+  not a markdownlint, actionlint, goose-schema, hydration, or Claude/routing
+  niche redo): exact fence-count leftovers for found 0/2/3/5/6 plus
+  tip-after-#307 found-7, historic version/provider/model exact Findings plus
+  documented `recipe YAML must be a mapping` fences, word-joiner / NEL /
+  vertical-tab plus invisible-separator / function-application lookalikes
+  beyond #253 fullwidth/tab, per-module last- and middle-phrase exact drop
+  matrices for all twelve listform and scratchpad* (≠ #253 first-phrase),
+  empty/whitespace scratchpad exact Finding plus empty AGENT-PROMPTS
+  section-lock shapes across all twelve, orchestration missing
+  BlockchainArchitectAgent / OrchestrationAgent exact (≠ #253 Quantum/Edge),
+  CI `--list-validators` / `--only` nineteen + required Manifest Validate
+  step-marker smoke, inventory empty-list leftovers beyond #253 bool/float
+  and #242 int/null, cross isolation vs #369/#354/#337/#322/#307/#300/#289/
+  #279/#270/#265/#264/#258/#253/#248 siblings with concurrent races,
+  tip-after-#354 deepeners retained from closed #370 (NEL / ZWNBSP prompt
+  lookalikes mirroring #354 link/shell theme, exact dual prompt+link Findings
+  vs live #354 actionlint, isolation vs #354 actionlint seven, `--only`
+  nineteen vs #354 invent refuse, quad-surface races vs live #354,
+  live-green), and tip-after-#369 deepeners (object-replacement / thin / hair
+  / en / em space + RLM / LRM / ZWJ / ZWNJ + bidi LRE/RLE/LRI/RLI +
+  braille-blank / medium-math / punctuation-space prompt/scratchpad
+  lookalikes mirroring #369 hyd theme, second-or-penultimate phrase exact
+  drop matrix ≠ after337 last/middle, exact dual prompt+security Findings vs
+  live #369 hyd/sec, isolation vs #369 after354 twenty-two, `--only` nineteen
+  vs #369 invent refuse, quad-surface races vs live #369, live-green).
+  Historic four only; Packaging inventory unchanged (v52 / 196); no schema /
+  validators / Dependabot bumps. Distinct from merged #369
+  (hydration/security after354), #354 (actionlint/linkcheck niche), #337
+  (hydration/security FIGURE niche), #322 (hydration/security+handoff niche),
+  #307 (actionlint/linkcheck niche), #300 (Claude/routing niche), #289/#279
+  (CI/markdownlint niches), #270 (goose-schema niche), #265 (Claude/routing
+  niche), #264 (goose-schema niche), #258 (hydration/security+handoff), #253
+  (fence/File-bind/first-phrase/fullwidth), #242
+  (ZWSP/on-disk/checkbox/inventory-types), open #375 (Claude/routing after
+  #369), open #376 (goose-schema after #369), and closed CONFLICTING
+  #370/#365/#361/#360/#359/#353/#350/#342/#338/#331/#330/#324/#315/#311/#303/
+  #301/#298/#296/#291/#290/#284/#272/#269 (same leftover vs stale tips).
+
 - Hydration↔security + handoff residual **tests-only** leftover deepeners after
   tip through **#354** (actionlint/linkcheck leftover after #337) / **#337**
   (hydration/security FIGURE leftover after #322) / **#322** / **#307** /
