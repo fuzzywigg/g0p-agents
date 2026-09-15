@@ -10,8 +10,40 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Actionlint/workflow + link-check residual **tests-only** leftover deepeners
+  after tip through **#300** (Claude/routing leftover after #289) / **#289** /
+  **#279** / **#270** / **#265** / **#264** / **#258** / **#253** / **#248**
+  (actionlint/linkcheck leftover after #242) / **#242** / **#236** / **#229** /
+  **#224** / **#219** / **#209** / **#208** / **#202** / **#200** / **#195** /
+  **#188** (EXISTING seven CI fixtures — `ci` / `ci-actions` / `link-check` /
+  `actionlint-shell` / `ci-job-names` / `ci-runs-on` / `ci-artifacts` — no
+  invented product / inventory bump; prefer actionlint+linkcheck niche, not
+  markdownlint / prompts+flows / goose / hydration / Claude-routing): root
+  sequence exact equality, cancel-false / fail-fast-true bool flips (≠ #248
+  string forms), `on: {}` + `Alpha` branch + group int/null, permissions
+  scalar + non-dict `link-check: true` green/fail split, ZWSP / fullwidth /
+  soft-hyphen lookalikes, lychee fail:false|null + args list|null, config
+  case/null + cache-path null via `link-check`, runs-on case/null/list-mixed +
+  all-four `Ubuntu-latest`, job name null|int, path mapping|bool and upload
+  `with: {}` / if-null, upload-if absent and artifact-prefix / matrix-no-py /
+  step-marker drop, drop markdown-lint and dual-drop link+actionlint / rename
+  orphan, actionlint `steps: true` and id-int / shell `sh`, ci-actions upload
+  pin drop and jobs null, dual-surface and concurrent races, inventory
+  null/bool leftovers and `run_all --only`, tip-after-#289/#300 deepeners
+  (tab/ideographic/word-joiner + figure-space/NNBSP/Mongolian lookalikes,
+  lychee `with:` absent + `steps: []`, concurrency absent + actionlint-only
+  `contents: write`, exact dual link+shell Findings, globs/config/cache type
+  edges via `link-check`, soft-hyphen step-id + WARN if-no-files-found,
+  isolation vs #300 Claude/routing + #289 CI/markdownlint, `--only` subset vs
+  Claude, triple/quad-surface concurrent races), tip isolation vs
+  #300/#289/#279/#270/#265/#264/#258/#253/#248/#242/#236 siblings. Historic
+  four only; inventory unchanged (v52 / 196). Distinct from merged #300
+  (Claude/routing), #289/#279 (CI/markdownlint), #270 (goose-schema), #265
+  (Claude/routing), #248 (after236 leftover), closed CONFLICTING
+  #302/#294/#280/#283/#274/#266/#256 (same leftover on stale tips), and
+  historic v10/v11 edges.
 - Prompts listform + agentic_flows residual **tests-only** leftover deepeners after
-  tip through **#300** (Claude/routing leftover after #289) / **#289**
+  tip through **#307** (actionlint/linkcheck leftover after #300) / **#300** (Claude/routing leftover after #289) / **#289**
   (CI/markdownlint leftover after #279) / **#279** / **#270** / **#265** / **#264** /
   **#258** / **#253** (prompts+flows after #248) / **#248** / **#242** / **#236** /
   **#229** / **#224** / **#219** / **#209** / **#208** / **#202** / **#200**
@@ -31,14 +63,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   OrchestrationAgent exact (≠ #253 Quantum/Edge), CI `--list-validators` /
   `--only` nineteen + required Manifest Validate step-marker smoke, inventory
   empty-list leftovers beyond #253 bool/float and #242 int/null, cross isolation
-  vs #300/#289/#279/#270/#265/#264/#258/#253/#248 siblings with concurrent races,
+  vs #307/#300/#289/#279/#270/#265/#264/#258/#253/#248 siblings with concurrent races,
   and tip-after-#300 deepeners (figure-space / NNBSP / Mongolian lookalikes
   mirroring #300 Claude theme onto prompts+flows, LS / PS / object-replacement
   lookalikes, simultaneous listform+scratchpad+goose triple exact drops,
-  isolation vs #300 Claude/routing twelve + vs #289 CI/markdownlint, `--only`
+  isolation vs #307 actionlint/linkcheck + #300 Claude/routing twelve + vs #289 CI/markdownlint, `--only`
   nineteen vs #300 Claude/routing residual + invent-key refuse, live-green).
   Historic four only; Packaging inventory unchanged (v52 / 196); no schema /
-  validators / Dependabot bumps. Distinct from merged #300 (Claude/routing niche),
+  validators / Dependabot bumps. Distinct from merged #307 (actionlint/linkcheck niche), #300 (Claude/routing niche),
   #289/#279 (CI/markdownlint niches), #270 (goose-schema niche), #265
   (Claude/routing niche), #264 (goose-schema niche), #258
   (hydration/security+handoff), #253 (fence/File-bind/first-phrase/fullwidth),
