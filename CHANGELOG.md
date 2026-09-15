@@ -10,6 +10,27 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- CI/markdownlint residual **tests-only** leftover deepeners after tip through
+  **#300** (Claude/routing leftover after #289) / **#289** (CI/markdownlint leftover
+  after #279) / **#279** / **#270** / **#265** / **#264** / **#258** / **#253** /
+  **#248** (EXISTING six fixtures — `markdownlint` / `ci-setup-python` / `ci-ruff` /
+  `ci-pip-install` / `ci-pip-check` / `ci-pytest` — no invented product / workflow /
+  inventory bump): tip-after-#300 HEAVY deepeners beyond merged #289 after-#279 set —
+  isolation vs #300 Claude/routing, PS / object-replacement lookalikes (mirror #300
+  Claude theme onto CI/md), Ogham / Em-space / Hair-space / LS lookalikes, pip-check
+  exact + setup-python cache case lookalike, schema MD024.siblings_only const mangle,
+  MD013.line_length string exact + MD013 null / MD025/MD033 string leftovers,
+  setup-python cache key drop + uses-step drop exact, pytest mid-marker + all-markers
+  exact drops, inventory ci_markdown_lint config/globs case leftovers, simultaneous
+  MD013 nested triple exact, dual pip-check+ruff exact, isolation vs #289
+  CI/markdownlint / #270 goose / #265/#264/#258/#253/#248 siblings, `--only` subset
+  vs #300 Claude + invent refuse, quad-surface concurrent races, live-green.
+  Historic four only; inventory unchanged (v52 / 196). Distinct from merged #300
+  (Claude/routing), #289/#279 CI/markdownlint, closed CONFLICTING
+  #306/#305/#288/#286/#276/#275/#267/#257/#250/#240/#237/#233/#220/#214/#210/#204/
+  #201/#196 (same leftover vs stale tips), and historic v12/v13 setup-python/ruff/
+  pip/pytest edges.
+
 - Claude/routing governance residual **tests-only** leftover deepeners after tip
   through **#289** (CI/markdownlint leftover after #279) / **#279** / **#270**
   (goose-schema leftover after #265) / **#265** (Claude/routing leftover after
