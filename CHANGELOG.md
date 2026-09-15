@@ -11,6 +11,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 
 - Hydration↔security + handoff residual **tests-only** leftover deepeners after
+  tip through **#322** (hydration/security leftover after #307) / **#307**
+  (actionlint/linkcheck leftover after #300) / **#300** / **#289** / **#279** /
+  **#270** / **#265** / **#264** / **#258** (EXISTING twenty-two fixtures —
+  `hydration-phase4`, ten `security*`, seven handoff-cluster `constitution-*`,
+  and four `scratchpad*` — no invented product / inventory bump): unsaturated
+  #295 edges not landed in merged #322 — figure-space / NNBSP / Mongolian /
+  Ogham / line-separator / paragraph-separator lookalikes, middle-phrase exact
+  drop matrix, dual invented-agent exact Finding, packaging+scratchpad
+  inventory type leftovers, mid-string BOM lookalikes, and multi `security-*`
+  simultaneous phrase drops. Historic four only; Packaging inventory unchanged
+  (v52 / 196). Distinct from merged #322 (core after307 hydration/security),
+  #307 (actionlint/linkcheck), #300 (Claude/routing), #289/#279
+  (CI/markdownlint), #270 (goose-schema), #265 (Claude/routing), #258 (prior
+  hydration/security), and closed #334/#320/#308/#297/#295 tip-stale /
+  CONFLICTING siblings.
+
+- Hydration↔security + handoff residual **tests-only** leftover deepeners after
   tip through **#307** (actionlint/linkcheck leftover after #300) / **#300**
   (Claude/routing leftover after #289) / **#289** (CI/markdownlint leftover
   after #279) / **#279** / **#270** / **#265** / **#264** / **#258**
