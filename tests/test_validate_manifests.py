@@ -47881,18 +47881,21 @@ def test_actionlint_linkcheck_after369_bidi_embed_isolate_and_braille_lookalikes
 
 
 def test_actionlint_linkcheck_after369_run_only_vs_mdl_figure_and_invent_refuse() -> None:
-    """Tip-after-#369 HEAVY: --only seven vs #289 mdl six + #337 figure + invent refuse."""
+    """Tip-after-#369 HEAVY: --only seven vs #369 hyd + #289 mdl + #337 figure + invent."""
     al_names = list(_ACTIONLINT_LINKCHECK_RESIDUAL_NAMES)
     mdl_names = list(_CI_MARKDOWNLINT_RESIDUAL_NAMES)
+    after369_hyd = list(_HYDRATION_SECURITY_HANDOFF_AFTER354_NAMES)
     figure_names = list(_HYDRATION_SECURITY_HANDOFF_AFTER322_FIGURE_NAMES)
     hyd_names = list(_HYDRATION_SECURITY_HANDOFF_AFTER307_NAMES)
     claude_names = list(_CLAUDE_ROUTING_AFTER289_NAMES)
     assert vm.run_all_validations(REPO_ROOT, only=al_names) == []
     assert vm.run_all_validations(REPO_ROOT, only=mdl_names) == []
+    assert vm.run_all_validations(REPO_ROOT, only=after369_hyd) == []
     assert vm.run_all_validations(REPO_ROOT, only=figure_names) == []
     assert vm.run_all_validations(REPO_ROOT, only=hyd_names) == []
     assert vm.run_all_validations(REPO_ROOT, only=claude_names) == []
     assert vm.run_all_validations(REPO_ROOT, only=al_names + mdl_names) == []
+    assert vm.run_all_validations(REPO_ROOT, only=al_names + after369_hyd) == []
     assert vm.run_all_validations(REPO_ROOT, only=al_names + figure_names) == []
 
     invent_keys = (
