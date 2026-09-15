@@ -10,6 +10,69 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Goose-recipe schema leftover **tests-only** deepeners after tip through **#307**
+  (actionlint/linkcheck leftover after #300) / **#300** (Claude/routing leftover
+  after #289) / **#289** (CI/markdownlint leftover after #279) / **#279** /
+  **#270** (goose-schema leftover after #265) / **#265** / **#264** / **#258** /
+  **#253** / **#248** / **#242** / **#236** / **#229** / **#224** / **#219** /
+  **#209** / **#208** / **#202** / **#200** / **#195** / **#188** / **#187** /
+  **#186** / **#184** (goose-schema tip) / **#172** (goose-schema residual suite)
+  (EXISTING three fixtures — `goose` / `recipe-agents` / `recipe-titles` plus
+  `schemas/goose-recipe.schema.json` + `GOOSE-RECIPES.md` — tip-relaunch of
+  closed CONFLICTING **#317** / **#313** / **#299** / **#292** / **#285** /
+  **#273** / **#268** / **#263** / **#262** / **#261** / **#259** / **#255** /
+  **#254** / **#249** / **#246** / **#245** / **#239** / **#234** / **#228** /
+  **#216** / **#212**; no invented product / inventory bump): unsaturated reject
+  leftovers beyond #270/`#317`-stale (`name` empty/space/dot/hyphen/`False`/null/
+  list plus tip-after-#289/#300/#307 upper/slash/at/dollar/tilde/129/object/float/
+  ZWSP/NBSP/tab/CRLF/soft-hyphen/fullwidth/NEL/figure-space/NNBSP/Mongolian/
+  word-joiner/ideographic/BOM/vtab plus LS/PS/object-replacement/ZWNBSP/RLM/LRM/
+  ZWJ lookalikes mirroring #307/#300 themes onto goose name pattern, root
+  null/list/string/empty/extra, `title` empty/null/bool/list/int/float,
+  `instructions` null/bool/object/int/float, `prompt` null/list/bool/int,
+  `version` empty/bool/list/padded/v-prefix/float/object/wrong-const,
+  provider/model bool/list/empty/int/wrong-const/object/float/padded/case,
+  settings empty/extra/miss-provider/miss-model/float/bool, `recipe`
+  empty/list/extra/bool, missing recipe required fields, timeout
+  zero/null/float/string/list/`False`, extension missing type/name, name
+  empty/null/bool/list/object, type empty/int/`STDIO`/`Builtin`/bool/list/object/
+  padded-streamable_http, item null/string/list/empty-object, extensions
+  non-array/float/bool, duplicate identical extensions+extras), invent-key
+  KeyError / `run_all --only` ValueError (+ #307 actionlint / #300 Claude / #289
+  CI invent refuse), ACCEPT leftovers (name min/`z9`/max 128, title max 256,
+  instructions/prompt min 1, omit-timeout, timeout min/max + ext name 128,
+  per-enum types, mixed uniqueItems, extension additionalProperties extras),
+  missing-doc / directory-not-file / duplicate names / `.yml`-**File** inventory /
+  extra-**File** / zero-**File** / three-fence / docs-phrase drop / first-run drop /
+  invent-run leftovers, on-disk `.yml`/`.yaml` invent / non-yaml allow-list /
+  uppercase `.YAML` allow-list / historic provider+version / wrong historic
+  extension type / miss-model / bad name pattern / string non-mapping / YAML parse
+  leftovers, title-type exact + orchestration missing-agent + invent-agent
+  (Quantum + Blockchain + Edge) + invent-name + `expected_recipe_files` /
+  `recipe_primary_agents` / `historic_recipe_version` / `historic_goose_settings`
+  (provider+model) / `recipe_titles` / `agentic_flows_allowed_files` inventory
+  leftovers, CI `--list-validators` / `--only` goose-trio + invent-refuse +
+  required manifest step-marker smoke + #307 actionlint/#300 Claude/#289/#279
+  CI/markdownlint sibling greens, concurrent races, tip isolation against #307
+  actionlint/linkcheck and #300 Claude/routing and #289 CI/markdownlint and
+  #279/#270/#265/#264/#258/#253/#248/#242/#236/#229/#224/#219 siblings,
+  simultaneous goose+titles+agents triple exact drops, titles vs agents exact
+  Finding isolation, `--only` goose trio vs #307 actionlint residual + #300 Claude
+  residual and invent-key refuse. Historic four only; Packaging inventory
+  unchanged (v52 / 196 validators). Distinct from merged #307
+  (actionlint/linkcheck leftover), merged #300 (Claude/routing leftover), merged
+  #289 (CI/markdownlint leftover), merged #279 (CI/markdownlint after #270),
+  merged #270 (prior goose-schema leftover after #265), closed CONFLICTING
+  #317/#313/#299/#292/#285/#273/#268/#263/#262/#261/#259/#255/#254/#249/#246/
+  #245/#239/#234/#228/#216/#212 (same leftover on stale tips), #265
+  (Claude/routing leftover), #264 (prior goose-schema leftover after #258), #258
+  (hydration/security+handoff), #253 (prompts+flows), #248 (actionlint/linkcheck),
+  #242 (prompts+flows), #236 (actionlint/linkcheck), #229
+  (hydration/security+handoff), #224 (prompts+flows), #219 (prior goose-schema
+  leftover), #202/#200 (listform+flows), #184 (tip type matrix), #172 (residual
+  suite), #147 (nine goose-* phrase locks), and not a v53 invent sibling or
+  Dependabot bump.
+
 - Actionlint/workflow + link-check residual **tests-only** leftover deepeners
   after tip through **#300** (Claude/routing leftover after #289) / **#289** /
   **#279** / **#270** / **#265** / **#264** / **#258** / **#253** / **#248**
