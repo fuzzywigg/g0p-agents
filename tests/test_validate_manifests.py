@@ -41671,11 +41671,11 @@ def test_claude_routing_after289_run_only_vs_289_ci_md_and_invent_refuse() -> No
 # EXISTING six fixtures — markdownlint + ci-setup-python / ci-ruff /
 # ci-pip-install / ci-pip-check / ci-pytest. Tip-after-#300 HEAVY deepeners
 # beyond merged #289 after-#279 set. No invented workflows / validators /
-# inventory bump (v52 / 196). Fresh tip relaunch after #300 squash; abandons
-# closed CONFLICTING #306/#305/#288/#286/#276/#275/#267/#257/#250/#240/#237/
-# #233/#220/#214/#210/#204/#201/#196 onto post-#300 tip. Distinct from
-# merged #300 (Claude/routing), #289/#279 CI/markdownlint, #270 goose,
-# #265 Claude/routing, and #264/#258/#253/#248 siblings.
+# inventory bump (v52 / 196). Tip-relaunch of closed CONFLICTING #306/#305/
+# #288/#286/#276/#275/#267/#257/#250/#240/#237/#233/#220/#214/#210/#204/#201/
+# #196 onto post-#300 tip. Distinct from merged #300 (Claude/routing),
+# #289/#279 CI/markdownlint, #270 goose, #265 Claude/routing, and
+# #264/#258/#253/#248 siblings.
 # ---------------------------------------------------------------------------
 
 
