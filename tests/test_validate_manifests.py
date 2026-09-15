@@ -45038,7 +45038,7 @@ def test_ci_markdownlint_after322_isolation_vs_300_claude_routing(
         )
         == []
     )
-    for invented in _CI_MARKDOWNLINT_AFTER307_INVENT_NAMES[:8]:
+    for invented in _CI_MARKDOWNLINT_AFTER322_INVENT_NAMES[:8]:
         assert invented not in vm.VALIDATORS
     for invented in _CLAUDE_ROUTING_AFTER289_INVENT_NAMES[:6]:
         assert invented not in vm.VALIDATORS
@@ -45962,7 +45962,7 @@ def test_ci_markdownlint_after322_leftover_live_green() -> None:
         == []
     )
 
-    for invented in _CI_MARKDOWNLINT_AFTER307_INVENT_NAMES:
+    for invented in _CI_MARKDOWNLINT_AFTER322_INVENT_NAMES:
         assert invented not in vm.VALIDATORS
     for invented in (
         "ci-markdownlint-after270-timeouts",
