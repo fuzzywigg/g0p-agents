@@ -10,6 +10,33 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Goose-recipe schema leftover **tests-only** evening deepeners after tip
+  through **#337** (hydration/security figure leftover after #322) / **#322** /
+  **#307** / **#300** / **#289** / **#279** / **#270** (goose-schema leftover
+  after #265) / **#265** / **#264** / **#258** (EXISTING three fixtures —
+  `goose` / `recipe-agents` / `recipe-titles` plus
+  `schemas/goose-recipe.schema.json` and `GOOSE-RECIPES.md` — complementary to
+  overnight after337 drafts; tip-relaunch of closed CONFLICTING **#352** unique
+  Ogham/mid-BOM/quad leftovers onto post-#337 tip; no invented product /
+  inventory bump): unsaturated name lookalike rejects (Ogham / mid-BOM /
+  em-quad / en-quad / thin / hair / MMSP / punctuation-space /
+  three-/four-/six-per-em / Arabic and fullwidth digit) omitted from overnight
+  after337 reject matrices, typed/bound/extra rejects (timeout 0,
+  BuiltIn/Stdio/HTTP, settings/recipe/root extra keys, wrong provider/model),
+  ACCEPT leftovers (extension `additionalProperties`, all four transports,
+  name/title mins), docs phrase Ogham/figure/thin lookalikes, first-run drop /
+  `.yml` File / duplicate fence name / missing-doc exact Finding, on-disk invent
+  `.yml` and historic provider/version exacts, titles/agents/inventory
+  (`recipe_titles` / `recipe_primary_agents` / `expected_recipe_files`) leftovers,
+  CI `--list-validators` / `--only` goose-trio and Manifest Validate markers,
+  concurrent races, isolation vs #337 figure hyd/sec and #307/#300/#289 siblings,
+  simultaneous goose+titles+agents triple drops and `--only` invent refuse, tip
+  live-green. Historic four only; Packaging inventory unchanged (v52 / 196).
+  Distinct from merged #337 (hydration/security figure), #322, #307
+  (actionlint/linkcheck), #300 (Claude/routing), #289/#279 (CI/markdownlint),
+  #270/#264 (prior goose-schema), closed CONFLICTING #352/#351/#348/#345/#340/
+  #336/#333/#329/#325/#317/#313/#299/#292/#285, and not a v53 invent sibling.
+
 - Hydration↔security + handoff residual **tests-only** FIGURE leftover
   deepeners after tip through **#322** (hydration/security leftover after
   #307) / **#307** (actionlint/linkcheck leftover after #300) / **#300** /
