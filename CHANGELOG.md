@@ -10,6 +10,33 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Hydration↔security + handoff residual **tests-only** CI leftover
+  deepeners after tip through **#337** (hydration/security FIGURE leftover
+  after #322) / **#322** / **#307** / **#300** / **#289** / **#279** /
+  **#270** / **#265** / **#264** / **#258** (EXISTING twenty-two fixtures —
+  `hydration-phase4` + ten `security` / `security-*` + seven handoff-cluster
+  `constitution-*` + four `scratchpad*` — no invented product / inventory
+  bump): unsaturated EN QUAD / EM QUAD / THREE-PER-EM / FOUR-PER-EM /
+  SIX-PER-EM lookalikes beyond #337 figure/NNBSP and open #356 thin/hair/en/em,
+  invisible separator / function application / invisible times lookalikes,
+  LRO / RLO bidi override lookalikes (≠ #356 LRE/RLE/LRI/RLI), form-feed
+  lookalikes, third-phrase exact drop matrix (≠ #337 middle; ≠ #356 second;
+  ≠ #322 first/last), empty-file exact Findings (≠ after307 missing-file),
+  CI `--list-validators` / `--only` twenty-two + Manifest Validate
+  step-marker smoke (no workflow YAML edits), inventory string-scalar +
+  missing-key leftovers beyond #337 dict / #322 packaging, isolation vs
+  #337 figure + #322 after307 + #307 actionlint/linkcheck + #300
+  Claude/routing + #289 CI/markdownlint, `run_all --only` subset + concurrent
+  four-doc races + tip live-green + invent-key refuse. Historic four only;
+  inventory unchanged (v52 / 196). Distinct from merged #337
+  (figure/NNBSP/LS/PS/middle/dual/mid-BOM after #322), open #356
+  (obj/thin/RLM/bidi-isolate/second/triple/symlink after #337), #322
+  (soft-hyphen/NEL/first+last after #307), closed CONFLICTING
+  #335/#334/#327/#321/#320/#314/#312/#309/#308/#304/#297/#295/#287/#281/#277
+  (same leftover vs stale / pre-#337 tips), #307 (actionlint/linkcheck),
+  #300 (Claude/routing), #289/#279 (CI/markdownlint), #270 (goose-schema),
+  and #258 (hydration/security+handoff).
+
 - Hydration↔security + handoff residual **tests-only** FIGURE leftover
   deepeners after tip through **#322** (hydration/security leftover after
   #307) / **#307** (actionlint/linkcheck leftover after #300) / **#300** /
