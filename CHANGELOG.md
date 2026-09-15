@@ -10,6 +10,29 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Hydration↔security + handoff residual **tests-only** FIGURE leftover
+  deepeners after tip through **#322** (hydration/security leftover after
+  #307) / **#307** (actionlint/linkcheck leftover after #300) / **#300** /
+  **#289** / **#279** / **#270** / **#265** / **#264** / **#258** (EXISTING
+  twenty-two fixtures — `hydration-phase4` + ten `security` / `security-*` +
+  seven handoff-cluster `constitution-*` + four `scratchpad*` — no invented
+  product / inventory bump): unsaturated figure-space / NNBSP / Mongolian /
+  Ogham / line separator / paragraph separator lookalikes beyond merged #322
+  soft-hyphen/NBSP/NEL/first+last + tip figure/NNBSP/Mongolian slice, middle-
+  phrase exact drop matrix (≠ #322 first/last), dual invented-agent exact
+  Finding, `security_required_phrases` + `scratchpad_required_phrases`
+  inventory leftovers excluded from #322 EMPTY_MAP, dict inventory leftovers,
+  mid-BOM lookalikes (leading BOM stays green), multi `security-*`
+  simultaneous phrase drops, isolation vs #322 after307 hyd/sec + #307
+  actionlint/linkcheck + #300 Claude/routing + #289 CI/markdownlint,
+  `run_all --only` subset + concurrent four-doc races + tip live-green +
+  invent-key refuse. Historic four only; inventory unchanged (v52 / 196).
+  Distinct from merged #322 (soft-hyphen/NEL/first+last after #307), closed
+  CONFLICTING #327/#334/#321/#320/#314/#312/#309/#308/#304/#297/#295/#287/
+  #281/#277 (same leftover vs stale / pre-#322 tips), #307
+  (actionlint/linkcheck), #300 (Claude/routing), #289/#279 (CI/markdownlint),
+  #270 (goose-schema), and #258 (hydration/security+handoff).
+
 - Hydration↔security + handoff residual **tests-only** leftover deepeners after
   tip through **#307** (actionlint/linkcheck leftover after #300) / **#300**
   (Claude/routing leftover after #289) / **#289** (CI/markdownlint leftover
@@ -72,7 +95,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   #302/#294/#280/#283/#274/#266/#256 (same leftover on stale tips), and
   historic v10/v11 edges.
 - Prompts listform + agentic_flows residual **tests-only** leftover deepeners after
-  tip through **#322** (hydration/security leftover after #307) / **#307** (actionlint/linkcheck leftover after #300) / **#300** (Claude/routing leftover after #289) / **#289**
+  tip through **#337** (hydration/security figure leftover after #322) / **#322**
+  (hydration/security leftover after #307) / **#307** (actionlint/linkcheck leftover
+  after #300) / **#300** (Claude/routing leftover after #289) / **#289**
   (CI/markdownlint leftover after #279) / **#279** / **#270** / **#265** / **#264** /
   **#258** / **#253** (prompts+flows after #248) / **#248** / **#242** / **#236** /
   **#229** / **#224** / **#219** / **#209** / **#208** / **#202** / **#200**
@@ -92,14 +117,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   OrchestrationAgent exact (≠ #253 Quantum/Edge), CI `--list-validators` /
   `--only` nineteen + required Manifest Validate step-marker smoke, inventory
   empty-list leftovers beyond #253 bool/float and #242 int/null, cross isolation
-  vs #322/#307/#300/#289/#279/#270/#265/#264/#258/#253/#248 siblings with concurrent races,
+  vs #337/#322/#307/#300/#289/#279/#270/#265/#264/#258/#253/#248 siblings with concurrent races,
   and tip-after-#300 deepeners (figure-space / NNBSP / Mongolian lookalikes
   mirroring #300 Claude theme onto prompts+flows, LS / PS / object-replacement
   lookalikes, simultaneous listform+scratchpad+goose triple exact drops,
-  isolation vs #322 hydration/security + #307 actionlint/linkcheck + #300 Claude/routing twelve + vs #289 CI/markdownlint, `--only`
+  isolation vs #337/#322 hydration/security + #307 actionlint/linkcheck + #300 Claude/routing twelve + vs #289 CI/markdownlint, `--only`
   nineteen vs #300 Claude/routing residual + invent-key refuse, live-green).
   Historic four only; Packaging inventory unchanged (v52 / 196); no schema /
-  validators / Dependabot bumps. Distinct from merged #322 (hydration/security niche), #307 (actionlint/linkcheck niche), #300 (Claude/routing niche),
+  validators / Dependabot bumps. Distinct from merged #337/#322 (hydration/security niches), #307 (actionlint/linkcheck niche), #300 (Claude/routing niche),
   #289/#279 (CI/markdownlint niches), #270 (goose-schema niche), #265
   (Claude/routing niche), #264 (goose-schema niche), #258
   (hydration/security+handoff), #253 (fence/File-bind/first-phrase/fullwidth),
