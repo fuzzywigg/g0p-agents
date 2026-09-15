@@ -10,6 +10,42 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- CI/markdownlint residual **tests-only** leftover deepeners after tip through
+  **#354** (actionlint/linkcheck leftover after #337) / **#337**
+  (hydration/security FIGURE leftover after #322) / **#322** / **#307** /
+  **#300** / **#289** (CI/markdownlint leftover after #279) / **#279** /
+  **#270** / **#265** / **#264** / **#258** / **#253** / **#248** (EXISTING
+  six fixtures — `markdownlint` / `ci-setup-python` / `ci-ruff` /
+  `ci-pip-install` / `ci-pip-check` / `ci-pytest` — no invented product /
+  workflow / inventory bump): tip-after-#354 HEAVY deepeners rebasing closed
+  CONFLICTING **#355** / evening **#364** / **#339** / **#323** / **#318**
+  unsaturated overnight+evening edges onto post-#354 tip — isolation vs #354
+  actionlint/linkcheck + #337 FIGURE hyd/sec + #322 hydration/security + #307
+  actionlint + #300 Claude/routing, PS / object-replacement lookalikes, Ogham /
+  Em-space / Hair-space / LS + thin/punct + En-quad / En-space / Three-per-em /
+  Four/Six-per-em / medium math-space lookalikes, ZWNBSP / Braille / paragraph-
+  sep / Mongolian / soft-hyphen / word-joiner CI lookalikes, mid-BOM
+  markdownlint value lookalikes (leading BOM stays green), pip-check +
+  pip-install exact + setup-python cache/cache-dep/with null-empty + uses-step
+  drop + cache-key drop exact, schema MD024.siblings_only + MD013.tables/
+  code_blocks const mangle, MD013.line_length string/`200.0`/bool/list + MD013
+  null / nested-null triple + MD025/MD033 string/float/null leftovers, pytest
+  first/mid/all-markers exact drops, inventory ci_markdown_lint config/globs
+  case + cache-dep/ruff/pip/setup-python/markdownlint_* type leftovers,
+  simultaneous MD013 nested triple + default+MD024+MD025+MD033 exact, dual
+  pip-check+ruff / md+setup-python / MD033+pip-check exact, empty MD013/MD024
+  exact, isolation vs #289 CI/markdownlint / #270 goose / #265/#264/#258/#253/
+  #248 siblings, `--only` subset vs #354 actionlint/#337 FIGURE/#322 hyd/#300
+  Claude/#307 actionlint + invent refuse, quad/quintuple/sextuple-surface
+  concurrent races + #354 actionlint live-green, tip live-green. Historic four
+  only; inventory unchanged (v52 / 196). Distinct from merged #354
+  (actionlint/linkcheck), #337 (hydration/security FIGURE), #322
+  (hydration/security), #307 (actionlint/linkcheck), #300 (Claude/routing),
+  #289/#279 CI/markdownlint, closed CONFLICTING
+  #355/#364/#339/#323/#318/#316/#306/#305/#288/#286/#276/#275/#267/#257/#250/
+  #240/#237/#233/#220/#214/#210/#204/#201/#196 (same leftover vs stale tips),
+  and historic v12/v13 setup-python/ruff/pip/pytest edges.
+
 - Actionlint/workflow + link-check residual **tests-only** leftover deepeners
   after tip through **#337** (hydration/security figure leftover after #322) /
   **#322** / **#307** (actionlint/linkcheck leftover after #300) / **#300** /
