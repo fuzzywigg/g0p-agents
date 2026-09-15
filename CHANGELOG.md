@@ -10,6 +10,26 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Goose-recipe schema leftover **tests-only** deepeners after tip through **#300**
+  (Claude/routing leftover after #289) / **#289** (CI/markdownlint leftover after #279) /
+  **#279** (CI/markdownlint leftover after #270) / **#270** (goose-schema leftover after #265) /
+  **#265** / **#264** / **#258** / **#253** / **#248** / **#242** / **#236** / **#229** /
+  **#224** / **#219** / **#209** / **#208** / **#202** / **#200** / **#195** / **#188** /
+  **#187** / **#186** / **#184** (goose-schema tip) / **#172** (goose-schema residual suite)
+  (EXISTING three fixtures — `goose` / `recipe-agents` / `recipe-titles` plus
+  `schemas/goose-recipe.schema.json` + `GOOSE-RECIPES.md` — no invented product /
+  inventory bump): unsaturated reject leftovers beyond #270 + tip-after-#279/#300
+  lookalike/typed deepeners, invent-key KeyError / `run_all --only` ValueError, ACCEPT
+  leftovers, docs/on-disk/titles/agents/inventory leftovers, CI `--list-validators` /
+  `--only` goose-trio + invent-refuse + required manifest step-marker smoke, concurrent
+  races, and tip isolation against #300 Claude/routing + #289/#279 CI/markdownlint and
+  #270/#265/#264/#258/#253/#248/#242/#236/#229/#224/#219 siblings. Historic four only;
+  Packaging inventory unchanged (v52 / 196 validators). Distinct from merged #300
+  (Claude/routing leftover), #289/#279 (CI/markdownlint leftovers), #270 (prior
+  goose-schema leftover), closed CONFLICTING #292/#285/#273/#268/#263/#262/#261/#259/
+  #255/#254/#249/#246/#245/#239/#234/#228/#216/#212 (same leftover on stale tips), and
+  not a v53 invent sibling or Dependabot bump.
+
 - Claude/routing governance residual **tests-only** leftover deepeners after tip
   through **#289** (CI/markdownlint leftover after #279) / **#279** / **#270**
   (goose-schema leftover after #265) / **#265** (Claude/routing leftover after
