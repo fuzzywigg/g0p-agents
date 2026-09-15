@@ -10,6 +10,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Goose-recipe schema leftover **tests-only** deepeners after tip through **#307**
+  (actionlint/linkcheck leftover after #300) / **#300** (Claude/routing leftover after #289) /
+  **#289** / **#279** / **#270** (goose-schema leftover after #265) / **#265** / **#264** /
+  **#258** / **#253** / **#248** / **#242** / **#236** / **#229** / **#224** / **#219** /
+  **#209** / **#208** / **#202** / **#200** / **#195** / **#188** / **#187** / **#186** /
+  **#184** (goose-schema tip) / **#172** (EXISTING three fixtures — `goose` /
+  `recipe-agents` / `recipe-titles` plus `schemas/goose-recipe.schema.json` +
+  `GOOSE-RECIPES.md` — no invented product / inventory bump): unsaturated reject /
+  ACCEPT / docs / on-disk / titles-agents-inventory / CI leftovers beyond #270 plus
+  tip lookalike/typed deepeners; invent-key refuse; concurrent races; tip isolation
+  against #307 actionlint/linkcheck + #300 Claude/routing + #289/#279 CI/markdownlint
+  and prior siblings. Historic four only; inventory unchanged (v52 / 196). Distinct
+  from merged #307 (actionlint/linkcheck), #300 (Claude/routing), #289/#279
+  (CI/markdownlint), #270 (prior goose-schema), closed CONFLICTING
+  #317/#292/#285/#273/#268/#263/#262/#261/#259/#255/#254/#249/#246/#245/#239/#234/
+  #228/#216/#212 (same leftover on stale tips), and not a v53 invent sibling.
+
 - Actionlint/workflow + link-check residual **tests-only** leftover deepeners
   after tip through **#300** (Claude/routing leftover after #289) / **#289** /
   **#279** / **#270** / **#265** / **#264** / **#258** / **#253** / **#248**
