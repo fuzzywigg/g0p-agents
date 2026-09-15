@@ -10,6 +10,42 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Prompts listform + agentic_flows residual **tests-only** leftover deepeners after
+  tip through **#300** (Claude/routing leftover after #289) / **#289**
+  (CI/markdownlint leftover after #279) / **#279** / **#270** / **#265** / **#264** /
+  **#258** / **#253** (prompts+flows after #248) / **#248** / **#242** / **#236** /
+  **#229** / **#224** / **#219** / **#209** / **#208** / **#202** / **#200**
+  (EXISTING nineteen fixtures — twelve list-form sibling `prompt-*` + seven
+  agentic_flows `goose` / `recipe-agents` / `recipe-titles` / `scratchpad*` — no
+  invented v53 list-form product / inventory bump; tip-relaunch of closed
+  CONFLICTING **#303** / **#301** / **#298** / **#296** / **#291** / **#290** /
+  **#284** / **#272** / **#269**; not a markdownlint or Claude/routing niche redo):
+  exact fence-count leftovers for found 0/5 beyond #253 found-1 plus found 2/3
+  and tip-after-#300 found-6 deepeners, historic version/provider/model exact
+  Findings plus documented `recipe YAML must be a mapping` fences, word-joiner /
+  NEL / vertical-tab lookalikes beyond #253 fullwidth/tab plus invisible-separator /
+  function-application deepeners, per-module last- and middle-phrase exact drop
+  matrices for all twelve listform and scratchpad* (≠ #253 first-phrase),
+  empty/whitespace scratchpad exact Finding plus empty AGENT-PROMPTS section-lock
+  shapes across all twelve, orchestration missing BlockchainArchitectAgent /
+  OrchestrationAgent exact (≠ #253 Quantum/Edge), CI `--list-validators` /
+  `--only` nineteen + required Manifest Validate step-marker smoke, inventory
+  empty-list leftovers beyond #253 bool/float and #242 int/null, cross isolation
+  vs #300/#289/#279/#270/#265/#264/#258/#253/#248 siblings with concurrent races,
+  and tip-after-#300 deepeners (figure-space / NNBSP / Mongolian lookalikes
+  mirroring #300 Claude theme onto prompts+flows, LS / PS / object-replacement
+  lookalikes, simultaneous listform+scratchpad+goose triple exact drops,
+  isolation vs #300 Claude/routing twelve + vs #289 CI/markdownlint, `--only`
+  nineteen vs #300 Claude/routing residual + invent-key refuse, live-green).
+  Historic four only; Packaging inventory unchanged (v52 / 196); no schema /
+  validators / Dependabot bumps. Distinct from merged #300 (Claude/routing niche),
+  #289/#279 (CI/markdownlint niches), #270 (goose-schema niche), #265
+  (Claude/routing niche), #264 (goose-schema niche), #258
+  (hydration/security+handoff), #253 (fence/File-bind/first-phrase/fullwidth),
+  #242 (ZWSP/on-disk/checkbox/inventory-types), #236/#229/#224/#219 siblings, and
+  closed CONFLICTING #303/#301/#298/#296/#291/#290/#284/#272/#269/#251/#243/#238/
+  #235/#230/#221/#223 (same leftover vs stale tips).
+
 - Claude/routing governance residual **tests-only** leftover deepeners after tip
   through **#289** (CI/markdownlint leftover after #279) / **#279** / **#270**
   (goose-schema leftover after #265) / **#265** (Claude/routing leftover after
