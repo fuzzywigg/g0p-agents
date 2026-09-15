@@ -47953,7 +47953,7 @@ def test_ci_markdownlint_after354_run_only_subset_vs_337_figure() -> None:
 def test_ci_markdownlint_after354_en_quad_en_space_three_per_em_lookalikes(
     tmp_path: Path,
 ) -> None:
-    """Evening residual: En-quad / En-space / Three-per-em beyond overnight after354 Ogham/Em/Hair."""
+    """Evening residual: En-quad / En-space / Three-per-em beyond overnight Ogham/Em/Hair."""
     locked = _locked_markdownlint_yaml()
 
     # En quad (U+2001) after colon — YAML parse Finding
@@ -47995,7 +47995,7 @@ def test_ci_markdownlint_after354_en_quad_en_space_three_per_em_lookalikes(
 def test_ci_markdownlint_after354_four_six_per_em_math_space_lookalikes(
     tmp_path: Path,
 ) -> None:
-    """Evening residual: Four/Six-per-em + medium math space beyond overnight after354 thin/punct."""
+    """Evening residual: Four/Six-per-em + medium math space beyond overnight thin/punct."""
     locked = _locked_markdownlint_yaml()
 
     # Four-per-em space (U+2005) after colon — YAML parse Finding
