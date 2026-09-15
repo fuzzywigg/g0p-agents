@@ -46331,7 +46331,7 @@ def test_goose_schema_after322_isolation_vs_300_claude_routing() -> None:
 
 
 def test_goose_schema_after322_line_para_sep_obj_replacement_lookalikes() -> None:
-    """Tip-after-#322 deepeners (retain tip-after-#307): LS / PS / object-replacement / ZWNBSP / RLM on names.
+    """Tip-after-#322 deepeners (retain tip-after-#307): LS/PS/ORC/ZWNBSP/RLM names.
 
     Mirrors #300 Claude/routing lookalike theme onto goose-recipe name pattern
     leftovers without inventing validators or redoing the Claude niche.
@@ -46582,7 +46582,7 @@ def test_goose_schema_after322_run_only_vs_307_actionlint_and_invent_refuse() ->
 
 
 def test_goose_schema_after322_bidi_isolates_and_tag_space_lookalikes() -> None:
-    """Tip-after-#322 deepeners (retain tip-after-#307): bidi isolates + tag-space lookalikes on names.
+    """Tip-after-#322 deepeners (retain tip-after-#307): bidi + tag-space names.
 
     Mirrors #307 actionlint/linkcheck lookalike pressure onto goose-recipe name
     pattern leftovers still unsaturated after closed CONFLICTING #333/#329/#325/#317/#313,
