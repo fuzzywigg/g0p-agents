@@ -10,6 +10,32 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Hydration↔security + handoff residual **tests-only** leftover deepeners after
+  tip through **#300** (Claude/routing leftover after #289) / **#289**
+  (CI/markdownlint leftover after #279) / **#279** / **#270** (goose-schema
+  leftover after #265) / **#265** / **#264** / **#258** (hydration/security+handoff
+  leftover after #248) / **#253** / **#248** / **#242** / **#236** / **#229** /
+  **#224** / **#219** / **#209** (EXISTING twenty-two fixtures —
+  `hydration-phase4`, ten `security*`, seven handoff-cluster `constitution-*`,
+  and four `scratchpad*` — no invented product / inventory bump): tip-relaunch
+  of closed CONFLICTING **#304** / **#297** / **#295** / **#287** / **#281** /
+  **#277** onto post-#300 tip — exact missing-file Finding equality (≠ #258
+  directory-not-file), section-present / phrases-absent matrix, soft-hyphen /
+  NBSP / ideographic / combining-accent + NEL / word-joiner / vtab lookalikes,
+  first/middle/last-phrase exact drop matrices, packaging asymmetry + dual
+  invented-agent exact Findings, empty/whitespace/header-only docs + empty/dup/
+  blank/seed + null/list-of-int/dict inventory leftovers, mid-BOM + figure-space /
+  NNBSP / Mongolian / Ogham / LS / PS lookalikes, multi `security-*`
+  simultaneous drops, `security_required_phrases` + `scratchpad_required_phrases`
+  packaging inventory leftovers, cross-isolation vs #300 Claude/routing and
+  #289/#279 CI/markdownlint and #270 goose-schema, concurrent four-doc races,
+  `--only` subset vs #300/#289 siblings, and tip live-green. Historic four only;
+  Packaging inventory unchanged (v52 / 196). Distinct from merged #300
+  (Claude/routing leftover), #289/#279 (CI/markdownlint), #270 (goose-schema),
+  #265 (Claude/routing), #258 (prior hydration/security leftover), #253
+  (prompts+flows), #248 (actionlint/linkcheck), and closed CONFLICTING
+  #304/#297/#295/#287/#281/#277/#252/#247/#241 (same leftover vs stale tips).
+
 - Claude/routing governance residual **tests-only** leftover deepeners after tip
   through **#289** (CI/markdownlint leftover after #279) / **#279** / **#270**
   (goose-schema leftover after #265) / **#265** (Claude/routing leftover after
