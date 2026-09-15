@@ -19,17 +19,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   **#209** / **#208** / **#202** / **#200** (EXISTING nineteen fixtures — twelve
   list-form sibling `prompt-*` + seven agentic_flows `goose` / `recipe-agents` /
   `recipe-titles` / `scratchpad*` — no invented v53 list-form product /
-  inventory bump; tip-relaunch of CONFLICTING **#330** / **#331** / **#324** /
-  **#315** / **#311** / **#303** / **#301** / **#298** / **#296** / **#291** /
-  **#290** / **#284** / **#272** / **#269**; not a markdownlint, actionlint,
-  goose-schema, hydration, or Claude/routing niche redo): exact fence-count
-  leftovers for found 0/2/3/5/6 plus tip-after-#307 found-7, historic
-  version/provider/model exact Findings plus documented `recipe YAML must be a
-  mapping` fences, word-joiner / NEL / vertical-tab plus invisible-separator /
-  function-application lookalikes beyond #253 fullwidth/tab, per-module last-
-  and middle-phrase exact drop matrices for all twelve listform and scratchpad*
-  (≠ #253 first-phrase), empty/whitespace scratchpad exact Finding plus empty
-  AGENT-PROMPTS section-lock shapes across all twelve, orchestration missing
+  inventory bump; tip-relaunch of closed CONFLICTING **#342** / **#330** /
+  **#331** / **#324** / **#315** / **#311** / **#303** / **#301** / **#298** /
+  **#296** / **#291** / **#290** / **#284** / **#272** / **#269**; not a
+  markdownlint, actionlint, goose-schema, hydration, or Claude/routing niche
+  redo; closed #342 AttributeError on nonexistent `vm.validate_security` fixed
+  to `validate_security_packaging`): exact fence-count leftovers for found
+  0/2/3/5/6 plus tip-after-#307 found-7, historic version/provider/model exact
+  Findings plus documented `recipe YAML must be a mapping` fences, word-joiner /
+  NEL / vertical-tab plus invisible-separator / function-application lookalikes
+  beyond #253 fullwidth/tab, per-module last- and middle-phrase exact drop
+  matrices for all twelve listform and scratchpad* (≠ #253 first-phrase),
+  empty/whitespace scratchpad exact Finding plus empty AGENT-PROMPTS
+  section-lock shapes across all twelve, orchestration missing
   BlockchainArchitectAgent / OrchestrationAgent exact (≠ #253 Quantum/Edge), CI
   `--list-validators` / `--only` nineteen + required Manifest Validate
   step-marker smoke, inventory empty-list leftovers beyond #253 bool/float and
@@ -53,8 +55,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   (goose-schema niche), #265 (Claude/routing niche), #264 (goose-schema niche),
   #258 (hydration/security+handoff), #253 (fence/File-bind/first-phrase/
   fullwidth), #242 (ZWSP/on-disk/checkbox/inventory-types), #236/#229/#224/#219
-  siblings, and CONFLICTING #330/#331/#324/#315/#311/#303/#301/#298/#296/#291/
-  #290/#284/#272/#269/#251/#243/#238/#235/#230/#221/#223 (same leftover vs
+  siblings, and CONFLICTING #342/#330/#331/#324/#315/#311/#303/#301/#298/#296/
+  #291/#290/#284/#272/#269/#251/#243/#238/#235/#230/#221/#223 (same leftover vs
   stale tips).
 
 - Hydration↔security + handoff residual **tests-only** leftover deepeners after

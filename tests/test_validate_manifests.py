@@ -44964,18 +44964,20 @@ def test_hydration_security_handoff_after307_run_only_subset_vs_307_actionlint()
 # #209 / #208 / #202 / #200. EXISTING nineteen listform+flows fixtures only
 # (v52 / 196). Prefer prompts+agentic_flows niche only (not markdownlint /
 # not actionlint / not goose-schema / not hydration / not Claude-routing).
-# Tip-relaunch of CONFLICTING #330/#331/#324/#315/#311/#303/#301/#298/#296/
+# Tip-relaunch of CONFLICTING #342/#330/#331/#324/#315/#311/#303/#301/#298/#296/
 # #291/#290/#284/#272/#269 (same leftover on pre-#322 / pre-#307 / earlier
-# tips). Tip-after-#322 deepeners: isolation vs #322 hyd/sec twenty-two,
-# `--only` nineteen vs #322 hyd invent refuse, exact dual prompt+security
-# Findings, BOM/NBSP/word-joiner deepeners retained from closed #330, plus
-# tip-after-#307 deepeners retained (soft-hyphen / ZWNBSP / ideographic,
-# found-7 fence, absent **File** + empty yaml, dual prompt+goose, isolation
-# vs #307 actionlint seven, quad-surface races, live-green).
+# tips; closed #342 used nonexistent vm.validate_security — fixed here to
+# validate_security_packaging). Tip-after-#322 deepeners: isolation vs #322
+# hyd/sec twenty-two, `--only` nineteen vs #322 hyd invent refuse, exact dual
+# prompt+security Findings, BOM/NBSP/word-joiner deepeners retained from
+# closed #330, plus tip-after-#307 deepeners retained (soft-hyphen / ZWNBSP /
+# ideographic, found-7 fence, absent **File** + empty yaml, dual prompt+goose,
+# isolation vs #307 actionlint seven, quad-surface races, live-green).
 # ---------------------------------------------------------------------------
 
 _PROMPTS_FLOWS_AFTER322_INVENT_NAMES: tuple[str, ...] = (
     "prompts-flows-after322-timeouts",
+    "prompts-flows-after342-timeouts",
     "prompts-flows-after330-timeouts",
     "prompts-flows-after331-timeouts",
     "prompts-flows-after324-timeouts",
@@ -46786,7 +46788,7 @@ def test_prompts_flows_after322_tip_live_green_vs_322_base() -> None:
     assert vm.validate_claude_packaging(REPO_ROOT) == []
     assert vm.validate_routing_surfaces(REPO_ROOT) == []
     assert vm.validate_hydration_phase4(REPO_ROOT) == []
-    assert vm.validate_security(REPO_ROOT) == []
+    assert vm.validate_security_packaging(REPO_ROOT) == []
     assert vm.validate_packaging_inventory(REPO_ROOT) == []
     assert vm.validate_changelog_unreleased(REPO_ROOT) == []
 
@@ -46844,7 +46846,7 @@ def test_prompts_flows_after322_exact_dual_prompt_and_security_findings(
     _write(tmp_path / "SECURITY.md", sec_live.replace(phrase, "ABSENT_AFTER322_DUAL_SEC"))
 
     usage = vm.validate_prompt_usage(tmp_path)
-    security = vm.validate_security(tmp_path)
+    security = vm.validate_security_packaging(tmp_path)
     assert any(f.message == "missing Usage Instructions section" for f in usage)
     assert any(
         f.message == f"SECURITY.md missing packaging phrase: {phrase}" for f in security
@@ -46874,7 +46876,7 @@ def test_prompts_flows_after322_isolation_vs_322_hydration_security(
     for name in _HYDRATION_SECURITY_HANDOFF_AFTER307_NAMES:
         assert vm.run_all_validations(REPO_ROOT, only=[name]) == []
     assert vm.validate_hydration_phase4(REPO_ROOT) == []
-    assert vm.validate_security(REPO_ROOT) == []
+    assert vm.validate_security_packaging(REPO_ROOT) == []
     assert vm.validate_constitution_handoff(REPO_ROOT) == []
     assert vm.validate_scratchpad(REPO_ROOT) == []
 
@@ -47085,7 +47087,7 @@ def test_prompts_flows_after322_tip_live_green_vs_322() -> None:
     assert vm.validate_scratchpad(REPO_ROOT) == []
     assert vm.validate_goose_recipes(REPO_ROOT) == []
     assert vm.validate_hydration_phase4(REPO_ROOT) == []
-    assert vm.validate_security(REPO_ROOT) == []
+    assert vm.validate_security_packaging(REPO_ROOT) == []
     assert vm.validate_actionlint_shell(REPO_ROOT) == []
     assert vm.validate_link_check(REPO_ROOT) == []
     assert vm.validate_markdownlint(REPO_ROOT) == []
