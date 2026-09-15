@@ -47019,7 +47019,7 @@ def test_goose_schema_after337_ci_workflow_goose_trio_smoke() -> None:
 
 
 def test_goose_schema_after337_concurrent_and_cross_isolation(tmp_path: Path) -> None:
-    """Concurrent schema+docs races; isolate leftover vs #337/#322/#307/#300/#289/#279/#270/#265 siblings."""
+    """Concurrent schema+docs races; isolate vs #337/#322/#307/#300/#289 siblings."""
     modules = _goose_schema_residual_modules()
     live_fns = [fn for _name, fn in modules]
     schema = vm.load_schema("goose-recipe.schema.json")
