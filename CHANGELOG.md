@@ -56,7 +56,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   #289 CI/markdownlint and #279/#270/#265/#264/#258/#253/#248/#242/#236/#229/
   #224/#219 siblings, simultaneous goose+titles+agents triple exact drops, titles
   vs agents exact Finding isolation, `--only` goose trio vs #300 Claude residual
-  + invent-key refuse. Historic four only; Packaging inventory unchanged
+  and invent-key refuse. Historic four only; Packaging inventory unchanged
   (v52 / 196 validators). Distinct from merged #300 (Claude/routing leftover),
   merged #289 (CI/markdownlint leftover), merged #279 (CI/markdownlint after
   #270), merged #270 (prior goose-schema leftover after #265), closed CONFLICTING
