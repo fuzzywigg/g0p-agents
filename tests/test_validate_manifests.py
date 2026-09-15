@@ -46786,7 +46786,7 @@ def test_prompts_flows_after322_tip_live_green_vs_322_base() -> None:
     assert vm.validate_claude_packaging(REPO_ROOT) == []
     assert vm.validate_routing_surfaces(REPO_ROOT) == []
     assert vm.validate_hydration_phase4(REPO_ROOT) == []
-    assert vm.validate_security(REPO_ROOT) == []
+    assert vm.validate_security_packaging(REPO_ROOT) == []
     assert vm.validate_packaging_inventory(REPO_ROOT) == []
     assert vm.validate_changelog_unreleased(REPO_ROOT) == []
 
@@ -46844,7 +46844,7 @@ def test_prompts_flows_after322_exact_dual_prompt_and_security_findings(
     _write(tmp_path / "SECURITY.md", sec_live.replace(phrase, "ABSENT_AFTER322_DUAL_SEC"))
 
     usage = vm.validate_prompt_usage(tmp_path)
-    security = vm.validate_security(tmp_path)
+    security = vm.validate_security_packaging(tmp_path)
     assert any(f.message == "missing Usage Instructions section" for f in usage)
     assert any(
         f.message == f"SECURITY.md missing packaging phrase: {phrase}" for f in security
@@ -46874,7 +46874,7 @@ def test_prompts_flows_after322_isolation_vs_322_hydration_security(
     for name in _HYDRATION_SECURITY_HANDOFF_AFTER307_NAMES:
         assert vm.run_all_validations(REPO_ROOT, only=[name]) == []
     assert vm.validate_hydration_phase4(REPO_ROOT) == []
-    assert vm.validate_security(REPO_ROOT) == []
+    assert vm.validate_security_packaging(REPO_ROOT) == []
     assert vm.validate_constitution_handoff(REPO_ROOT) == []
     assert vm.validate_scratchpad(REPO_ROOT) == []
 
@@ -47085,7 +47085,7 @@ def test_prompts_flows_after322_tip_live_green_vs_322() -> None:
     assert vm.validate_scratchpad(REPO_ROOT) == []
     assert vm.validate_goose_recipes(REPO_ROOT) == []
     assert vm.validate_hydration_phase4(REPO_ROOT) == []
-    assert vm.validate_security(REPO_ROOT) == []
+    assert vm.validate_security_packaging(REPO_ROOT) == []
     assert vm.validate_actionlint_shell(REPO_ROOT) == []
     assert vm.validate_link_check(REPO_ROOT) == []
     assert vm.validate_markdownlint(REPO_ROOT) == []
