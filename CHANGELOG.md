@@ -10,6 +10,44 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Claude/routing governance residual **tests-only** leftover deepeners after tip
+  through **#369** (hydration/security leftover after #354) / **#354**
+  (actionlint/linkcheck leftover after #337) / **#337** / **#322** / **#307** /
+  **#300** (Claude/routing leftover after #289) / **#289** / **#279** / **#270** /
+  **#265** / **#264** / **#258** / **#253** / **#248** (EXISTING twelve CLAUDE.md
+  fixtures — `claude` / `claude-metadata` / `routing` / `routing-matrix` /
+  `routing-rationales` / `repo-identity` / `state-residency` / `key-files` /
+  `escalation-format` / `escalation-usage` / `quarterly-review` /
+  `negative-constraints` — historic v14–v16 + merged **#300** / **#265** residual;
+  tip-relaunch of closed CONFLICTING **#371** / **#358** / **#347** / **#346** /
+  **#344** / **#328** / **#326** / **#319**; no invented product / inventory bump):
+  CI `--list-validators` / `--only` / `--json` twelve + Manifest Validate
+  step-marker smoke, exact key-files / repo-identity / matrix / rationale Finding
+  equality, escalation-usage vs escalation-format isolation, packaging↔repo-identity
+  shared phrase dual Finding formats, per-metadata Tier/Created/Edit/Canonical
+  exact drops, empty-file + directory-not-file exact multi-Finding leftovers,
+  inventory type/empty/dup leftovers, LRM / ZWJ / soft-hyphen / VT / form-feed +
+  EM / HAIR / THIN + EN QUAD / PUNCTUATION / MMSP + FOUR/SIX-PER-EM / OGHAM +
+  THREE-PER-EM / Braille / WJ + Ogham/mid-BOM/NEL/ZWNBSP header lookalikes,
+  simultaneous matrix+rationale+metadata / packaging+escalation+negative /
+  key-files+quarterly+state triple exact drops, three-agent simultaneous drop,
+  concurrent CLAUDE.md races, tip isolation against #369 hydration/security
+  after354 / #354 actionlint after337 / #337 FIGURE / #322 / #307 / #300
+  after289 / #289 CI/markdownlint / #270 goose-schema siblings, tip-after-#369
+  deepeners beyond closed #371 (RLM / object-replacement / LRE / RLI bidi
+  isolate header lookalikes mirroring #369 hyd theme onto Claude niche;
+  second-or-penultimate phrase exact drop matrix; triple invented-agent exact
+  Finding; symlink-to-directory missing + packaging/routing/key/negative quad
+  surface; `--only` twelve vs #369 hyd twenty-two + invent-key refuse;
+  isolation vs #369 after354 hyd residual live-green), and tip live-green.
+  Historic four only; Packaging inventory unchanged (v52 / 196). Distinct from
+  merged #369 (hydration/security after #354), #354 (actionlint/linkcheck),
+  #337 (hydration/security FIGURE), #322, #307, #300 (prior Claude/routing),
+  #289 (CI/markdownlint), #279, #270 (goose-schema), #265 (prior Claude/routing),
+  #264/#258/#253/#248 siblings, and closed CONFLICTING
+  #371/#358/#347/#346/#344/#328/#326/#319/#293/#282/#271/#278/#260/#192 (same
+  niche on stale / pre-#369 tips).
+
 - Hydration↔security + handoff residual **tests-only** leftover deepeners after
   tip through **#354** (actionlint/linkcheck leftover after #337) / **#337**
   (hydration/security FIGURE leftover after #322) / **#322** / **#307** /
