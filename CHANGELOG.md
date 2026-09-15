@@ -18,22 +18,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   **#248** (EXISTING seven CI fixtures — `ci` / `ci-actions` / `link-check` /
   `actionlint-shell` / `ci-job-names` / `ci-runs-on` / `ci-artifacts` — no
   invented product / inventory bump; prefer actionlint+linkcheck niche):
-  tip-after-#369 HEAVY deepeners beyond merged #354 after337 + #307 after300
-  + closed #372/#377 — em/en/thin/hair + punct/math + RLM/LRM, form-feed
-  (≠ #354 VT), fail string/int + YAML `yes` green, shell/args list types,
-  lychee@v1 pin, contents:write, ZWNJ/ZWJ id, NBSP runs-on, LRE/RLI +
-  braille-blank (mirror #369 hyd), dual args+fail Findings — ports open
-  #381 em/en-quad/three-per-em/ideographic + FSI/PDI/LRO/RLO/invisible +
-  ci.yml symlink follow/dangling/dir + triple/float — plus UNIQUE beyond
-  open #381: four/six-per-em + Arabic letter mark/PDF lookalikes, empty-
-  string shell exact + null-shell type asymmetry, `--only` seven vs #369
-  hyd + invent refuse (incl. after381/after377), isolation vs #369 hyd/sec
-  + #289 mdl + #337 figure, quintuple races, tip live-green. Historic four
-  only; inventory unchanged (v52 / 196). Distinct from merged #369
-  (hydration/security), #354 (after337), #337 (figure), #307 (after300),
-  open draft #381 (same niche; this draft adds four/six-per-em/ALM/PDF/
-  empty-null-shell), closed #377 (RED NameError), and closed CONFLICTING
-  #372/#366/#343/#341/#332/#310/#302/#294/#280/#283/#274/#266/#256.
+  tip-after-#369 HEAVY deepeners beyond merged #354 after337 and #307
+  after300 and closed #372/#377 — em/en/thin/hair, punct/math, RLM/LRM,
+  form-feed (≠ #354 VT), fail string/int with YAML `yes` green, shell/args
+  list types, lychee@v1 pin, contents:write, ZWNJ/ZWJ id, NBSP runs-on,
+  LRE/RLI and braille-blank (mirror #369 hyd), dual args+fail Findings —
+  ports open #381 em/en-quad/three-per-em/ideographic, FSI/PDI/LRO/RLO/
+  invisible, ci.yml symlink follow/dangling/dir, and triple/float — plus
+  UNIQUE beyond open #381: four/six-per-em and Arabic letter mark/PDF
+  lookalikes, empty-string shell exact and null-shell type asymmetry,
+  `--only` seven vs #369 hyd and invent refuse (incl. after381/after377),
+  isolation vs #369 hyd/sec and #289 mdl and #337 figure, quintuple races,
+  tip live-green. Historic four only; inventory unchanged (v52 / 196).
+  Distinct from merged #369 (hydration/security), #354 (after337), #337
+  (figure), #307 (after300), open draft #381 (same niche; this draft adds
+  four/six-per-em/ALM/PDF/empty-null-shell), closed #377 (RED NameError),
+  and closed CONFLICTING #372/#366/#343/#341/#332/#310/#302/#294/#280/
+  #283/#274/#266/#256.
 
 - Hydration↔security + handoff residual **tests-only** leftover deepeners after
   tip through **#354** (actionlint/linkcheck leftover after #337) / **#337**
