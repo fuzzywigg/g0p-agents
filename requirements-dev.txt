@@ -3,4 +3,4 @@ jsonschema>=4.26.0,<5
 PyYAML>=6.0.3,<7
 pytest>=9.1.1,<10
 pytest-cov>=7.1.0,<8
-ruff>=0.16.6,<0.17
+ruff>=0.16.7,<0.17
