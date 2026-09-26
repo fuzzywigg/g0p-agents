@@ -53,7 +53,10 @@
     "--only",
     "junitxml",
     "Lock inventory",
-    "INVENTORY_VERSION"
+    "INVENTORY_VERSION",
+    "Expect long PENDING",
+    "GITHUB_STEP_SUMMARY",
+    "PENDING is expected"
   ],
   "required_schema_files": [
     "goose-recipe.schema.json",
@@ -1307,6 +1310,14 @@
     "Fix #12: Add LICENSE file",
     "markdown lint, link check, actionlint",
     "manifest validate on Python 3.11/3.12/3.13",
+    "CI \u2014 Lint, Links & Manifests",
+    "Markdown Lint, Link Check, Actionlint",
+    "Manifest Validate (Py 3.11)",
+    "Manifest Validate (Py 3.12)",
+    "Manifest Validate (Py 3.13)",
+    "PENDING is expected",
+    "~5\u201315+",
+    "no custom `timeout-minutes`",
     "Andrew or designated reviewer",
     "Packaging inventory v52",
     "refuse invented recipes",

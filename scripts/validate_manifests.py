@@ -844,6 +844,14 @@ CONTRIBUTING_CI_HONESTY_REQUIRED_PHRASES: tuple[str, ...] = (
     "Fix #12: Add LICENSE file",
     "markdown lint, link check, actionlint",
     "manifest validate on Python 3.11/3.12/3.13",
+    "CI — Lint, Links & Manifests",
+    "Markdown Lint, Link Check, Actionlint",
+    "Manifest Validate (Py 3.11)",
+    "Manifest Validate (Py 3.12)",
+    "Manifest Validate (Py 3.13)",
+    "PENDING is expected",
+    "~5–15+",
+    "no custom `timeout-minutes`",
     "Andrew or designated reviewer",
     "Packaging inventory v52",
     "refuse invented recipes",
@@ -1454,6 +1462,9 @@ REQUIRED_MANIFEST_STEP_MARKERS = (
     "junitxml",
     "Lock inventory",
     "INVENTORY_VERSION",
+    "Expect long PENDING",
+    "GITHUB_STEP_SUMMARY",
+    "PENDING is expected",
 )
 
 GITHUB_AGENT_FILES: tuple[str, ...] = (".github/agents/my-agent.agent.md",)
@@ -8241,6 +8252,12 @@ def _inventory_lock_consistency(
     else:
         required_ci_honesty = {
             "markdown lint, link check, actionlint",
+            "CI — Lint, Links & Manifests",
+            "Markdown Lint, Link Check, Actionlint",
+            "Manifest Validate (Py 3.11)",
+            "Manifest Validate (Py 3.12)",
+            "Manifest Validate (Py 3.13)",
+            "PENDING is expected",
             "Packaging inventory v52",
             "refuse invented recipes",
         }
@@ -8249,7 +8266,8 @@ def _inventory_lock_consistency(
                 Finding(
                     schema_path,
                     "contributing_ci_honesty_required_phrases must include "
-                    "CI checks/Packaging inventory v52/refuse invented recipes",
+                    "CI checks/live display names/PENDING/Packaging inventory "
+                    "v52/refuse invented recipes",
                 )
             )
 
