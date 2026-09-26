@@ -1371,6 +1371,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 
+- CONTRIBUTING + Manifest workflow contract: lock live required-check display names
+  (`Markdown Lint` / `Link Check` / `Actionlint` / `Manifest Validate (Py 3.11|3.12|3.13)`)
+  and workflow name `CI — Lint, Links & Manifests` into contributing-ci-honesty; lock
+  post-#388 PENDING step markers (`Expect long PENDING`, `GITHUB_STEP_SUMMARY`,
+  `PENDING is expected`) into `required_manifest_step_markers`. Inventory stays
+  v52 / 196 validators. TOKENMAXX ON-20260926 docs-vs-live workflow names + Manifest
+  contract after #388.
 - CONTRIBUTING + Manifest Validate CI: document that the Py 3.11/3.12/3.13 required
   checks commonly stay PENDING for many minutes (often ~5–15+ on tip) while lint /
   link / actionlint finish in seconds; add a short GITHUB_STEP_SUMMARY note. Matrix

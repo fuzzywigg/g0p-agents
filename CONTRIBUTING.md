@@ -29,7 +29,10 @@ This repo is part of the FUZZYWIGG multi-agent ecosystem. Contributions come fro
 2. Reference the issue number in the PR title when one exists: `Fix #12: Add LICENSE file`
 3. Fill in the PR template completely
 4. All CI checks must pass before merge (markdown lint, link check, actionlint, and
-   manifest validate on Python 3.11/3.12/3.13). Manifest Validate is three required
+   manifest validate on Python 3.11/3.12/3.13). Live required-check display names
+   under workflow `CI — Lint, Links & Manifests` are Markdown Lint, Link Check, Actionlint,
+   plus Manifest Validate (Py 3.11) / Manifest Validate (Py 3.12) /
+   Manifest Validate (Py 3.13). Manifest Validate is three required
    check contexts (one per Python version). Lint / link / actionlint usually finish
    in seconds; Manifest Validate commonly stays PENDING for many minutes (often
    ~5–15+ on tip) because it runs ruff, the full packaging validator set, a
