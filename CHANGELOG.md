@@ -1371,6 +1371,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 
+- `CLAUDE.md` Key Files: `agentic_flows/` purpose now matches tip inventory
+  (`scratchpad.txt` only; Goose recipe YAML remains fenced in `GOOSE-RECIPES.md` —
+  no on-disk `*.yaml`). TOKENMAXX ON-20260926 tip-residual-honesty; no inventory bump.
 - Inventory schema minimum version is **7**; CI validator-count gate raised to ≥34; coverage gate **99%**
 - Inventory schema minimum version is **6**; CI validator-count gate raised to ≥31; coverage gate **99%**
 - Inventory schema minimum version is **5**; CI validator-count gate raised to ≥27

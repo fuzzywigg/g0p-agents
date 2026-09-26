@@ -54,7 +54,7 @@ pending architectural decision (see LIST B in docs/agent-hydration.md)
 | `IMPLEMENTATION-GUIDE.md` | Step-by-step WSL2 setup guide |
 | `EXECUTION-SUMMARY.md` | Dec 2025 status snapshot |
 | `docs/agent-hydration.md` | Hydration findings report (this run) |
-| `agentic_flows/` | Live recipe YAML files + scratchpad.txt (to be scaffolded) |
+| `agentic_flows/` | `scratchpad.txt` only; Goose recipe YAML is fenced in `GOOSE-RECIPES.md` (no on-disk `*.yaml` in tip inventory) |
 
 ---
 
