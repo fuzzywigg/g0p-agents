@@ -29,7 +29,13 @@ This repo is part of the FUZZYWIGG multi-agent ecosystem. Contributions come fro
 2. Reference the issue number in the PR title when one exists: `Fix #12: Add LICENSE file`
 3. Fill in the PR template completely
 4. All CI checks must pass before merge (markdown lint, link check, actionlint, and
-   manifest validate on Python 3.11/3.12/3.13)
+   manifest validate on Python 3.11/3.12/3.13). Manifest Validate is three required
+   check contexts (one per Python version). Lint / link / actionlint usually finish
+   in seconds; Manifest Validate commonly stays PENDING for many minutes (often
+   ~5–15+ on tip) because it runs ruff, the full packaging validator set, a
+   per-validator `--only` smoke loop, and pytest coverage. PENDING is expected —
+   not stuck. The job has no custom `timeout-minutes` (GitHub Actions default
+   applies).
 5. One approval required (Andrew or designated reviewer)
 
 ## Local validation (docs packaging)

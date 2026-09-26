@@ -64,6 +64,17 @@ jobs:
         python-version: ["3.11", "3.12", "3.13"]
     steps:
       - uses: actions/checkout@v7
+      - name: Expect long PENDING (job summary)
+        run: |
+          {
+            echo "### Manifest Validate (Py ${{ matrix.python-version }})"
+            echo
+            echo "This matrix cell is a required check. Lint / link / actionlint"
+            echo "usually finish in seconds; this job commonly stays **PENDING**"
+            echo "for many minutes (often ~5–15+ on tip) while it runs ruff,"
+            echo "packaging validators, per-validator \`--only\` smoke, and pytest."
+            echo "PENDING is expected — not stuck. No custom \`timeout-minutes\`."
+          } >> "$GITHUB_STEP_SUMMARY"
       - name: Set up Python
         uses: actions/setup-python@v7
         with:
