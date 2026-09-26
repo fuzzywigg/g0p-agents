@@ -1371,6 +1371,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 
+- CONTRIBUTING + Manifest Validate CI: document that the Py 3.11/3.12/3.13 required
+  checks commonly stay PENDING for many minutes (often ~5–15+ on tip) while lint /
+  link / actionlint finish in seconds; add a short GITHUB_STEP_SUMMARY note. Matrix
+  already matched tip post-#387. TOKENMAXX ON-20260926 Manifest Validate CI honesty;
+  no inventory bump.
 - `CLAUDE.md` Key Files: `agentic_flows/` purpose now matches tip inventory
   (`scratchpad.txt` only; Goose recipe YAML remains fenced in `GOOSE-RECIPES.md` —
   no on-disk `*.yaml`). TOKENMAXX ON-20260926 tip-residual-honesty; no inventory bump.
