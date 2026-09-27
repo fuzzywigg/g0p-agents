@@ -10,6 +10,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Coverage deepen **tests-only** for remaining `scripts/validate_manifests.py`
+  statement/branch gaps (no inventory bump / no invented validators): packaging
+  inventory `version` lock mismatch; on-disk Goose recipe non-string `name`
+  skips binding check; Dependabot non-dict `schedule` skips interval lock
+  (post-schema); CI `manifest-validate` non-list `steps` skips upload-artifact
+  `if` lock; `validate_link_check` non-list manifest steps skips
+  cache-dependency-path lock. Distinct from tip-honesty / TOKENMAXX leftover
+  invent-key deepeners; Packaging inventory unchanged (v52 / 196 validators).
+
 - Goose-recipe schema leftover **tests-only** deepeners after tip through **#369**
   (hydration/security leftover after #354) / **#354** (actionlint/linkcheck
   leftover after #337) / **#337** (hydration/security figure leftover after

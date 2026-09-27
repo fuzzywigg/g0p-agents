@@ -49522,3 +49522,148 @@ def test_goose_schema_after369_run_only_vs_369_hydration_and_invent_refuse() -> 
             _ = vm.VALIDATORS[invented]
     assert len(vm.VALIDATORS) == 196
     assert vm.INVENTORY_VERSION == 52
+
+
+# ---------------------------------------------------------------------------
+# Coverage deepen: remaining statement/branch gaps in existing validators
+# (inventory version lock, on-disk goose non-string name, dependabot non-dict
+# schedule, CI/link-check non-list steps). No invented product / inventory bump.
+# ---------------------------------------------------------------------------
+
+
+def test_packaging_inventory_version_lock_mismatch(tmp_path: Path) -> None:
+    """Schema-valid inventory with drifted version hits the version lock append."""
+    _copy_schemas(tmp_path)
+    inventory = _inventory_payload(version=vm.INVENTORY_VERSION - 1)
+    (tmp_path / "schemas" / "packaging-inventory.json").write_text(
+        json.dumps(inventory), encoding="utf-8"
+    )
+    findings = vm.validate_packaging_inventory(tmp_path)
+    assert any(
+        f.message == "version do not match locked validator constants" for f in findings
+    )
+
+
+def test_goose_ondisk_non_string_name_skips_binding_check(tmp_path: Path) -> None:
+    """On-disk recipe with non-string name skips must-live-at binding (False branch)."""
+    _write(tmp_path / "GOOSE-RECIPES.md", (REPO_ROOT / "GOOSE-RECIPES.md").read_text())
+    flows = tmp_path / "agentic_flows"
+    flows.mkdir()
+    (flows / "scratchpad.txt").write_text("scratch\n", encoding="utf-8")
+    recipe = json.loads(json.dumps(LOCKED_RECIPE))
+    recipe["name"] = 99
+    rel = vm.EXPECTED_RECIPE_FILES[0]
+    target = tmp_path / rel
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_text(yaml.safe_dump(recipe, sort_keys=False), encoding="utf-8")
+    findings = vm.validate_goose_recipes(tmp_path)
+    assert any(f.path == rel and "not of type 'string'" in f.message for f in findings)
+    assert not any("must live at" in f.message for f in findings)
+
+
+def test_dependabot_non_dict_schedule_skips_interval_lock(tmp_path: Path) -> None:
+    """Post-schema non-dict schedule skips interval lock (defensive False branch)."""
+    _copy_schemas(tmp_path)
+    live = yaml.safe_load(
+        (REPO_ROOT / ".github" / "dependabot.yml").read_text(encoding="utf-8")
+    )
+    assert isinstance(live, dict)
+    for item in live["updates"]:
+        item["schedule"] = "weekly"
+    _write(tmp_path / ".github" / "dependabot.yml", yaml.safe_dump(live, sort_keys=False))
+
+    original = vm.validate_against_schema
+
+    def _ok(instance, schema, *, path):  # noqa: ANN001
+        return []
+
+    vm.validate_against_schema = _ok  # type: ignore[assignment]
+    try:
+        findings = vm.validate_dependabot(tmp_path)
+    finally:
+        vm.validate_against_schema = original  # type: ignore[assignment]
+
+    assert findings == []
+    assert not any("schedule.interval must be" in f.message for f in findings)
+
+
+def _ci_yaml_with_manifest_steps(steps: object) -> str:
+    """Minimal CI YAML reaching validate_ci_workflow / validate_link_check step locks."""
+    data = {
+        "name": vm.CI_WORKFLOW_NAME,
+        "on": {
+            "push": {},
+            "pull_request": {"branches": [vm.CI_PULL_REQUEST_BRANCH]},
+        },
+        "concurrency": {
+            "group": f"{vm.CI_CONCURRENCY_GROUP_PREFIX}-coverage",
+            "cancel-in-progress": True,
+        },
+        "jobs": {
+            "markdown-lint": {
+                "runs-on": "ubuntu-latest",
+                "permissions": {"contents": "read"},
+                "steps": [
+                    {
+                        "uses": "DavidAnson/markdownlint-cli2-action@v24",
+                        "with": {
+                            "globs": vm.CI_MARKDOWN_LINT_GLOBS,
+                            "config": vm.CI_MARKDOWN_LINT_CONFIG,
+                        },
+                    }
+                ],
+            },
+            "link-check": {
+                "runs-on": "ubuntu-latest",
+                "permissions": {"contents": "read"},
+                "steps": [
+                    {
+                        "uses": "lycheeverse/lychee-action@v2",
+                        "with": {
+                            "args": vm.CI_LINK_CHECK_ARGS,
+                            "fail": vm.CI_LINK_CHECK_FAIL,
+                        },
+                    }
+                ],
+            },
+            "actionlint": {
+                "runs-on": "ubuntu-latest",
+                "permissions": {"contents": "read"},
+                "steps": [],
+            },
+            "manifest-validate": {
+                "runs-on": "ubuntu-latest",
+                "permissions": {"contents": "read"},
+                "strategy": {
+                    "fail-fast": False,
+                    "matrix": {"python-version": list(vm.REQUIRED_PYTHON_VERSIONS)},
+                },
+                "steps": steps,
+            },
+        },
+    }
+    return yaml.safe_dump(data, sort_keys=False)
+
+
+def test_ci_workflow_non_list_steps_skips_upload_if_lock(tmp_path: Path) -> None:
+    """Non-list manifest-validate steps skip upload-artifact if lock (False branch)."""
+    _write(
+        tmp_path / ".github" / "workflows" / "ci.yml",
+        _ci_yaml_with_manifest_steps({"not": "a-list"}),
+    )
+    findings = vm.validate_ci_workflow(tmp_path)
+    assert any("upload validation artifacts" in f.message for f in findings)
+    assert not any("upload-artifact if must be" in f.message for f in findings)
+
+
+def test_link_check_non_list_manifest_steps_skips_cache_path_lock(
+    tmp_path: Path,
+) -> None:
+    """Non-list manifest-validate steps skip cache-dependency-path lock (False branch)."""
+    _write(
+        tmp_path / ".github" / "workflows" / "ci.yml",
+        _ci_yaml_with_manifest_steps({"not": "a-list"}),
+    )
+    findings = vm.validate_link_check(tmp_path)
+    assert not any("cache-dependency-path lock not found" in f.message for f in findings)
+    assert not any("cache-dependency-path must be" in f.message for f in findings)
