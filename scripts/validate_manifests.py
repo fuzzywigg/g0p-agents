@@ -210,7 +210,7 @@ CI_REQUIRED_ACTIONS: tuple[str, ...] = (
     "actions/checkout@v7",
     "actions/setup-python@v7",
     "actions/upload-artifact@v7",
-    "DavidAnson/markdownlint-cli2-action@v24",
+    "DavidAnson/markdownlint-cli2-action@v25",
     "lycheeverse/lychee-action@v2",
 )
 CI_REQUIRED_TEXT_MARKERS: tuple[str, ...] = (

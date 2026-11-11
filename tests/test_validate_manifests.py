@@ -4415,7 +4415,7 @@ def test_v10_link_check_ci_job_names_github_agent_desc_edge_cases(
                 "    name: Wrong Markdown",
                 "    runs-on: ubuntu-latest",
                 "    steps:",
-                "      - uses: DavidAnson/markdownlint-cli2-action@v24",
+                "      - uses: DavidAnson/markdownlint-cli2-action@v25",
                 "        with:",
                 "          globs: '*.md'",
                 "          config: wrong.yaml",
@@ -4774,7 +4774,7 @@ def test_v10_link_check_ci_job_names_github_agent_desc_edge_cases(
                         "runs-on": "ubuntu-latest",
                         "steps": [
                             "not-a-mapping-step",
-                            {"uses": "DavidAnson/markdownlint-cli2-action@v24"},
+                            {"uses": "DavidAnson/markdownlint-cli2-action@v25"},
                         ],
                     },
                     "manifest-validate": {
@@ -24805,7 +24805,7 @@ def test_actionlint_linkcheck_after186_linkcheck_with_and_lock_not_found(
 
     # Drop markdownlint-cli2-action uses → globs/config lock not found
     no_mdl = base.replace(
-        "DavidAnson/markdownlint-cli2-action@v24",
+        "DavidAnson/markdownlint-cli2-action@v25",
         "actions/checkout@v7",
         1,
     )
@@ -25289,15 +25289,15 @@ def test_actionlint_linkcheck_after188_markdownlint_with_and_setup_python(
     # markdownlint-cli2-action without with: (changelog #188 claimed; tests dropped uses)
     no_mdl_with = base.replace(
         "      - name: Lint Markdown files\n"
-        "        uses: DavidAnson/markdownlint-cli2-action@v24\n"
+        "        uses: DavidAnson/markdownlint-cli2-action@v25\n"
         "        with:\n"
         f'          globs: "{vm.CI_MARKDOWN_LINT_GLOBS}"\n'
         f"          config: {vm.CI_MARKDOWN_LINT_CONFIG}\n",
         "      - name: Lint Markdown files\n"
-        "        uses: DavidAnson/markdownlint-cli2-action@v24\n",
+        "        uses: DavidAnson/markdownlint-cli2-action@v25\n",
     )
     mdl_chunk = no_mdl_with.split("  markdown-lint:")[1].split("  link-check:")[0]
-    assert "markdownlint-cli2-action@v24" in mdl_chunk
+    assert "markdownlint-cli2-action@v25" in mdl_chunk
     assert "with:" not in mdl_chunk
     _write_ci_yaml(tmp_path, no_mdl_with)
     findings = vm.validate_link_check(tmp_path)
@@ -25536,12 +25536,12 @@ def test_actionlint_linkcheck_after188_run_only_and_inventory_leftover_types(
     base = _actionlint_linkcheck_locked_ci_yaml()
     no_mdl_with = base.replace(
         "      - name: Lint Markdown files\n"
-        "        uses: DavidAnson/markdownlint-cli2-action@v24\n"
+        "        uses: DavidAnson/markdownlint-cli2-action@v25\n"
         "        with:\n"
         f'          globs: "{vm.CI_MARKDOWN_LINT_GLOBS}"\n'
         f"          config: {vm.CI_MARKDOWN_LINT_CONFIG}\n",
         "      - name: Lint Markdown files\n"
-        "        uses: DavidAnson/markdownlint-cli2-action@v24\n",
+        "        uses: DavidAnson/markdownlint-cli2-action@v25\n",
     )
     _write_ci_yaml(tmp_path, no_mdl_with)
     only_link = vm.run_all_validations(tmp_path, only=["link-check"])
@@ -25665,7 +25665,7 @@ def test_actionlint_linkcheck_after188_leftover_live_green() -> None:
     assert f"shell: {vm.CI_ACTIONLINT_SHELL}" in body
     assert f"id: {vm.CI_ACTIONLINT_STEP_ID}" in body
     assert "lycheeverse/lychee-action@v2" in body
-    assert "DavidAnson/markdownlint-cli2-action@v24" in body
+    assert "DavidAnson/markdownlint-cli2-action@v25" in body
     for expected in vm.CI_JOB_DISPLAY_NAMES.values():
         assert f"name: {expected}" in body
 
@@ -31001,7 +31001,7 @@ def test_actionlint_linkcheck_after229_leftover_live_green() -> None:
     assert f"shell: {vm.CI_ACTIONLINT_SHELL}" in body
     assert f"id: {vm.CI_ACTIONLINT_STEP_ID}" in body
     assert "lycheeverse/lychee-action@v2" in body
-    assert "DavidAnson/markdownlint-cli2-action@v24" in body
+    assert "DavidAnson/markdownlint-cli2-action@v25" in body
     assert "GITHUB_TOKEN" in body
     for expected in vm.CI_JOB_DISPLAY_NAMES.values():
         assert f"name: {expected}" in body
@@ -32469,7 +32469,7 @@ def test_actionlint_linkcheck_after236_leftover_live_green() -> None:
     assert f"shell: {vm.CI_ACTIONLINT_SHELL}" in body
     assert f"id: {vm.CI_ACTIONLINT_STEP_ID}" in body
     assert "lycheeverse/lychee-action@v2" in body
-    assert "DavidAnson/markdownlint-cli2-action@v24" in body
+    assert "DavidAnson/markdownlint-cli2-action@v25" in body
     assert "GITHUB_TOKEN" in body
     assert "cancel-in-progress: true" in body
     assert "fail-fast: false" in body
@@ -37689,7 +37689,7 @@ def test_ci_markdownlint_residual_live_green() -> None:
         assert marker in body
     assert vm.CI_MARKDOWN_LINT_CONFIG in body
     assert vm.CI_MARKDOWN_LINT_GLOBS in body
-    assert "DavidAnson/markdownlint-cli2-action@v24" in body
+    assert "DavidAnson/markdownlint-cli2-action@v25" in body
     assert "actions/setup-python@v7" in body
 
     schema = _locked_markdownlint_schema()
@@ -39126,7 +39126,7 @@ def test_ci_markdownlint_after264_leftover_live_green() -> None:
     assert cfg["MD024"]["siblings_only"] is True
 
     body = (REPO_ROOT / _ACTIONLINT_LINKCHECK_CI_REL).read_text(encoding="utf-8")
-    assert "DavidAnson/markdownlint-cli2-action@v24" in body
+    assert "DavidAnson/markdownlint-cli2-action@v25" in body
     assert vm.CI_MARKDOWN_LINT_CONFIG in body
     assert vm.CI_MARKDOWN_LINT_GLOBS in body
     assert vm.CI_RUFF_CHECK_COMMAND in body
@@ -39522,7 +39522,7 @@ def test_ci_markdownlint_after265_leftover_live_green() -> None:
     assert cfg["MD024"]["siblings_only"] is True
 
     body = (REPO_ROOT / _ACTIONLINT_LINKCHECK_CI_REL).read_text(encoding="utf-8")
-    assert "DavidAnson/markdownlint-cli2-action@v24" in body
+    assert "DavidAnson/markdownlint-cli2-action@v25" in body
     assert vm.CI_MARKDOWN_LINT_CONFIG in body
     assert vm.CI_MARKDOWN_LINT_GLOBS in body
     assert vm.CI_RUFF_CHECK_COMMAND in body
@@ -40290,7 +40290,7 @@ def test_ci_markdownlint_after279_leftover_live_green() -> None:
     assert cfg["MD024"]["siblings_only"] is True
 
     body = (REPO_ROOT / _ACTIONLINT_LINKCHECK_CI_REL).read_text(encoding="utf-8")
-    assert "DavidAnson/markdownlint-cli2-action@v24" in body
+    assert "DavidAnson/markdownlint-cli2-action@v25" in body
     assert vm.CI_MARKDOWN_LINT_CONFIG in body
     assert vm.CI_MARKDOWN_LINT_GLOBS in body
     assert vm.CI_RUFF_CHECK_COMMAND in body
@@ -42735,7 +42735,7 @@ def test_actionlint_linkcheck_after300_leftover_live_green() -> None:
     assert f"shell: {vm.CI_ACTIONLINT_SHELL}" in body
     assert f"id: {vm.CI_ACTIONLINT_STEP_ID}" in body
     assert "lycheeverse/lychee-action@v2" in body
-    assert "DavidAnson/markdownlint-cli2-action@v24" in body
+    assert "DavidAnson/markdownlint-cli2-action@v25" in body
     assert "GITHUB_TOKEN" in body
     assert "cancel-in-progress: true" in body
     assert "fail-fast: false" in body
@@ -49605,7 +49605,7 @@ def _ci_yaml_with_manifest_steps(steps: object) -> str:
                 "permissions": {"contents": "read"},
                 "steps": [
                     {
-                        "uses": "DavidAnson/markdownlint-cli2-action@v24",
+                        "uses": "DavidAnson/markdownlint-cli2-action@v25",
                         "with": {
                             "globs": vm.CI_MARKDOWN_LINT_GLOBS,
                             "config": vm.CI_MARKDOWN_LINT_CONFIG,
